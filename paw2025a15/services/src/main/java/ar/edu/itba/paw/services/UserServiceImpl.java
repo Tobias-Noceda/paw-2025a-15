@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User createUser(String email, String password) {
+    public User create(String email, String password) {
         return userDao.create(email, password);
+    }
+
+    @Override
+    public Optional<User> findById(long id) {
+        return userDao.findById(id);
     }
 
 }

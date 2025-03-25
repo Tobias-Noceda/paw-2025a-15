@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,13 +24,19 @@ public class HelloWorldController {
     @RequestMapping("/")
     public ModelAndView helloWorld() {
         final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("user", us.createUser("pawpaw@itba.edu.ar", "password"));
+        return mav;
+    }
+
+    @RequestMapping("/{id:\\d+}")
+    public ModelAndView profile(@PathVariable("id") long id) {
+        final ModelAndView mav = new ModelAndView("profile");
+        us.findById(id).ifPresent(user -> mav.addObject("user", user));
         return mav;
     }
 
     @RequestMapping(value = "/register", method=RequestMethod.POST)
     public ModelAndView register(@RequestParam(value = "email", required = true) final String email, @RequestParam(value = "password", required = true) final String password){
-        final User user = us.createUser(email, password);
+        final User user = us.create(email, password);
 
         final var mav = new ModelAndView("index");
         mav.addObject("user", user);
@@ -40,4 +47,5 @@ public class HelloWorldController {
     public ModelAndView registerForm() {
         return new ModelAndView("register");
     }
+        
 }
