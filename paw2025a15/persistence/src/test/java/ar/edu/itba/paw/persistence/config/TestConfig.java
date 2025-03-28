@@ -16,10 +16,10 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 @Configuration
 public class TestConfig {
 
-    @Value("classpath:hsqldb.sql") 
+    @Value("classpath:pgsql.sql") 
     private Resource hsqldbSql; 
  
-     @Value("classpath:schema.sql")
+    @Value("classpath:hsqldb.sql")
     private Resource schemaSql;
 
     @Bean

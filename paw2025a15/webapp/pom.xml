@@ -40,6 +40,12 @@
       <artifactId>jstl</artifactId>
     </dependency>
 
+    <!--images-->
+    <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>ar.edu.itba.paw</groupId>
       <artifactId>models</artifactId>
