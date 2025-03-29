@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,13 +42,39 @@ public class FileController {
         }
         
         byte[] content = file.getBytes();
-        File f = fs.create(content);
+        File f = fs.create(content, fileType);
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public @ResponseBody byte[] getImage(@PathVariable("file_id") long id){
+    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")
+    public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
         Optional<File> f = fs.findById(id);
-        return f.get().getContent(); //.orElseThrow(()->new NoSuchFileException()).getContent();
+        if (!f.isPresent()) {
+            throw new NoSuchElementException("File not found with ID: " + id);
+        }
+        
+        byte[] content = f.get().getContent();
+        String fileType = f.get().getType();
+        
+        MediaType mediaType;
+        switch (fileType) {
+            case "image/png":
+                mediaType = MediaType.IMAGE_PNG;
+                break;
+            case "image/jpeg":
+                mediaType = MediaType.IMAGE_JPEG;
+                break;
+            case "application/pdf":
+                mediaType = MediaType.APPLICATION_PDF;
+                break;
+            default:
+                mediaType = MediaType.APPLICATION_OCTET_STREAM;
+                break;
+        }
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .body(content);
     }
 }

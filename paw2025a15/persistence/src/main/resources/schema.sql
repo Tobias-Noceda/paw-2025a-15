@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS files(
     file_id SERIAL PRIMARY KEY,
-    file_content BYTEA NOT NULL
+    file_content BYTEA NOT NULL,
+    file_type VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users (

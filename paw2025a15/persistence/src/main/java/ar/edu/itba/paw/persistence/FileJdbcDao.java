@@ -18,7 +18,7 @@ import ar.edu.itba.paw.models.File;
 @Repository
 public class FileJdbcDao implements FileDao{
 
-    private static final RowMapper<File> ROW_MAPPER = (rs, rowNum) -> new File(rs.getLong("file_id"), rs.getBytes("file_content"));
+    private static final RowMapper<File> ROW_MAPPER = (rs, rowNum) -> new File(rs.getLong("file_id"), rs.getBytes("file_content"), rs.getString("file_type"));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -37,11 +37,12 @@ public class FileJdbcDao implements FileDao{
     }
 
     @Override
-    public File create(byte[] content) {
+    public File create(byte[] content, String type) {
         final Map<String, Object> args = new HashMap<>();
         args.put("file_content", content); 
-        final Number image_id = jdbcInsert.executeAndReturnKey(args);
-        return new File(image_id.longValue(), content);
+        args.put("file_type", type); 
+        final Number file_id = jdbcInsert.executeAndReturnKey(args);
+        return new File(file_id.longValue(), content, type);
     }
 
 }

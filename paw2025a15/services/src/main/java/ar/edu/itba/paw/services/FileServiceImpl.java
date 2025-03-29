@@ -25,8 +25,8 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public File create(byte[] content) {
-        return fileDao.create(content);
+    public File create(byte[] content, String type) {
+        return fileDao.create(content, type);
     }
 
 }
