@@ -15,6 +15,18 @@
   <url>http://pawserver.it.itba.edu.ar/paw-2025a-15</url>
 
   <dependencies>
+    <!--mailing-->
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>ar.edu.itba.paw</groupId>
       <artifactId>models</artifactId>

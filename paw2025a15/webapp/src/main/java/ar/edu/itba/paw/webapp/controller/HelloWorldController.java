@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 
@@ -16,9 +17,12 @@ public class HelloWorldController {
 
     private final UserService us;
 
+    private final EmailService es;
+
     @Autowired
-    public HelloWorldController(final UserService us){
+    public HelloWorldController(final UserService us, final EmailService es){
         this.us = us;
+        this.es = es;
     }
 
     @RequestMapping("/")
@@ -46,6 +50,12 @@ public class HelloWorldController {
     @RequestMapping(value = "/register", method=RequestMethod.GET)
     public ModelAndView registerForm() {
         return new ModelAndView("register");
+    }
+
+    @RequestMapping(value = "/testMail")
+    public ModelAndView testMail(){
+        es.sendTestEmail();
+        return new ModelAndView("redirect:/");
     }
         
 }
