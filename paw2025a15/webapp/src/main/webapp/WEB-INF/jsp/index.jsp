@@ -11,7 +11,9 @@
 </c:if>
 <c:url var="registerUrl" value="/register"/>
 <p>Register <a href="<c:out value="${registerUrl}" escapeXml="true"/>">here</a>.</p>
+<!--
 <iframe src="<c:out value='${pageContext.request.contextPath}/supersecret/files/2'/>"
-                                 alt="University Logo" style="max-width: 100%; max-height: 600px; height: auto; width: auto"/>
+                                 alt="File" style="max-width: 100%; max-height: 600px; height: auto; width: auto"/>
+-->
 </body>
 </html>
