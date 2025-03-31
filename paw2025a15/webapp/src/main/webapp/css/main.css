@@ -91,3 +91,7 @@ body {
     background-color: #ffffffe5;
     color: #0e3b6b;
 }
+
+.formError{
+    color: red;
+}
