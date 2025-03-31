@@ -32,7 +32,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 @EnableAsync
 @ComponentScan({ "ar.edu.itba.paw.webapp.controller" , "ar.edu.itba.paw.services" , "ar.edu.itba.paw.persistence" })
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter{
+public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("classpath:schema.sql")
      private Resource schemaSql;
@@ -57,17 +57,16 @@ public class WebConfig extends WebMvcConfigurerAdapter{
     }
 
     @Bean
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
         // ds.setUrl("jdbc:postgresql://localhost:5432/paw-2025a-15");
         // ds.setUsername("paw-2025a-15");
         // ds.setPassword("0meJb9emM");
 
-       ds.setUrl("jdbc:postgresql://localhost:5432/paw");
-       ds.setUsername("root");
-       ds.setPassword("root");
-
+        ds.setUrl("jdbc:postgresql://localhost:5432/paw");
+        ds.setUsername("root");
+        ds.setPassword("root");
 
         return ds;
     }
