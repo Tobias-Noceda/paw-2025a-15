@@ -27,6 +27,24 @@ public class HelloWorldController {
         return mav;
     }
 
+    @RequestMapping("/estudios")
+    public ModelAndView estudios() {
+        final ModelAndView mav = new ModelAndView("estudios");
+        return mav;
+    }
+
+    @RequestMapping("/obras-sociales")
+    public ModelAndView obrasSociales() {
+        final ModelAndView mav = new ModelAndView("obras-sociales");
+        return mav;
+    }
+
+    @RequestMapping("/medico")
+    public ModelAndView medico() {
+        final ModelAndView mav = new ModelAndView("medico");
+        return mav;
+    }
+
     @RequestMapping("/{id:\\d+}")
     public ModelAndView profile(@PathVariable("id") long id) {
         final ModelAndView mav = new ModelAndView("profile");
