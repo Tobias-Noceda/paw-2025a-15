@@ -1,22 +1,24 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <html>
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareTrace</title>
+    <title>CareTrace <c:if test="${param.title != null}"> - ${param.title}</c:if></title>
     <link rel="icon" type="image/png" href="resources/favicon.png" />
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
+    <!-- the title with a "-" appended at the front (if it exists)-->
     <div class="topbar">
       <div class="logo">
-        <a href="/" class="logo-link">
+        <a href='/' class="logo-link">
           <img src="resources/icono.jpg" alt="Logo">
         </a>
       </div>
       <nav class="nav-links">
-        <a href="estudios" class="nav-item">Estudios</a>
-        <a href="obras-sociales" class="nav-item">Obras Sociales</a>
+        <a href="estudios" class="nav-item <c:if test='${param.title == "Estudios"}'>active</c:if>">Estudios</a>
+        <a href="obras-sociales" class="nav-item <c:if test='${param.title == "Obras Sociales"}'>active</c:if>">Obras Sociales</a>
       </nav>
       <div class="search-bar-container">
         <div class="search-bar">
@@ -28,7 +30,7 @@
       </div>
       <a href="medico">
         <button class="doctor-btn" href="medico">
-          Soy Medico
+          Soy Médico
         </button>
       </a>
     </div>
