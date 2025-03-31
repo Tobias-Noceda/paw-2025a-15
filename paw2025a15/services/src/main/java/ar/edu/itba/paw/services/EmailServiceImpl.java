@@ -26,7 +26,7 @@ public class EmailServiceImpl implements EmailService{
     @Autowired
     private TemplateEngine templateEngine;
 
-    private String emailFromString = "testMail@paw.com";
+    private String emailFromString = "caretracehealth@gmail.com";
 
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
@@ -59,6 +59,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendTestEmail() {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("name", "testName");
+        templateModel.put("link", "http://pawserver.it.itba.edu.ar/paw-2025a-15/");
         try {
             sendSimpleMessageTemplate("testMail@gmail.com", "Test", templateModel, "testTemplate");
         } catch (MessagingException e) {
