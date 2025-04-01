@@ -50,3 +50,12 @@ CREATE TABLE IF NOT EXISTS patient_coverages (--TODO: ver si se permite a un pac
     FOREIGN KEY (patient_id) REFERENCES users(user_id),
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
+
+CREATE TABLE IF NOT EXISTS doctor_coverages (
+    doctor_id BIGINT NOT NULL,
+    insurance_id BIGINT NOT NULL,
+
+    PRIMARY KEY(doctor_id, insurance_id),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id),
+    FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
+);
