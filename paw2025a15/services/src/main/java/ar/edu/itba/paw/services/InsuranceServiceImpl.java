@@ -20,8 +20,15 @@ public class InsuranceServiceImpl implements InsuranceService{
     }
 
     @Override
-    public Insurance create(String name) {
-        return insuranceDao.create(name);
+    public Insurance create(String name, long pictureId) {
+        return insuranceDao.create(name, pictureId);
+    }
+
+    @Override
+    public void edit(long id, String name, long pictureId) {
+        if(getInsuranceById(id).isPresent()){
+            insuranceDao.edit(id, name, pictureId);
+        }
     }
 
     @Override

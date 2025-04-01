@@ -42,3 +42,11 @@ CREATE TABLE IF NOT EXISTS studies (
     FOREIGN KEY (file_id) REFERENCES files(file_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE IF NOT EXISTS patient_coverages (--TODO: ver si se permite a un paciente tener más de una (por ahora esto no lo permite)
+    patient_id BIGINT PRIMARY KEY,
+    insurance_id BIGINT NOT NULL,
+
+    FOREIGN KEY (patient_id) REFERENCES users(user_id),
+    FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
+);

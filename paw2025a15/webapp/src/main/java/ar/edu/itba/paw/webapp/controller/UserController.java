@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.User;
 
 @Controller
 public class UserController {
@@ -22,7 +21,6 @@ public class UserController {
 
     @RequestMapping(value = "/register", method=RequestMethod.POST)
     public ModelAndView register(@RequestParam(value = "email", required = true) final String email, @RequestParam(value = "password", required = true) final String password, @RequestParam(value = "name", required = true) final String name){
-        final User user = us.create(email, password, name);
         final var mav = new ModelAndView("index");
         return mav;
     }

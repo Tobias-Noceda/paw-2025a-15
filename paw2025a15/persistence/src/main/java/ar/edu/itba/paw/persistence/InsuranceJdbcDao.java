@@ -18,7 +18,7 @@ import ar.edu.itba.paw.models.Insurance;
 @Repository
 public class InsuranceJdbcDao implements InsuranceDao{
 
-    private static final RowMapper<Insurance> ROW_MAPPER = (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"));
+    private static final RowMapper<Insurance> ROW_MAPPER = (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id"));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,11 +31,20 @@ public class InsuranceJdbcDao implements InsuranceDao{
     }
 
     @Override
-    public Insurance create(String name) {
+    public Insurance create(String name, long pictureId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("insurance_name", name);
+        args.put("picture_id", pictureId);
         final Number insurance_id = jdbcInsert.executeAndReturnKey(args);
-        return new Insurance(insurance_id.longValue(), name);
+        return new Insurance(insurance_id.longValue(), name, pictureId);
+    }
+
+    @Override
+    public void edit(long id, String name, long pictureId) {
+        String sql = "UPDATE insurances SET insurance_name = ?, picture_id = ? WHERE insurance_id = ?";
+        jdbcTemplate.update(sql,
+         new Object[] {name, pictureId, id},
+         new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override

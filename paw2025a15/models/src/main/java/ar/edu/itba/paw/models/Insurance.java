@@ -2,11 +2,13 @@ package ar.edu.itba.paw.models;
 
 public class Insurance {
     private final long id;
-    private final String name;
+    private String name;
+    private long pictureId;
 
-    public Insurance(long id, String name){
+    public Insurance(long id, String name, long pictureId){
         this.id = id;
         this.name = name;
+        this.pictureId = pictureId;
     }
 
     public long getId(){
@@ -15,6 +17,18 @@ public class Insurance {
 
     public String getName(){
         return name;
+    }
+
+    public long getPictureId(){
+        return pictureId;
+    }
+
+    public void setPictureId(long pictureId){
+        this.pictureId = pictureId;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
     
 }
