@@ -49,7 +49,6 @@ body {
     padding: 8px 8px 8px 16px;
     border: none;
     border-radius: 30px;
-    width: 500px;
     height: 30px;
     text-align: left;
 }
@@ -57,6 +56,7 @@ body {
 .search-bar-text {
     background-color: #0e3b6b;
     color: white;
+    width: 500px;
     height: 20px;
     border: none;
     padding: 0 0 0 8px;
@@ -80,11 +80,12 @@ body {
     background-color: white;
     color: #256395;
     border: none;
-    padding: 8px 15px;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     margin-left: 15px;
     font-weight: bold;
+    font-size: larger;
 }
 
 .doctor-btn:hover {
