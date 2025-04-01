@@ -20,8 +20,8 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public Study create(String type, long fileId, long patientId) {
-        return studyDao.create(type, fileId, patientId);
+    public Study create(String type, long fileId, long userId) {
+        return studyDao.create(type, fileId, userId);
     }
 
     @Override

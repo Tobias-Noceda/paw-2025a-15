@@ -5,6 +5,9 @@
 <c:url var="registerUrl" value="/register"/>
 <form action="${registerUrl}" method="post">
     <div>
+        <label>Name: <input type="text" name="name"></label>
+    </div>
+    <div>
         <label>Email: <input type="text" name="email"></label>
     </div>
     <div>

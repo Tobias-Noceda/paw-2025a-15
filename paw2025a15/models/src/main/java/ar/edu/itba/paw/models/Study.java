@@ -5,13 +5,13 @@ public class Study {
     private final long id;
     private final String type;
     private final long fileId;
-    private final long patientId;
+    private final long userId;
 
-    public Study(long id, String type, long fileId, long patientId){
+    public Study(long id, String type, long fileId, long userId){
         this.id = id;
         this.type = type;
         this.fileId = fileId;
-        this.patientId = patientId;
+        this.userId = userId;
     }
 
     public long getId(){
@@ -26,7 +26,7 @@ public class Study {
         return fileId;
     }
 
-    public long getPatientId(){
-        return patientId;
+    public long getUserId(){
+        return userId;
     }
 }
