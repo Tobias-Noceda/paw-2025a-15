@@ -3,8 +3,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
   <head>
-    <link rel="icon" type="image/png" href="<c:url value="resources/favicon.png"/>" />
-    <link rel="stylesheet" href="<c:url value="css/doctor-detail.css"/>">
+    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
   </head>
   <body>
     <jsp:include page="header.jsp"/>
@@ -13,7 +13,7 @@
         <div class="doctor-info">
           <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
           <div class="doctor-image">
-            <img src="<c:url value='resources/avatar.jpg'/>" alt="Doctor Image" />
+            <img src="<c:url value='/resources/avatar.jpg'/>" alt="Doctor Image" />
           </div>
           <p class="doctor-email"><c:out value="${doctor.email}"/></p>
           <div class="doctor-insurances-div">

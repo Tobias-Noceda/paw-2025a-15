@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareTrace <c:if test="${param.title != null}"> - ${param.title}</c:if></title>
-    <link rel="icon" type="image/png" href="<c:url value="resources/favicon.png"/>" />
-    <link rel="stylesheet" href="<c:url value="css/main.css"/>">
+    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="stylesheet" href="<c:url value="/css/main.css"/>">
   </head>
   <body>
     <c:set var="studies">
@@ -16,11 +16,13 @@
     <c:set var="ensurance">
       <spring:message code="header.ensurance"/>
     </c:set>
-    <!-- the title with a "-" appended at the front (if it exists)-->
+    <c:set var="imgSrc">
+      <c:url value="/resources/icono.jpg"/>
+    </c:set>
     <div class="topbar">
       <div class="logo">
         <a href="<c:url value="/"/>"' class="logo-link">
-          <img src="resources/icono.jpg" alt="Logo">
+          <img src="${imgSrc}" alt="Logo">
         </a>
       </div>
       <nav class="nav-links">
