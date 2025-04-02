@@ -18,13 +18,15 @@
           <p class="doctor-email"><c:out value="${doctor.email}"/></p>
           <div class="doctor-insurances-div">
             <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
-            <p class="doctor-insurances"><c:out value="${doctor.workingEnsurances[0]}"/></p>
+            <!--TODO for each-->
+            <p class="doctor-insurances"><c:out value="${doctorInsurances[0].name}"/></p>
           </div>
           <div class="doctor-specialty-div">
             <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
-            <p class="doctor-specialty"><c:out value="${doctor.specialty}"/></p>
+            <p class="doctor-specialty"><c:out value="${doctorDetail.specialty}"/></p>
           </div>
           <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
+          <!--
           <div class="doctor-schedule">
             <ul>
               <c:forEach var="schedule" items="${doctor.schedules}">
@@ -37,6 +39,7 @@
               </c:forEach>
             </ul>
           </div>
+        -->
         </div>
       </div>
       <div class="shifts-list-container">
