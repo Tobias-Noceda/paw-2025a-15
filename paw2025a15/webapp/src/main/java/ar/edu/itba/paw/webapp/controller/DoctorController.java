@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 
 @Controller
@@ -25,12 +26,14 @@ public class DoctorController {
     private final UserService us;
     private final DoctorDetailService dds;
     private final DoctorCoverageService dcs;
+    private final DoctorShiftService dss;
 
     @Autowired
-    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs){
+    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs, final DoctorShiftService dss){
         this.us = us;
         this.dds = dds;
         this.dcs = dcs;
+        this.dss = dss;
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
@@ -39,6 +42,7 @@ public class DoctorController {
         dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
+        mav.addObject("doctorShifts", dss.getShiftsByDoctorId(id));
         return mav;
     }
 

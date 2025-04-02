@@ -19,4 +19,12 @@ public enum WeekdayEnum {
     public String getName() {
         return name;
     }
+
+    public static WeekdayEnum fromInt(int num) {
+        WeekdayEnum[] values = WeekdayEnum.values();
+        if (num >= 0 && num < values.length) {
+            return values[num];
+        }
+        throw new IllegalArgumentException("Number out of range");
+    }
 }

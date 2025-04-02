@@ -3,12 +3,12 @@ package ar.edu.itba.paw.models;
 public class DoctorShift {
     private final long id;
     private final long doctorId;
-    private final String weekday;
+    private final WeekdayEnum weekday;
     private final String address;
     private final int amount;
     private final String range;
 
-    public DoctorShift(long id, long doctorId, String weekday, String address, int amount, String range){
+    public DoctorShift(long id, long doctorId, WeekdayEnum weekday, String address, int amount, String range){
         this.id = id;
         this.doctorId = doctorId;
         this.weekday = weekday;
@@ -25,7 +25,7 @@ public class DoctorShift {
         return doctorId;
     }
 
-    public String getWeekday(){
+    public WeekdayEnum getWeekday(){
         return weekday;
     }
 

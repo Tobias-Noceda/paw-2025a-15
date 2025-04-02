@@ -15,11 +15,12 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Repository
 public class DoctorShiftJdbcDao implements DoctorShiftDao{
 
-    private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), rs.getString("shift_weekday"), rs.getString("shift_address"), rs.getInt("shift_amount"), rs.getString("shift_range"));
+    private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), WeekdayEnum.fromInt(rs.getInt("shift_weekday")), rs.getString("shift_address"), rs.getInt("shift_amount"), rs.getString("shift_range"));
     
     private final JdbcTemplate jdbcTemplate;
 
@@ -32,7 +33,7 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
     }
 
     @Override
-    public DoctorShift create(long doctorId, String weekday, String address, int amount, String range) {
+    public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, int amount, String range) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
         args.put("shift_weekday", weekday);

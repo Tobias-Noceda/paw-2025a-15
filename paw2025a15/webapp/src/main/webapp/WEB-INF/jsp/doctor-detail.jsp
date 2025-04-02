@@ -26,10 +26,9 @@
             <p class="doctor-specialty"><c:out value="${doctorDetail.specialty}"/></p>
           </div>
           <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
-          <!--
           <div class="doctor-schedule">
             <ul>
-              <c:forEach var="schedule" items="${doctor.schedules}">
+              <c:forEach var="schedule" items="${doctorShifts}">
                 <c:set var="myWeekday">
                   <spring:message code="weekday.${schedule.weekday.name}"/>
                 </c:set>
@@ -39,7 +38,6 @@
               </c:forEach>
             </ul>
           </div>
-        -->
         </div>
       </div>
       <div class="shifts-list-container">
