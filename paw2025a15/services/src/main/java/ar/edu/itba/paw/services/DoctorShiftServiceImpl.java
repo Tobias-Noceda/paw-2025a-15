@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Service
 public class DoctorShiftServiceImpl implements DoctorShiftService{
@@ -21,7 +22,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     }
 
     @Override
-    public DoctorShift create(long doctorId, String weekday, String address, int amount, String range) {
+    public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, int amount, String range) {
         return doctorShiftDao.create(doctorId, weekday, address, amount, range);
     }
 
