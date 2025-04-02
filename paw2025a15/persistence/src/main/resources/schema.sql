@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS doctor_coverages (
 CREATE TABLE IF NOT EXISTS doctor_shifts (
     shift_id SERIAL PRIMARY KEY,
     doctor_id BIGINT NOT NULL,
-    shift_weekday VARCHAR(20) NOT NULL, --TODO: esto con el enum se deberia normalizar
+    shift_weekday VARCHAR(20) NOT NULL,
     shift_address VARCHAR(50) NOT NULL,
     shift_amount INT NOT NULL,
     shift_range TSRANGE NOT NULL,
 
-    UNIQUE (doctor_id, shift_weekday, shift_address),
+    UNIQUE (doctor_id, shift_weekday, shift_range),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     appointment_idx INT NOT NULL,
     appointment_date DATE NOT NULL,
 
-    PRIMARY KEY(shift_id, appointment_idx),
+    PRIMARY KEY(shift_id, appointment_idx, appointment_date),
     FOREIGN KEY (shift_id) REFERENCES doctor_shifts(shift_id),
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
