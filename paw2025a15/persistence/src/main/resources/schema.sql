@@ -13,8 +13,6 @@ VALUES (
 ON CONFLICT (file_id) DO NOTHING;
 SELECT setval('files_file_id_seq', COALESCE((SELECT MAX(file_id) FROM files), 1));
 
-
-
 CREATE TABLE IF NOT EXISTS insurances(
     insurance_id SERIAL PRIMARY KEY,
     insurance_name VARCHAR(100) NOT NULL UNIQUE,
@@ -58,4 +56,27 @@ CREATE TABLE IF NOT EXISTS doctor_coverages (
     PRIMARY KEY(doctor_id, insurance_id),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id),
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
+);
+
+CREATE TABLE IF NOT EXISTS doctor_shifts (
+    shift_id SERIAL PRIMARY KEY,
+    doctor_id BIGINT NOT NULL,
+    shift_weekday VARCHAR(20) NOT NULL, --TODO: esto con el enum se deberia normalizar
+    shift_address VARCHAR(50) NOT NULL,
+    shift_amount INT NOT NULL,
+    shift_range TSRANGE NOT NULL,
+
+    UNIQUE (doctor_id, shift_weekday, shift_address),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS appointments (
+    shift_id BIGINT NOT NULL,
+    patient_id BIGINT NOT NULL,
+    appointment_idx INT NOT NULL,
+    appointment_date DATE NOT NULL,
+
+    PRIMARY KEY(shift_id, appointment_idx),
+    FOREIGN KEY (shift_id) REFERENCES doctor_shifts(shift_id),
+    FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
