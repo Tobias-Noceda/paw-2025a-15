@@ -4,7 +4,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
   <head>
-    <link rel="icon" type="image/png" href="resources/favicon.png" />
+    <link rel="icon" type="image/png" href="<c:url value="resources/favicon.png"/>" />
   </head>
   <body>
     <c:set var="title">

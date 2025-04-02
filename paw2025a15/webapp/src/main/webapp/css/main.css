@@ -1,6 +1,8 @@
 body {
     margin: 0;
+    flex-grow: 1;
     font-family: Arial, sans-serif;
+    background-color: #d8eeff;
 }
 
 .topbar {
@@ -95,4 +97,12 @@ body {
 
 .formError{
     color: red;
+}
+
+.page-container {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    min-height: calc(100vh - 110px);
+    align-items: stretch;
 }

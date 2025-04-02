@@ -1,27 +1,30 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.form.DoctorForm;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.User;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import ar.edu.itba.paw.form.DoctorForm;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 
 @Controller
 public class HelloWorldController {
 
-    private final UserService us;
+    private final DoctorService ds;
 
     @Autowired
-    public HelloWorldController(final UserService us) {
-        this.us = us;
+    public HelloWorldController(final DoctorService us) {
+        this.ds = us;
     }
 
     private List<SelectItem> getObrasSociales() {
@@ -60,19 +63,10 @@ public class HelloWorldController {
         return mav;
     }
 
-    @RequestMapping("/{id:\\d+}")
+    @RequestMapping("/doctor-{id:\\d+}")
     public ModelAndView profile(@PathVariable("id") long id) {
-        final ModelAndView mav = new ModelAndView("profile");
-        us.findById(id).ifPresent(user -> mav.addObject("user", user));
-        return mav;
-    }
-
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ModelAndView register(@RequestParam(value = "email", required = true) final String email, @RequestParam(value = "password", required = true) final String password) {
-        final User user = us.create(email, password);
-
-        final var mav = new ModelAndView("index");
-        mav.addObject("user", user);
+        final ModelAndView mav = new ModelAndView("doctor-detail");
+        ds.findById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         return mav;
     }
 
