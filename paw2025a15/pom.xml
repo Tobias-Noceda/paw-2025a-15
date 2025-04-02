@@ -29,6 +29,8 @@
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <javax-mail.version>1.6.2</javax-mail.version>
     <thymeleaf.version>3.1.0.RELEASE</thymeleaf.version>
+    <javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
+    <org.hibernate.validator>6.2.4.Final</org.hibernate.validator>
   </properties>
           
   <dependencyManagement>
@@ -96,6 +98,18 @@
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
         <version>${jstl.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>${javax.validation-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${org.hibernate.validator}</version>
       </dependency>
 
       <!--images-->
