@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class AppointmentJdbcDao implements AppointmentDao{
     }
 
     @Override
-    public void addApointment(long shiftId, long patientId, int idx, Date date) {
+    public void addApointment(long shiftId, long patientId, int idx, LocalDate date) {
         final Map<String, Object> args = new HashMap<>();
         args.put("shift_id", shiftId);
         args.put("patient_id", patientId);
@@ -48,9 +48,17 @@ public class AppointmentJdbcDao implements AppointmentDao{
     }
 
     @Override
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, Date date) {
-        return jdbcTemplate.query("SELECT * FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, date},
-          new int[] {java.sql.Types.BIGINT}, ROW_MAPPER);
+    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
+        java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+        return jdbcTemplate.query("SELECT * FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, sqlDate},
+          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, ROW_MAPPER);
+    }
+
+    @Override
+    public List<Integer> getAppointmentIdxByShiftAndDate(long shiftId, LocalDate date) {
+        java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+        return jdbcTemplate.query("SELECT appointment_idx FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, sqlDate},
+          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, (rs, rowNum) -> rs.getInt("appointment_idx"));
     }
 
     @Override

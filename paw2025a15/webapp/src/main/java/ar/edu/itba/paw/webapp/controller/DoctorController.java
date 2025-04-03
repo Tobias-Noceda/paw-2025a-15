@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 import javax.validation.Valid;
 
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -29,14 +29,16 @@ public class DoctorController {
     private final DoctorCoverageService dcs;
     private final DoctorShiftService dss;
     private final InsuranceService is;
+    private final AppointmentService as;
 
     @Autowired
-    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs, final DoctorShiftService dss, final InsuranceService is){
+    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs, final DoctorShiftService dss, final InsuranceService is, final AppointmentService as){
         this.us = us;
         this.dds = dds;
         this.dcs = dcs;
         this.dss = dss;
         this.is = is;
+        this.as = as;
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
@@ -46,6 +48,7 @@ public class DoctorController {
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getShiftsByDoctorId(id));
+        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdAndDate(id, LocalDate.now()));
         return mav;
     }
 

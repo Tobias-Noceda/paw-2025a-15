@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS doctor_coverages (
 CREATE TABLE IF NOT EXISTS doctor_shifts (
     shift_id SERIAL PRIMARY KEY,
     doctor_id BIGINT NOT NULL,
-    shift_weekday VARCHAR(20) NOT NULL,
+    shift_weekday INT NOT NULL,
     shift_address VARCHAR(50) NOT NULL,
     shift_amount INT NOT NULL,
     shift_range TSRANGE NOT NULL,

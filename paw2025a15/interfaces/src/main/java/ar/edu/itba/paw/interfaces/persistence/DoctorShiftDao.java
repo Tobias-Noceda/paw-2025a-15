@@ -12,4 +12,6 @@ public interface DoctorShiftDao {
     public Optional<DoctorShift> getShiftById(long id);
 
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);
+
+    public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday);
 }

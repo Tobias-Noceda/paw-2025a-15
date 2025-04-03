@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public void addApointment(long shiftId, long patientId, int idx, Date date) {
+    public void addApointment(long shiftId, long patientId, int idx, LocalDate date) {
         appointmentDao.addApointment(shiftId, patientId, idx, date);
     }
 
@@ -31,13 +31,18 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, Date date) {
+    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
         return appointmentDao.getAppointmentsByShiftIdAndDate(shiftId, date);
     }
 
     @Override
     public List<Appointment> getAppointmentsByPatientId(long patientId) {
         return appointmentDao.getAppointmentsByPatientId(patientId);
+    }
+
+    @Override
+    public List<Integer> getAppointmentIdxByShiftAndDate(long shiftId, LocalDate date) {
+        return appointmentDao.getAppointmentIdxByShiftAndDate(shiftId, date);
     }
 
 }
