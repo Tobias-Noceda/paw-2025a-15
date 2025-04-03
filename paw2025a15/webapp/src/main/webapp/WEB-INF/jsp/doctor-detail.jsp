@@ -18,8 +18,11 @@
           <p class="doctor-email"><c:out value="${doctor.email}"/></p>
           <div class="doctor-insurances-div">
             <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
-            <!--TODO for each-->
-            <p class="doctor-insurances"><c:out value="${doctorInsurances[0].name}"/></p>
+            <p class="doctor-insurances">
+              <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
+                  <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
+              </c:forEach>
+            </p>
           </div>
           <div class="doctor-specialty-div">
             <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
@@ -33,7 +36,7 @@
                   <spring:message code="weekday.${schedule.weekday.name}"/>
                 </c:set>
                 <li>
-                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}, ${schedule.address}"/>
+                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.getStartTime()}, ${schedule.getEndTime()}, ${schedule.address}"/>
                 </li>
               </c:forEach>
             </ul>
