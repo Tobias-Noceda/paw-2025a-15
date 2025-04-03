@@ -44,4 +44,8 @@ public class AvailableTurn {
     public String getEndTime() {
         return timeRange.substring(35, 40);
     }
+
+    public String getStartToEndTime() {
+        return getStartTime() + " - " + getEndTime();
+    }
 }

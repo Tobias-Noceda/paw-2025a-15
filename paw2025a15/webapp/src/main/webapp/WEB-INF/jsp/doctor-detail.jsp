@@ -44,8 +44,61 @@
         </div>
       </div>
       <div class="shifts-list-container">
-        <h2 class="doctor-name" style="color: red;">Hello!</h1>
+        <table class="appointments-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Dirección</th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:forEach var="appointment" items="${doctorAppointments}">
+              <tr class="appointment-row"
+                data-shift="${appointment.shiftId}"
+                data-index="${appointment.index}"
+                data-date="${appointment.date}">
+                <td>${appointment.date}</td>
+                <td>${appointment.getStartTime()}</td>
+                <td>${appointment.address}</td>
+              </tr>
+            </c:forEach>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <!-- Dialog Element -->
+    <dialog id="appointmentDialog">
+      <div class="dialog-content">
+          <h2>Detalles del Turno</h2>
+          <p><strong>Fecha:</strong> <span id="dialogDate"></span></p>
+          <p><strong>Indice</strong> <span id="dialogIdx"></span></p>
+          <p><strong>Nro. Shift</strong> <span id="dialogShiftId"></span></p>
+          <button id="closeDialog">Cerrar</button>
+      </div>
+    </dialog>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const rows = document.querySelectorAll(".appointment-row");
+          const dialog = document.getElementById("appointmentDialog");
+          const closeDialog = document.getElementById("closeDialog");
+      
+          rows.forEach(row => {
+              row.addEventListener("click", function () {
+                  document.getElementById("dialogDate").innerText = this.dataset.date;
+                  document.getElementById("dialogIdx").innerText = this.dataset.index;
+                  document.getElementById("dialogShiftId").innerText = this.dataset.shift;
+                  
+                  dialog.showModal();
+              });
+          });
+      
+          closeDialog.addEventListener("click", function () {
+              dialog.close();
+          });
+      });
+      </script>
   </body>
 </html>
