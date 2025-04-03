@@ -40,4 +40,12 @@ public class DoctorShift {
     public String getRange(){
         return range;
     }
+
+    public String getStartTime() {
+        return range.substring(13, 18);
+    }
+
+    public String getEndTime() {
+        return range.substring(35, 40);
+    }
 }
