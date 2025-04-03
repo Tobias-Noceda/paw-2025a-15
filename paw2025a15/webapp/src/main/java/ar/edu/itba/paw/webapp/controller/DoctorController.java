@@ -48,7 +48,7 @@ public class DoctorController {
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getShiftsByDoctorId(id));
-        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdAndDate(id, LocalDate.now()));
+        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, LocalDate.now().getMonth()));
         return mav;
     }
 

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +19,8 @@ public interface DoctorShiftService {
     public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday);
 
     public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date);
+
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate);
+
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonth(long doctorId, Month month);
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,16 +52,40 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
         List<AvailableTurn> turns = new ArrayList<>();
-        //TODO: for date in month
-            List<DoctorShift> shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()));
-            for (DoctorShift shift : shifts) {
-                List<Integer> takenAppIdx = as.getAppointmentIdxByShiftAndDate(shift.getId(), date);
-                for(int i = 0; i < shift.getAmount(); i++){
-                    if(!takenAppIdx.contains(i)) turns.add(new AvailableTurn(date, shift.getRange(), shift.getAddress(), shift.getId(), i));
-                }
+        List<DoctorShift> shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1));//-1 cause our enu starts at cero
+        for (DoctorShift shift : shifts) {
+            List<Integer> takenAppIdx = as.getAppointmentIdxByShiftAndDate(shift.getId(), date);
+            for(int i = 0; i < shift.getAmount(); i++){
+                if(!takenAppIdx.contains(i)) turns.add(new AvailableTurn(date, shift.getRange(), shift.getAddress(), shift.getId(), i));
             }
-
+        }
         return turns;
     }
+
+    @Override
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AvailableTurn> allTurns = new ArrayList<>();
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            List<AvailableTurn> turnsForDay = getAvailableTurnsByDoctorIdAndDate(doctorId, date);
+            allTurns.addAll(turnsForDay);
+        }
+        return allTurns;
+    }
+
+    @Override
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonth(long doctorId, Month month) {
+        LocalDate now = LocalDate.now();
+        int year = (now.getMonthValue() > month.getValue()) ? now.getYear() : now.getYear() + 1;
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+
+        if(now.getMonth().equals(month)){
+            return getAvailableTurnsByDoctorIdBetweenDates(doctorId, now, endOfMonth);
+        }
+        else{
+            return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfMonth, endOfMonth);
+        }
+    }
+
 
 }
