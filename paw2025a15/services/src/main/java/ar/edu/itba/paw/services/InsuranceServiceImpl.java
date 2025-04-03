@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public Optional<Insurance> getInsuranceById(long id) {
         return insuranceDao.getInsuranceById(id);
+    }
+
+    @Override
+    public List<Insurance> getAllInsurances() {
+        return insuranceDao.getAllInsurances();
     }
 
 }

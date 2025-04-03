@@ -18,6 +18,7 @@ import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 
 @Controller
@@ -27,13 +28,15 @@ public class DoctorController {
     private final DoctorDetailService dds;
     private final DoctorCoverageService dcs;
     private final DoctorShiftService dss;
+    private final InsuranceService is;
 
     @Autowired
-    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs, final DoctorShiftService dss){
+    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs, final DoctorShiftService dss, final InsuranceService is){
         this.us = us;
         this.dds = dds;
         this.dcs = dcs;
         this.dss = dss;
+        this.is = is;
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
@@ -50,7 +53,7 @@ public class DoctorController {
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
-        mav.addObject("items", getObrasSociales());
+        mav.addObject("items", is.getAllInsurances());
         return mav;
     }
 
@@ -61,42 +64,4 @@ public class DoctorController {
         mav.addObject("form", form);
         return mav;
     }
-
-    private List<SelectItem> getObrasSociales() {
-        List<SelectItem> items = new ArrayList<>();
-        items.add(new SelectItem("OS1", "Obra Social 1"));
-        items.add(new SelectItem("OS2", "Obra Social 2"));
-        items.add(new SelectItem("OS3", "Obra Social 3"));
-        // Añadir más obras sociales aquí
-
-        return items;
-    }
-
-    protected class SelectItem {
-        private String value;
-        private String label;
-
-        // Constructor, getters y setters
-        public SelectItem(String value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-    }
-
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,6 +52,12 @@ public class InsuranceJdbcDao implements InsuranceDao{
     public Optional<Insurance> getInsuranceById(long id) {
         return jdbcTemplate.query("SELECT * FROM insurances WHERE insurance_id = ?", new Object[]  {id},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
+    public List<Insurance> getAllInsurances() {
+        String sql = "SELECT * from insurances";
+        return jdbcTemplate.query(sql, new Object[]{}, new int[]{java.sql.Types.BIGINT}, ROW_MAPPER);
     }
     
 }
