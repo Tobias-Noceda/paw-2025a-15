@@ -112,16 +112,4 @@ body {
     margin-left: 10px;
 }
 
-.register-btn {
-    background-color: white;
-    color: #256395;
-    border: 1px solid black;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 15px;
-    font-weight: bold;
-    font-size: 0.9em;
-}
-
 

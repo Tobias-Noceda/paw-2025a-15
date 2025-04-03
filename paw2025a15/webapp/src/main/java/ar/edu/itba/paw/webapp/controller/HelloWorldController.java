@@ -52,7 +52,7 @@ public class HelloWorldController {
 
     private List<SelectItem> getHoursSelectItems() {
         final List<SelectItem> times = new ArrayList<>();
-        for(Integer hour = 0;hour < 24;hour++){
+        for(Integer hour = 6;hour < 22;hour++){
             StringBuilder a = new StringBuilder().append(hour).append(":00");
             StringBuilder b = new StringBuilder().append(hour).append(":30");
             times.add(new SelectItem(a.toString(),a.toString()));
@@ -99,11 +99,7 @@ public class HelloWorldController {
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
         ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());
-        final ModelAndView mav = new ModelAndView("medico");
-        mav.addObject("form", form);
-        mav.addObject("obrasSocialesItems", getObrasSociales());
-        mav.addObject("weekdaySelectItems", WeekdayEnum.values());
-        mav.addObject("hoursSelectItems", getHoursSelectItems());
+        final ModelAndView mav = new ModelAndView("index");
         return mav;
     }
 

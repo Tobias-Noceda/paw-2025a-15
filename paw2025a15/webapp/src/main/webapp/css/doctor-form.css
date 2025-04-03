@@ -17,6 +17,7 @@ div {
 }
 
 form label {
+
     display: block;
     margin-bottom: 5px;
 }
@@ -25,12 +26,13 @@ form input[type="text"],
 form select {
     width: 100%;
     padding: 8px;
+    margin-bottom: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
 }
 
-.register-btn {
+.register-button {
     background-color: #007bff;
     color: white;
     padding: 10px;
@@ -50,9 +52,12 @@ form select {
     font-size: 12px;
 }
 
-
 .checkbox-group {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
+}
+
+.form-title{
+    font-weight: bold;
 }
