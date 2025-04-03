@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.form;
 
+import ar.edu.itba.paw.models.Schedule;
+
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -12,7 +14,21 @@ public class DoctorForm {
     @Size(min = 6, max = 100)
     @Pattern(regexp = "[a-zA-Z]+")
     private String surname;
+    private String speciality;
     private List<String> ObrasSociales;
+    private List<Schedule> schedules;
+
+    public List<Schedule> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
+    }
+
+    public String getSpeciality() {
+        return speciality;
+    }
 
     public List<String> getObrasSociales() {
         return ObrasSociales;
@@ -33,6 +49,10 @@ public class DoctorForm {
         this.name = name;
     }
 
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
+    }
+
     public void setSurname(String surname){
         this.surname = surname;
     }
@@ -47,5 +67,9 @@ public class DoctorForm {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSpecialty() {
+        return speciality;
     }
 }

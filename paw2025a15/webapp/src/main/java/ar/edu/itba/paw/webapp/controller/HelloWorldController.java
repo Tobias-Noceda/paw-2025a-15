@@ -32,13 +32,13 @@ public class HelloWorldController {
     }
 
     private List<SelectItem> getObrasSociales() {
-        List<SelectItem> items = new ArrayList<>();
-        items.add(new SelectItem("OS1", "Obra Social 1"));
-        items.add(new SelectItem("OS2", "Obra Social 2"));
-        items.add(new SelectItem("OS3", "Obra Social 3"));
-        // Añadir más obras sociales aquí
+        List<SelectItem> obrasSociales = List.of(
+                new SelectItem("1","OSDE"),
+                new SelectItem("2","Swiss Medical"),
+                new SelectItem("3","Galeno")
+        );
 
-        return items;
+        return obrasSociales;
     }
 
     @RequestMapping("/")
@@ -63,7 +63,7 @@ public class HelloWorldController {
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
-        mav.addObject("items", getObrasSociales());
+        mav.addObject("obrasSocialesItems", getObrasSociales());
         return mav;
     }
 
@@ -76,7 +76,7 @@ public class HelloWorldController {
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
-        //us.createMedic(form.getName(), form.getEmail());
+        ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("form", form);
         return mav;

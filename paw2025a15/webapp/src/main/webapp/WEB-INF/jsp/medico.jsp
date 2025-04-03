@@ -16,30 +16,34 @@
     <c:url value="/createMedic" var="postPath"/>
     <form:form modelAttribute="registerMedicForm" action="${postPath}" method="post">
 
-      <div>
+      <div  style="padding: 7px">
         <form:label path="name">Nombre: </form:label>
         <form:input type="text" path="name"/>
         <form:errors path="name" cssClass="formError" element="p"/>
       </div>
 
-      <div>
+      <div style="padding: 7px">
         <form:label path="surname">Apellido: </form:label>
         <form:input type="text" path="surname" />
         <form:errors path="surname" cssClass="formError" element="p"/>
       </div>
 
-      <div>
+      <div style="padding: 7px">
         <form:label path="email">Correo electronico: </form:label>
         <form:input type="text" path="email"/>
         <form:errors path="email" cssClass="formError" element="p"/>
       </div>
-      <div>
-        <form:label path="obrasSociales">Obras Sociales: </form:label>
-        <form:select multiple="true" path="obrasSociales" items="${items}" itemLabel="label" itemValue="value" />
-        <form:errors path="obrasSociales" cssClass="formError" element="p"/>
+      <div style="padding: 7px">
+        <form:label path="specialty">Especialidad: </form:label>
+        <form:input type="text" path="specialty"/>
+        <form:errors path="email" cssClass="formError" element="p"/>
       </div>
-      <div>
-        <input type="submit" value="Registrarme"/>
+      <div style="padding: 7px">
+          <p>Obras sociales:</p>
+          <form:checkboxes path="obrasSociales" items="${obrasSocialesItems}" itemLabel="label" itemValue="value"  cssClass="checkbox-inline"/>
+      </div>
+      <div >
+        <input type="submit" value="Registrarme" class="register-btn"/>
       </div>
     </form:form>
   </body>
