@@ -1,44 +1,52 @@
 package ar.edu.itba.paw.models;
 
+import java.util.List;
+
 public class Schedule {
     
-    private final WeekdayEnum weekday;
-    private final String startTime;
-    private final String endTime;
-    private final String address;
-    private final int shiftCount;
+    private List<WeekdayEnum> weekday;
+    private String startTime;
+    private String endTime;
+    private String address;
+    private int shiftCount;
 
-    public Schedule(
-        final WeekdayEnum weekday,
-        final String startTime,
-        final String endTime,
-        final String address,
-        final int shiftCount
-    ) {
-        this.weekday = weekday;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.address = address;
-        this.shiftCount = shiftCount;
+    public List<WeekdayEnum> getWeekday() {
+        return weekday;
     }
 
-    public WeekdayEnum getWeekday() {
-        return weekday;
+    public void setWeekday(List<WeekdayEnum> weekday) {
+        this.weekday = weekday;
     }
 
     public String getStartTime() {
         return startTime;
     }
 
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
     public String getEndTime() {
         return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public String getAddress() {
         return address;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public int getShiftCount() {
         return shiftCount;
+    }
+
+    public void setShiftCount(int shiftCount) {
+        this.shiftCount = shiftCount;
     }
 }

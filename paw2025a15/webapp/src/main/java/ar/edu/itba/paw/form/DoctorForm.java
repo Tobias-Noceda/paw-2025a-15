@@ -16,13 +16,22 @@ public class DoctorForm {
     private String surname;
     private String speciality;
     private List<String> ObrasSociales;
-    private List<Schedule> schedules;
+    private Schedule schedules;
+    private String address;
 
-    public List<Schedule> getSchedules() {
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Schedule getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(List<Schedule> schedules) {
+    public void setSchedules(Schedule schedules) {
         this.schedules = schedules;
     }
 

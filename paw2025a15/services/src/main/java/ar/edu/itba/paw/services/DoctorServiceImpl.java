@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,26 +14,36 @@ import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Service
 public class DoctorServiceImpl implements DoctorService {
-    
+
     @Autowired
-    public DoctorServiceImpl() {}
+    public DoctorServiceImpl() {
+    }
 
     @Override
-    public Doctor create(final String name, final String email, final List<String> workingEnsurances, final String specialty, final List<Schedule> schedules) {
-        return new Doctor(0, name, email, workingEnsurances, specialty, schedules);        
+    public Doctor create(final String name, final String email, final List<String> workingEnsurances, final String specialty, final Schedule schedules) {
+        return new Doctor(0, name, email, workingEnsurances, specialty, schedules);
     }
 
     @Override
     public Optional<Doctor> findById(long id) {
-        final Doctor aux = new Doctor(0, "Tobías Noceda", "tnoceda@itba.edu.ar", List.of("OSDE"), "Pediatría", List.of(
-            new Schedule(WeekdayEnum.MONDAY, "08:00", "12:00", "Iguazú 341", 4),
-            new Schedule(WeekdayEnum.TUESDAY, "08:00", "12:00", "Iguazú 341", 4),
-            new Schedule(WeekdayEnum.WEDNESDAY, "08:00", "12:00", "Iguazú 341", 4),
-            new Schedule(WeekdayEnum.THURSDAY, "08:00", "12:00", "Iguazú 341", 4),
-            new Schedule(WeekdayEnum.FRIDAY, "08:00", "12:00", "Iguazú 341", 4),
-            new Schedule(WeekdayEnum.FRIDAY, "13:00", "15:00", "Iguazú 341", 4),
-            new Schedule(WeekdayEnum.TUESDAY, "15:00", "17:00", "Iguazú 341", 4)));
-        
-        return Optional.of(aux);
+        return Optional.of(new Doctor(0, "Tobías Noceda", "tnoceda@itba.edu.ar", List.of("OSDE"), "Pediatría", new Schedule()));
     }
+
 }
+
+
+//    @Override
+//    public Optional<Doctor> findById(long id) {
+//        final Doctor aux
+//                //= new Doctor(0, "Tobías Noceda", "tnoceda@itba.edu.ar", List.of("OSDE"), "Pediatría", List.of()
+////            new Schedule(WeekdayEnum.MONDAY, "08:00", "12:00", "Iguazú 341", 4),
+////            new Schedule(WeekdayEnum.TUESDAY, "08:00", "12:00", "Iguazú 341", 4),
+////            new Schedule(WeekdayEnum.WEDNESDAY, "08:00", "12:00", "Iguazú 341", 4),
+////            new Schedule(WeekdayEnum.THURSDAY, "08:00", "12:00", "Iguazú 341", 4),
+////            new Schedule(WeekdayEnum.FRIDAY, "08:00", "12:00", "Iguazú 341", 4),
+////            new Schedule(WeekdayEnum.FRIDAY, "13:00", "15:00", "Iguazú 341", 4),
+////            new Schedule(WeekdayEnum.TUESDAY, "15:00", "17:00", "Iguazú 341", 4)));
+//
+//        return Optional.of(aux);
+//    }
+//}

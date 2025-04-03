@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.models.WeekdayEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -31,14 +32,33 @@ public class HelloWorldController {
         this.es = es;
     }
 
+    private List<SelectItem> getWeekdaySelectItems() {
+        final List<SelectItem> items =  new ArrayList<>();
+        for(WeekdayEnum weekday: WeekdayEnum.values()){
+            items.add(new SelectItem(weekday.getName(), weekday.getName()));
+        }
+
+        return items;
+    }
+
     private List<SelectItem> getObrasSociales() {
         List<SelectItem> obrasSociales = List.of(
                 new SelectItem("1","OSDE"),
                 new SelectItem("2","Swiss Medical"),
                 new SelectItem("3","Galeno")
         );
-
         return obrasSociales;
+    }
+
+    private List<SelectItem> getHoursSelectItems() {
+        final List<SelectItem> times = new ArrayList<>();
+        for(Integer hour = 0;hour < 24;hour++){
+            StringBuilder a = new StringBuilder().append(hour).append(":00");
+            StringBuilder b = new StringBuilder().append(hour).append(":30");
+            times.add(new SelectItem(a.toString(),a.toString()));
+            times.add(new SelectItem(b.toString(),b.toString()));
+        }
+        return times;
     }
 
     @RequestMapping("/")
@@ -64,6 +84,8 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", getObrasSociales());
+        mav.addObject("weekdaySelectItems", getWeekdaySelectItems());
+        mav.addObject("hoursSelectItems", getHoursSelectItems());
         return mav;
     }
 
@@ -79,6 +101,9 @@ public class HelloWorldController {
         ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("form", form);
+        mav.addObject("obrasSocialesItems", getObrasSociales());
+        mav.addObject("weekdaySelectItems", WeekdayEnum.values());
+        mav.addObject("hoursSelectItems", getHoursSelectItems());
         return mav;
     }
 
