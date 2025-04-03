@@ -75,9 +75,9 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonth(long doctorId, Month month) {
         LocalDate now = LocalDate.now();
-        int year = (now.getMonthValue() > month.getValue()) ? now.getYear() : now.getYear() + 1;
+        int year = (now.getMonthValue() <= month.getValue()) ? now.getYear() : (now.getYear() + 1);
         LocalDate startOfMonth = LocalDate.of(year, month, 1);
-        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+        LocalDate endOfMonth = LocalDate.of(year, month, startOfMonth.lengthOfMonth());
 
         if(now.getMonth().equals(month)){
             return getAvailableTurnsByDoctorIdBetweenDates(doctorId, now, endOfMonth);
