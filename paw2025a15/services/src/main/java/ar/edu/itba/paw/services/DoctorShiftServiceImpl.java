@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,27 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
         List<DoctorShift> shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1));//-1 cause our enu starts at cero
         for (DoctorShift shift : shifts) {
             List<Integer> takenAppIdx = as.getAppointmentIdxByShiftAndDate(shift.getId(), date);
-            for(int i = 0; i < shift.getAmount(); i++){
-                if(!takenAppIdx.contains(i)) turns.add(new AvailableTurn(date, shift.getRange(), shift.getAddress(), shift.getId(), i));
+            String startTime = shift.getStartTime();
+            String endTime = shift.getEndTime();
+
+            // Convertimos los strings a LocalTime
+            LocalTime t1 = LocalTime.parse(startTime);
+            LocalTime t2 = LocalTime.parse(endTime);
+
+            // Calculamos la diferencia en milisegundos
+            long shiftDuration = Duration.between(t1, t2).toSeconds() / shift.getAmount();
+
+            t2 = t1.plusSeconds(shiftDuration);
+            for(int i = 0; i < shift.getAmount(); i++) {
+                if(!takenAppIdx.contains(i)) {
+                    // Convertimos el tiempo de vuelta a String
+                    String timeRange = String.format("[\"2010-01-01 %s:00\",\"2010-01-01 %s:00\")", t1.toString(), t2.toString());
+                    // Actualizamos t1 y t2 para la siguiente iteración
+                    t1 = t2;
+                    t2 = t1.plusSeconds(shiftDuration);
+
+                    turns.add(new AvailableTurn(date, timeRange, shift.getAddress(), shift.getId(), i));
+                }
             }
         }
         return turns;

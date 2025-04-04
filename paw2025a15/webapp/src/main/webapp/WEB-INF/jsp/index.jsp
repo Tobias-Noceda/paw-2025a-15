@@ -10,5 +10,6 @@
   <body>
     <%@include file="header.jsp" %>
     <h2>Hello!</h2>
+    <p>${user.id}</p>
   </body>
 </html>

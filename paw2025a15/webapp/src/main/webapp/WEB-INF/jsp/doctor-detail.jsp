@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
   <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
@@ -8,6 +9,21 @@
   </head>
   <body>
     <jsp:include page="header.jsp"/>
+    <c:if test="${takeTurnForm.name != null}">
+      <c:set var="dialogDate" value="${takeTurnForm.date}"/>
+      <c:set var="dialogTime" value="${takeTurnForm.timeRange}"/>
+      <c:set var="dialogIdx" value="${takeTurnForm.index}"/>
+      <c:set var="dialogShiftId" value="${takeTurnForm.shiftId}"/>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          // Set the values in the dialog
+          document.getElementById("dateSpan").innerText = "${dialogDate}";
+          document.getElementById("timeSpan").innerText = "${dialogTime}";
+
+          document.getElementById("appointmentDialog").showModal();
+        });
+      </script>
+    </c:if>
     <div class="page-container" style="flex-direction: row;">
       <div class="doctor-card">
         <div class="doctor-info">
@@ -57,9 +73,10 @@
               <tr class="appointment-row"
                 data-shift="${appointment.shiftId}"
                 data-index="${appointment.index}"
-                data-date="${appointment.date}">
+                data-date="${appointment.date}"
+                data-time="${appointment.getStartToEndTime()}">
                 <td>${appointment.date}</td>
-                <td>${appointment.getStartTime()}</td>
+                <td>${appointment.getStartToEndTime()}</td>
                 <td>${appointment.address}</td>
               </tr>
             </c:forEach>
@@ -71,34 +88,55 @@
     <!-- Dialog Element -->
     <dialog id="appointmentDialog">
       <div class="dialog-content">
-          <h2>Detalles del Turno</h2>
-          <p><strong>Fecha:</strong> <span id="dialogDate"></span></p>
-          <p><strong>Indice</strong> <span id="dialogIdx"></span></p>
-          <p><strong>Nro. Shift</strong> <span id="dialogShiftId"></span></p>
-          <button id="closeDialog">Cerrar</button>
+        <h2>Reservar Turno</h2>
+
+        <div class="appointment-data"><p class="appointment-data-label">Fecha:</p> <span id="dateSpan"></span></div>
+        <div class="appointment-data"><p class="appointment-data-label">Hora:</p> <span id="timeSpan"></span></div>
+
+        <c:url value="/doctors/${doctorId}" var="postPath"/>
+        <form:form modelAttribute="takeTurnForm" method="POST" action="${postPath}">
+          <!-- Hidden Fields -->
+          <form:input type="hidden" path="shiftId" id="dialogShiftId"/>
+          <form:input type="hidden" path="index" id="dialogIdx"/>
+          <form:input type="hidden" path="date" id="dialogDate"/>
+          <form:input type="hidden" path="timeRange" id="dialogTime"/>
+
+          <!-- Name -->
+          <div class="form-group">
+            <form:label path="name">Nombre:</form:label>
+            <form:input type="text" path="name"/>
+          </div>
+          <form:errors path="name" cssClass="error-message"/>
+
+          <!-- Surname -->
+          <div class="form-group">
+            <form:label path="surname">Apellido:</form:label>
+            <form:input type="text" path="surname"/>
+          </div>
+          <form:errors path="surname" cssClass="error-message"/>
+
+          <!-- Email -->
+          <div class="form-group">
+            <form:label path="email">Correo Electrónico:</form:label>
+            <form:input type="text" path="email"/>
+          </div>
+          <form:errors path="email" cssClass="error-message"/>
+
+          <!-- Phone -->
+          <div class="form-group">
+            <form:label path="phoneNumber">Teléfono:</form:label>
+            <form:input type="tel" path="phoneNumber"/>
+          </div>
+          <form:errors path="phoneNumber" cssClass="error-message"/>
+
+          <div class="form-buttons">
+            <button type="submit">Reservar</button>
+            <button type="button" id="closeDialog">Cancelar</button>
+          </div>
+        </form:form>
       </div>
     </dialog>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-          const rows = document.querySelectorAll(".appointment-row");
-          const dialog = document.getElementById("appointmentDialog");
-          const closeDialog = document.getElementById("closeDialog");
-      
-          rows.forEach(row => {
-              row.addEventListener("click", function () {
-                  document.getElementById("dialogDate").innerText = this.dataset.date;
-                  document.getElementById("dialogIdx").innerText = this.dataset.index;
-                  document.getElementById("dialogShiftId").innerText = this.dataset.shift;
-                  
-                  dialog.showModal();
-              });
-          });
-      
-          closeDialog.addEventListener("click", function () {
-              dialog.close();
-          });
-      });
-      </script>
+    <script src="<c:url value="/js/turnConfirmationModal.js"/>"></script>
   </body>
 </html>

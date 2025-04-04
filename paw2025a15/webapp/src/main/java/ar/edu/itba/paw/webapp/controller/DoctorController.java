@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
+import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.User;
 
 @Controller
 public class DoctorController {
@@ -42,13 +44,28 @@ public class DoctorController {
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
-    public ModelAndView profile(@PathVariable("id") long id) {
+    public ModelAndView doctorProfile(@PathVariable("id") long id, @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
         final ModelAndView mav = new ModelAndView("doctor-detail");
         dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getShiftsByDoctorId(id));
         mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, LocalDate.now().getMonth()));
+        mav.addObject("doctorId", id);
+
+        return mav;
+    }
+
+    @RequestMapping(value = "/doctors/{id:\\d+}", method = RequestMethod.POST)
+    public ModelAndView takeTurn(@PathVariable("id") long id, @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form, final BindingResult errors) {
+        final ModelAndView mav = new ModelAndView("redirect:/");
+        if (errors.hasErrors()) {
+            return doctorProfile(id, form);
+        }
+
+        User patient = us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname());
+        as.addApointment(form.getShiftId(), patient.getId(), form.getIndex(), LocalDate.parse(form.getDate()));
+
         return mav;
     }
 
