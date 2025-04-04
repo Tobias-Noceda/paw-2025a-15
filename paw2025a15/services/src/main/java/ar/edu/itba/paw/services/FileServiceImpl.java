@@ -12,12 +12,8 @@ import ar.edu.itba.paw.models.File;
 @Service
 public class FileServiceImpl implements FileService{
 
-    private final FileDao fileDao;
-
     @Autowired
-    public FileServiceImpl(final FileDao fileDao){
-        this.fileDao = fileDao;
-    }
+    private FileDao fileDao;
 
     @Override
     public Optional<File> findById(long id) {

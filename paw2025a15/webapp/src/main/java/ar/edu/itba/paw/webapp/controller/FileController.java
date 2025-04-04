@@ -22,12 +22,8 @@ import ar.edu.itba.paw.models.File;
 @Controller
 public class FileController {
 
-    private final FileService fs;
-
     @Autowired
-    public FileController(final FileService fs){
-        this.fs = fs;
-    }
+    private FileService fs;
 
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
     public ModelAndView getImageForm(){

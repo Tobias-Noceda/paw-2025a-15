@@ -26,9 +26,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Optional<Doctor> findById(long id) {
-        return Optional.of(new Doctor(0, "Tobías Noceda", "tnoceda@itba.edu.ar", List.of("OSDE"), "Pediatría", new Schedule()));
+        return Optional.of(new Doctor(0, "Tobías Noceda", "tnoceda@itba.edu.ar", List.of("OSDE"), "Pediatría", null));
     }
-
 }
 
 

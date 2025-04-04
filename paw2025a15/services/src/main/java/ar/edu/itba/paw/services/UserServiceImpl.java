@@ -12,12 +12,8 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 @Service
 public class UserServiceImpl implements UserService{
 
-    private final UserDao userDao;
-
     @Autowired
-    public UserServiceImpl(final UserDao userDao){
-        this.userDao = userDao;
-    }
+    private UserDao userDao;
 
     @Override
     public User create(String email, String password) {

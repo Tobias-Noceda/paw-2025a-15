@@ -22,15 +22,11 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 @Controller
 public class HelloWorldController {
 
-    private final DoctorService ds;
-
-    private final EmailService es;
+    @Autowired
+    private DoctorService ds;
 
     @Autowired
-    public HelloWorldController(final DoctorService ds, final EmailService es) {
-        this.ds = ds;
-        this.es = es;
-    }
+    private EmailService es;
 
     private List<SelectItem> getWeekdaySelectItems() {
         final List<SelectItem> items =  new ArrayList<>();
