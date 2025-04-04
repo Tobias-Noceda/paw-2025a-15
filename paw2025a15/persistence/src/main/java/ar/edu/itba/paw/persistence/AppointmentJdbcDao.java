@@ -38,7 +38,7 @@ public class AppointmentJdbcDao implements AppointmentDao{
         args.put("patient_id", patientId);
         args.put("appointment_idx", idx);
         args.put("appointment_date", date);
-        jdbcInsert.executeAndReturnKey(args);
+        jdbcInsert.execute(args);
     }
 
     @Override
