@@ -72,12 +72,13 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
                 if(!takenAppIdx.contains(i)) {
                     // Convertimos el tiempo de vuelta a String
                     String timeRange = String.format("[\"2010-01-01 %s:00\",\"2010-01-01 %s:00\")", t1.toString(), t2.toString());
-                    // Actualizamos t1 y t2 para la siguiente iteración
-                    t1 = t2;
-                    t2 = t1.plusSeconds(shiftDuration);
-
+                    
                     turns.add(new AvailableTurn(date, timeRange, shift.getAddress(), shift.getId(), i));
                 }
+
+                // Actualizamos t1 y t2 para la siguiente iteración
+                t1 = t2;
+                t2 = t1.plusSeconds(shiftDuration);
             }
         }
         return turns;
