@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.models.Doctor;
 import ar.edu.itba.paw.models.WeekdayEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,6 +47,15 @@ public class HelloWorldController {
         return obrasSociales;
     }
 
+    private List<Doctor> getDocsNames(){
+        List<Doctor> docsName = List.of(
+                new Doctor(1, "Santi SillaNegra", "Santi@gmail.com", List.of("Osde","Medicus"), "traumatologo", null),
+                new Doctor(1, "Manu Santamarina", "Manu@gmail.com", List.of("Osde","Medicus"), "Otorrino", null),
+                new Doctor(1, "Pepe pepon", "Pepe@gmail.com", List.of("Osde","Medicus"), "cirujano", null)
+        );
+        return docsName;
+    }
+
     private List<SelectItem> getHoursSelectItems() {
         final List<SelectItem> times = new ArrayList<>();
         for(Integer hour = 6;hour < 22;hour++){
@@ -60,6 +70,7 @@ public class HelloWorldController {
     @RequestMapping("/")
     public ModelAndView helloWorld() {
         final ModelAndView mav = new ModelAndView("index");
+        mav.addObject("docList", getDocsNames());
         return mav;
     }
 
