@@ -19,7 +19,7 @@ import ar.edu.itba.paw.models.Appointment;
 @Repository
 public class AppointmentJdbcDao implements AppointmentDao{
 
-    private static final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(rs.getLong("shift_id"), rs.getLong("patient_id"), rs.getInt("appointment_idx"), rs.getDate("appointment_date"));
+    private static final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(rs.getLong("shift_id"), rs.getLong("patient_id"), rs.getDate("appointment_date"));
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -32,11 +32,10 @@ public class AppointmentJdbcDao implements AppointmentDao{
     }
 
     @Override
-    public void addApointment(long shiftId, long patientId, int idx, LocalDate date) {
+    public void addApointment(long shiftId, long patientId, LocalDate date) {
         final Map<String, Object> args = new HashMap<>();
         args.put("shift_id", shiftId);
         args.put("patient_id", patientId);
-        args.put("appointment_idx", idx);
         args.put("appointment_date", date);
         jdbcInsert.execute(args);
     }
@@ -52,13 +51,6 @@ public class AppointmentJdbcDao implements AppointmentDao{
         java.sql.Date sqlDate = java.sql.Date.valueOf(date);
         return jdbcTemplate.query("SELECT * FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, sqlDate},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, ROW_MAPPER);
-    }
-
-    @Override
-    public List<Integer> getAppointmentIdxByShiftAndDate(long shiftId, LocalDate date) {
-        java.sql.Date sqlDate = java.sql.Date.valueOf(date);
-        return jdbcTemplate.query("SELECT appointment_idx FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, sqlDate},
-          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, (rs, rowNum) -> rs.getInt("appointment_idx"));
     }
 
     @Override

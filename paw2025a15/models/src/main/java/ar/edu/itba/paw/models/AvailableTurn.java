@@ -1,28 +1,33 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class AvailableTurn {
     private final LocalDate date;
-    private final String timeRange;
+    private final LocalTime startTime;
+    private final LocalTime endTime;
     private final String address;
     private final long shiftId;
-    private final int index;
     
-    public AvailableTurn(LocalDate date, String timeRange, String address, long shiftId, int index) {
+    public AvailableTurn(LocalDate date, LocalTime startTime, LocalTime endtTime, String address, long shiftId) {
         this.date = date;
-        this.timeRange = timeRange;
+        this.startTime = startTime;
+        this.endTime = endtTime;
         this.address = address;
         this.shiftId = shiftId;
-        this.index = index;
     }
 
     public LocalDate getDate() {
         return date;
     }
 
-    public String getTimeRange() {
-        return timeRange;
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
     public String getAddress() {
@@ -31,18 +36,6 @@ public class AvailableTurn {
 
     public long getShiftId() {
         return shiftId;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public String getStartTime() {
-        return timeRange.substring(13, 18);
-    }
-
-    public String getEndTime() {
-        return timeRange.substring(35, 40);
     }
 
     public String getStartToEndTime() {

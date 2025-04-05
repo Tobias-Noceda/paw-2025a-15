@@ -5,13 +5,11 @@ import java.util.Date;
 public class Appointment {
     private final long shiftId;
     private final long patientId;
-    private final int idx;
     private final Date date;
 
-    public Appointment(long shiftId, long patientId, int idx, Date date){
+    public Appointment(long shiftId, long patientId, Date date){
         this.shiftId = shiftId;
         this.patientId = patientId;
-        this.idx = idx;
         this.date = date;
     }
 
@@ -21,10 +19,6 @@ public class Appointment {
 
     public long getPatientId(){
         return patientId;
-    }
-
-    public int getIdx(){
-        return idx;
     }
 
     public Date getDate(){

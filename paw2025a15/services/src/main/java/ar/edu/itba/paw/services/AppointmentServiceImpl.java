@@ -21,8 +21,8 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public void addApointment(long shiftId, long patientId, int idx, LocalDate date) {
-        appointmentDao.addApointment(shiftId, patientId, idx, date);
+    public void addApointment(long shiftId, long patientId, LocalDate date) {
+        appointmentDao.addApointment(shiftId, patientId, date);
     }
 
     @Override
@@ -38,11 +38,6 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public List<Appointment> getAppointmentsByPatientId(long patientId) {
         return appointmentDao.getAppointmentsByPatientId(patientId);
-    }
-
-    @Override
-    public List<Integer> getAppointmentIdxByShiftAndDate(long shiftId, LocalDate date) {
-        return appointmentDao.getAppointmentIdxByShiftAndDate(shiftId, date);
     }
 
 }

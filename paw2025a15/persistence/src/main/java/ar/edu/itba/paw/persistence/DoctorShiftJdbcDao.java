@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ import ar.edu.itba.paw.models.WeekdayEnum;
 @Repository
 public class DoctorShiftJdbcDao implements DoctorShiftDao{
 
-    private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), WeekdayEnum.fromInt(rs.getInt("shift_weekday")), rs.getString("shift_address"), rs.getInt("shift_amount"), rs.getString("shift_range"));
+    private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), WeekdayEnum.fromInt(rs.getInt("shift_weekday")), rs.getString("shift_address"), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_start_time").toLocalTime());
     
     private final JdbcTemplate jdbcTemplate;
 
@@ -33,15 +34,15 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
     }
 
     @Override
-    public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, int amount, String range) {
+    public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
         args.put("shift_weekday", weekday);
         args.put("shift_address", address);
-        args.put("shift_amount", amount);
-        args.put("shift_range", range);
+        args.put("shift_start_time", startTime);
+        args.put("shift_end_time", endTime);
         final Number shift_id = jdbcInsert.executeAndReturnKey(args);
-        return new DoctorShift(shift_id.longValue(), doctorId, weekday, address, amount, range);
+        return new DoctorShift(shift_id.longValue(), doctorId, weekday, address, startTime, endTime);
     }
 
     @Override

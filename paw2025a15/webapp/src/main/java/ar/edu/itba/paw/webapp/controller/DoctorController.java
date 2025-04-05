@@ -20,18 +20,13 @@ import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Controller
 public class DoctorController {
-
-    @Autowired
-    private DoctorService ds;
 
     @Autowired
     private UserService us;
@@ -44,9 +39,6 @@ public class DoctorController {
     
     @Autowired
     private DoctorShiftService dss;
-    
-    @Autowired
-    private InsuranceService is;
     
     @Autowired
     private AppointmentService as;
@@ -102,7 +94,7 @@ public class DoctorController {
         }
 
         User patient = us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname());
-        as.addApointment(form.getShiftId(), patient.getId(), form.getIndex(), LocalDate.parse(form.getDate()));
+        as.addApointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
         // TODO: send email to doctor with appointment details
 
         return mav;
@@ -120,7 +112,7 @@ public class DoctorController {
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
-        ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());
+        //ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());//TODO create doctor
         final ModelAndView mav = new ModelAndView("index");
         return mav;
     }

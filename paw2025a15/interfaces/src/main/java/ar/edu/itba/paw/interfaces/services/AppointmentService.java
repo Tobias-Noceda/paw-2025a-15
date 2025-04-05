@@ -6,13 +6,11 @@ import java.util.List;
 import ar.edu.itba.paw.models.Appointment;
 
 public interface AppointmentService {
-    public void addApointment(long shiftId, long patientId, int idx, LocalDate date);
+    public void addApointment(long shiftId, long patientId, LocalDate date);
 
     public List<Appointment> getAppointmentsByShiftId(long shiftId);
 
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);
+    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);//TODO ya no es list es un Optional
 
     public List<Appointment> getAppointmentsByPatientId(long patientId);
-
-    public List<Integer> getAppointmentIdxByShiftAndDate(long shiftId, LocalDate date);
 }

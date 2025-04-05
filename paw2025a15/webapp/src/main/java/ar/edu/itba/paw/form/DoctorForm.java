@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.form;
 
-import ar.edu.itba.paw.models.Schedule;
+import java.util.List;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+
+import ar.edu.itba.paw.models.Schedule;
 
 public class DoctorForm {
     @Size(min = 6, max = 100)

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS studies (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS patient_coverages (--TODO: ver si se permite a un paciente tener más de una (por ahora esto no lo permite)
+CREATE TABLE IF NOT EXISTS patient_coverages (
     patient_id BIGINT PRIMARY KEY,
     insurance_id BIGINT NOT NULL,
 
@@ -63,20 +63,22 @@ CREATE TABLE IF NOT EXISTS doctor_shifts (
     doctor_id BIGINT NOT NULL,
     shift_weekday INT NOT NULL,
     shift_address VARCHAR(50) NOT NULL,
-    shift_amount INT NOT NULL,
-    shift_range TSRANGE NOT NULL,
+    shift_start_time TIME NOT NULL,
+    shift_end_time TIME NOT NULL,
 
-    UNIQUE (doctor_id, shift_weekday, shift_range),
-    FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+    UNIQUE (doctor_id, shift_weekday, shift_start_time),
+    UNIQUE (doctor_id, shift_weekday, shift_end_time),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id),
+
+    CONSTRAINT valid_time_range CHECK (shift_start_time < shift_end_time)
 );
 
 CREATE TABLE IF NOT EXISTS appointments (
     shift_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
-    appointment_idx INT NOT NULL,
     appointment_date DATE NOT NULL,
 
-    PRIMARY KEY(shift_id, appointment_idx, appointment_date),
+    PRIMARY KEY(shift_id, appointment_date),
     FOREIGN KEY (shift_id) REFERENCES doctor_shifts(shift_id),
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );

@@ -1,20 +1,22 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalTime;
+
 public class DoctorShift {
     private final long id;
     private final long doctorId;
     private final WeekdayEnum weekday;
     private final String address;
-    private final int amount;
-    private final String range;
+    private final LocalTime startTime;
+    private final LocalTime endTime;
 
-    public DoctorShift(long id, long doctorId, WeekdayEnum weekday, String address, int amount, String range){
+    public DoctorShift(long id, long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime){
         this.id = id;
         this.doctorId = doctorId;
         this.weekday = weekday;
         this.address = address;
-        this.amount = amount;
-        this.range = range;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public long getId(){
@@ -33,19 +35,11 @@ public class DoctorShift {
         return address;
     }
 
-    public int getAmount(){
-        return amount;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public String getRange(){
-        return range;
-    }
-
-    public String getStartTime() {
-        return range.substring(13, 18);
-    }
-
-    public String getEndTime() {
-        return range.substring(35, 40);
+    public LocalTime getEndTime() {
+        return endTime;
     }
 }

@@ -72,7 +72,6 @@
             <c:forEach var="appointment" items="${doctorAppointments}">
               <tr class="appointment-row"
                 data-shift="${appointment.shiftId}"
-                data-index="${appointment.index}"
                 data-date="${appointment.date}"
                 data-time="${appointment.getStartToEndTime()}">
                 <td>${appointment.date}</td>
