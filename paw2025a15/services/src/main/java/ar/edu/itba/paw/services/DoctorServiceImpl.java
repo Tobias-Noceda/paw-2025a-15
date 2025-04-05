@@ -3,7 +3,10 @@ package ar.edu.itba.paw.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
+import ar.edu.itba.paw.models.DoctorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +19,12 @@ import ar.edu.itba.paw.models.WeekdayEnum;
 public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
-    public DoctorServiceImpl() {
-    }
+    private DoctorDetailDao doctorDetailDao;
+
 
     @Override
     public Doctor create(final String name, final String email, final List<String> workingEnsurances, final String specialty, final Schedule schedules) {
+        //doctorDetailDao.create(0, )
         return new Doctor(0, name, email, workingEnsurances, specialty, schedules);
     }
 
