@@ -25,6 +25,13 @@ public class DoctorCoverageServiceImpl implements DoctorCoverageService{
     }
 
     @Override
+    public void addCoverages(long doctorId, List<Insurance> insurances) {
+        for (Insurance insurance : insurances) {
+            addCoverage(doctorId, insurance.getId());
+        }
+    }
+
+    @Override
     public boolean removeCoverage(long doctorId, long insuranceId) {
         return doctorCoverageDao.removeCoverage(doctorId, insuranceId);
     }

@@ -13,6 +13,8 @@ import ar.edu.itba.paw.models.WeekdayEnum;
 public interface DoctorShiftService {
     public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime);
 
+    public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);
+
     public Optional<DoctorShift> getShiftById(long id);
 
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);

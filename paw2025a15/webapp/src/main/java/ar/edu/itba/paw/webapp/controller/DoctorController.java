@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,10 +113,10 @@ public class DoctorController {
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
-        User doc = us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname());//TODO magicnumber password sacar
-        dds.create(doc.getId(), "MED_LICENCE", form.getSpecialty()); //TODO getLicence
-        dcs.addCoverage(doc.getId(), 1);//TODO magic number, tiene que ser el getId de insurance
-       // dss.create(doc.getId(), form.getSchedules()., address, startTime, endTime)TODO logica de añadir el schedules
+        User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
+        //TODO OJO! puede tener más de una specialty no?
+        //dcs.addCoverages(doc.getId(), form.getInsurances());TODO
+        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getSchedules().getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getSchedules().getShiftCount());
         final ModelAndView mav = new ModelAndView("index");
         return mav;
     }
