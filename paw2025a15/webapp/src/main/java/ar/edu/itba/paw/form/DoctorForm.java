@@ -16,7 +16,7 @@ public class DoctorForm {
     @Pattern(regexp = "[a-zA-Z]+")
     private String surname;
     private SpecialtyEnum speciality;
-    private List<String> ObrasSociales;
+    private List<Long> ObrasSociales;
     private Schedule schedules;
     private String address;
 
@@ -40,11 +40,11 @@ public class DoctorForm {
         return speciality;
     }
 
-    public List<String> getObrasSociales() {
+    public List<Long> getObrasSociales() {
         return ObrasSociales;
     }
 
-    public void setObrasSociales(List<String> obrasSociales) {
+    public void setObrasSociales(List<Long> obrasSociales) {
         ObrasSociales = obrasSociales;
     }
 

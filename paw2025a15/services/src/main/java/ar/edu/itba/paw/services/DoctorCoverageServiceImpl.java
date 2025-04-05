@@ -25,9 +25,9 @@ public class DoctorCoverageServiceImpl implements DoctorCoverageService{
     }
 
     @Override
-    public void addCoverages(long doctorId, List<Insurance> insurances) {
-        for (Insurance insurance : insurances) {
-            addCoverage(doctorId, insurance.getId());
+    public void addCoverages(long doctorId, List<Long> insurances) {
+        for (Long insuranceId : insurances) {
+            addCoverage(doctorId, insuranceId);
         }
     }
 

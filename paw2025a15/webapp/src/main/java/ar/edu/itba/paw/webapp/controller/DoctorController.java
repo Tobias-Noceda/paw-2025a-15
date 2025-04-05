@@ -22,6 +22,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.WeekdayEnum;
@@ -43,6 +44,9 @@ public class DoctorController {
     
     @Autowired
     private AppointmentService as;
+
+    @Autowired
+    private InsuranceService is;
 
     private List<SelectItem> getWeekdaySelectItems() {
         final List<SelectItem> items =  new ArrayList<>();
@@ -105,7 +109,7 @@ public class DoctorController {
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
-        mav.addObject("obrasSocialesItems", getObrasSociales());//TODO vincularlo con la tabla de Insurance
+        mav.addObject("obrasSocialesItems", is.getAllInsurances());//TODO vincularlo con la tabla de Insurance
         mav.addObject("weekdaySelectItems", getWeekdaySelectItems());
         mav.addObject("hoursSelectItems", getHoursSelectItems());
         return mav;
@@ -115,7 +119,7 @@ public class DoctorController {
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         //TODO OJO! puede tener más de una specialty no?
-        //dcs.addCoverages(doc.getId(), form.getInsurances());TODO
+        dcs.addCoverages(doc.getId(), form.getObrasSociales());
         dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getSchedules().getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getSchedules().getShiftCount());
         final ModelAndView mav = new ModelAndView("index");
         return mav;

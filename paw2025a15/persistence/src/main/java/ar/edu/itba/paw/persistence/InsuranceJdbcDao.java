@@ -57,7 +57,7 @@ public class InsuranceJdbcDao implements InsuranceDao{
     @Override
     public List<Insurance> getAllInsurances() {
         String sql = "SELECT * from insurances";
-        return jdbcTemplate.query(sql, new Object[]{}, new int[]{java.sql.Types.BIGINT}, ROW_MAPPER);
+        return jdbcTemplate.query(sql, ROW_MAPPER);
     }
     
 }
