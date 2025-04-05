@@ -3,9 +3,9 @@ package ar.edu.itba.paw.models;
 public class DoctorDetail {
     private final long doctorId;
     private final String licence;
-    private final String specialty;
+    private final SpecialtyEnum specialty;
 
-    public DoctorDetail(long doctorId, String licence, String specialty){
+    public DoctorDetail(long doctorId, String licence, SpecialtyEnum specialty){
         this.doctorId = doctorId;
         this.licence = licence;
         this.specialty = specialty;
@@ -19,7 +19,7 @@ public class DoctorDetail {
         return licence;
     }
 
-    public String getSpecialty(){
+    public SpecialtyEnum getSpecialty(){
         return specialty;
     }
 }

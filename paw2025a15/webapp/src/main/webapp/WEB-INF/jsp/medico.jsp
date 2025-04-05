@@ -36,8 +36,10 @@
       </div>
       <div style="padding: 7px">
         <form:label cssClass="form-title" path="specialty">Especialidad: </form:label>
-        <form:input type="text" path="specialty"/>
-        <form:errors path="email" cssClass="formError" element="p"/>
+        <form:select path="specialty" cssClass="form-select">
+            <form:options items="${specialtyItems}" />
+        </form:select>
+        <form:errors path="specialty" cssClass="formError" element="p"/>
       </div>
       <div style="padding: 7px">
         <form:label cssClass="form-title" path="address">Dirección: </form:label>

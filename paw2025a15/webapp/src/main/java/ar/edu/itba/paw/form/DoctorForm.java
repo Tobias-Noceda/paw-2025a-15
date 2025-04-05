@@ -6,6 +6,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.models.Schedule;
+import ar.edu.itba.paw.models.SpecialtyEnum;
 
 public class DoctorForm {
     @Size(min = 6, max = 100)
@@ -14,7 +15,7 @@ public class DoctorForm {
     @Size(min = 6, max = 100)
     @Pattern(regexp = "[a-zA-Z]+")
     private String surname;
-    private String speciality;
+    private SpecialtyEnum speciality;
     private List<String> ObrasSociales;
     private Schedule schedules;
     private String address;
@@ -35,7 +36,7 @@ public class DoctorForm {
         this.schedules = schedules;
     }
 
-    public String getSpeciality() {
+    public SpecialtyEnum getSpeciality() {
         return speciality;
     }
 
@@ -58,7 +59,7 @@ public class DoctorForm {
         this.name = name;
     }
 
-    public void setSpeciality(String speciality) {
+    public void setSpeciality(SpecialtyEnum speciality) {
         this.speciality = speciality;
     }
 
@@ -78,7 +79,7 @@ public class DoctorForm {
         this.email = email;
     }
 
-    public String getSpecialty() {
+    public SpecialtyEnum getSpecialty() {
         return speciality;
     }
 }

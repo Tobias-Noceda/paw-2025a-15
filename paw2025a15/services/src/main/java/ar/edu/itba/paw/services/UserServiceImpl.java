@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 
 @Service
@@ -30,14 +31,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, String licence, String speciality){
+    public User createDoctor(String email, String password, String name, String licence, SpecialtyEnum speciality){
         User doc = create(email ,password, name);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, long pictureID, String licence, String speciality){
+    public User createDoctor(String email, String password, String name, long pictureID, String licence, SpecialtyEnum speciality){
         User doc = create(email ,password, name, pictureID);
         dds.create(doc.getId(), licence, speciality);
         return doc;

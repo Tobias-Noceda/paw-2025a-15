@@ -14,11 +14,12 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.SpecialtyEnum;
 
 @Repository
 public class DoctorDetailJdbcDao implements DoctorDetailDao{
 
-    private static final RowMapper<DoctorDetail> ROW_MAPPER = (rs, rowNum) -> new DoctorDetail(rs.getLong("doctor_id"), rs.getString("doctor_licence"), rs.getString("doctor_specialty"));
+    private static final RowMapper<DoctorDetail> ROW_MAPPER = (rs, rowNum) -> new DoctorDetail(rs.getLong("doctor_id"), rs.getString("doctor_licence"), SpecialtyEnum.fromInt(rs.getInt("doctor_specialty")));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,7 +32,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public DoctorDetail create(long doctorId, String licence, String specialty) {
+    public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
         args.put("doctor_licence", licence);
