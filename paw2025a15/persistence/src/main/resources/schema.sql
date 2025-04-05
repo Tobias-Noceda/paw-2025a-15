@@ -85,7 +85,8 @@ CREATE TABLE IF NOT EXISTS doctor_details (
     doctor_id BIGINT NOT NULL,
     doctor_licence VARCHAR(50) NOT NULL,
     doctor_specialty VARCHAR(50) NOT NULL,
-    
+
     PRIMARY KEY(doctor_id, doctor_specialty),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
+
