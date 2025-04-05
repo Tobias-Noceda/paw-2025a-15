@@ -15,9 +15,24 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private DoctorDetailServiceImpl ds;
+
+    @Autowired
+    private DoctorShiftServiceImpl dss;
+
     @Override
     public User create(String email, String password, String name, long pictureId) {
         return userDao.create(email, password, name, pictureId);
+    }
+
+    @Override
+    public User createDoctorUser(String email, String password, String name, long pictureID, String licence, String speciality){
+        User newDoctor = create(email ,password, name, pictureID);
+        long doctorId = newDoctor.getId();
+        ds.create(doctorId, licence, speciality);
+        //dss.create(doctorId, )
+        return newDoctor;
     }
 
     @Override
