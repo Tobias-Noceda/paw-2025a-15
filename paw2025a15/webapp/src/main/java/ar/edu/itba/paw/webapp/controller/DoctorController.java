@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -18,30 +20,66 @@ import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Controller
 public class DoctorController {
 
-    private final UserService us;
-    private final DoctorDetailService dds;
-    private final DoctorCoverageService dcs;
-    private final DoctorShiftService dss;
-    private final InsuranceService is;
-    private final AppointmentService as;
+    @Autowired
+    private DoctorService ds;
 
     @Autowired
-    public DoctorController(final UserService us, final DoctorDetailService dds, final DoctorCoverageService dcs, final DoctorShiftService dss, final InsuranceService is, final AppointmentService as){
-        this.us = us;
-        this.dds = dds;
-        this.dcs = dcs;
-        this.dss = dss;
-        this.is = is;
-        this.as = as;
+    private UserService us;
+    
+    @Autowired
+    private DoctorDetailService dds;
+    
+    @Autowired
+    private DoctorCoverageService dcs;
+    
+    @Autowired
+    private DoctorShiftService dss;
+    
+    @Autowired
+    private InsuranceService is;
+    
+    @Autowired
+    private AppointmentService as;
+
+    private List<SelectItem> getWeekdaySelectItems() {
+        final List<SelectItem> items =  new ArrayList<>();
+        for(WeekdayEnum weekday: WeekdayEnum.values()){
+            items.add(new SelectItem(weekday.getName(), weekday.getName()));
+        }
+
+        return items;
     }
+
+    private List<SelectItem> getObrasSociales() {
+        List<SelectItem> obrasSociales = List.of(
+                new SelectItem("1","OSDE"),
+                new SelectItem("2","Swiss Medical"),
+                new SelectItem("3","Galeno")
+        );
+        return obrasSociales;
+    }
+
+    private List<SelectItem> getHoursSelectItems() {
+        final List<SelectItem> times = new ArrayList<>();
+        for(Integer hour = 6;hour < 22;hour++){
+            StringBuilder a = new StringBuilder().append(hour).append(":00");
+            StringBuilder b = new StringBuilder().append(hour).append(":30");
+            times.add(new SelectItem(a.toString(),a.toString()));
+            times.add(new SelectItem(b.toString(),b.toString()));
+        }
+        return times;
+    }
+
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(@PathVariable("id") long id, @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
@@ -65,6 +103,7 @@ public class DoctorController {
 
         User patient = us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname());
         as.addApointment(form.getShiftId(), patient.getId(), form.getIndex(), LocalDate.parse(form.getDate()));
+        // TODO: send email to doctor with appointment details
 
         return mav;
     }
@@ -73,15 +112,43 @@ public class DoctorController {
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
-        mav.addObject("items", is.getAllInsurances());
+        mav.addObject("obrasSocialesItems", getObrasSociales());
+        mav.addObject("weekdaySelectItems", getWeekdaySelectItems());
+        mav.addObject("hoursSelectItems", getHoursSelectItems());
         return mav;
     }
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
-        //us.createMedic(form.getName(), form.getEmail());
-        final ModelAndView mav = new ModelAndView("medico");
-        mav.addObject("form", form);
+        ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());
+        final ModelAndView mav = new ModelAndView("index");
         return mav;
+    }
+
+    protected class SelectItem {
+        private String value;
+        private String label;
+
+        // Constructor, getters y setters
+        public SelectItem(String value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
     }
 }
