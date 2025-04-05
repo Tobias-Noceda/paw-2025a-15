@@ -5,7 +5,9 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.User;
 
 public interface UserService {
-    User create(final String email, final String password);
+    public User create(String email, String password, String name, long pictureId);
+    
+    public User create(String email, String password, String name);
 
-    Optional<User> findById(long id);
+    public Optional<User> getUserById(long id);
 }

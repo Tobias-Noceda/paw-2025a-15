@@ -4,27 +4,38 @@ public class User {
 
     private final long id;
     private final String email;
-    private String password;
+    private final String password;
+    private final String name;
+    private long pictureId = 1;
 
-    public User(final long id, final String email, final String password){
+    public User(long id, String email, String password, String name){
         this.id = id;
-        this.email = email;
+        this. email = email;
         this.password = password;
+        this.name= name;
     }
 
-    public long getId() {
+    public User(long id, String email, String password, String name, long pictureId){
+        this.id = id;
+        this. email = email;
+        this.password = password;
+        this.name= name;
+        this.pictureId = pictureId;
+    }
+
+    public long getId(){
         return id;
-    }
-
-    public void setPassword(String password){
-        this.password = password;
-    }
-
-    public String getPassword(){
-        return password;
     }
 
     public String getEmail(){
         return email;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public long getPictureId(){
+        return pictureId;
     }
 }

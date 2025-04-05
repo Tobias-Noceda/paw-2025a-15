@@ -8,16 +8,10 @@ import javax.validation.Valid;
 import ar.edu.itba.paw.models.WeekdayEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.interfaces.services.EmailService;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
 
 @Controller
 public class HelloWorldController {
@@ -26,6 +20,9 @@ public class HelloWorldController {
     private DoctorService ds;
 
     @Autowired
+    private EmailService es;
+
+
     private EmailService es;
 
     private List<SelectItem> getWeekdaySelectItems() {
@@ -85,13 +82,6 @@ public class HelloWorldController {
         return mav;
     }
 
-    @RequestMapping("/doctor-{id:\\d+}")
-    public ModelAndView profile(@PathVariable("id") long id) {
-        final ModelAndView mav = new ModelAndView("doctor-detail");
-        ds.findById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
-        return mav;
-    }
-
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
         ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());
@@ -110,30 +100,4 @@ public class HelloWorldController {
         return new ModelAndView("redirect:/");
     }
 
-    protected class SelectItem {
-        private String value;
-        private String label;
-
-        // Constructor, getters y setters
-        public SelectItem(String value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-    }
 }
