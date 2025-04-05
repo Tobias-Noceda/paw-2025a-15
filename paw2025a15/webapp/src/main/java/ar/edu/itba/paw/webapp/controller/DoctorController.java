@@ -104,7 +104,7 @@ public class DoctorController {
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
-        mav.addObject("obrasSocialesItems", getObrasSociales());
+        mav.addObject("obrasSocialesItems", getObrasSociales());//TODO vincularlo con la tabla de Insurance
         mav.addObject("weekdaySelectItems", getWeekdaySelectItems());
         mav.addObject("hoursSelectItems", getHoursSelectItems());
         return mav;
@@ -112,7 +112,10 @@ public class DoctorController {
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
-        //ds.create(form.getName(), form.getEmail(), form.getObrasSociales(),form.getSpecialty(), form.getSchedules());//TODO create doctor
+        User doc = us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname());//TODO magicnumber password sacar
+        dds.create(doc.getId(), "MED_LICENCE", form.getSpecialty()); //TODO getLicence
+        dcs.addCoverage(doc.getId(), 1);//TODO magic number, tiene que ser el getId de insurance
+       // dss.create(doc.getId(), form.getSchedules()., address, startTime, endTime)TODO logica de añadir el schedules
         final ModelAndView mav = new ModelAndView("index");
         return mav;
     }
