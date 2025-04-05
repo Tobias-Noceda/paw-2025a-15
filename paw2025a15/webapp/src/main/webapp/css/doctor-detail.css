@@ -93,3 +93,174 @@
 .doctor-schedule li:last-child {
     margin: 0;
 }
+
+.shift-card {
+    display: flex;
+    flex-direction: row;
+    color: black;
+}
+
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.appointments-table th, .appointments-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.appointments-table thead {
+    background-color: #0d4a85; /* Match your header/nav bar color */
+    color: white;
+}
+
+.appointments-table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.appointments-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.appointments-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.appointments-table th {
+    font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+    .appointments-table {
+        font-size: 14px;
+    }
+}
+
+/* Table styling remains the same */
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.appointments-table th, .appointments-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.appointments-table thead {
+    background-color: #0d4a85;
+    color: white;
+}
+
+.appointments-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Dialog Styling */
+dialog {
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    width: 35%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: left;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 10px;
+    margin: 0;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+button {
+    background-color: #0d4a85;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0a3b68;
+}
+
+.dialog-content {
+    padding: 20px;
+}
+
+/* Center title */
+.dialog-content h2 {
+    text-align: center;
+    margin: 0 0 20px 0;
+}
+
+.appointment-data {
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    margin: 0 0 10px 0;
+}
+
+.appointment-data-label {
+    font-weight: bold;
+    margin: 0 5px 0 0;
+}
+
+/* Labels and Inputs Side by Side */
+.form-group {
+    display: flex;
+    align-items: center;
+}
+
+/* Labels */
+.form-group label {
+    width: 110px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Input Fields */
+.form-group input {
+    flex: 1;
+    padding: 5px;
+}
+
+/* Error Messages (Above the input) */
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 5px;
+}

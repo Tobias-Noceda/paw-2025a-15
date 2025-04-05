@@ -3,9 +3,9 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="<c:url value="css/landing-page.css"/>"
+  <link rel="stylesheet" href="<c:url value="/css/landing-page.css"/>"
   <title>CareTrace</title>
-  <link rel="icon" type="image/png" href="<c:url value='resources/favicon.png'/>" />
+  <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
 </head>
 <body>
 <%@include file="header.jsp" %>
