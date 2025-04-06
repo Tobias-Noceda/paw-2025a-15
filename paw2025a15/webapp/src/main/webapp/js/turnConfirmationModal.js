@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("dialogDate").value = this.dataset.date;
             document.getElementById("dialogTime").value = this.dataset.time;
             document.getElementById("dialogShiftId").value = this.dataset.shift;
-            document.getElementById("dialogIdx").value = this.dataset.index;
             
             dialog.showModal();
         });

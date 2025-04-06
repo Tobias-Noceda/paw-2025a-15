@@ -22,7 +22,6 @@ public class TakeTurnForm {
     private String phoneNumber;
 
     private int shiftId;
-    private int index;
     private String date;
     private String timeRange;
 
@@ -64,14 +63,6 @@ public class TakeTurnForm {
 
     public void setShiftId(int shiftId) {
         this.shiftId = shiftId;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public String getDate() {

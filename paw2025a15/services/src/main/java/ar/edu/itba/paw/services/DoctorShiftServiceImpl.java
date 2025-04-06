@@ -1,13 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import java.time.Duration;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,40 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     public List<DoctorShift> getShiftsByDoctorId(long doctorId) {
         return doctorShiftDao.getShiftsByDoctorId(doctorId);
     }
+
+    @Override
+    public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId) {
+        List<DoctorShift> aux = doctorShiftDao.getShiftsByDoctorId(doctorId);
+        
+        if (aux == null || aux.isEmpty() || aux.size() == 1) return List.of();
+        
+        // Ordenar por día y luego por hora de inicio
+        List<DoctorShift> sorted = aux.stream()
+            .sorted(Comparator.comparing(DoctorShift::getWeekday)
+            .thenComparing(DoctorShift::getStartTime))
+            .collect(Collectors.toList());
+        
+        List<DoctorShift> toReturn = new ArrayList<>();
+        DoctorShift current = sorted.get(0);
+        DoctorShift end;
+
+        for (int i = 1; i < sorted.size(); i++) {
+            end = sorted.get(i);
+            // Si es el mismo día y el turno actual termina cuando el próximo empieza
+            if(current.getWeekday() == end.getWeekday() && current.getEndTime().equals(end.getStartTime())) {
+                current = new DoctorShift(current.getId(), current.getDoctorId(), current.getWeekday(), current.getAddress(), current.getStartTime(), end.getEndTime());
+            } else {
+                toReturn.add(current);
+                if(i < sorted.size()) {
+                    current = sorted.get(i);
+                }
+            }
+        }
+        // Agregar el último turno
+        toReturn.add(new DoctorShift(current.getId(), current.getDoctorId(), current.getWeekday(), current.getAddress(), current.getStartTime(), current.getEndTime()));
+
+        return toReturn;
+    }
     
     @Override
     public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday) {
@@ -68,7 +103,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
         List<DoctorShift> shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1));//-1 cause our enum starts at cero
         
         for (DoctorShift shift : shifts) {
-            if(as.getAppointmentsByShiftIdAndDate(doctorId, date).isEmpty()){
+            if(as.getAppointmentsByShiftIdAndDate(shift.getId(), date).isEmpty()){
                 turns.add(new AvailableTurn(date, shift.getStartTime(), shift.getEndTime(), shift.getAddress(), shift.getId()));
             }
         }

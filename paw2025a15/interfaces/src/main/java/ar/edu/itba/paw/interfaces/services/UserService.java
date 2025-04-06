@@ -15,4 +15,6 @@ public interface UserService {
     public User createDoctor(String email, String password, String name, long pictureID, String licence, SpecialtyEnum speciality);
 
     public Optional<User> getUserById(long id);
+
+    public Optional<User> getUserByEmail(String email);
 }

@@ -21,7 +21,7 @@ import ar.edu.itba.paw.models.WeekdayEnum;
 @Repository
 public class DoctorShiftJdbcDao implements DoctorShiftDao{
 
-    private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), WeekdayEnum.fromInt(rs.getInt("shift_weekday")), rs.getString("shift_address"), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_start_time").toLocalTime());
+    private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), WeekdayEnum.fromInt(rs.getInt("shift_weekday")), rs.getString("shift_address"), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_end_time").toLocalTime());
     
     private final JdbcTemplate jdbcTemplate;
 

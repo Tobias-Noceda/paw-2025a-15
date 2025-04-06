@@ -66,7 +66,7 @@ public class DoctorController {
         dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
-        mav.addObject("doctorShifts", dss.getShiftsByDoctorId(id));
+        mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
         mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, LocalDate.now().getMonth()));
         mav.addObject("doctorId", id);
 
@@ -80,7 +80,8 @@ public class DoctorController {
             return doctorProfile(id, form);
         }
 
-        User patient = us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname());
+        User patient = us.getUserByEmail(form.getEmail())
+            .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
         as.addApointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
         // TODO: send email to doctor with appointment details
 

@@ -10,10 +10,10 @@ public class AvailableTurn {
     private final String address;
     private final long shiftId;
     
-    public AvailableTurn(LocalDate date, LocalTime startTime, LocalTime endtTime, String address, long shiftId) {
+    public AvailableTurn(LocalDate date, LocalTime startTime, LocalTime endTime, String address, long shiftId) {
         this.date = date;
         this.startTime = startTime;
-        this.endTime = endtTime;
+        this.endTime = endTime;
         this.address = address;
         this.shiftId = shiftId;
     }

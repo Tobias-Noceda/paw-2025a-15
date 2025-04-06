@@ -8,13 +8,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HelloWorldController {
     
-/*TODO
     @RequestMapping("/")
     public ModelAndView helloWorld() {
         final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("docList", );
+
         return mav;
-    }*/
+    }
 
     @RequestMapping("/estudios")
     public ModelAndView estudios() {

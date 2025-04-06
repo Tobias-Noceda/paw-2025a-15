@@ -12,7 +12,6 @@
     <c:if test="${takeTurnForm.name != null}">
       <c:set var="dialogDate" value="${takeTurnForm.date}"/>
       <c:set var="dialogTime" value="${takeTurnForm.timeRange}"/>
-      <c:set var="dialogIdx" value="${takeTurnForm.index}"/>
       <c:set var="dialogShiftId" value="${takeTurnForm.shiftId}"/>
       <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -42,7 +41,7 @@
           </div>
           <div class="doctor-specialty-div">
             <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
-            <p class="doctor-specialty"><c:out value="${doctorDetail.specialty}"/></p>
+            <p class="doctor-specialty"><c:out value="${doctorDetail.specialty.name}"/></p>
           </div>
           <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
           <div class="doctor-schedule">
@@ -52,7 +51,7 @@
                   <spring:message code="weekday.${schedule.weekday.name}"/>
                 </c:set>
                 <li>
-                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.getStartTime()}, ${schedule.getEndTime()}, ${schedule.address}"/>
+                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}, ${schedule.address}"/>
                 </li>
               </c:forEach>
             </ul>
@@ -96,7 +95,6 @@
         <form:form modelAttribute="takeTurnForm" method="POST" action="${postPath}">
           <!-- Hidden Fields -->
           <form:input type="hidden" path="shiftId" id="dialogShiftId"/>
-          <form:input type="hidden" path="index" id="dialogIdx"/>
           <form:input type="hidden" path="date" id="dialogDate"/>
           <form:input type="hidden" path="timeRange" id="dialogTime"/>
 

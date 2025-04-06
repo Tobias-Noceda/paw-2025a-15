@@ -8,4 +8,6 @@ public interface UserDao {
     public User create(String email, String password, String name, long pictureId);
 
     public Optional<User> getUserById(long id);
+
+    public Optional<User> getUserByEmail(String email);
 }

@@ -19,6 +19,8 @@ public interface DoctorShiftService {
 
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);
 
+    public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId);
+
     public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday);
 
     public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date);
