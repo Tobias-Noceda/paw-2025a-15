@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +19,7 @@ import ar.edu.itba.paw.models.Study;
 @Repository
 public class StudyJdbcDao implements StudyDao{
 
-    private static final RowMapper<Study> ROW_MAPPER = (rs, rowNum) -> new Study(rs.getLong("study_id"), rs.getString("study_type"), rs.getLong("file_id"), rs.getLong("user_id"));
+    private static final RowMapper<Study> ROW_MAPPER = (rs, rowNum) -> new Study(rs.getLong("study_id"), rs.getString("study_type"), rs.getLong("file_id"), rs.getLong("user_id"), rs.getLong("uploader_id"), rs.getTimestamp("upload_date").toLocalDateTime());
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,13 +32,15 @@ public class StudyJdbcDao implements StudyDao{
     }
 
     @Override
-    public Study create(String type, long fileId, long userId) {
+    public Study create(String type, long fileId, long userId, long uploaderId, LocalDateTime uploadDate) {
         final Map<String, Object> args = new HashMap<>();
         args.put("study_type", type);
         args.put("file_id", fileId);
         args.put("user_id", userId);
+        args.put("uploader_id", uploaderId);
+        args.put("upload_date", uploadDate);
         final Number study_id = jdbcInsert.executeAndReturnKey(args);
-        return new Study(study_id.longValue(), type, fileId, userId);
+        return new Study(study_id.longValue(), type, fileId, userId, uploaderId, uploadDate);
     }
 
     @Override

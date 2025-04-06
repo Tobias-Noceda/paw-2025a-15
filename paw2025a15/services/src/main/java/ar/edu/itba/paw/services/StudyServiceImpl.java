@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public Study create(String type, long fileId, long userId) {
-        return studyDao.create(type, fileId, userId);
+    public Study create(String type, long fileId, long userId, long uploaderId, LocalDateTime uploadDate) {
+        return studyDao.create(type, fileId, userId, uploaderId, uploadDate);
     }
 
     @Override

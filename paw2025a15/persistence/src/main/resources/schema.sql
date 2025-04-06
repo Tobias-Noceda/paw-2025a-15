@@ -36,9 +36,12 @@ CREATE TABLE IF NOT EXISTS studies (
     study_type VARCHAR(100) NOT NULL,
     file_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
+    uploader_id BIGINT NOT NULL,
+    upload_date TIMESTAMP NOT NULL,
 
     FOREIGN KEY (file_id) REFERENCES files(file_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS patient_coverages (
