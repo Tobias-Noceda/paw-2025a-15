@@ -2,6 +2,8 @@ package ar.edu.itba.paw.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -9,16 +11,33 @@ import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 public class DoctorForm {
-    @Size(min = 6, max = 100)
+    @NotNull
+    @NotEmpty
     @Pattern(regexp = "[a-zA-Z]+")
     private String name;
-    @Size(min = 6, max = 100)
+
+    @NotNull
+    @NotEmpty
     @Pattern(regexp = "[a-zA-Z]+")
     private String surname;
+
+    @NotNull
     private SpecialtyEnum speciality;
+
+    @NotNull
+    @NotEmpty
     private List<Long> ObrasSociales;
+
+    @NotNull
     private Schedule schedules;
+
+    @NotNull
+    @NotEmpty
     private String address;
+
+    @NotNull
+    @NotEmpty
+    private String email;
 
     public String getAddress() {
         return address;
@@ -40,6 +59,10 @@ public class DoctorForm {
         return speciality;
     }
 
+    public void setSpeciality(SpecialtyEnum speciality) {
+        this.speciality = speciality;
+    }
+
     public List<Long> getObrasSociales() {
         return ObrasSociales;
     }
@@ -48,19 +71,12 @@ public class DoctorForm {
         ObrasSociales = obrasSociales;
     }
 
-    @Size(min = 6, max = 100)
-    private String email;
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setSpeciality(SpecialtyEnum speciality) {
-        this.speciality = speciality;
     }
 
     public void setSurname(String surname){

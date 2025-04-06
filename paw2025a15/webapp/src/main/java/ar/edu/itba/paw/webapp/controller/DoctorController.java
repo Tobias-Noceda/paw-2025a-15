@@ -100,12 +100,21 @@ public class DoctorController {
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
+        if (errors.hasErrors()) {
+            ModelAndView mav = new ModelAndView("medico");
+            mav.addObject("doctor", form);
+            mav.addObject("obrasSocialesItems", is.getAllInsurances());
+            mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
+            mav.addObject("hoursSelectItems", getHoursSelectItems());
+            return mav;
+        }
+
+        // Si no hay errores, proceder con la creación del médico
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
-        //TODO OJO! puede tener más de una specialty no?
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
         dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getSchedules().getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getSchedules().getShiftCount());
-        final ModelAndView mav = new ModelAndView("index");
-        return mav;
+
+        return new ModelAndView("index");
     }
 
     protected class SelectItem {
