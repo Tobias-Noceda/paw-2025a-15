@@ -6,7 +6,7 @@ import java.util.List;
 import ar.edu.itba.paw.models.Appointment;
 
 public interface AppointmentDao {
-    public void addApointment(long shiftId, long patientId, LocalDate date);
+    public Appointment addAppointment(long shiftId, long patientId, LocalDate date);
 
     public List<Appointment> getAppointmentsByShiftId(long shiftId);
 

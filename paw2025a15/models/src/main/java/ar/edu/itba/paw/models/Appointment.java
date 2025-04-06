@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Appointment {
     private final long shiftId;
     private final long patientId;
-    private final Date date;
+    private final LocalDate date;
 
-    public Appointment(long shiftId, long patientId, Date date){
+    public Appointment(long shiftId, long patientId, LocalDate date){
         this.shiftId = shiftId;
         this.patientId = patientId;
         this.date = date;
@@ -21,7 +21,19 @@ public class Appointment {
         return patientId;
     }
 
-    public Date getDate(){
+    public LocalDate getDate(){
         return date;
+    }
+
+    public String getDateNumber(){
+        return String.format("%d", date.getDayOfMonth());
+    }
+
+    public String getDateMonthNumber() {
+        return date.getMonth().toString();
+    }
+
+    public String getDateYearNumber() {
+        return String.format("%d", date.getYear());
     }
 }

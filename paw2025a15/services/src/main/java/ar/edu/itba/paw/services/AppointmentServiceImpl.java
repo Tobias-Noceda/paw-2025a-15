@@ -21,8 +21,8 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public void addApointment(long shiftId, long patientId, LocalDate date) {
-        appointmentDao.addApointment(shiftId, patientId, date);
+    public Appointment addAppointment(long shiftId, long patientId, LocalDate date) {
+        return appointmentDao.addAppointment(shiftId, patientId, date);
     }
 
     @Override

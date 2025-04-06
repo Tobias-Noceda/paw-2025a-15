@@ -19,7 +19,7 @@ import ar.edu.itba.paw.models.Appointment;
 @Repository
 public class AppointmentJdbcDao implements AppointmentDao{
 
-    private static final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(rs.getLong("shift_id"), rs.getLong("patient_id"), rs.getDate("appointment_date"));
+    private static final RowMapper<Appointment> ROW_MAPPER = (rs, rowNum) -> new Appointment(rs.getLong("shift_id"), rs.getLong("patient_id"), rs.getDate("appointment_date").toLocalDate());
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -32,12 +32,14 @@ public class AppointmentJdbcDao implements AppointmentDao{
     }
 
     @Override
-    public void addApointment(long shiftId, long patientId, LocalDate date) {
+    public Appointment addAppointment(long shiftId, long patientId, LocalDate date) {
         final Map<String, Object> args = new HashMap<>();
         args.put("shift_id", shiftId);
         args.put("patient_id", patientId);
         args.put("appointment_date", date);
         jdbcInsert.execute(args);
+
+        return new Appointment(shiftId, patientId, date);
     }
 
     @Override
