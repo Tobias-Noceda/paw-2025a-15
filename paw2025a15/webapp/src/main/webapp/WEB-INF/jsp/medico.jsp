@@ -57,7 +57,7 @@
         <form:label cssClass="form-title" path="schedules.weekday">Días laborales:</form:label>
       </div>
       <div class="checkbox-group" style="padding: 7px">
-        <form:checkboxes path="schedules.weekday" items="${weekdaySelectItems}" itemLabel="label" itemValue="value"  cssClass="checkbox-inline"/>
+        <form:checkboxes path="schedules.weekday" items="${weekdaySelectItems}" itemLabel="name" itemValue="name"  cssClass="checkbox-inline"/>
       </div>
 
       <div style="padding: 7px">

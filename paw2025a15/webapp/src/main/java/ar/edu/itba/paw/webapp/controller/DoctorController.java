@@ -48,24 +48,6 @@ public class DoctorController {
     @Autowired
     private InsuranceService is;
 
-    private List<SelectItem> getWeekdaySelectItems() {
-        final List<SelectItem> items =  new ArrayList<>();
-        for(WeekdayEnum weekday: WeekdayEnum.values()){
-            items.add(new SelectItem(weekday.getName(), weekday.getName()));
-        }
-
-        return items;
-    }
-
-    private List<SelectItem> getObrasSociales() {
-        List<SelectItem> obrasSociales = List.of(
-                new SelectItem("1","OSDE"),
-                new SelectItem("2","Swiss Medical"),
-                new SelectItem("3","Galeno")
-        );
-        return obrasSociales;
-    }
-
     private List<SelectItem> getHoursSelectItems() {
         final List<SelectItem> times = new ArrayList<>();
         for(Integer hour = 6;hour < 22;hour++){
@@ -109,8 +91,8 @@ public class DoctorController {
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
-        mav.addObject("obrasSocialesItems", is.getAllInsurances());//TODO vincularlo con la tabla de Insurance
-        mav.addObject("weekdaySelectItems", getWeekdaySelectItems());
+        mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
         mav.addObject("hoursSelectItems", getHoursSelectItems());
         return mav;
     }

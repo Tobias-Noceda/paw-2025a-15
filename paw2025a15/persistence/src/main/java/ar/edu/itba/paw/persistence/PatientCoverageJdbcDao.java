@@ -35,7 +35,7 @@ public class PatientCoverageJdbcDao implements PatientCoverageDao{
         final Map<String, Object> args = new HashMap<>();
         args.put("patient_id", patientId);
         args.put("insurance_id", insuranceId);
-        jdbcInsert.executeAndReturnKey(args);
+        jdbcInsert.execute(args);
     }
 
     @Override

@@ -37,7 +37,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         args.put("doctor_id", doctorId);
         args.put("doctor_licence", licence);
         args.put("doctor_specialty", specialty);
-        jdbcInsert.executeAndReturnKey(args);
+        jdbcInsert.execute(args);
         return new DoctorDetail(doctorId, licence, specialty);
     }
 
