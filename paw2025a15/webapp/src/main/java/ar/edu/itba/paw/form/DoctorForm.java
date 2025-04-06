@@ -1,42 +1,34 @@
 package ar.edu.itba.paw.form;
 
 import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 public class DoctorForm {
-    @NotNull
-    @NotEmpty
-    @Pattern(regexp = "[a-zA-Z]+")
+    @NotEmpty(message = "{doctorForm.name.notEmpty}")
     private String name;
 
-    @NotNull
-    @NotEmpty
-    @Pattern(regexp = "[a-zA-Z]+")
+    @NotEmpty(message = "{doctorForm.surname.notEmpty}")
     private String surname;
 
-    @NotNull
+    @NotNull(message = "{doctorForm.specialty.notNull}")
     private SpecialtyEnum speciality;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "{doctorForm.obrasSociales.notNull}")
+    @NotEmpty(message = "{doctorForm.obrasSociales.notEmpty}")
     private List<Long> ObrasSociales;
 
-    @NotNull
+    @NotNull(message = "{doctorForm.schedules.notNull}")
     private Schedule schedules;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = "{doctorForm.address.notNull}")
+    @NotEmpty(message = "{doctorForm.address.notEmpty}")
     private String address;
 
-    @NotNull
-    @NotEmpty
+    @NotEmpty(message = "{doctorForm.email.notEmpty}")
+    @Email(message = "{doctorForm.email.invalid}")
     private String email;
 
     public String getAddress() {
@@ -79,7 +71,7 @@ public class DoctorForm {
         this.name = name;
     }
 
-    public void setSurname(String surname){
+    public void setSurname(String surname) {
         this.surname = surname;
     }
 
