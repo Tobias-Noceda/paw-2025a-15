@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 @Service
@@ -28,6 +30,16 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId) {
         return doctorDetailDao.getDetailByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<DoctorView> getAllDoctors() {
+        return doctorDetailDao.getAllDoctors();
+    }
+
+    @Override
+    public List<DoctorView> findDoctorsByName(String name) {
+        return doctorDetailDao.findDoctorsByName(name);
     }
 
 }
