@@ -40,7 +40,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
 
     @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount) {
-        long slot = Duration.between(endTime,startTime).toMinutes() / amount;
+        long slot = Duration.between(endTime,startTime).toMinutes() / 1;
         for (WeekdayEnum weekday : weekdays) {
             for (int i = 1; i <= amount; i++) {
                 create(doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i));

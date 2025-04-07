@@ -9,13 +9,14 @@
 </head>
 <body>
 <%@include file="header.jsp" %>
-<h2>  Cartilla médica:</h2>
+<h2>Cartilla médica:</h2>
 
 <div class="doctorLanding-container">
   <c:forEach var="doctor" items="${docList}">
     <jsp:include page="doctor-card.jsp">
+      <jsp:param name="id" value="${doctor.id}" />
       <jsp:param name="doctorName" value="${doctor.name}" />
-      <jsp:param name="workingEnsurances" value="${doctor.workingEnsurances}" />
+      <jsp:param name="insurances" value="${doctor.insurances}" />
       <jsp:param name="speciality" value="${doctor.specialty}" />
     </jsp:include>
   </c:forEach>

@@ -17,13 +17,12 @@ public class DoctorForm {
     private SpecialtyEnum speciality;
 
     @NotNull(message = "{doctorForm.obrasSociales.notNull}")
-    @NotEmpty(message = "{doctorForm.obrasSociales.notEmpty}")
+    //@NotEmpty(message = "{doctorForm.obrasSociales.notEmpty}")
     private List<Long> ObrasSociales;
 
     @NotNull(message = "{doctorForm.schedules.notNull}")
     private Schedule schedules;
 
-    @NotNull(message = "{doctorForm.address.notNull}")
     @NotEmpty(message = "{doctorForm.address.notEmpty}")
     private String address;
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -51,10 +52,16 @@ public class DoctorController {
     private List<SelectItem> getHoursSelectItems() {
         final List<SelectItem> times = new ArrayList<>();
         for(Integer hour = 6;hour < 22;hour++){
-            StringBuilder a = new StringBuilder().append(hour).append(":00");
-            StringBuilder b = new StringBuilder().append(hour).append(":30");
-            times.add(new SelectItem(a.toString(),a.toString()));
-            times.add(new SelectItem(b.toString(),b.toString()));
+            StringBuilder a = new StringBuilder();
+            StringBuilder b = new StringBuilder();
+            if(hour < 10){
+                a.append("0");
+                b.append("0");
+            }
+            a.append(hour).append(":00");
+            b.append(hour).append(":30");
+            times.add(new SelectItem(a.toString(), a.toString()));
+            times.add(new SelectItem((b.toString()),b.toString()));
         }
         return times;
     }
@@ -69,9 +76,14 @@ public class DoctorController {
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
         mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, LocalDate.now().getMonth()));
         mav.addObject("doctorId", id);
+        mav.addObject("searchForm", new SearchForm());
 
         return mav;
     }
+
+
+
+
 
     @RequestMapping(value = "/doctors/{id:\\d+}", method = RequestMethod.POST)
     public ModelAndView takeTurn(@PathVariable("id") long id, @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form, final BindingResult errors) {
@@ -84,7 +96,7 @@ public class DoctorController {
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
         as.addApointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
         // TODO: send email to doctor with appointment details
-
+        mav.addObject("searchForm", new SearchForm());
         return mav;
     }
 
@@ -95,6 +107,7 @@ public class DoctorController {
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
         mav.addObject("hoursSelectItems", getHoursSelectItems());
+        mav.addObject("searchForm", new SearchForm());
         return mav;
     }
 
@@ -106,6 +119,7 @@ public class DoctorController {
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
             mav.addObject("hoursSelectItems", getHoursSelectItems());
+            mav.addObject("searchForm", new SearchForm());
             return mav;
         }
 
@@ -113,8 +127,10 @@ public class DoctorController {
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
         dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getSchedules().getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getSchedules().getShiftCount());
-
-        return new ModelAndView("index");
+        ModelAndView mav = new ModelAndView("index");
+        mav.addObject("docList", dds.getAllDoctors());
+        mav.addObject("searchForm", new SearchForm());
+        return mav;
     }
 
     protected class SelectItem {

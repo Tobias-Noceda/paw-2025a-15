@@ -47,7 +47,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
         args.put("doctor_licence", licence);
-        args.put("doctor_specialty", specialty);
+        args.put("doctor_specialty", specialty.ordinal());
         jdbcInsert.execute(args);
         return new DoctorDetail(doctorId, licence, specialty);
     }
@@ -60,9 +60,12 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
 
     @Override
     public List<DoctorView> getAllDoctors() {
-        return (List<DoctorView>) jdbcTemplate.query("SELECT dd.doctor_id AS id, u.user_name AS name, dd.doctor_specialty AS specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id ",
-        DV_ROW_MAPPER);
+        return (List<DoctorView>) jdbcTemplate.query(
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id",
+                DV_ROW_MAPPER
+        );
     }
+
 
     //TODO estas capaz estan mal que esten aca
     public List<Insurance> getInsurancesById(long doctorId) {
@@ -77,8 +80,12 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
 
     @Override
     public List<DoctorView> findDoctorsByName(String name) {
-        return (List<DoctorView>) jdbcTemplate.query("SELECT dd.doctor_id AS id, u.user_name AS name, dd.doctor_specialty AS specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
-        new Object[]{ "%" + name + "%" }, new int[]{java.sql.Types.VARCHAR}, DV_ROW_MAPPER);
+        return (List<DoctorView>) jdbcTemplate.query(
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
+                new Object[]{ "%" + name + "%" },
+                new int[]{ java.sql.Types.VARCHAR },
+                DV_ROW_MAPPER
+        );
     }
 
 }

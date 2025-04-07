@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-form {
+.doctor-form {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
@@ -12,18 +12,18 @@ form {
     margin: 20px auto;
 }
 
-div {
+.doctor-div {
     margin-bottom: 12px;
+    padding: 7px;
 }
 
-form label {
+.doctor-form-label {
 
     display: block;
     margin-bottom: 5px;
 }
 
-form input[type="text"],
-form select {
+.form-select-doctor {
     width: 100%;
     padding: 8px;
     margin-bottom: 12px;

@@ -39,6 +39,8 @@ public class DoctorView {
         return insurances;
     }
 
+
+
     public List<WeekdayEnum> getWeekdays(){
         return weekdays;
     }

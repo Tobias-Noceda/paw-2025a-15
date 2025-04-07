@@ -11,6 +11,11 @@ public class Insurance {
         this.pictureId = pictureId;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public long getId(){
         return id;
     }
