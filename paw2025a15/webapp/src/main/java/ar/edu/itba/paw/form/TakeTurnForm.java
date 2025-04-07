@@ -5,12 +5,12 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class TakeTurnForm {
-    @Size(min = 6, max = 100)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Size(min = 1, max = 100)
+    //@Pattern(regexp = "[a-zA-Z]+") TODO rethink logic
     private String name;
 
-    @Size(min = 6, max = 100)
-    @Pattern(regexp = "[a-zA-Z]+")
+    @Size(min = 1, max = 100)
+    //@Pattern(regexp = "[a-zA-Z]+")
     private String surname;
     
     @Email
