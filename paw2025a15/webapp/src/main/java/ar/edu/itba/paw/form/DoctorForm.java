@@ -1,7 +1,11 @@
 package ar.edu.itba.paw.form;
 
 import java.util.List;
-import javax.validation.constraints.*;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
@@ -29,6 +33,10 @@ public class DoctorForm {
     @NotEmpty(message = "{doctorForm.email.notEmpty}")
     @Email(message = "{doctorForm.email.invalid}")
     private String email;
+
+    @NotNull(message = "{doctorForm.amount.notNull}")
+    @Positive(message = "{doctorForm.amount.positive}")
+    private int amount;
 
     public String getAddress() {
         return address;
@@ -88,5 +96,13 @@ public class DoctorForm {
 
     public SpecialtyEnum getSpecialty() {
         return speciality;
+    }
+
+    public int getAmount(){
+        return amount;
+    }
+
+    public void setAmount(int amount){
+        this.amount = amount;
     }
 }

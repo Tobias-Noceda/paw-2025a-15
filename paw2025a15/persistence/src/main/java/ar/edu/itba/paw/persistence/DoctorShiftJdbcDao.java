@@ -37,7 +37,7 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
     public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
-        args.put("shift_weekday", weekday);
+        args.put("shift_weekday", weekday.ordinal());
         args.put("shift_address", address);
         args.put("shift_start_time", startTime);
         args.put("shift_end_time", endTime);

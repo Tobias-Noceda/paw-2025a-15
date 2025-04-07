@@ -8,20 +8,25 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.models.Appointment;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
 
+    private final EmailService es;
+
     private final AppointmentDao appointmentDao;
 
     @Autowired
-    public AppointmentServiceImpl(final AppointmentDao appointmentDao){
+    public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es){
         this.appointmentDao = appointmentDao;
+        this.es = es;
     }
 
     @Override
     public void addApointment(long shiftId, long patientId, LocalDate date) {
+        
         appointmentDao.addApointment(shiftId, patientId, date);
     }
 

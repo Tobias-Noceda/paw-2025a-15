@@ -28,7 +28,6 @@ public class HelloWorldController {
             doctors = dds.getAllDoctors();
         }
         mav.addObject("docList", doctors );
-        System.out.println(doctors);
         return mav;
     }
 

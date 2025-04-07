@@ -92,6 +92,14 @@
   </div>
 
   <div class="doctor-div">
+    <form:label cssClass="form-title" path="amount">
+      <spring:message code="doctorForm.amount"/>
+    </form:label>
+    <form:input type="number" path="amount"/>
+    <form:errors path="amount" cssClass="formError" element="p"/>
+  </div>
+
+  <div class="doctor-div">
     <input type="submit" value="<spring:message code="doctorForm.registerButton"/>" class="register-button"/>
   </div>
 

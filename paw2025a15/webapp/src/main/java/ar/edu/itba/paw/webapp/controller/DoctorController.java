@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.form.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
+import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
@@ -91,7 +91,6 @@ public class DoctorController {
         User patient = us.getUserByEmail(form.getEmail())
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
         as.addApointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
-        // TODO: send email to doctor with appointment details
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }
@@ -122,8 +121,7 @@ public class DoctorController {
         // Si no hay errores, proceder con la creación del médico
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
-        System.out.println(form.getSchedules().getWeekday());
-        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getSchedules().getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getSchedules().getShiftCount());
+        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());//TODO change Schedule model or sth.
         ModelAndView mav = new ModelAndView("index");
         mav.addObject("docList", dds.getAllDoctors());
         mav.addObject("searchForm", new SearchForm());
