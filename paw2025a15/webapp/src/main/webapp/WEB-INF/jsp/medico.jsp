@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
   <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
 </head>
-<body>
+<body class="form-body">
 <c:set var="title">
   <spring:message code="header.doctor"/>
 </c:set>
@@ -41,15 +41,15 @@
     <form:errors path="email" cssClass="formError" element="p"/>
   </div>
 
-    <div class="doctor-div">
-      <form:label cssClass="form-title" path="speciality">
-        <spring:message code="doctorForm.specialty"/>
-      </form:label>
-      <form:select  path="speciality" cssClass="form-select-doctor">
-        <form:options items="${specialtyItems}" itemValue="name" />
-      </form:select>
-      <form:errors path="speciality" cssClass="formError" element="p"/>
-    </div>
+  <div class="doctor-div">
+    <form:label cssClass="form-title" path="speciality">
+      <spring:message code="doctorForm.specialty"/>
+    </form:label>
+    <form:select  path="speciality" cssClass="form-select-doctor">
+      <form:options items="${specialtyItems}" itemValue="name" />
+    </form:select>
+    <form:errors path="speciality" cssClass="formError" element="p"/>
+  </div>
 
   <div class="doctor-div">
     <form:label cssClass="form-title" path="address">
@@ -65,7 +65,7 @@
     </form:label>
   </div>
 
-  <div class="checkbox-group" style="padding: 7px">
+  <div class="checkbox-group">
     <form:checkboxes path="obrasSociales" items="${obrasSocialesItems}" itemLabel="name" itemValue="id" cssClass="checkbox-inline"/>
   </div>
 
@@ -75,7 +75,7 @@
     </form:label>
   </div>
 
-  <div class="checkbox-group" style="padding: 7px">
+  <div class="checkbox-group">
     <form:checkboxes path="schedules.weekday" items="${weekdaySelectItems}" itemLabel="name" itemValue="name" cssClass="checkbox-inline"/>
   </div>
 

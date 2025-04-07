@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 public interface DoctorDetailService {
@@ -15,4 +16,8 @@ public interface DoctorDetailService {
     public List<DoctorView> getAllDoctors();
 
     public List<DoctorView> findDoctorsByName(String name);
+
+    List<DoctorView> getFilteredDoctorsSpecialty(SpecialtyEnum specialty);
+
+    List<DoctorView> getFilteredDoctorsInsurance(Insurance insurance);
 }

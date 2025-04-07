@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Objects;
+
 public class Insurance {
     private final long id;
     private String name;
@@ -35,5 +37,13 @@ public class Insurance {
     public void setName(String name){
         this.name = name;
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Insurance insurance = (Insurance) o;
+        return Objects.equals(name, insurance.name);
+    }
+
 }

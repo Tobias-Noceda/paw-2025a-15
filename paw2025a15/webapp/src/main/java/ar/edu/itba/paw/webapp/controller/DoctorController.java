@@ -66,7 +66,6 @@ public class DoctorController {
         return times;
     }
 
-
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(@PathVariable("id") long id, @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
         final ModelAndView mav = new ModelAndView("doctor-detail");
@@ -80,9 +79,6 @@ public class DoctorController {
 
         return mav;
     }
-
-
-
 
 
     @RequestMapping(value = "/doctors/{id:\\d+}", method = RequestMethod.POST)
@@ -126,6 +122,7 @@ public class DoctorController {
         // Si no hay errores, proceder con la creación del médico
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
+        System.out.println(form.getSchedules().getWeekday());
         dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getSchedules().getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getSchedules().getShiftCount());
         ModelAndView mav = new ModelAndView("index");
         mav.addObject("docList", dds.getAllDoctors());

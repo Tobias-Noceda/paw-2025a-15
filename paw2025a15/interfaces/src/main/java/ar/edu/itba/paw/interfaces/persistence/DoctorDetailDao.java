@@ -15,4 +15,5 @@ public interface DoctorDetailDao {
     public List<DoctorView> getAllDoctors();
 
     public List<DoctorView> findDoctorsByName(String name);
+
 }

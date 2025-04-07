@@ -1,4 +1,4 @@
-body {
+.form-body {
     background-color: #d0e4f5;
     font-family: Arial, sans-serif;
 }
@@ -18,17 +18,20 @@ body {
 }
 
 .doctor-form-label {
-
     display: block;
     margin-bottom: 5px;
+    font-weight: bold;
 }
 
-.form-select-doctor {
+.form-select-doctor,
+form input[type="text"],
+form select {
+    display: block;
     width: 100%;
     padding: 8px;
-    margin-bottom: 12px;
+    margin-top: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 14px;
 }
 
@@ -43,7 +46,7 @@ body {
     width: 100%;
 }
 
-.register-btn:hover {
+.register-button:hover {
     background-color: #0056b3;
 }
 
@@ -58,6 +61,7 @@ body {
     gap: 10px;
 }
 
-.form-title{
+.form-title {
     font-weight: bold;
+    display: block;
 }
