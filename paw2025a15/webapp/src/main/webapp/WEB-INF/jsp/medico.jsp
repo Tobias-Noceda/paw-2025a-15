@@ -55,7 +55,7 @@
                 <spring:message code="doctorForm.specialty"/>
               </form:label>
               <form:select  path="speciality" cssClass="form-select">
-                <form:options items="${specialtyItems}" itemValue="name" />
+                <form:options items="${specialtySelectItems}" itemValue="value" itemLabel="label" />
               </form:select>
             </div>
           </div>
@@ -86,7 +86,7 @@
             </form:label>
             
             <div class="checkbox-group">
-              <form:checkboxes path="schedules.weekday" items="${weekdaySelectItems}" itemLabel="name" itemValue="name" cssClass="checkbox-inline"/>
+              <form:checkboxes path="schedules.weekday" items="${weekdaySelectItems}" itemLabel="label" itemValue="value" cssClass="checkbox-inline"/>
             </div>
           </div>
           
