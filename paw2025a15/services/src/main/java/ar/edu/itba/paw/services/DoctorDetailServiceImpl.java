@@ -3,15 +3,12 @@ package ar.edu.itba.paw.services;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.models.DoctorDetail;
-import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.SpecialtyEnum;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
@@ -43,18 +40,34 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         return doctorDetailDao.findDoctorsByName(name);
     }
 
-    @Override
-    public List<DoctorView> getFilteredDoctorsSpecialty(SpecialtyEnum specialty){
+    private List<DoctorView> getFilteredDoctorsSpecialty(SpecialtyEnum specialty){
         List<DoctorView> doctorList = getAllDoctors();
         doctorList.stream().filter(doctorView -> doctorView.getSpecialty().getName().equals(specialty.getName()));
         return doctorList;
     }
 
-    @Override
-    public List<DoctorView> getFilteredDoctorsInsurance(Insurance insurance){
+    private List<DoctorView> getFilteredDoctorsInsurance(Insurance insurance){
         List<DoctorView> doctorList = getAllDoctors();
         doctorList.stream().filter(doctorView -> doctorView.getInsurances().contains(insurance));
         return doctorList;
+    }
+
+    private  List<DoctorView> getFilteredDoctorsWeekday(WeekdayEnum weekday){
+        List<DoctorView> doctorList = getAllDoctors();
+        doctorList.stream().filter(doctorView -> doctorView.getWeekdays().contains(weekday));
+        return doctorList;
+    }
+
+    @Override
+    public List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday){
+        List<DoctorView> specialtyFiltered = getFilteredDoctorsSpecialty(specialty);
+        List<DoctorView> insuranceFiltered = getFilteredDoctorsInsurance(insurance);
+        List<DoctorView> weekdayFiltered = getFilteredDoctorsWeekday(weekday);
+
+        specialtyFiltered.retainAll(insuranceFiltered);
+        specialtyFiltered.retainAll(weekdayFiltered);
+
+        return specialtyFiltered;
     }
 
 }
