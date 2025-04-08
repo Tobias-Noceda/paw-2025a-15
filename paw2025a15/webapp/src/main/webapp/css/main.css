@@ -55,6 +55,16 @@ body {
     text-align: left;
 }
 
+.search-bar-form {
+    margin: 0;
+}
+
+.search-bar-form input {
+    box-shadow: 0 0 0 1000px #0e3b6b inset !important; /* deep blue */
+    border: none !important;
+    -webkit-text-fill-color: white !important;
+}
+
 .search-bar-text {
     background-color: #0e3b6b;
     color: white;
@@ -111,5 +121,3 @@ body {
     display: inline-block;
     margin-left: 10px;
 }
-
-

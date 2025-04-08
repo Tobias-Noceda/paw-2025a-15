@@ -12,7 +12,7 @@
 <div class="doctorLanding-card">
     <a href="/doctors/${param.id}" class="clickable-card">
         <h3>${param.doctorName}</h3>
-        <p><spring:message code="Specialty.${param.speciality}"></spring:message></p>
+        <p><spring:message code="specialty.${param.speciality}"></spring:message></p>
         <p>${fn:replace(fn:replace(param.insurances, "[", ""), "]", "")}</p>
     </a>
 </div>

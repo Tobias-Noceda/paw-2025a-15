@@ -35,15 +35,17 @@
         </a>
       </nav>
 
-
+      <c:set var="barPlaceholder">
+        <spring:message code="header.placeholder"/>
+      </c:set>
 
       <div class="search-bar-container">
         <div class="search-bar">
-          <form:form modelAttribute="searchForm" action="/search" method="get">
-            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
-              <path fill="white" d="M10 2a8 8 0 015.29 13.71l3.94 3.94-1.42 1.42-3.94-3.94A8 8 0 1110 2m0 2a6 6 0 104.24 10.24A6 6 0 0010 4z"/>
-            </svg>
-            <form:input path="query" class="search-bar-text" placeholder='' />
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="white" d="M10 2a8 8 0 015.29 13.71l3.94 3.94-1.42 1.42-3.94-3.94A8 8 0 1110 2m0 2a6 6 0 104.24 10.24A6 6 0 0010 4z"/>
+          </svg>
+          <form:form modelAttribute="searchForm" action="/search" method="get" class="search-bar-form">
+            <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
             <button type="submit" style="display: none;"></button>
           </form:form>
         </div>
