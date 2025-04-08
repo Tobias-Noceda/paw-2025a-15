@@ -14,6 +14,7 @@ import java.util.List;
 
 @Controller
 public class HelloWorldController {
+    
     @Autowired
     private DoctorDetailService dds;
 
@@ -52,7 +53,4 @@ public class HelloWorldController {
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }
-
-
-
 }
