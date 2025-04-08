@@ -11,28 +11,39 @@
 <%@include file="header.jsp" %>
 
 <form:form modelAttribute="filterForm" action="/filter" method="get">
-  <div >
-  <form:label  path="insurances">
-    <spring:message code="doctorForm.obrasSociales"/>
-  </form:label>
-  <form:select path="insurances" itemLabel="name" itemValue="id" items="${insurances}" />
-</div>
-<div >
-  <form:label  path="specialty">
-    <spring:message code="doctorForm.specialty"/>
-  </form:label>
-  <form:select path="specialty" itemLabel="name" itemValue="name" items="${specialty}" />
-</div>
-<div >
-  <form:label  path="weekday">
-    <spring:message code="doctorForm.schedules.weekday"/>
-  </form:label>
-  <form:select path="weekday" itemLabel="name" itemValue="name" items="${weekdays}" />
-</div>
+  <div>
+    <form:label path="insurances">
+      <spring:message code="doctorForm.obrasSociales"/>
+    </form:label>
+    <form:select path="insurances">
+      <form:option value="">Todas</form:option>
+      <form:options itemLabel="name" itemValue="id" items="${insurances}" />
+    </form:select>
+  </div>
 
-<div class="doctor-div">
-  <input type="submit" value="<spring:message code="doctorForm.registerButton"/>"/>
-</div>
+  <div>
+    <form:label path="specialty">
+      <spring:message code="doctorForm.specialty"/>
+    </form:label>
+    <form:select path="specialty">
+      <form:option value="">Todas</form:option>
+      <form:options itemLabel="name" itemValue="name" items="${specialty}" />
+    </form:select>
+  </div>
+
+  <div>
+    <form:label path="weekday">
+      <spring:message code="doctorForm.schedules.weekday"/>
+    </form:label>
+    <form:select path="weekday">
+      <form:option value="">Todos</form:option>
+      <form:options itemLabel="name" itemValue="name" items="${weekdays}" />
+    </form:select>
+  </div>
+
+  <div class="doctor-div">
+    <input type="submit" value="<spring:message code='doctorForm.registerButton'/>"/>
+  </div>
 </form:form>
 
     <h2>Cartilla médica:</h2>

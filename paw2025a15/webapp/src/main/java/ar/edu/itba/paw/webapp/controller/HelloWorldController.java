@@ -5,6 +5,7 @@ import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.WeekdayEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +42,30 @@ public class HelloWorldController {
     }
 
     @RequestMapping("/filter")
-    public ModelAndView filter(@ModelAttribute("searchForm") final SearchForm searchForm, @ModelAttribute("filterForm") final FilterForm filterForm){
+    public ModelAndView filter(@ModelAttribute("searchForm") final SearchForm searchForm,
+                               @ModelAttribute("filterForm") final FilterForm filterForm){
         ModelAndView mav = new ModelAndView("index");
-        List<DoctorView> doctors = dds.getFilteredDoctor(filterForm.getSpecialty(), filterForm.getInsurances(), filterForm.getWeekday());
+        Insurance insurance;
+        if(filterForm.getInsurances() != null) {
+            insurance = is.getInsuranceById(filterForm.getInsurances()).orElse(null);
+        }else{
+            insurance = null;
+        }
+
+
+
+
+        List<DoctorView> doctors = dds.getFilteredDoctor(
+                filterForm.getSpecialty(),
+                insurance,
+                filterForm.getWeekday()
+        );
+
         mav.addObject("docList", doctors);
         mav.addObject("insurances", is.getAllInsurances());
         mav.addObject("weekdays", List.of(WeekdayEnum.values()));
         mav.addObject("specialty", List.of(SpecialtyEnum.values()));
+
         return mav;
     }
 

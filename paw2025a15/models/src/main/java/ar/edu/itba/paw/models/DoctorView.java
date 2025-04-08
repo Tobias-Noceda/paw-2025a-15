@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DoctorView {
     private long id;
@@ -21,6 +22,22 @@ public class DoctorView {
         this.specialty = specialty;
         this.insurances = insurances;
         this.weekdays = weekdays;
+    }
+
+    @Override
+    public String toString() {
+        return "name='" + name + '\'';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DoctorView that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     public long getId(){

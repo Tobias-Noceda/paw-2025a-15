@@ -6,9 +6,7 @@ import ar.edu.itba.paw.models.WeekdayEnum;
 
 public class FilterForm {
     private SpecialtyEnum specialty;
-
-    private Insurance insurances;
-
+    private Long insurances; // <-- ID en lugar del objeto
     private WeekdayEnum weekday;
 
     public SpecialtyEnum getSpecialty() {
@@ -19,11 +17,11 @@ public class FilterForm {
         this.specialty = specialty;
     }
 
-    public Insurance getInsurances() {
+    public Long getInsurances() {
         return insurances;
     }
 
-    public void setInsurances(Insurance insurances) {
+    public void setInsurances(Long insurances) {
         this.insurances = insurances;
     }
 
@@ -35,4 +33,13 @@ public class FilterForm {
         this.weekday = weekday;
     }
 
+    @Override
+    public String toString() {
+        return "FilterForm{" +
+                "specialty=" + specialty +
+                ", insurances=" + insurances +
+                ", weekday=" + weekday +
+                '}';
+    }
 }
+

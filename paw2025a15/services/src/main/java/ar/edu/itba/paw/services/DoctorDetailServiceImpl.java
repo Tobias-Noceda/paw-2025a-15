@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,12 +14,8 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
 
-    private final DoctorDetailDao doctorDetailDao;
-
     @Autowired
-    public DoctorDetailServiceImpl(final DoctorDetailDao doctorDetailDao){
-        this.doctorDetailDao = doctorDetailDao;
-    }
+    private DoctorDetailDao doctorDetailDao;
 
     @Override
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
@@ -42,27 +39,68 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     private List<DoctorView> getFilteredDoctorsSpecialty(SpecialtyEnum specialty){
         List<DoctorView> doctorList = getAllDoctors();
-        doctorList.stream().filter(doctorView -> doctorView.getSpecialty().getName().equals(specialty.getName()));
-        return doctorList;
+
+        List<DoctorView> filteredDoctors = new ArrayList<>();
+        for (DoctorView doctor : doctorList) {
+            if (doctor.getSpecialty().equals(specialty) ){
+                filteredDoctors.add(doctor);
+            }
+        }
+
+        return filteredDoctors;
     }
 
     private List<DoctorView> getFilteredDoctorsInsurance(Insurance insurance){
         List<DoctorView> doctorList = getAllDoctors();
-        doctorList.stream().filter(doctorView -> doctorView.getInsurances().contains(insurance));
-        return doctorList;
+        List<DoctorView> filteredDoctors = new ArrayList<>();
+        for (DoctorView doctor : doctorList) {
+            if (doctor.getInsurances().contains(insurance)){
+                filteredDoctors.add(doctor);
+            }
+        }
+        return filteredDoctors;
     }
 
     private  List<DoctorView> getFilteredDoctorsWeekday(WeekdayEnum weekday){
         List<DoctorView> doctorList = getAllDoctors();
-        doctorList.stream().filter(doctorView -> doctorView.getWeekdays().contains(weekday));
-        return doctorList;
+        List<DoctorView> filteredDoctors = new ArrayList<>();
+        for (DoctorView doctor : doctorList) {
+            if (doctor.getWeekdays().contains(weekday)){
+                filteredDoctors.add(doctor);
+            }
+        }
+        return filteredDoctors;
     }
 
     @Override
     public List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday){
-        List<DoctorView> specialtyFiltered = getFilteredDoctorsSpecialty(specialty);
-        List<DoctorView> insuranceFiltered = getFilteredDoctorsInsurance(insurance);
-        List<DoctorView> weekdayFiltered = getFilteredDoctorsWeekday(weekday);
+        List<DoctorView> specialtyFiltered;
+        List<DoctorView> insuranceFiltered;
+        List<DoctorView> weekdayFiltered;
+
+        if(specialty == null){
+            specialtyFiltered = getAllDoctors();
+        }else{
+            specialtyFiltered = getFilteredDoctorsSpecialty(specialty);
+        }
+
+        System.out.println(specialtyFiltered);
+
+        if(insurance == null){
+            insuranceFiltered = getAllDoctors();
+        }else{
+            insuranceFiltered = getFilteredDoctorsInsurance(insurance);
+        }
+
+        System.out.println(insuranceFiltered);
+
+        if(weekday == null){
+            weekdayFiltered = getAllDoctors();
+        }else{
+            weekdayFiltered = getFilteredDoctorsWeekday(weekday);
+        }
+
+        System.out.println(weekdayFiltered);
 
         specialtyFiltered.retainAll(insuranceFiltered);
         specialtyFiltered.retainAll(weekdayFiltered);
