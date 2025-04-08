@@ -81,7 +81,7 @@
       <tr>
         <td class="content">
           <p th:text="#{takenShift.firstRow (${doctorName})}"></p>
-          <p th:text="#{takenShift.secondRow(${patientName}, ${dateNumber}, ${#messages.get('month.' + monthName)}, ${startTime}, ${address})}"></p>
+          <p th:text="#{takenShift.secondRow(${patientName}, ${dateNumber}, #{${monthName}}, ${startTime}, ${address})}"></p>
           <p th:text="#{takenShift.thirdRow}"></p>
         </td>
       </tr>

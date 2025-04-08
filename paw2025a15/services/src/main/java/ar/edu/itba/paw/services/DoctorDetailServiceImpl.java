@@ -3,7 +3,6 @@ package ar.edu.itba.paw.services;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.Insurance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +10,7 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 @Service
@@ -46,7 +46,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public List<DoctorView> getFilteredDoctorsSpecialty(SpecialtyEnum specialty){
         List<DoctorView> doctorList = getAllDoctors();
-        doctorList.stream().filter(doctorView -> doctorView.getSpecialty().getName().equals(specialty.getName()));
+        doctorList.stream().filter(doctorView -> doctorView.getSpecialty().equals(specialty));
         return doctorList;
     }
 

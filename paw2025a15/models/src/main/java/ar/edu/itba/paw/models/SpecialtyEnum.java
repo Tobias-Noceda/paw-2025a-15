@@ -2,26 +2,39 @@ package ar.edu.itba.paw.models;
 
 public enum SpecialtyEnum {
 
-    DERMATOLOGY("DERMATOLOGY"),
-    CLINIC("CLINIC"),
-    CARDIOLOGY("CARDIOLOGY"),
-    PEDIATRICS("PEDIATRICS"),
-    NEUROLOGY("NEUROLOGY"),
-    ORTHOPEDICS("ORTHOPEDICS"),
-    RADIOLOGY("RADIOLOGY"),
-    PSYCHIATRY("PSYCHIATRY"),
-    ONCOLOGY("ONCOLOGY");
-
-    private final String name;
-
-
-    SpecialtyEnum(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    BARIATRIC_SURGERY,
+    BREAST_PATHOLOGY,
+    CARDIOLOGY,
+    DERMATOLOGY,
+    ENDOCRINOLOGY,
+    GASTROENTEROLOGY,
+    GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY,
+    GYNECOLOGY,
+    HEAD_AND_NECK_SURGERY,
+    HEMATOLOGY,
+    INFECTIOUS_DISEASES,
+    INTERNAL_MEDICINE,
+    PEDIATRIC_DERMATOLOGY,
+    PEDIATRIC_CARDIOLOGY,
+    PHLEBOLOGY,
+    PLASTIC_AND_RECONSTRUCTIVE_SURGERY,
+    NEPHROLOGY,
+    NEUROLOGY,
+    NEUROSURGERY,
+    NUTRITION,
+    ONCOLOGY,
+    OTOLARYNGOLOGY,
+    PEDIATRICS,
+    PEDIATRIC_NUTRITION_AND_DIABETOLOGY,
+    PEDIATRIC_PULMONOLOGY,
+    PULMONOLOGY,
+    OPHTHALMOLOGY,
+    PROCTOLOGY_AND_SURGERY,
+    RHEUMATOLOGY,
+    SPEECH_THERAPY,
+    SURGERY,
+    TRAUMATOLOGY,
+    UROLOGY;
 
     public static SpecialtyEnum fromInt(int num) {
         SpecialtyEnum[] values = SpecialtyEnum.values();
@@ -30,6 +43,4 @@ public enum SpecialtyEnum {
         }
         throw new IllegalArgumentException("Number out of range");
     }
-
-
 }

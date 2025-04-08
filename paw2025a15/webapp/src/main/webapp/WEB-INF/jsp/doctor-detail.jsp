@@ -41,7 +41,7 @@
           </div>
           <div class="doctor-specialty-div">
             <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
-            <p class="doctor-specialty"><c:out value="${doctorDetail.specialty.name}"/></p>
+            <p class="doctor-specialty"><spring:message code="Specialty.${doctorDetail.specialty}"/></p>
           </div>
           <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
           <div class="doctor-schedule">
