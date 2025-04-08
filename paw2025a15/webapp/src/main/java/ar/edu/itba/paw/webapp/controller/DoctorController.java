@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.FilterForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -107,10 +108,12 @@ public class DoctorController {
     }
 
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
-    public ModelAndView registerForm(@Valid @ModelAttribute("registerMedicForm") final DoctorForm form, final BindingResult errors) {
+    public ModelAndView registerForm(
+            @Valid @ModelAttribute("registerMedicForm") final DoctorForm form,
+            final BindingResult errors,
+            @ModelAttribute("filterForm") final FilterForm filterForm) {
         if (errors.hasErrors()) {
             ModelAndView mav = new ModelAndView("medico");
-            mav.addObject("doctor", form);
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
             mav.addObject("hoursSelectItems", getHoursSelectItems());

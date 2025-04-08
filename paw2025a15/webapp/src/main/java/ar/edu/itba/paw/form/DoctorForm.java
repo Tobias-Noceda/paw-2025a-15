@@ -10,6 +10,7 @@ import javax.validation.constraints.Positive;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
+
 public class DoctorForm {
     @NotEmpty(message = "{doctorForm.name.notEmpty}")
     private String name;
@@ -37,6 +38,8 @@ public class DoctorForm {
     @NotNull(message = "{doctorForm.amount.notNull}")
     @Positive(message = "{doctorForm.amount.positive}")
     private int amount;
+
+
 
     public String getAddress() {
         return address;
