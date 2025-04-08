@@ -1,38 +1,71 @@
-.form-body {
-    background-color: #d0e4f5;
-    font-family: Arial, sans-serif;
+.doctor-form-container {
+    background-color: #ffffff;
+    width: fit-content;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: hidden;
 }
 
 .doctor-form {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 400px;
-    margin: 20px auto;
+    margin: 0;
 }
 
-.doctor-div {
-    margin-bottom: 12px;
-    padding: 7px;
+.field-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
-.doctor-form-label {
-    display: block;
-    margin-bottom: 5px;
+.field-info-container {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    gap: 10px;
+}
+
+.formError {
+    color: red;
+    font-size: 12px;
+}
+
+.form-title {
     font-weight: bold;
+    width: fit-content;
+    display: flex;
+    align-content: center;
+}
+
+.doctor-form-amount,
+.hour-select,
+.form-select-doctor,
+.doctor-form-input,
+.form-select {
+    font-size: 14px;
+    font-weight: 400;
+    padding: 2px 0 2px 4px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
 .form-select-doctor,
-form input[type="text"],
-form select {
-    display: block;
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+.doctor-form-input,
+.form-select {
+    flex: 1;
+}
+    
+.hour-select {
+    width: fit-content;
+}
+
+.doctor-form-amount {
+    width: 50px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 5px;
 }
 
 .register-button {
@@ -48,20 +81,4 @@ form select {
 
 .register-button:hover {
     background-color: #0056b3;
-}
-
-.formError {
-    color: red;
-    font-size: 12px;
-}
-
-.checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-}
-
-.form-title {
-    font-weight: bold;
-    display: block;
 }
