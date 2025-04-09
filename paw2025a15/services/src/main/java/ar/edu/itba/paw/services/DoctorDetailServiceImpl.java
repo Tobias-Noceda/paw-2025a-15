@@ -88,23 +88,17 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
             specialtyFiltered = getFilteredDoctorsSpecialty(specialty);
         }
 
-        System.out.println(specialtyFiltered);
-
         if(insurance == null){
             insuranceFiltered = getAllDoctors();
         }else{
             insuranceFiltered = getFilteredDoctorsInsurance(insurance);
         }
 
-        System.out.println(insuranceFiltered);
-
         if(weekday == null){
             weekdayFiltered = getAllDoctors();
         }else{
             weekdayFiltered = getFilteredDoctorsWeekday(weekday);
         }
-
-        System.out.println(weekdayFiltered);
 
         specialtyFiltered.retainAll(insuranceFiltered);
         specialtyFiltered.retainAll(weekdayFiltered);
