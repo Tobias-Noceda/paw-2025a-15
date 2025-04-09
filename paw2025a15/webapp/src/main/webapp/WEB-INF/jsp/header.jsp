@@ -27,10 +27,10 @@
         </a>
       </div>
       <nav class="nav-links">
-        <a href="<c:url value="/estudios"/>" class="nav-item <c:if test='${param.title == studies}'>active</c:if>">
+        <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title == studies}'>active</c:if>">
           <spring:message code="header.studies" />
         </a>
-        <a href="<c:url value="/obras-sociales"/>" class="nav-item <c:if test='${param.title == ensurance}'>active</c:if>">
+        <a href="<c:url value="/insurances"/>" class="nav-item <c:if test='${param.title == ensurance}'>active</c:if>">
           <spring:message code="header.ensurance" />
         </a>
       </nav>
@@ -53,7 +53,7 @@
       </div>
 
 
-      <a href="<c:url value="/medico"/>">
+      <a href="<c:url value="/doctor-form"/>">
         <button class="doctor-btn">
           <spring:message code="header.doctor" />
         </button>

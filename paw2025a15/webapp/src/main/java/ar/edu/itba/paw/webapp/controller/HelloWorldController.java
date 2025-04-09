@@ -1,5 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
 import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
@@ -8,14 +16,6 @@ import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.WeekdayEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 
 @Controller
@@ -81,16 +81,16 @@ public class HelloWorldController {
         return mav;
     }
 
-    @RequestMapping("/estudios")
-    public ModelAndView estudios() {
-        final ModelAndView mav = new ModelAndView("estudios");
+    @RequestMapping("/studies")
+    public ModelAndView studies() {
+        final ModelAndView mav = new ModelAndView("studies");
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }
 
-    @RequestMapping("/obras-sociales")
-    public ModelAndView obrasSociales() {
-        final ModelAndView mav = new ModelAndView("obras-sociales");
+    @RequestMapping("/insurances")
+    public ModelAndView insurances() {
+        final ModelAndView mav = new ModelAndView("insurances");
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }

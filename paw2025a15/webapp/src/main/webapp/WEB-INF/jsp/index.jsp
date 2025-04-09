@@ -54,7 +54,7 @@
   
       <div class="doctor-landing-container">
         <c:forEach var="doctor" items="${docList}">
-          <jsp:include page="doctor-card.jsp">
+          <jsp:include page="doctorCard.jsp">
             <jsp:param name="id" value="${doctor.id}" />
             <jsp:param name="doctorName" value="${doctor.name}" />
             <jsp:param name="insurances" value="${doctor.insurances}" />

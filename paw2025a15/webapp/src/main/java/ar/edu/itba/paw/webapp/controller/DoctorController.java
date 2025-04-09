@@ -81,7 +81,7 @@ public class DoctorController {
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(@PathVariable("id") long id, @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
-        final ModelAndView mav = new ModelAndView("doctor-detail");
+        final ModelAndView mav = new ModelAndView("doctorDetail");
         dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
@@ -111,9 +111,9 @@ public class DoctorController {
         return mav;
     }
 
-    @RequestMapping("/medico")
+    @RequestMapping("/doctor-form")
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
-        final ModelAndView mav = new ModelAndView("medico");
+        final ModelAndView mav = new ModelAndView("doctorForm");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
@@ -131,7 +131,7 @@ public class DoctorController {
         @ModelAttribute("filterForm") final FilterForm filterForm
     ) {
         if (errors.hasErrors()) {
-            ModelAndView mav = new ModelAndView("medico");
+            ModelAndView mav = new ModelAndView("doctorForm");
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
             mav.addObject("specialtySelectItems", getListOfSpecialties(locale));
