@@ -6,15 +6,18 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 
 public class DoctorForm {
+    @Size(min = 1, max = 50, message = "name must be less than 50 characters")
     @NotEmpty(message = "{doctorForm.name.notEmpty}")
     private String name;
 
+    @Size(min = 1, max = 50, message = "surname must be less than 50 characters")
     @NotEmpty(message = "{doctorForm.surname.notEmpty}")
     private String surname;
 
@@ -28,6 +31,7 @@ public class DoctorForm {
     @NotNull(message = "{doctorForm.schedules.notNull}")
     private Schedule schedules;
 
+    @Size(min = 1, max = 50, message = "address must be less than 50 characters")
     @NotEmpty(message = "{doctorForm.address.notEmpty}")
     private String address;
 
