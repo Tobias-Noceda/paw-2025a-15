@@ -51,7 +51,7 @@
                   <spring:message code="weekday.${schedule.weekday.name}"/>
                 </c:set>
                 <li>
-                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}, ${schedule.address}"/>
+                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}, ${schedule.address}" htmlEscape="true"/>
                 </li>
               </c:forEach>
             </ul>
@@ -73,9 +73,9 @@
                 data-shift="${appointment.shiftId}"
                 data-date="${appointment.date}"
                 data-time="${appointment.getStartToEndTime()}">
-                <td>${appointment.date}</td>
-                <td>${appointment.getStartToEndTime()}</td>
-                <td>${appointment.address}</td>
+                <td><c:out value="${appointment.date}"/></td>
+                <td><c:out value="${appointment.getStartToEndTime()}"/></td>
+                <td><c:out value="${appointment.address}"/></td>
               </tr>
             </c:forEach>
           </tbody>

@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.createStudyForm;
+import ar.edu.itba.paw.form.CreateStudyForm;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -32,7 +34,7 @@ public class StudyController {
     private FileService fs;
 
     @RequestMapping(path = "/supersecret/upload/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.GET)
-    public ModelAndView createStudyForm(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @ModelAttribute("createStudyForm") createStudyForm createStudyForm){
+    public ModelAndView createStudyForm(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm){
         ModelAndView mav = new ModelAndView("createStudy");
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
         mav.addObject("patientName", patient.getName());
@@ -42,7 +44,7 @@ public class StudyController {
     }
 
     @RequestMapping(path = "/supersecret/upload/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
-    public ModelAndView createStudy(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @ModelAttribute("createStudyForm") createStudyForm createStudyForm, BindingResult errors) throws IOException{
+    public ModelAndView createStudy(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm, BindingResult errors) throws IOException{
         if (errors.hasErrors()) {
             return createStudyForm(patientId, doctorId, createStudyForm);
         }
