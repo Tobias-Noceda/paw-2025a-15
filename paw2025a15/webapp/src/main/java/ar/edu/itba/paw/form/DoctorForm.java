@@ -35,6 +35,7 @@ public class DoctorForm {
     @NotEmpty(message = "{doctorForm.address.notEmpty}")
     private String address;
 
+    @Size(min = 1, max = 50, message = "email must be less than 100 characters")
     @NotEmpty(message = "{doctorForm.email.notEmpty}")
     @Email(message = "{doctorForm.email.invalid}")
     private String email;
