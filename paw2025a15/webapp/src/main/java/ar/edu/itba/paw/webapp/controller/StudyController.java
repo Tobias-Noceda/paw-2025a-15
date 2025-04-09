@@ -15,7 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.createStudyForm;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.User;
 
 @Controller
 public class StudyController {
@@ -24,11 +26,16 @@ public class StudyController {
     private StudyService ss;
 
     @Autowired
+    private UserService us;
+
+    @Autowired
     private FileService fs;
 
     @RequestMapping(path = "/supersecret/upload/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @ModelAttribute("createStudyForm") createStudyForm createStudyForm){
         ModelAndView mav = new ModelAndView("createStudy");
+        User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
+        mav.addObject("patientName", patient.getName());
         mav.addObject("patientId", patientId);
         mav.addObject("doctorId", doctorId);
         return mav;
