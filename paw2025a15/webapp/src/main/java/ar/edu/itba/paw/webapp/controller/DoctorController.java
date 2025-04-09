@@ -31,6 +31,8 @@ import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.WeekdayEnum;
@@ -62,21 +64,69 @@ public class DoctorController {
     @Autowired
     private EmailService es;
 
-    private List<SelectItem> getHoursSelectItems() {
-        final List<SelectItem> times = new ArrayList<>();
-        for(Integer hour = 6;hour < 22;hour++){
-            StringBuilder a = new StringBuilder();
-            StringBuilder b = new StringBuilder();
-            if(hour < 10){
-                a.append("0");
-                b.append("0");
-            }
-            a.append(hour).append(":00");
-            b.append(hour).append(":30");
-            times.add(new SelectItem(a.toString(), a.toString()));
-            times.add(new SelectItem((b.toString()),b.toString()));
+    private ModelAndView renderIndexPage(Locale locale) {
+        final ModelAndView mav = new ModelAndView("index");
+
+        mav.addObject("insurances", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
+        mav.addObject("specialtySelectItems", getListOfSpecialties(locale));
+
+        return mav;
+    }
+
+    @RequestMapping("/")
+    public ModelAndView index(
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("filterForm") final FilterForm filterForm,
+        Locale locale
+    ) {
+        final ModelAndView mav = renderIndexPage(locale);
+        List<DoctorView> doctors;
+        // if (searchForm.getQuery() != null && !searchForm.getQuery().isEmpty()) {
+        //     doctors = dds.findDoctorsByName(searchForm.getQuery());
+        // } else {
+            doctors = dds.getAllDoctors();
+        //}
+        mav.addObject("docList", doctors);
+        
+        return mav;
+    }
+
+    @RequestMapping("/filter")
+    public ModelAndView filter(
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("filterForm") final FilterForm filterForm,
+        Locale locale
+    ){
+        ModelAndView mav = renderIndexPage(locale);
+        Insurance insurance;
+        if(filterForm.getInsurances() != null) {
+            insurance = is.getInsuranceById(filterForm.getInsurances()).orElse(null);
+        }else{
+            insurance = null;
         }
-        return times;
+
+        List<DoctorView> doctors = dds.getFilteredDoctor(
+                filterForm.getSpecialty(),
+                insurance,
+                filterForm.getWeekday()
+        );
+
+        mav.addObject("docList", doctors);
+
+        return mav;
+    }
+
+    @RequestMapping("/search")
+    public ModelAndView search(
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("filterForm") final FilterForm filterForm,
+        Locale locale
+    ) {
+        ModelAndView mav = renderIndexPage(locale);
+        List<DoctorView> doctors = dds.findDoctorsByName(searchForm.getQuery());
+        mav.addObject("docList", doctors);
+        return mav;
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
@@ -144,10 +194,26 @@ public class DoctorController {
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
         dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());//TODO change Schedule model or sth.
-        ModelAndView mav = new ModelAndView("index");
-        mav.addObject("docList", dds.getAllDoctors());
-        mav.addObject("searchForm", new SearchForm());
+        ModelAndView mav = new ModelAndView("redirect:/");
+
         return mav;
+    }
+
+    private List<SelectItem> getHoursSelectItems() {
+        final List<SelectItem> times = new ArrayList<>();
+        for(Integer hour = 6;hour < 22;hour++){
+            StringBuilder a = new StringBuilder();
+            StringBuilder b = new StringBuilder();
+            if(hour < 10){
+                a.append("0");
+                b.append("0");
+            }
+            a.append(hour).append(":00");
+            b.append(hour).append(":30");
+            times.add(new SelectItem(a.toString(), a.toString()));
+            times.add(new SelectItem((b.toString()),b.toString()));
+        }
+        return times;
     }
 
     private List<SelectItem> getListOfSpecialties(Locale locale) {

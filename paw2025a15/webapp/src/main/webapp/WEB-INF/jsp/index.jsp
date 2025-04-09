@@ -13,7 +13,10 @@
     <div class="page-container">
       <div class="landing-filters-box">
         <h1 class="landing-filters-title"><spring:message code="landing.filter.title"></spring:message></h1>
-        <form:form modelAttribute="filterForm" action="/filter" method="get">
+        <c:set var="filterUrl">
+          <c:url value="/filter" />
+        </c:set>
+        <form:form modelAttribute="filterForm" action="${filterUrl}" method="get">
           <div class="landing-filters-container">
             <div class="filter-container">
               <form:label path="insurances" class="filter-label">
@@ -31,7 +34,7 @@
               </form:label>
               <form:select path="weekday" class="filter-select">
                 <form:option value=""><spring:message code="landing.filter.weekdays"></spring:message></form:option>
-                <form:options itemLabel="name" itemValue="name" items="${weekdays}" />
+                <form:options items="${weekdaySelectItems}" itemLabel="label" itemValue="value" />
               </form:select>
             </div>
             
@@ -41,7 +44,7 @@
               </form:label>
               <form:select path="specialty" class="filter-select">
                 <form:option value=""><spring:message code="landing.filter.specialty"></spring:message></form:option>
-                <form:options itemLabel="name" itemValue="name" items="${specialty}" />
+                <form:options items="${specialtySelectItems}" itemLabel="label" itemValue="value" />
               </form:select>
             </div>
             

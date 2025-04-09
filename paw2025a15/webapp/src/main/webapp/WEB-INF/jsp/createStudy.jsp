@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
   <head>
     <meta charset="UTF-8">
@@ -12,16 +13,16 @@
     <div class="page-container">
       <h1 style="margin: 0;"><spring:message code="uploadStudies.title" arguments="${patientName}"></spring:message></h1>
       <div class="upload-card">
-        <form action="${pageContext.request.contextPath}/supersecret/upload/${patientId}/${doctorId}" method="post" enctype="multipart/form-data" name>
-            <div class="file-container">
-              <input name="file" type="file" accept=".png, .jpg, .jpeg, .pdf">
-            </div>
-            <p class="description-label"><spring:message code="uploadStudies.description"></spring:message></p>
-            <div class="description-container">
-              <input name ="type" type="text" path="type" class="upload-input"/>
-              <button type="submit" class="upload-button"><spring:message code="uploadStudies.button"></spring:message></button>
-            </div>
-        </form>
+        <form:form modelAttribute="createStudyForm" method="post" action="${pageContext.request.contextPath}/supersecret/upload/${patientId}/${doctorId}" enctype="multipart/form-data">
+          <div class="file-container">
+            <input name="file" type="file" accept=".png, .jpg, .jpeg, .pdf">
+          </div>
+          <p class="description-label"><spring:message code="uploadStudies.description"></spring:message></p>
+          <div class="description-container">
+            <form:input type="text" path="type" class="upload-input"/>
+            <button type="submit" class="upload-button"><spring:message code="uploadStudies.button"></spring:message></button>
+          </div>
+        </form:form>
       </div>
     </div>
   </body>

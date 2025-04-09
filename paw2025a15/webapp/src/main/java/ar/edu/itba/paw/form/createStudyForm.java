@@ -5,12 +5,12 @@ import javax.validation.constraints.Size;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class createStudyForm {
+public class CreateStudyForm {
 
-    @NotNull(message = "A file must be uploaded")
+    @NotNull(message = "${uploadStudies.file.errorMessage}")
     private MultipartFile file;
 
-    @Size(min = 1, max = 100, message = "Study information should be specified and in less than 100 characters")
+    @Size(min = 1, max = 100, message = "${uploadStudies.type.errorMessage}")
     private String type;
 
     public MultipartFile getFile(){
