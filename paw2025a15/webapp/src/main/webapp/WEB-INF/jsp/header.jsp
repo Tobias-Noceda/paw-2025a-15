@@ -26,6 +26,7 @@
           <img src="${imgSrc}" alt="Logo">
         </a>
       </div>
+      <!--
       <nav class="nav-links">
         <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title == studies}'>active</c:if>">
           <spring:message code="header.studies" />
@@ -34,7 +35,7 @@
           <spring:message code="header.ensurance" />
         </a>
       </nav>
-
+      -->
       <c:set var="barPlaceholder">
         <spring:message code="header.placeholder"/>
       </c:set>

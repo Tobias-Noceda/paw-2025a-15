@@ -114,7 +114,9 @@
               <form:label cssClass="form-title" path="amount">
                 <spring:message code="doctorForm.amount"/>
               </form:label>
-              <form:input type="number" path="amount" class="doctor-form-amount"/>
+              <form:input type="number" path="amount" class="doctor-form-amount"
+                          oninput="this.value = this.value.slice(0, 3)"
+                          onkeydown="if (this.value.length >= 3 && event.key !== 'Backspace' && event.key !== 'Delete') event.preventDefault();" />
             </div>
           </div>
     
