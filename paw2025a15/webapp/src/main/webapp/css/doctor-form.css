@@ -24,7 +24,7 @@
     gap: 10px;
 }
 
-.formError {
+.form-error {
     color: red;
     font-size: 12px;
 }

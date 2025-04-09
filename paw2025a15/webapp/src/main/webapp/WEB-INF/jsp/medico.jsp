@@ -19,7 +19,7 @@
       <div class="doctor-form-container">
         <form:form cssClass="doctor-form" modelAttribute="registerMedicForm" action="${postPath}" method="post">
           <div class="field-container">
-            <form:errors path="name" cssClass="formError" element="p"/>
+            <form:errors path="name" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="name">
                 <spring:message code="doctorForm.name"/>
@@ -29,7 +29,7 @@
           </div>
     
           <div class="field-container">
-            <form:errors path="surname" cssClass="formError" element="p"/>
+            <form:errors path="surname" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="surname">
                 <spring:message code="doctorForm.surname"/>
@@ -39,7 +39,7 @@
           </div>
     
           <div class="field-container">
-            <form:errors path="email" cssClass="formError" element="p"/>
+            <form:errors path="email" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="email">
                 <spring:message code="doctorForm.email"/>
@@ -49,7 +49,7 @@
           </div>
     
           <div class="field-container">
-            <form:errors path="speciality" cssClass="formError" element="p"/>
+            <form:errors path="speciality" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="speciality">
                 <spring:message code="doctorForm.specialty"/>
@@ -61,7 +61,7 @@
           </div>
     
           <div class="field-container">
-            <form:errors path="address" cssClass="formError" element="p"/>
+            <form:errors path="address" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="address">
                 <spring:message code="doctorForm.address"/>
@@ -109,7 +109,7 @@
           </div>
           
           <div class="field-container">
-            <form:errors path="amount" cssClass="formError" element="p"/>
+            <form:errors path="amount" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="amount">
                 <spring:message code="doctorForm.amount"/>

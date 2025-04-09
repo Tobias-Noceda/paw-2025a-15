@@ -5,11 +5,11 @@
 <html>
 <head>
     <title>Title</title>
-    <link rel="stylesheet" href="<c:url value="css/landing-page.css"/>">
+    <link rel="stylesheet" href="<c:url value="/css/landing-page.css"/>">
 </head>
 <body>
 <%-- userCard.jsp --%>
-<div class="doctorLanding-card">
+<div class="doctor-landing-card">
     <a href="/doctors/${param.id}" class="clickable-card">
         <h3>${param.doctorName}</h3>
         <p><spring:message code="specialty.${param.speciality}"></spring:message></p>

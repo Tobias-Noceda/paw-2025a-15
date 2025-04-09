@@ -12,6 +12,8 @@
     <jsp:include page="header.jsp">
       <jsp:param name="title" value="${title}"/>
     </jsp:include>
-    <h2>${title}</h2>
+    <div class="page-container">
+      <h2>${title}</h2>
+    </div>
   </body>
 </html>
