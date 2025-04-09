@@ -2,11 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 
@@ -19,7 +14,7 @@ public class InsuranceController {
     public InsuranceController(final InsuranceService is){
         this.is = is;
     }
-
+/*TODO
     @RequestMapping("/insurances/{id:\\d+}")
     public ModelAndView profile(@PathVariable("id") long id) {
         final ModelAndView mav = new ModelAndView("insurance");
@@ -53,5 +48,5 @@ public class InsuranceController {
         final ModelAndView mav = new ModelAndView("editInsurance");
         return mav;
     }
-
+*/
 }
