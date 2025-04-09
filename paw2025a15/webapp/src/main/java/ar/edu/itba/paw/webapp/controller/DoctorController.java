@@ -4,11 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.form.FilterForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,19 +19,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
+import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Controller
 public class DoctorController {
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     private UserService us;
@@ -49,6 +58,9 @@ public class DoctorController {
 
     @Autowired
     private InsuranceService is;
+
+    @Autowired
+    private EmailService es;
 
     private List<SelectItem> getHoursSelectItems() {
         final List<SelectItem> times = new ArrayList<>();
@@ -91,31 +103,38 @@ public class DoctorController {
 
         User patient = us.getUserByEmail(form.getEmail())
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
-        as.addApointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
-        mav.addObject("searchForm", new SearchForm());
+        Appointment appointment = as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+        DoctorShift shift = dss.getShiftById(form.getShiftId()).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
+        User doctor = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
+        es.sendTakenShiftEmail(patient, doctor, appointment, shift);
+
         return mav;
     }
 
     @RequestMapping("/medico")
-    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form) {
+    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
         final ModelAndView mav = new ModelAndView("medico");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
-        mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
+        mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
+        mav.addObject("specialtySelectItems", getListOfSpecialties(locale));
         mav.addObject("hoursSelectItems", getHoursSelectItems());
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }
-
+    
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(
-            @Valid @ModelAttribute("registerMedicForm") final DoctorForm form,
-            final BindingResult errors,
-            @ModelAttribute("filterForm") final FilterForm filterForm) {
+        @Valid @ModelAttribute("registerMedicForm") final DoctorForm form,
+        final BindingResult errors,
+        Locale locale,
+        @ModelAttribute("filterForm") final FilterForm filterForm
+    ) {
         if (errors.hasErrors()) {
             ModelAndView mav = new ModelAndView("medico");
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
-            mav.addObject("weekdaySelectItems", List.of(WeekdayEnum.values()));
+            mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
+            mav.addObject("specialtySelectItems", getListOfSpecialties(locale));
             mav.addObject("hoursSelectItems", getHoursSelectItems());
             mav.addObject("searchForm", new SearchForm());
             return mav;
@@ -129,6 +148,26 @@ public class DoctorController {
         mav.addObject("docList", dds.getAllDoctors());
         mav.addObject("searchForm", new SearchForm());
         return mav;
+    }
+
+    private List<SelectItem> getListOfSpecialties(Locale locale) {
+        final List<SelectItem> specialties = new ArrayList<>();
+        // For each specialty, create a SelectItem and add it to the list
+        for (SpecialtyEnum specialty : SpecialtyEnum.values()) {
+            specialties.add(new SelectItem(specialty.name(), messageSource.getMessage("specialty." + specialty.name(), null, locale)));
+        }
+
+        return specialties;
+    }
+
+    private List<SelectItem> getListOfWeekdays(Locale locale) {
+        final List<SelectItem> weekdays = new ArrayList<>();
+        // For each specialty, create a SelectItem and add it to the list
+        for (WeekdayEnum weekday : WeekdayEnum.values()) {
+            weekdays.add(new SelectItem(weekday.name(), messageSource.getMessage("weekday." + weekday.name(), null, locale)));
+        }
+
+        return weekdays;
     }
 
     protected class SelectItem {

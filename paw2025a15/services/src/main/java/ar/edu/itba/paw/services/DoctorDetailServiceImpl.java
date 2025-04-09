@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.SpecialtyEnum;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{

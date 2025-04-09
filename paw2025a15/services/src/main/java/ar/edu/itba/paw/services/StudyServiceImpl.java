@@ -1,13 +1,16 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Study;
 
 @Service
@@ -15,14 +18,23 @@ public class StudyServiceImpl implements StudyService{
 
     private final StudyDao studyDao;
 
+    private final FileService fs;
+
+    private final UserService us;
+
     @Autowired
-    public StudyServiceImpl(final StudyDao studyDao){
+    public StudyServiceImpl(final StudyDao studyDao, final FileService fs, final UserService us){
         this.studyDao = studyDao;
+        this.fs = fs;
+        this.us = us;
     }
 
     @Override
     public Study create(String type, long fileId, long userId, long uploaderId, LocalDateTime uploadDate) {
-        return studyDao.create(type, fileId, userId, uploaderId, uploadDate);
+        if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
+        if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
+        if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
+        return studyDao.create(type, fileId, userId, uploaderId, uploadDate);   
     }
 
     @Override

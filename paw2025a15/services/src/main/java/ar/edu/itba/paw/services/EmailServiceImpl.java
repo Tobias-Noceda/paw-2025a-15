@@ -16,6 +16,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import ar.edu.itba.paw.interfaces.services.EmailService;
+import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.User;
 
 @Service
 public class EmailServiceImpl implements EmailService{
@@ -26,7 +29,10 @@ public class EmailServiceImpl implements EmailService{
     @Autowired
     private TemplateEngine templateEngine;
 
-    private String emailFromString = "caretracehealth@gmail.com";
+    private final String emailFromString = "caretracehealth@gmail.com";
+
+    // private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
+    private final String baseURL = "http://localhost:8080/webapp/";
 
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
@@ -39,7 +45,6 @@ public class EmailServiceImpl implements EmailService{
     }
 
     @Override
-    @Async
     public void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName) throws MessagingException{
         Context context = new Context();
         context.setVariables(templateModel);
@@ -56,6 +61,7 @@ public class EmailServiceImpl implements EmailService{
     }
 
     @Override
+    @Async
     public void sendTestEmail() {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("name", "testName");
@@ -67,4 +73,24 @@ public class EmailServiceImpl implements EmailService{
         }
     }
 
+    @Override
+    @Async
+    public void sendTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        templateModel.put("monthName", "April");
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("uploadLink", baseURL + "supersecret/upload/" + patient.getId() + "/" + doctor.getId());
+
+        try {
+            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Confirmation", templateModel, "appointmentConfirmationTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
+    }
 }

@@ -1,8 +1,15 @@
 body {
-    margin: 0;
     flex-grow: 1;
     font-family: Arial, sans-serif;
     background-color: #d8eeff;
+    margin: 0;
+}
+
+.page-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    max-height: 100vh - 100px;
 }
 
 .topbar {
@@ -53,6 +60,16 @@ body {
     border-radius: 30px;
     height: 30px;
     text-align: left;
+}
+
+.search-bar-form {
+    margin: 0;
+}
+
+.search-bar-form input {
+    box-shadow: 0 0 0 1000px #0e3b6b inset !important; /* deep blue */
+    border: none !important;
+    -webkit-text-fill-color: white !important;
 }
 
 .search-bar-text {
@@ -111,5 +128,3 @@ body {
     display: inline-block;
     margin-left: 10px;
 }
-
-
