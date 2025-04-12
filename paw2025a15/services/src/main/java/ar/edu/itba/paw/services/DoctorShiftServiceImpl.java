@@ -98,9 +98,17 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     }
 
     @Override
+    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime) {
+        return doctorShiftDao.getShiftsByDoctorIdAndWeekdayAndStartTime(doctorId, weekday, startTime);
+    }
+
+    @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
         List<AvailableTurn> turns = new ArrayList<>();
-        List<DoctorShift> shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1));//-1 cause our enum starts at cero
+        List<DoctorShift> shifts = new ArrayList<>();
+        if(date.isBefore(LocalDate.now())) return turns;
+        else if(date.isEqual(LocalDate.now())) shifts = getShiftsByDoctorIdAndWeekdayAndStartTime(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), LocalTime.now());
+        else shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1));//-1 cause our enum starts at cero
         
         for (DoctorShift shift : shifts) {
             if(as.getAppointmentsByShiftIdAndDate(shift.getId(), date).isEmpty()){

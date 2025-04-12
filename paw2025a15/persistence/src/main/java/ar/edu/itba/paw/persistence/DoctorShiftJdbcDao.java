@@ -63,4 +63,10 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
           new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER}, ROW_MAPPER);
     }
 
+    @Override
+    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime) {
+        return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE doctor_id = ? AND shift_weekday = ? AND shift_start_time > ?", new Object[]  {doctorId, weekday.ordinal(), startTime},
+          new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.TIME}, ROW_MAPPER);
+    }
+
 }

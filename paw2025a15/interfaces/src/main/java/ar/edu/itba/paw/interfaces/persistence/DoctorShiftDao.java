@@ -15,4 +15,6 @@ public interface DoctorShiftDao {
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);
 
     public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday);
+
+    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime);
 }
