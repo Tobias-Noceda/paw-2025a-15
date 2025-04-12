@@ -34,8 +34,7 @@ public class EmailServiceImpl implements EmailService{
     private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
     // private final String baseURL = "http://localhost:8080/webapp/";
 
-    @Override
-    public void sendSimpleMessage(String to, String subject, String text) {
+    private void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -44,8 +43,7 @@ public class EmailServiceImpl implements EmailService{
         emailSender.send(message);
     }
 
-    @Override
-    public void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName) throws MessagingException{
+    private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName) throws MessagingException{
         Context context = new Context();
         context.setVariables(templateModel);
         String htmlBody = templateEngine.process(templateName, context);
@@ -58,19 +56,6 @@ public class EmailServiceImpl implements EmailService{
         helper.setFrom(emailFromString);
 
         emailSender.send(message);
-    }
-
-    @Override
-    @Async
-    public void sendTestEmail() {
-        Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("name", "testName");
-        templateModel.put("link", "http://pawserver.it.itba.edu.ar/paw-2025a-15/");
-        try {
-            sendSimpleMessageTemplate("testMail@gmail.com", "Test", templateModel, "testTemplate");
-        } catch (MessagingException e) {
-            // TODO catch
-        }
     }
 
     @Override
@@ -92,5 +77,27 @@ public class EmailServiceImpl implements EmailService{
         } catch (MessagingException e) {
             // TODO catch
         }
+    }
+
+	@Override
+	public void sendPatientCancellationEmails(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+		//TODO
+	}
+
+	@Override
+	public void sendDoctorCancellationEmails(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+		//TODO
+	}
+
+
+    @Async
+    private void sendCancelledAppointmentEmail(User affected, User canceller, Appointment appointment, DoctorShift shift, String templateName) {
+        //TODO
+    }
+
+    
+    @Async
+    private void sendCancellationConfirmationEmail(User user, User cancelUser, Appointment appointment, DoctorShift shift) {
+        //TODO
     }
 }

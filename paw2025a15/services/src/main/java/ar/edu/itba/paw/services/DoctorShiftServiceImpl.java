@@ -25,12 +25,9 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
 
     private final DoctorShiftDao doctorShiftDao;
 
-    private final AppointmentService as;
-
     @Autowired
-    public DoctorShiftServiceImpl(final DoctorShiftDao doctorShiftDao, final AppointmentService as){
+    public DoctorShiftServiceImpl(final DoctorShiftDao doctorShiftDao){
         this.doctorShiftDao = doctorShiftDao;
-        this.as = as;
     }
 
     @Override
@@ -98,14 +95,29 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     }
 
     @Override
+    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime) {
+        return doctorShiftDao.getShiftsByDoctorIdAndWeekdayAndStartTime(doctorId, weekday, startTime);
+    }
+
+    @Override
+    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date){
+        return doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, weekday, date);
+    }
+
+    @Override
+    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday, LocalDate date, LocalTime time){
+        return doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, weekday, date, time);
+    }
+
+    @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
         List<AvailableTurn> turns = new ArrayList<>();
-        List<DoctorShift> shifts = getShiftsByDoctorIdAndWeekday(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1));//-1 cause our enum starts at cero
-        
+        List<DoctorShift> shifts = new ArrayList<>();
+        if(date.isBefore(LocalDate.now())) return turns;
+        else if(date.isEqual(LocalDate.now())) shifts = getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date, LocalTime.now());
+        else shifts = getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date);
         for (DoctorShift shift : shifts) {
-            if(as.getAppointmentsByShiftIdAndDate(shift.getId(), date).isEmpty()){
-                turns.add(new AvailableTurn(date, shift.getStartTime(), shift.getEndTime(), shift.getAddress(), shift.getId()));
-            }
+            turns.add(new AvailableTurn(date, shift.getStartTime(), shift.getEndTime(), shift.getAddress(), shift.getId()));
         }
         return turns;
     }

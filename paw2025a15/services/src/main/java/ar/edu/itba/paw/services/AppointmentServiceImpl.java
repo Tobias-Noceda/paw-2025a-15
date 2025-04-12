@@ -2,27 +2,38 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentData;
+import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.User;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
 
     private final EmailService es;
 
+    private final UserService us;
+
+    private final DoctorShiftService dss;
+
     private final AppointmentDao appointmentDao;
 
     @Autowired
-    public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es){
+    public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss){
         this.appointmentDao = appointmentDao;
         this.es = es;
+        this.us = us;
+        this.dss = dss;
     }
 
     @Override
@@ -36,7 +47,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
+    public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
         return appointmentDao.getAppointmentsByShiftIdAndDate(shiftId, date);
     }
 
@@ -53,6 +64,18 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public List<AppointmentData> getAppointmentDataByDoctorId(long doctorId) {
         return appointmentDao.getAppointmentDataByDoctorId(doctorId);
+    }
+
+    @Override
+    public void cancelAppointment(long shiftId, LocalDate date, long cancelId) {
+        Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(()->new IllegalArgumentException("No such appointment"));
+        User patient = us.getUserById(appointment.getPatientId()).orElseThrow(()->new IllegalArgumentException("No such patient"));
+        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
+        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(()->new IllegalArgumentException("No such doctor"));
+        if(appointmentDao.removeAppointment(shiftId, date)){
+            if(cancelId==patient.getId()) es.sendPatientCancellationEmails(patient, doctor, appointment, shift);
+            else if(cancelId==doctor.getId()) es.sendDoctorCancellationEmails(patient, doctor, appointment, shift);
+        }
     }
 
 }

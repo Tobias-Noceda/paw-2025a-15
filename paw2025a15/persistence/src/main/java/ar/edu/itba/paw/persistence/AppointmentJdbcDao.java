@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -50,10 +51,10 @@ public class AppointmentJdbcDao implements AppointmentDao{
     }
 
     @Override
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
+    public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
         java.sql.Date sqlDate = java.sql.Date.valueOf(date);
         return jdbcTemplate.query("SELECT * FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, sqlDate},
-          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, ROW_MAPPER);
+          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, ROW_MAPPER).stream().findFirst();
     }
 
     @Override
@@ -74,6 +75,16 @@ public class AppointmentJdbcDao implements AppointmentDao{
         return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE ds.doctor_id = ?",
           new Object[]  {doctorId},
           new int[] {java.sql.Types.BIGINT}, (rs, rowNum) -> new AppointmentData(rs.getLong("shift_id"), rs.getString("patient_name"), rs.getString("doctor_name"), rs.getDate("appointment_date").toLocalDate(), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_end_time").toLocalTime(), rs.getString("shift_address")));
+    }
+
+    @Override
+    public boolean removeAppointment(long shiftId, LocalDate date) {
+        int rowsAffected = jdbcTemplate.update(
+            "DELETE FROM appointments WHERE shift_id = ? AND appointment_date = ?", 
+            new Object[]{shiftId, date},
+            new int[]{java.sql.Types.BIGINT, java.sql.Types.DATE}
+        );
+        return rowsAffected > 0;
     }
 
 }
