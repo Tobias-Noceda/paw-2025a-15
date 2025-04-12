@@ -1,0 +1,53 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<html>
+  <head>
+    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
+  </head>
+  <body>
+    <div class="page-container" style="display: flex; flex-direction: row;">
+        <div class="doctor-card">
+            <div class="doctor-info">
+              <h2 class="doctor-name"><c:out value="${patient.name}"/></h2>
+              <div class="doctor-image">
+                <img src="<c:url value='/resources/avatar.jpg'/>" alt="Patient Image" />
+              </div>
+              <p class="doctor-email"><c:out value="${patient.email}"/></p>
+              <div class="doctor-insurances-div">
+                <p class="doctor-insurances-label"><spring:message code="patient.details.insurance.label"/></p>
+                <p class="doctor-insurances">
+                  <c:if test="${patientInsurance != null}">
+                      <c:out value="${insurance.name}"/>
+                  </c:if>
+                </p>
+              </div>
+            </div>
+        </div>
+        <div class="shifts-list-container">
+            <table class="appointments-table">
+              <thead>
+                <tr>
+                  <th>Medico</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Dirección</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="appointment" items="${patientAppointments}">
+                  <tr class="appointment-row">
+                    <td><c:out value="${appointment.doctorName}"/></td>
+                    <td><c:out value="${appointment.date}"/></td>
+                    <td><c:out value="${appointment.getStartToEndTime()}"/></td>
+                    <td><c:out value="${appointment.address}"/></td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+        </div>
+    </div>
+  </body>
+</html>

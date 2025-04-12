@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class PatientCoverageServiceImpl implements PatientCoverageService{
     }
 
     @Override
-    public List<Insurance> getInsurancesById(long patientId) {
-        return patientCoverageDao.getInsurancesById(patientId);
+    public Optional<Insurance> getInsuranceById(long patientId) {
+        return patientCoverageDao.getInsuranceById(patientId);
     }
 
 }

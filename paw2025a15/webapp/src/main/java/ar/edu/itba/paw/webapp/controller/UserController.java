@@ -1,22 +1,35 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.PatientCoverageService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.User;
 
 @Controller
 public class UserController {
 
-    @RequestMapping(value = "/register", method=RequestMethod.POST)
-    public ModelAndView register(@RequestParam(value = "email", required = true) final String email, @RequestParam(value = "password", required = true) final String password, @RequestParam(value = "name", required = true) final String name){
-        final var mav = new ModelAndView("index");
-        return mav;
-    }
+    @Autowired
+    private UserService us;
 
-    @RequestMapping(value = "/register", method=RequestMethod.GET)
-    public ModelAndView registerForm() {
-        return new ModelAndView("register");
+    @Autowired
+    private PatientCoverageService pcs;
+
+    @Autowired
+    private AppointmentService as;
+
+    @RequestMapping("/patients/{id:\\d+}")
+    public ModelAndView patientProfile(@PathVariable("id") long id){
+        ModelAndView mav = new ModelAndView("patientProfile");
+        User patient = us.getUserById(id).orElseThrow(()->new IllegalArgumentException("No such patient"));
+        mav.addObject("patient", patient);
+        mav.addObject("patientInsurance", pcs.getInsuranceById(id));
+        mav.addObject("patientAppointments", as.getAppointmentDataByPatientId(id));
+        return mav;
     }
 }

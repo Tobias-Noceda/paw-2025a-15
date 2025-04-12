@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -46,9 +47,9 @@ public class PatientCoverageJdbcDao implements PatientCoverageDao{
     }
 
     @Override
-    public List<Insurance> getInsurancesById(long patientId) {
+    public Optional<Insurance> getInsuranceById(long patientId) {
         String sql = "SELECT insurances.* from insurances JOIN patient_coverages ON patient_coverages.insurance_id = insurances.insurance_id WHERE patient_coverages.patient_id = ?";
-        return jdbcTemplate.query(sql, new Object[]{patientId}, new int[]{java.sql.Types.BIGINT}, ROW_MAPPER);
+        return jdbcTemplate.query(sql, new Object[]{patientId}, new int[]{java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
     }
 
 }

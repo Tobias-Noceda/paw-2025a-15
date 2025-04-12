@@ -10,6 +10,7 @@ import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AppointmentData;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
@@ -42,6 +43,11 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public List<Appointment> getAppointmentsByPatientId(long patientId) {
         return appointmentDao.getAppointmentsByPatientId(patientId);
+    }
+
+    @Override
+    public List<AppointmentData> getAppointmentDataByPatientId(long patientId) {
+        return appointmentDao.getAppointmentDataByPatientId(patientId);
     }
 
 }
