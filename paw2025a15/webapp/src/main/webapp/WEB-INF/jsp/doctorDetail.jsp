@@ -62,9 +62,9 @@
         <table class="appointments-table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Dirección</th>
+              <th><spring:message code="doctorDetail.dateColumn"></spring:message></th>
+              <th><spring:message code="doctorDetail.timeColumn"></spring:message></th>
+              <th><spring:message code="doctorDetail.addressColumn"></spring:message></th>
             </tr>
           </thead>
           <tbody>
@@ -86,10 +86,16 @@
     <!-- Dialog Element -->
     <dialog id="appointmentDialog">
       <div class="dialog-content">
-        <h2>Reservar Turno</h2>
+        <h2><spring:message code="doctorDetail.popup.title"></spring:message></h2>
 
-        <div class="appointment-data"><p class="appointment-data-label">Fecha:</p> <span id="dateSpan"></span></div>
-        <div class="appointment-data"><p class="appointment-data-label">Hora:</p> <span id="timeSpan"></span></div>
+        <div class="appointment-data">
+          <p class="appointment-data-label"><spring:message code="doctorDetail.popup.date"></spring:message></p>
+          <span id="dateSpan"></span>
+        </div>
+        <div class="appointment-data">
+          <p class="appointment-data-label"><spring:message code="doctorDetail.popup.time"></spring:message></p>
+          <span id="timeSpan"></span>
+        </div>
 
         <c:url value="/doctors/${doctorId}" var="postPath"/>
         <form:form modelAttribute="takeTurnForm" method="POST" action="${postPath}">
@@ -100,35 +106,35 @@
 
           <!-- Name -->
           <div class="form-group">
-            <form:label path="name">Nombre:</form:label>
+            <form:label path="name"><spring:message code="doctorDetail.popup.name"></spring:message></form:label>
             <form:input type="text" path="name"/>
           </div>
           <form:errors path="name" cssClass="error-message"/>
 
           <!-- Surname -->
           <div class="form-group">
-            <form:label path="surname">Apellido:</form:label>
+            <form:label path="surname"><spring:message code="doctorDetail.popup.surname"></spring:message></form:label>
             <form:input type="text" path="surname"/>
           </div>
           <form:errors path="surname" cssClass="error-message"/>
 
           <!-- Email -->
           <div class="form-group">
-            <form:label path="email">Correo Electrónico:</form:label>
+            <form:label path="email"><spring:message code="doctorDetail.popup.email"></spring:message></form:label>
             <form:input type="text" path="email"/>
           </div>
           <form:errors path="email" cssClass="error-message"/>
 
           <!-- Phone -->
           <div class="form-group">
-            <form:label path="phoneNumber">Teléfono:</form:label>
+            <form:label path="phoneNumber"><spring:message code="doctorDetail.popup.telephone"></spring:message></form:label>
             <form:input type="tel" path="phoneNumber"/>
           </div>
           <form:errors path="phoneNumber" cssClass="error-message"/>
 
           <div class="form-buttons">
-            <button type="submit">Reservar</button>
-            <button type="button" id="closeDialog">Cancelar</button>
+            <button type="submit"><spring:message code="doctorDetail.popup.takeAppointment"></spring:message></button>
+            <button type="button" id="closeDialog"><spring:message code="doctorDetail.popup.cancelAppointment"></spring:message></button>
           </div>
         </form:form>
       </div>
