@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.PatientCoverageService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
@@ -21,15 +22,28 @@ public class UserController {
     private PatientCoverageService pcs;
 
     @Autowired
+    private DoctorCoverageService dcs;
+
+    @Autowired
     private AppointmentService as;
 
-    @RequestMapping("/patients/{id:\\d+}")
+    @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("patientProfile");
         User patient = us.getUserById(id).orElseThrow(()->new IllegalArgumentException("No such patient"));
         mav.addObject("patient", patient);
         mav.addObject("patientInsurance", pcs.getInsuranceById(id));
         mav.addObject("patientAppointments", as.getAppointmentDataByPatientId(id));
+        return mav;
+    }
+
+    @RequestMapping("/doctorProfile/{id:\\d+}")
+    public ModelAndView doctorProfile(@PathVariable("id") long id){
+        ModelAndView mav = new ModelAndView("doctorProfile");
+        User patient = us.getUserById(id).orElseThrow(()->new IllegalArgumentException("No such doctor"));
+        mav.addObject("doctor", patient);
+        mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
+        mav.addObject("doctorAppointments", as.getAppointmentDataByDoctorId(id));
         return mav;
     }
 }

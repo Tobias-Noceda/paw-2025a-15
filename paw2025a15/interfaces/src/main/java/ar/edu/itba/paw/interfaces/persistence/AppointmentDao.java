@@ -16,4 +16,6 @@ public interface AppointmentDao {
     public List<Appointment> getAppointmentsByPatientId(long patientId);
 
     public List<AppointmentData> getAppointmentDataByPatientId(long patientId);
+
+    public List<AppointmentData> getAppointmentDataByDoctorId(long doctorId);
 }

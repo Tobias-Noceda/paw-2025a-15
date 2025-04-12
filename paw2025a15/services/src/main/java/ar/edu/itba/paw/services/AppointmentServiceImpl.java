@@ -50,4 +50,9 @@ public class AppointmentServiceImpl implements AppointmentService{
         return appointmentDao.getAppointmentDataByPatientId(patientId);
     }
 
+    @Override
+    public List<AppointmentData> getAppointmentDataByDoctorId(long doctorId) {
+        return appointmentDao.getAppointmentDataByDoctorId(doctorId);
+    }
+
 }

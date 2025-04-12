@@ -11,16 +11,18 @@
     <div class="page-container" style="display: flex; flex-direction: row;">
         <div class="doctor-card">
             <div class="doctor-info">
-              <h2 class="doctor-name"><c:out value="${patient.name}"/></h2>
+              <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
               <div class="doctor-image">
-                <img src="<c:url value='/resources/avatar.jpg'/>" alt="Patient Image" />
+                <img src="<c:url value='/resources/avatar.jpg'/>" alt="Doctor Image" />
               </div>
-              <p class="doctor-email"><c:out value="${patient.email}"/></p>
+              <p class="doctor-email"><c:out value="${doctor.email}"/></p>
               <div class="doctor-insurances-div">
                 <p class="doctor-insurances">
-                  <c:if test="${patientInsurance != null}">
-                      <p class="doctor-insurances-label"><spring:message code="patient.profile.insurance.label"/></p>
-                      <c:out value="${insurance.name}"/>
+                  <c:if test="${doctorInsurances != null}">
+                    <p class="doctor-insurances-label"><spring:message code="doctor.profile.insurance.label"/></p>
+                    <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
+                        <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
+                    </c:forEach>
                   </c:if>
                 </p>
               </div>
@@ -30,19 +32,19 @@
             <table class="appointments-table">
               <thead>
                 <tr>
-                  <th>Medico</th>
                   <th>Fecha</th>
                   <th>Hora</th>
                   <th>Dirección</th>
+                  <th>Paciente</th>
                 </tr>
               </thead>
               <tbody>
-                <c:forEach var="appointment" items="${patientAppointments}">
+                <c:forEach var="appointment" items="${doctorAppointments}">
                   <tr class="appointment-row">
-                    <td><c:out value="${appointment.doctorName}"/></td>
                     <td><c:out value="${appointment.date}"/></td>
                     <td><c:out value="${appointment.getStartToEndTime()}"/></td>
                     <td><c:out value="${appointment.address}"/></td>
+                    <td><c:out value="${appointment.patientName}"/></td>
                   </tr>
                 </c:forEach>
               </tbody>
