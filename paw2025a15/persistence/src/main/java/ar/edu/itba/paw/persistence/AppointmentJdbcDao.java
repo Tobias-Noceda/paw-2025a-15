@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -49,10 +50,10 @@ public class AppointmentJdbcDao implements AppointmentDao{
     }
 
     @Override
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
+    public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
         java.sql.Date sqlDate = java.sql.Date.valueOf(date);
         return jdbcTemplate.query("SELECT * FROM appointments WHERE shift_id = ? AND appointment_date = ?", new Object[]  {shiftId, sqlDate},
-          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, ROW_MAPPER);
+          new int[] {java.sql.Types.BIGINT, java.sql.Types.DATE}, ROW_MAPPER).stream().findFirst();
     }
 
     @Override

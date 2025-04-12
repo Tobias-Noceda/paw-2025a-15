@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import ar.edu.itba.paw.models.Appointment;
 
@@ -10,7 +11,7 @@ public interface AppointmentService {
 
     public List<Appointment> getAppointmentsByShiftId(long shiftId);
 
-    public List<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);//TODO ya no es list es un Optional
+    public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);
 
     public List<Appointment> getAppointmentsByPatientId(long patientId);
 }
