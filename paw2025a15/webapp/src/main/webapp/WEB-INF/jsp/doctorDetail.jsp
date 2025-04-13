@@ -122,7 +122,7 @@
 
           <!-- Name -->
           <div class="form-column">
-            <form:errors path="name" cssClass="error-message"/>  
+            <form:errors path="name" cssClass="form-error"/>  
             <div class="form-group">
               <form:label path="name"><spring:message code="doctorDetail.popup.name"></spring:message></form:label>
               <form:input type="text" path="name"/>
@@ -131,7 +131,7 @@
 
           <!-- Surname -->
           <div class="form-column">
-            <form:errors path="surname" cssClass="error-message"/>
+            <form:errors path="surname" cssClass="form-error"/>
             <div class="form-group">
               <form:label path="surname"><spring:message code="doctorDetail.popup.surname"></spring:message></form:label>
               <form:input type="text" path="surname"/>
@@ -140,7 +140,7 @@
 
           <!-- Email -->
           <div class="form-column">
-            <form:errors path="email" cssClass="error-message"/>
+            <form:errors path="email" cssClass="form-error"/>
             <div class="form-group">
               <form:label path="email"><spring:message code="doctorDetail.popup.email"></spring:message></form:label>
               <form:input type="text" path="email"/>
@@ -149,7 +149,7 @@
 
           <!-- Phone -->
           <div class="form-column">
-            <form:errors path="phoneNumber" cssClass="error-message"/>
+            <form:errors path="phoneNumber" cssClass="form-error"/>
             <div class="form-group">
               <form:label path="phoneNumber"><spring:message code="doctorDetail.popup.telephone"></spring:message></form:label>
               <form:input type="tel" path="phoneNumber"/>
