@@ -13,31 +13,30 @@ import ar.edu.itba.paw.models.SpecialtyEnum;
 
 
 public class DoctorForm {
-    @Size(min = 1, max = 50, message = "name must be less than 50 characters")
-    @NotEmpty(message = "{doctorForm.name.notEmpty}")
+    @Size(min = 1, max = 50, message = "{form.name.size}")
+    @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
 
-    @Size(min = 1, max = 50, message = "surname must be less than 50 characters")
-    @NotEmpty(message = "{doctorForm.surname.notEmpty}")
+    @Size(min = 1, max = 50, message = "{form.surname.size}")
+    @NotEmpty(message = "{form.surname.notEmpty}")
     private String surname;
 
-    @NotNull(message = "{doctorForm.specialty.notNull}")
+    @NotNull(message = "{form.specialty.notNull}")
     private SpecialtyEnum speciality;
 
-    @NotNull(message = "{doctorForm.obrasSociales.notNull}")
-    //@NotEmpty(message = "{doctorForm.obrasSociales.notEmpty}")
+    @NotNull(message = "{form.insurances.notNull}")
     private List<Long> ObrasSociales;
 
-    @NotNull(message = "{doctorForm.schedules.notNull}")
+    @NotNull(message = "{form.schedules.notNull}")
     private Schedule schedules;
 
-    @Size(min = 1, max = 50, message = "address must be less than 50 characters")
-    @NotEmpty(message = "{doctorForm.address.notEmpty}")
+    @Size(min = 1, max = 50, message = "{form.address.size}")
+    @NotEmpty(message = "{form.address.notEmpty}")
     private String address;
 
-    @Size(min = 1, max = 50, message = "email must be less than 100 characters")
-    @NotEmpty(message = "{doctorForm.email.notEmpty}")
-    @Email(message = "{doctorForm.email.invalid}")
+    @Size(min = 1, max = 100, message = "{form.email.size}")
+    @NotEmpty(message = "{dorm.email.notEmpty}")
+    @Email(message = "{form.email.invalid}")
     private String email;
 
     @NotNull(message = "{doctorForm.amount.notNull}")

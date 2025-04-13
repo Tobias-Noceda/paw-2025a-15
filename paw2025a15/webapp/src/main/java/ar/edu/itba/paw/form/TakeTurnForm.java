@@ -1,19 +1,23 @@
 package ar.edu.itba.paw.form;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import ar.edu.itba.paw.annotation.ValidArgPhone;
+
 public class TakeTurnForm {
-    @Size(min = 1, max = 100)
-    //@Pattern(regexp = "[a-zA-Z]+") TODO rethink logic
+    @Size(min = 1, max = 50, message = "{form.name.size}")
+    @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
 
-    @Size(min = 1, max = 100)
-    //@Pattern(regexp = "[a-zA-Z]+")
+    @Size(min = 1, max = 50, message = "{form.surname.size}")
+    @NotEmpty(message = "{form.surname.notEmpty}")
     private String surname;
     
-    @Email
+    @Size(min = 1, max = 100, message = "{form.email.size}")
+    @NotEmpty(message = "{form.email.notEmpty}")
+    @Email(message = "{form.email.invalid}")
     private String email;
 
     @Size(min = 11, max = 13)
@@ -71,6 +75,18 @@ public class TakeTurnForm {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getMonthDate() {
+        return date.substring(8, 10);
+    }
+    
+    public String getMonth() {
+        return date.substring(5, 7);
+    }
+
+    public String getYear() {
+        return date.substring(0, 4);
     }
 
     public String getTimeRange() {
