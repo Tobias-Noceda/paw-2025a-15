@@ -20,9 +20,7 @@ public class TakeTurnForm {
     @Email(message = "{form.email.invalid}")
     private String email;
 
-    @Size(min = 11, max = 13)
-    // between 2 and 4 digits, followed by a space, followed by 8 digits
-    @Pattern(regexp = "\\d{2,4} \\d{8}")
+    @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
     private int shiftId;
