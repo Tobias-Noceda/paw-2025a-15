@@ -156,7 +156,8 @@ public class DoctorController {
         Appointment appointment = as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
         DoctorShift shift = dss.getShiftById(form.getShiftId()).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
         User doctor = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
-        es.sendTakenShiftEmail(patient, doctor, appointment, shift);
+        es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
+        es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
 
         return mav;
     }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -33,6 +34,9 @@ public class StudyController {
     @Autowired
     private FileService fs;
 
+    @Autowired
+    private EmailService es;
+
     @RequestMapping(path = "/supersecret/upload/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm){
         ModelAndView mav = new ModelAndView("createStudy");
@@ -50,10 +54,18 @@ public class StudyController {
         }
         //TODO esta verificacion tendria que e star en el form directamente
         //if (fileType == null || !(fileType.equals("image/png") || fileType.equals("image/jpeg") || fileType.equals("application/pdf"))) {
-//throw new IllegalArgumentException("Unsupported file type: " + fileType);
-       // }
+        //throw new IllegalArgumentException("Unsupported file type: " + fileType);
+        // }
+        User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
+        User doctor = us.getUserById(doctorId).orElseThrow(() -> new IllegalArgumentException("Invalid doctor ID: " + doctorId));
+        LocalDateTime dateTime = LocalDateTime.now();
+        
         File f = fs.create(createStudyForm.getFile().getBytes(), createStudyForm.getFile().getContentType());
-        ss.create(createStudyForm.getType(), f.getId(), patientId, doctorId, LocalDateTime.now());
+        ss.create(createStudyForm.getType(), f.getId(), patientId, doctorId, dateTime);
+
+
+        es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getType(), dateTime);
+
         return new ModelAndView("redirect:/");
     }
 }

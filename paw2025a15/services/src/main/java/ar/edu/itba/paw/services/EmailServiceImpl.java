@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,6 +20,7 @@ import org.thymeleaf.context.Context;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
 
 @Service
@@ -61,6 +64,23 @@ public class EmailServiceImpl implements EmailService{
     }
 
     @Override
+    public void sendMessageWithFileTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, byte[] file, String fileType, String fileName) throws MessagingException {
+        Context context = new Context();
+        context.setVariables(templateModel);
+        String htmlBody = templateEngine.process(templateName, context);
+
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlBody, true);
+        helper.setFrom(emailFromString);
+        helper.addAttachment(fileName, new ByteArrayDataSource(file, fileType));
+
+        emailSender.send(message);
+    }
+
+    @Override
     @Async
     public void sendTestEmail() {
         Map<String, Object> templateModel = new HashMap<>();
@@ -75,20 +95,77 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendDoctorTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "resources/icono.jpg");
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
+        // TODO: get month name
         templateModel.put("monthName", "April");
         templateModel.put("address", shift.getAddress());
+        templateModel.put("email", patient.getEmail());
+        // TODO: get phone
+        templateModel.put("phone", "11 1234-5678");
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("uploadLink", baseURL + "supersecret/upload/" + patient.getId() + "/" + doctor.getId());
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Confirmation", templateModel, "appointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Confirmation", templateModel, "doctorAppointmentConfirmationTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
+    }
+
+    @Override
+    @Async
+    public void sendPatientTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        // TODO: get month name
+        templateModel.put("monthName", "April");
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", doctor.getEmail());
+        // TODO: get phone
+        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("startTime", shift.getStartTime().toString());
+        // TODO: real shifts list link
+        templateModel.put("shiftsLink", baseURL);
+
+        try {
+            sendSimpleMessageTemplate(patient.getEmail(), "Appointment Confirmation", templateModel, "patientAppointmentConfirmationTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
+    }
+
+    @Override
+    @Async
+    public void sendRecievedStudyEmail(User patient, User doctor, File file, String description, LocalDateTime dateTime) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("description", description);
+        // TODO: replace with real watch file link
+        templateModel.put("watchLink", baseURL);
+        
+        StringBuilder fileName = new StringBuilder();
+        fileName.append("Study_")
+            .append(patient.getName().replace(" ", "-"))
+            .append("_")
+            .append(dateTime.toString().replace(":", "-"))
+            .append(".")
+            .append(file.getType().split("/")[1]);
+
+        try {
+            sendMessageWithFileTemplate(patient.getEmail(), "Recieved Study", templateModel, "recievedStudyTemplate", file.getContent(), file.getType(), fileName.toString());
         } catch (MessagingException e) {
             // TODO catch
         }

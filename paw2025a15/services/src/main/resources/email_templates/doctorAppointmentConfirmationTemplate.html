@@ -80,15 +80,16 @@
       </tr>
       <tr>
         <td class="content">
-          <p th:text="#{takenShift.firstRow (${doctorName})}"></p>
-          <p th:text="#{takenShift.secondRow(${patientName}, ${dateNumber}, #{${monthName}}, ${startTime}, ${address})}"></p>
-          <p th:text="#{takenShift.thirdRow}"></p>
+          <p th:text="#{takenShift.firstRow(${doctorName})}"></p>
+          <p th:text="#{takenShift.doctor.secondRow(${patientName}, ${dateNumber}, #{${monthName}}, ${startTime}, ${address})}"></p>
+          <p th:text="#{takenShift.thirdRow(${email}, ${phone})}"></p>
+          <p th:text="#{takenShift.doctor.fourthRow}"></p>
         </td>
       </tr>
       <tr>
         <td class="email-button-cont">
           <a th:href="${uploadLink}" class="email-button">
-            <p th:text="#{takenShift.button}"></p>
+            <p th:text="#{takenShift.doctor.button}"></p>
           </a>
         </td>
       </tr>
