@@ -5,7 +5,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.annotation.ValidArgPhone;
+import ar.edu.itba.paw.form.constraints.AvailableTurn;
+import ar.edu.itba.paw.form.constraints.ValidTurnStart;
 
+@ValidTurnStart
+@AvailableTurn
 public class TakeTurnForm {
     @Size(min = 1, max = 50, message = "{form.name.size}")
     @NotEmpty(message = "{form.name.notEmpty}")
@@ -89,6 +93,13 @@ public class TakeTurnForm {
 
     public String getTimeRange() {
         return timeRange;
+    }
+
+    public String getStartTime() {
+        if (timeRange == null || !timeRange.contains("-")) {
+            return null;
+        }
+        return timeRange.split("-")[0];
     }
 
     public void setTimeRange(String timeRange) {
