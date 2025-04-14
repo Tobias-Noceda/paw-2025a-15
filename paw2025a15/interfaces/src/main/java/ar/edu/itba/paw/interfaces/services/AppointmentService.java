@@ -16,9 +16,13 @@ public interface AppointmentService {
 
     public List<Appointment> getAppointmentsByPatientId(long patientId);
 
-    public List<AppointmentData> getAppointmentDataByPatientId(long patientId);
+    public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId);
 
-    public List<AppointmentData> getAppointmentDataByDoctorId(long doctorId);
+    public List<AppointmentData> getOldAppointmentDataByPatientId(long patientId);
+
+    public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId);
+
+    public List<AppointmentData> getOldAppointmentDataByDoctorId(long doctorId);
 
     public void cancelAppointment(long shiftId, LocalDate date, long cancelId);
 }

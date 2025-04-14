@@ -33,7 +33,8 @@ public class UserController {
         User patient = us.getUserById(id).orElseThrow(()->new IllegalArgumentException("No such patient"));
         mav.addObject("patient", patient);
         mav.addObject("patientInsurance", pcs.getInsuranceById(id));
-        mav.addObject("patientAppointments", as.getAppointmentDataByPatientId(id));
+        mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(id));
+        mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(id));
         return mav;
     }
 
@@ -43,7 +44,8 @@ public class UserController {
         User patient = us.getUserById(id).orElseThrow(()->new IllegalArgumentException("No such doctor"));
         mav.addObject("doctor", patient);
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
-        mav.addObject("doctorAppointments", as.getAppointmentDataByDoctorId(id));
+        mav.addObject("doctorFutureAppointments", as.getFutureAppointmentDataByDoctorId(id));
+        mav.addObject("doctorOldAppointments", as.getOldAppointmentDataByDoctorId(id));
         return mav;
     }
 }

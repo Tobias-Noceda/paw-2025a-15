@@ -57,13 +57,23 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public List<AppointmentData> getAppointmentDataByPatientId(long patientId) {
-        return appointmentDao.getAppointmentDataByPatientId(patientId);
+    public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId) {
+        return appointmentDao.getFutureAppointmentDataByPatientId(patientId);
     }
 
     @Override
-    public List<AppointmentData> getAppointmentDataByDoctorId(long doctorId) {
-        return appointmentDao.getAppointmentDataByDoctorId(doctorId);
+    public List<AppointmentData> getOldAppointmentDataByPatientId(long patientId) {
+        return appointmentDao.getOldAppointmentDataByPatientId(patientId);
+    }
+
+    @Override
+    public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {
+        return appointmentDao.getFutureAppointmentDataByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<AppointmentData> getOldAppointmentDataByDoctorId(long doctorId) {
+        return appointmentDao.getOldAppointmentDataByDoctorId(doctorId);
     }
 
     @Override

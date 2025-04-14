@@ -37,7 +37,27 @@
                 </tr>
               </thead>
               <tbody>
-                <c:forEach var="appointment" items="${patientAppointments}">
+                <c:forEach var="appointment" items="${patientFutureAppointments}">
+                  <tr class="appointment-row">
+                    <td><c:out value="${appointment.doctorName}"/></td>
+                    <td><c:out value="${appointment.date}"/></td>
+                    <td><c:out value="${appointment.getStartToEndTime()}"/></td>
+                    <td><c:out value="${appointment.address}"/></td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+            <table class="appointments-table">
+              <thead>
+                <tr>
+                  <th>Medico</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Dirección</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="appointment" items="${patientOldAppointments}">
                   <tr class="appointment-row">
                     <td><c:out value="${appointment.doctorName}"/></td>
                     <td><c:out value="${appointment.date}"/></td>
