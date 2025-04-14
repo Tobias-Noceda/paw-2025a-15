@@ -36,6 +36,7 @@
                   <th>Hora</th>
                   <th>Dirección</th>
                   <th>Paciente</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -45,6 +46,11 @@
                     <td><c:out value="${appointment.getStartToEndTime()}"/></td>
                     <td><c:out value="${appointment.address}"/></td>
                     <td><c:out value="${appointment.patientName}"/></td>
+                    <td>
+                      <form action="/doctorCancelAppointment/${doctor.id}/${appointment.shiftId}/${appointment.date}" method="post" onsubmit="return confirm('¿Estás seguro que quieres cancelar esta cita?');">
+                        <button type="submit">Cancelar</button>
+                      </form>
+                    </td>
                   </tr>
                 </c:forEach>
               </tbody>
@@ -56,7 +62,6 @@
                   <th>Hora</th>
                   <th>Dirección</th>
                   <th>Paciente</th>
-                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -66,11 +71,6 @@
                     <td><c:out value="${appointment.getStartToEndTime()}"/></td>
                     <td><c:out value="${appointment.address}"/></td>
                     <td><c:out value="${appointment.patientName}"/></td>
-                    <td>
-                      <form action="/doctorCancelAppointment/${patient.id}/${appointment.shiftId}/${appointment.date}" method="post" onsubmit="return confirm('¿Estás seguro que quieres cancelar esta cita?');">
-                        <button type="submit">Cancelar</button>
-                      </form>
-                    </td>
                   </tr>
                 </c:forEach>
               </tbody>
