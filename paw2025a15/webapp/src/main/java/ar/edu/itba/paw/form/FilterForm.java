@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.form;
 
-import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.WeekdayEnum;
 
