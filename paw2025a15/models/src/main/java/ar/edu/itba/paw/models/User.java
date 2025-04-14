@@ -23,6 +23,17 @@ public class User {
         this.pictureId = pictureId;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", pictureId=" + pictureId +
+                '}';
+    }
+
     public long getId(){
         return id;
     }
@@ -33,6 +44,10 @@ public class User {
 
     public String getName(){
         return name;
+    }
+
+    public String getPassword(){
+        return password;
     }
 
     public long getPictureId(){

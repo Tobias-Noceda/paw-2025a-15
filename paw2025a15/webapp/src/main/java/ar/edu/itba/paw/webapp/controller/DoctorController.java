@@ -8,8 +8,11 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -75,7 +78,16 @@ public class DoctorController {
     }
 
     @RequestMapping("/")
-    public ModelAndView index(
+    public ModelAndView index(Locale locale) {
+        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final long userId = us.getUserByEmail(userDetails.getUsername()).orElseThrow(()->new UsernameNotFoundException("Username not found")).getId();
+        return new  ModelAndView("redirect:/home");
+    }
+
+
+
+    @RequestMapping("/home")
+    public ModelAndView index (
         @ModelAttribute("searchForm") final SearchForm searchForm,
         @ModelAttribute("filterForm") final FilterForm filterForm,
         Locale locale
@@ -88,9 +100,10 @@ public class DoctorController {
             doctors = dds.getAllDoctors();
         //}
         mav.addObject("docList", doctors);
-        
+
         return mav;
     }
+
 
     @RequestMapping("/filter")
     public ModelAndView filter(
