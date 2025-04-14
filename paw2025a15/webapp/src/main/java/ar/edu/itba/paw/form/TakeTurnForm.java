@@ -4,9 +4,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import ar.edu.itba.paw.form.constraints.AvailableTurn;
 import ar.edu.itba.paw.form.constraints.ValidTurnStart;
 
 @ValidTurnStart
+@AvailableTurn
 public class TakeTurnForm {
     @Size(min = 1, max = 100)
     //@Pattern(regexp = "[a-zA-Z]+") TODO rethink logic
