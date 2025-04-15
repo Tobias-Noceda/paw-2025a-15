@@ -17,4 +17,6 @@ public interface UserService {
     public Optional<User> getUserById(long id);
 
     public Optional<User> getUserByEmail(String email);
+
+    void changePassword(String email, String password);
 }

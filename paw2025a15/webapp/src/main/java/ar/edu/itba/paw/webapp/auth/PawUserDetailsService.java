@@ -12,12 +12,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 
 @Component
 public class PawUserDetailsService implements UserDetailsService {
 
     private final UserService us;
+
+    private final Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[.0-9A-Za-z]{53}");
 
     @Autowired
     public PawUserDetailsService(final UserService us) {
@@ -28,7 +31,11 @@ public class PawUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         final User user = us.getUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
-
+        if(!BCRYPT_PATTERN.matcher(user.getPassword()).matches()){
+            // TODO: pedirle al usuario que actualice contra, por mail y hashearle la contra
+            us.changePassword(email, user.getPassword());
+            return loadUserByUsername(email);
+        }
         System.out.println("superado?  " + user.getEmail() + " " + user.getPassword());
 
         //TODO:Implement logic to grant only required authorities 

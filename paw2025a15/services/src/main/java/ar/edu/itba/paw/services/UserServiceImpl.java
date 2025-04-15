@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
@@ -20,9 +21,16 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private DoctorDetailService dds;
 
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     public User create(String email, String password, String name, long pictureId) {
-        return userDao.create(email, password, name, pictureId);
+        return userDao.create(email, passwordEncoder.encode(password), name, pictureId);
     }
 
     @Override
@@ -52,5 +60,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<User> getUserByEmail(String email) {
         return userDao.getUserByEmail(email);
+    }
+
+    @Override
+    public void changePassword(String email, String password) {
+        userDao.changePassword(email, passwordEncoder.encode(password));
     }
 }
