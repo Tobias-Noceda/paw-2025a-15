@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,18 +27,12 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     private final DoctorShiftService dss;
 
-    private final UserService us;
-
-    private final DoctorShiftService dss;
-
     private final AppointmentDao appointmentDao;
 
     @Autowired
     public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss){
         this.appointmentDao = appointmentDao;
         this.es = es;
-        this.us = us;
-        this.dss = dss;
         this.us = us;
         this.dss = dss;
     }
