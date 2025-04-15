@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
@@ -10,14 +11,17 @@
   <body>
     <jsp:include page="header.jsp"/>
     <c:if test="${takeTurnForm.name != null}">
-      <c:set var="dialogDate" value="${takeTurnForm.date}"/>
-      <c:set var="dialogTime" value="${takeTurnForm.timeRange}"/>
-      <c:set var="dialogShiftId" value="${takeTurnForm.shiftId}"/>
+      <c:set var="myLocalDate">
+        <spring:message code="dateFormat" arguments="${takeTurnForm.monthDate},${takeTurnForm.month},${takeTurnForm.year}"></spring:message>
+      </c:set>
+      <c:set var="myTime" value="${takeTurnForm.timeRange}"/>
       <script>
         document.addEventListener("DOMContentLoaded", function() {
-          // Set the values in the dialog
-          document.getElementById("dateSpan").innerText = "${dialogDate}";
-          document.getElementById("timeSpan").innerText = "${dialogTime}";
+          document.getElementById("dateSpan").innerText = "${myLocalDate}";
+          document.getElementById("timeSpan").innerText = "${myTime}";
+
+          document.getElementById("dialogLocalDate").value = "${takeTurnForm.date}";
+          document.getElementById("dialogTime").value = "${myTime}";
 
           document.getElementById("appointmentDialog").showModal();
         });
@@ -62,18 +66,28 @@
         <table class="appointments-table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Dirección</th>
+              <th><spring:message code="doctorDetail.dateColumn"></spring:message></th>
+              <th><spring:message code="doctorDetail.timeColumn"></spring:message></th>
+              <th><spring:message code="doctorDetail.addressColumn"></spring:message></th>
             </tr>
           </thead>
           <tbody>
             <c:forEach var="appointment" items="${doctorAppointments}">
+              <c:set var="day">
+                <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
+              </c:set>
+              <c:set var="month">
+                <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
+              </c:set>
+              <c:set var="year" value="${appointment.date.year}" />
               <tr class="appointment-row"
                 data-shift="${appointment.shiftId}"
-                data-date="${appointment.date}"
+                data-localDate="${appointment.date}"
+                data-formattedDate='<spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>'
                 data-time="${appointment.getStartToEndTime()}">
-                <td><c:out value="${appointment.date}"/></td>
+                <td>
+                  <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>
+                </td>
                 <td><c:out value="${appointment.getStartToEndTime()}"/></td>
                 <td><c:out value="${appointment.address}"/></td>
               </tr>
@@ -86,49 +100,65 @@
     <!-- Dialog Element -->
     <dialog id="appointmentDialog">
       <div class="dialog-content">
-        <h2>Reservar Turno</h2>
+        <h2><spring:message code="doctorDetail.popup.title"></spring:message></h2>
 
-        <div class="appointment-data"><p class="appointment-data-label">Fecha:</p> <span id="dateSpan"></span></div>
-        <div class="appointment-data"><p class="appointment-data-label">Hora:</p> <span id="timeSpan"></span></div>
+        <div class="appointment-data">
+          <p class="appointment-data-label">
+            <spring:message code="doctorDetail.popup.date"></spring:message>
+          </p>
+          <span id="dateSpan"></span>
+        </div>
+        <div class="appointment-data">
+          <p class="appointment-data-label"><spring:message code="doctorDetail.popup.time"></spring:message></p>
+          <span id="timeSpan"></span>
+        </div>
 
         <c:url value="/doctors/${doctorId}" var="postPath"/>
         <form:form modelAttribute="takeTurnForm" method="POST" action="${postPath}">
           <!-- Hidden Fields -->
           <form:input type="hidden" path="shiftId" id="dialogShiftId"/>
-          <form:input type="hidden" path="date" id="dialogDate"/>
+          <form:input type="hidden" path="date" id="dialogLocalDate"/>
           <form:input type="hidden" path="timeRange" id="dialogTime"/>
 
           <!-- Name -->
-          <div class="form-group">
-            <form:label path="name">Nombre:</form:label>
-            <form:input type="text" path="name"/>
+          <div class="form-column">
+            <form:errors path="name" cssClass="form-error"/>  
+            <div class="form-group">
+              <form:label path="name"><spring:message code="doctorDetail.popup.name"></spring:message></form:label>
+              <form:input type="text" path="name"/>
+            </div>
           </div>
-          <form:errors path="name" cssClass="error-message"/>
 
           <!-- Surname -->
-          <div class="form-group">
-            <form:label path="surname">Apellido:</form:label>
-            <form:input type="text" path="surname"/>
+          <div class="form-column">
+            <form:errors path="surname" cssClass="form-error"/>
+            <div class="form-group">
+              <form:label path="surname"><spring:message code="doctorDetail.popup.surname"></spring:message></form:label>
+              <form:input type="text" path="surname"/>
+            </div>
           </div>
-          <form:errors path="surname" cssClass="error-message"/>
 
           <!-- Email -->
-          <div class="form-group">
-            <form:label path="email">Correo Electrónico:</form:label>
-            <form:input type="text" path="email"/>
+          <div class="form-column">
+            <form:errors path="email" cssClass="form-error"/>
+            <div class="form-group">
+              <form:label path="email"><spring:message code="doctorDetail.popup.email"></spring:message></form:label>
+              <form:input type="text" path="email"/>
+            </div>
           </div>
-          <form:errors path="email" cssClass="error-message"/>
 
           <!-- Phone -->
-          <div class="form-group">
-            <form:label path="phoneNumber">Teléfono:</form:label>
-            <form:input type="tel" path="phoneNumber"/>
+          <div class="form-column">
+            <form:errors path="phoneNumber" cssClass="form-error"/>
+            <div class="form-group">
+              <form:label path="phoneNumber"><spring:message code="doctorDetail.popup.telephone"></spring:message></form:label>
+              <form:input type="tel" path="phoneNumber"/>
+            </div>
           </div>
-          <form:errors path="phoneNumber" cssClass="error-message"/>
 
           <div class="form-buttons">
-            <button type="submit">Reservar</button>
-            <button type="button" id="closeDialog">Cancelar</button>
+            <button type="submit"><spring:message code="doctorDetail.popup.takeAppointment"></spring:message></button>
+            <button type="button" id="closeDialog"><spring:message code="doctorDetail.popup.cancelAppointment"></spring:message></button>
           </div>
         </form:form>
       </div>

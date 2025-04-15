@@ -1,29 +1,30 @@
 package ar.edu.itba.paw.form;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import ar.edu.itba.paw.annotation.ValidArgPhone;
 import ar.edu.itba.paw.form.constraints.AvailableTurn;
 import ar.edu.itba.paw.form.constraints.ValidTurnStart;
 
 @ValidTurnStart
 @AvailableTurn
 public class TakeTurnForm {
-    @Size(min = 1, max = 100)
-    //@Pattern(regexp = "[a-zA-Z]+") TODO rethink logic
+    @Size(min = 1, max = 50, message = "{form.name.size}")
+    @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
 
-    @Size(min = 1, max = 100)
-    //@Pattern(regexp = "[a-zA-Z]+")
+    @Size(min = 1, max = 50, message = "{form.surname.size}")
+    @NotEmpty(message = "{form.surname.notEmpty}")
     private String surname;
     
-    @Email
+    @Size(min = 1, max = 100, message = "{form.email.size}")
+    @NotEmpty(message = "{form.email.notEmpty}")
+    @Email(message = "{form.email.invalid}")
     private String email;
 
-    @Size(min = 11, max = 13)
-    // between 2 and 4 digits, followed by a space, followed by 8 digits
-    @Pattern(regexp = "\\d{2,4} \\d{8}")
+    @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
     private int shiftId;
@@ -76,6 +77,18 @@ public class TakeTurnForm {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getMonthDate() {
+        return date.substring(8, 10);
+    }
+    
+    public String getMonth() {
+        return date.substring(5, 7);
+    }
+
+    public String getYear() {
+        return date.substring(0, 4);
     }
 
     public String getTimeRange() {

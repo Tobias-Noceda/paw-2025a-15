@@ -240,10 +240,17 @@ button:hover {
     margin: 0 5px 0 0;
 }
 
-/* Labels and Inputs Side by Side */
+.form-column {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
 .form-group {
     display: flex;
     align-items: center;
+    margin-top: 5px;
 }
 
 /* Labels */
@@ -257,11 +264,4 @@ button:hover {
 .form-group input {
     flex: 1;
     padding: 5px;
-}
-
-/* Error Messages (Above the input) */
-.error-message {
-    color: red;
-    font-size: 12px;
-    margin-bottom: 5px;
 }

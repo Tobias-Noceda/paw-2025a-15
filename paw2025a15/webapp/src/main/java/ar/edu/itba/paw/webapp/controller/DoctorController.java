@@ -26,6 +26,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Appointment;
@@ -58,6 +59,9 @@ public class DoctorController {
 
     @Autowired
     private InsuranceService is;
+
+    @Autowired
+    private EmailService es;
 
     private ModelAndView renderIndexPage(Locale locale) {
         final ModelAndView mav = new ModelAndView("index");
@@ -149,6 +153,7 @@ public class DoctorController {
         User patient = us.getUserByEmail(form.getEmail())
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
         Appointment appointment = as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+
         return mav;
     }
 
