@@ -92,8 +92,14 @@ public class AppointmentServiceImpl implements AppointmentService{
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(()->new IllegalArgumentException("No such doctor"));
         if(appointmentDao.removeAppointment(shiftId, date)){
-            if(cancelId==patient.getId()) es.sendPatientCancellationEmails(patient, doctor, appointment, shift);
-            else if(cancelId==doctor.getId()) es.sendDoctorCancellationEmails(patient, doctor, appointment, shift);
+            if(cancelId==patient.getId()){
+                es.sendPatientCancellationConfirmationEmail(patient, doctor, appointment, shift);
+                es.sendDoctorCancelledAppointmentEmail(patient, doctor, appointment, shift);
+            }
+            else if(cancelId==doctor.getId()){
+                es.sendDoctorCancellationConfirmationEmail(patient, doctor, appointment, shift);
+                es.sendPatientCancelledAppointmentEmail(patient, doctor, appointment, shift);
+            }
         }
     }
 

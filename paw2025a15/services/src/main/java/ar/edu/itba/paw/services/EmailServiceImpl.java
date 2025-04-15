@@ -61,8 +61,7 @@ public class EmailServiceImpl implements EmailService{
         emailSender.send(message);
     }
 
-    @Override
-    public void sendMessageWithFileTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, byte[] file, String fileType, String fileName) throws MessagingException {
+    private void sendMessageWithFileTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, byte[] file, String fileType, String fileName) throws MessagingException {
         Context context = new Context();
         context.setVariables(templateModel);
         String htmlBody = templateEngine.process(templateName, context);
@@ -76,19 +75,6 @@ public class EmailServiceImpl implements EmailService{
         helper.addAttachment(fileName, new ByteArrayDataSource(file, fileType));
 
         emailSender.send(message);
-    }
-
-    @Override
-    @Async
-    public void sendTestEmail() {
-        Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("name", "testName");
-        templateModel.put("link", "http://pawserver.it.itba.edu.ar/paw-2025a-15/");
-        try {
-            sendSimpleMessageTemplate("testMail@gmail.com", "Test", templateModel, "testTemplate");
-        } catch (MessagingException e) {
-            // TODO catch
-        }
     }
 
     @Override
@@ -169,25 +155,98 @@ public class EmailServiceImpl implements EmailService{
         }
     }
 
-	@Override
-	public void sendPatientCancellationEmails(User patient, User doctor, Appointment appointment, DoctorShift shift) {
-		//TODO
-	}
 
-	@Override
-	public void sendDoctorCancellationEmails(User patient, User doctor, Appointment appointment, DoctorShift shift) {
-		//TODO
-	}
-
-
+    @Override
     @Async
-    private void sendCancelledAppointmentEmail(User affected, User canceller, Appointment appointment, DoctorShift shift, String templateName) {
-        //TODO
+    public void sendDoctorCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        // TODO: get month name
+        templateModel.put("monthName", "April");
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", patient.getEmail());
+        // TODO: get phone
+        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+
+        try {
+            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Cancellation", templateModel, "doctorCancelledAppointmentTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
     }
 
-    
+    @Override
     @Async
-    private void sendCancellationConfirmationEmail(User user, User cancelUser, Appointment appointment, DoctorShift shift) {
-        //TODO
+    public void sendPatientCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        // TODO: get month name
+        templateModel.put("monthName", "April");
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", doctor.getEmail());
+        // TODO: get phone
+        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+
+        try {
+            sendSimpleMessageTemplate(patient.getEmail(), "Appointment Cancellation", templateModel, "patientCancelledAppointmentTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
+    }
+
+    @Override
+    @Async
+    public void sendDoctorCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        // TODO: get month name
+        templateModel.put("monthName", "April");
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+
+        try {
+            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Cancellation", templateModel, "doctorCancelledAppointmentConfirmationTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
+    }
+
+    @Override
+    @Async
+    public void sendPatientCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        // TODO: get month name
+        templateModel.put("monthName", "April");
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+
+        try {
+            sendSimpleMessageTemplate(patient.getEmail(), "Appointment Cancellation", templateModel, "patientCancelledAppointmentConfirmationTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
     }
 }
