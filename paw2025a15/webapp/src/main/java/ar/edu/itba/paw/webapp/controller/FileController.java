@@ -42,7 +42,7 @@ public class FileController {
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")
+    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
         Optional<File> f = fs.findById(id);
         if (!f.isPresent()) {

@@ -77,15 +77,13 @@
               <thead>
                 <tr>
                   <th>Tipo de estudio</th>
-                  <th>FileId</th>
                   <th>Fecha de subida</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="study" items="${patientStudies}">
-                  <tr class="appointment-row">
+                  <tr class="appointment-row" data-fileid="<c:out value='${study.fileId}'/>">
                     <td><c:out value="${study.type}"/></td>
-                    <td><c:out value="${study.fileId}"/></td>
                     <td><c:out value="${study.uploadDate}"/></td>
                   </tr>
                 </c:forEach>
@@ -93,5 +91,11 @@
             </table>
         </div>
     </div>
+
+    <dialog id="fileDialog" class="file-dialog">
+      <button id="closeFileDialog" class="close-button">Cerrar</button>
+      <iframe id="fileViewer" src="" frameborder="0" style="width: 100%; height: 80vh;"></iframe>
+    </dialog>
+    <script src="<c:url value="/js/turnConfirmationModal.js"/>"></script>
   </body>
 </html>
