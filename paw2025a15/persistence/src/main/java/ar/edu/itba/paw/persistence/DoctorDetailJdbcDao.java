@@ -26,9 +26,14 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     private static final RowMapper<DoctorDetail> ROW_MAPPER = (rs, rowNum) -> new DoctorDetail(rs.getLong("doctor_id"), rs.getString("doctor_licence"), SpecialtyEnum.fromInt(rs.getInt("doctor_specialty")));
 
     private final RowMapper<DoctorView> DV_ROW_MAPPER = (rs, rowNum) -> {
-        DoctorView doc = new DoctorView(rs.getLong("doctor_id"), rs.getString("user_name"), SpecialtyEnum.fromInt(rs.getInt("doctor_specialty")));
-        doc.setInsurances(getInsurancesById(rs.getLong("doctor_id")));
-        doc.setWeekdays(getWeekdaysById(rs.getLong("doctor_id")));
+        DoctorView doc = new DoctorView(
+            rs.getLong("doctor_id"),
+            rs.getString("user_name"),
+            SpecialtyEnum.fromInt(rs.getInt("doctor_specialty")),
+            rs.getLong("picture_id"),
+            getInsurancesById(rs.getLong("doctor_id")),
+            getWeekdaysById(rs.getLong("doctor_id"))
+        );
         return doc;
     };
     
@@ -61,7 +66,10 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public List<DoctorView> getAllDoctors() {
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id",
+                """
+                SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
+                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
+                """,
                 DV_ROW_MAPPER
         );
     }
