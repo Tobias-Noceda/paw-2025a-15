@@ -95,3 +95,20 @@ CREATE TABLE IF NOT EXISTS doctor_details (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
+REATE TABLE IF NOT EXISTS auth_doctors (
+    doctor_id BIGINT NOT NULL,
+    patient_id BIGINT NOT NULL,
+
+    PRIMARY KEY(doctor_id, patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id),
+    FOREIGN KEY (patient_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS auth_studies (
+    doctor_id BIGINT NOT NULL,
+    study_id BIGINT NOT NULL,
+
+    PRIMARY KEY(doctor_id, study_id),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id),
+    FOREIGN KEY (study_id) REFERENCES studies(study_id)
+);
