@@ -54,7 +54,9 @@
 }
 
 .doctor-insurances-div,
-.doctor-specialty-div {
+.doctor-specialty-div,
+.doctor-address-div,
+.doctor-license-div {
     display: flex;
     flex-direction: row;
     font-size: 16px;
@@ -62,7 +64,9 @@
 }
 
 .doctor-insurances-label,
-.doctor-specialty-label {
+.doctor-specialty-label,
+.doctor-address-label,
+.doctor-license-label {
     color: black;
     font-weight: 700;
     margin: 0 5px 0 0;
@@ -75,7 +79,9 @@
 }
 
 .doctor-insurances,
-.doctor-specialty {
+.doctor-specialty,
+.doctor-address,
+.doctor-license {
     color: #555;
     margin: 0;
 }

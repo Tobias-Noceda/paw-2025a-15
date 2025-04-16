@@ -32,20 +32,28 @@
         <div class="doctor-info">
           <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
           <div class="doctor-image">
-            <img src="<c:url value='/resources/avatar.jpg'/>" alt="Doctor Image" />
+            <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
           </div>
           <p class="doctor-email"><c:out value="${doctor.email}"/></p>
           <div class="doctor-insurances-div">
             <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
             <p class="doctor-insurances">
               <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
-                  <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
+                <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
               </c:forEach>
             </p>
           </div>
           <div class="doctor-specialty-div">
             <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
             <p class="doctor-specialty"><spring:message code="specialty.${doctorDetail.specialty}"/></p>
+          </div>
+          <div class="doctor-address-div">
+            <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
+            <p class="doctor-address"><c:out value="${doctorShifts[0].address}"/></p>
+          </div>
+          <div class="doctor-license-div">
+            <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
+            <p class="doctor-license"><c:out value="${doctorDetail.licence}"/></p>
           </div>
           <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
           <div class="doctor-schedule">
@@ -55,7 +63,7 @@
                   <spring:message code="weekday.${schedule.weekday.name}"/>
                 </c:set>
                 <li>
-                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}, ${schedule.address}" htmlEscape="true"/>
+                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}" htmlEscape="true"/>
                 </li>
               </c:forEach>
             </ul>
@@ -113,7 +121,7 @@
           <span id="timeSpan"></span>
         </div>
 
-        <c:url value="/doctors/${doctorId}" var="postPath"/>
+        <c:url value="/doctors/${doctor.id}" var="postPath"/>
         <form:form modelAttribute="takeTurnForm" method="POST" action="${postPath}">
           <!-- Hidden Fields -->
           <form:input type="hidden" path="shiftId" id="dialogShiftId"/>
