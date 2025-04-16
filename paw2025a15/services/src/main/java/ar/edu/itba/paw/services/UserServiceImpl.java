@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User createDoctor(String email, String password, String name, String licence, SpecialtyEnum speciality){
-        User doc = create(email ,password, name);
+        User doc = create(email ,passwordEncoder.encode(password), name);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }

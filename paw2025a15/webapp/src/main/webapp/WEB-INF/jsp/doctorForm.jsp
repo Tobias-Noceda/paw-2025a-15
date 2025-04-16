@@ -47,6 +47,16 @@
               <form:input type="text" path="email" class="doctor-form-input"/>
             </div>
           </div>
+
+          <div class="field-container">
+            <form:errors path="password" cssClass="form-error" element="p"/>
+            <div class="field-info-container">
+              <form:label cssClass="form-title" path="email">
+                <spring:message code="doctorForm.password"/>
+              </form:label>
+              <form:input type="password" path="password" class="doctor-form-input"/>
+            </div>
+          </div>
     
           <div class="field-container">
             <form:errors path="speciality" cssClass="form-error" element="p"/>

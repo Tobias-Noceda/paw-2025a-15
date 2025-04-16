@@ -21,6 +21,9 @@ public class DoctorForm {
     @NotEmpty(message = "{doctorForm.surname.notEmpty}")
     private String surname;
 
+    @Size(min=8)
+    @NotEmpty
+    private String password;
     @NotNull(message = "{doctorForm.specialty.notNull}")
     private SpecialtyEnum speciality;
 
@@ -45,7 +48,13 @@ public class DoctorForm {
     private int amount;
 
 
+    public String getPassword() {
+        return password;
+    }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
     public String getAddress() {
         return address;
     }
