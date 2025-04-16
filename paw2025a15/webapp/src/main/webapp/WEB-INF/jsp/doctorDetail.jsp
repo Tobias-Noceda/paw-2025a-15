@@ -71,6 +71,12 @@
         </div>
       </div>
       <div class="shifts-list-container">
+        <c:url value="/doctors/${doctor.id}" var="getPath"/>
+        <form:form class="month-dropdown-div" action="${getPath}" method="GET" modelAttribute="shiftsMonthForm">
+          <form:select cssClass="month-dropdown" path="month" id="monthSelect" onchange="this.form.submit()">
+            <form:options cssClass="dropdown-options" items="${possibleMonths}" itemValue="value" itemLabel="label" />
+          </form:select>
+        </form:form>
         <table class="appointments-table">
           <thead>
             <tr>

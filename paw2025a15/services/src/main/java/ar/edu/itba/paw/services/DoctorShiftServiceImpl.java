@@ -111,7 +111,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
         List<AvailableTurn> turns = new ArrayList<>();
-        List<DoctorShift> shifts = new ArrayList<>();
+        List<DoctorShift> shifts;
         if(date.isBefore(LocalDate.now())) return turns;
         else if(date.isEqual(LocalDate.now())) shifts = getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date, LocalTime.now());
         else shifts = getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date);
@@ -145,6 +145,4 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
             return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfMonth, endOfMonth);
         }
     }
-
-
 }
