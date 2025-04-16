@@ -73,6 +73,24 @@
                 </c:forEach>
               </tbody>
             </table>
+            <table class="appointments-table">
+              <thead>
+                <tr>
+                  <th>Tipo de estudio</th>
+                  <th>FileId</th>
+                  <th>Fecha de subida</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="study" items="${patientStudies}">
+                  <tr class="appointment-row">
+                    <td><c:out value="${study.type}"/></td>
+                    <td><c:out value="${study.fileId}"/></td>
+                    <td><c:out value="${study.uploadDate}"/></td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
         </div>
     </div>
   </body>

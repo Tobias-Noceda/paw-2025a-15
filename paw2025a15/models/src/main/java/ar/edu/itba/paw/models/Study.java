@@ -40,7 +40,7 @@ public class Study {
         return uploaderId;
     }
 
-    public LocalDateTime getUpLocalDateTime(){
+    public LocalDateTime getUploadDate(){
         return uploadDate;
     }
 }

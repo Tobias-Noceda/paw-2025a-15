@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -40,6 +41,11 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public Optional<Study> getStudyById(long id) {
         return studyDao.getStudyById(id);
+    }
+
+    @Override
+    public List<Study> getStudiesByPatientId(long id) {
+        return studyDao.getStudiesByPatientId(id);
     }
 
 }

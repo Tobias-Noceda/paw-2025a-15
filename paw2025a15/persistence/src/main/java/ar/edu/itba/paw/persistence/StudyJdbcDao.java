@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,6 +48,12 @@ public class StudyJdbcDao implements StudyDao{
     public Optional<Study> getStudyById(long id) {
         return jdbcTemplate.query("SELECT * FROM studies WHERE study_id = ?", new Object[]  {id},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
+    public List<Study> getStudiesByPatientId(long id) {
+        return jdbcTemplate.query("SELECT * FROM studies WHERE user_id = ?", new Object[]  {id},
+          new int[] {java.sql.Types.BIGINT}, ROW_MAPPER);
     }
 
 }

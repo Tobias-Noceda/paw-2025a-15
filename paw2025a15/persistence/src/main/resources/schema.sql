@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS doctor_details (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
-REATE TABLE IF NOT EXISTS auth_doctors (
+CREATE TABLE IF NOT EXISTS auth_doctors (
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
 

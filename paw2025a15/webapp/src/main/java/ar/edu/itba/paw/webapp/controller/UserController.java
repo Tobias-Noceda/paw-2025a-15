@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.PatientCoverageService;
+import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 
@@ -31,6 +32,9 @@ public class UserController {
     @Autowired
     private AppointmentService as;
 
+    @Autowired
+    private StudyService ss;
+
     @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("patientProfile");
@@ -39,6 +43,7 @@ public class UserController {
         mav.addObject("patientInsurance", pcs.getInsuranceById(id));
         mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(id));
         mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(id));
+        mav.addObject("patientStudies", ss.getStudiesByPatientId(id));
         return mav;
     }
 
