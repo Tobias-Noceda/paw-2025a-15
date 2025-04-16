@@ -26,10 +26,8 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
@@ -60,9 +58,6 @@ public class DoctorController {
     @Autowired
     private InsuranceService is;
 
-    @Autowired
-    private EmailService es;
-
     private ModelAndView renderIndexPage(Locale locale) {
         final ModelAndView mav = new ModelAndView("index");
 
@@ -80,12 +75,7 @@ public class DoctorController {
         Locale locale
     ) {
         final ModelAndView mav = renderIndexPage(locale);
-        List<DoctorView> doctors;
-        // if (searchForm.getQuery() != null && !searchForm.getQuery().isEmpty()) {
-        //     doctors = dds.findDoctorsByName(searchForm.getQuery());
-        // } else {
-            doctors = dds.getAllDoctors();
-        //}
+        List<DoctorView> doctors = dds.getAllDoctors();
         mav.addObject("docList", doctors);
         
         return mav;
@@ -136,7 +126,6 @@ public class DoctorController {
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
         mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, LocalDate.now().getMonth()));
-        mav.addObject("doctorId", id);
         mav.addObject("searchForm", new SearchForm());
 
         return mav;
@@ -152,7 +141,7 @@ public class DoctorController {
 
         User patient = us.getUserByEmail(form.getEmail())
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
-        Appointment appointment = as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+        as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
 
         return mav;
     }
