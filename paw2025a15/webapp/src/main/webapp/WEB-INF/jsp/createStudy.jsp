@@ -24,12 +24,12 @@
                 <p>Type:</p><!--TODO inter!!-->
               </form:label>
               <form:select  path="type" cssClass="form-select">
-                <form:options items="${studyTypeSelectItems}" itemValue="name()" itemLabel="getName()" />
+                <form:options items="${studyTypeSelectItems}" itemValue="name" itemLabel="displayName" />
               </form:select>
             </div>
           <p class="description-label"><spring:message code="uploadStudies.description"></spring:message></p>
           <div class="description-container">
-            <form:input type="text" path="type" class="upload-input"/>
+            <form:input type="text" path="comment" class="upload-input"/>
             <button type="submit" class="upload-button"><spring:message code="uploadStudies.button"></spring:message></button>
           </div>
         </form:form>

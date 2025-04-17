@@ -89,7 +89,7 @@
                     </c:set>
                     <td><c:out value="${myStudyType}"/></td>
                     <td><c:out value="${study.comment}"/></td>
-                    <td><c:out value="${study.uploadDate}"/></td>
+                    <td><c:out value="${study.uploadDate}"/></td><!--TODO: con internacionalizacion se le puede dar e formato preferido por idioma tmb-->
                   </tr>
                 </c:forEach>
               </tbody>

@@ -11,14 +11,14 @@ public enum StudyTypeEnum {
     ELECTROCARDIOGRAM("Electrocardiogram"),
     VACCINATION_RECORD("Vaccination record");
 
-    private final String name;
+    private final String displayName;
 
-    StudyTypeEnum(String name){
-        this.name = name;
+    StudyTypeEnum(String displayName){
+        this.displayName = displayName;
     }
 
-    public String getName(){
-        return name;
+    public String getdisplayName(){
+        return displayName;
     }
 
     public static StudyTypeEnum fromInt(int num) {
