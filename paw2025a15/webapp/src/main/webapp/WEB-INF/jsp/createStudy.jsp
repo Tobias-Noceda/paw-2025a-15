@@ -24,7 +24,7 @@
                 <p>Type:</p><!--TODO inter!!-->
               </form:label>
               <form:select  path="type" cssClass="form-select">
-                <form:options items="${studyTypeSelectItems}" itemValue="name" itemLabel="name" />
+                <form:options items="${studyTypeSelectItems}" itemValue="name()" itemLabel="getName()" />
               </form:select>
             </div>
           <p class="description-label"><spring:message code="uploadStudies.description"></spring:message></p>

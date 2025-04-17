@@ -4,9 +4,9 @@ public class File {
 
     private final long id;
     private final byte[] content;
-    private final String type;
+    private final FileTypeEnum type;
 
-    public File(long id, byte[] content, String type){
+    public File(long id, byte[] content, FileTypeEnum type){
         this.content = content;
         this.id = id;
         this.type = type;
@@ -20,7 +20,7 @@ public class File {
         return id;
     }
 
-    public String getType(){
+    public FileTypeEnum getType(){
         return type;
     }
 }

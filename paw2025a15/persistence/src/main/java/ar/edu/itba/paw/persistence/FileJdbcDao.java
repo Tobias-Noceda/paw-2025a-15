@@ -14,11 +14,12 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.FileDao;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.FileTypeEnum;
 
 @Repository
 public class FileJdbcDao implements FileDao{
 
-    private static final RowMapper<File> ROW_MAPPER = (rs, rowNum) -> new File(rs.getLong("file_id"), rs.getBytes("file_content"), rs.getString("file_type"));
+    private static final RowMapper<File> ROW_MAPPER = (rs, rowNum) -> new File(rs.getLong("file_id"), rs.getBytes("file_content"), FileTypeEnum.fromInt(rs.getInt("file_type")));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -37,10 +38,10 @@ public class FileJdbcDao implements FileDao{
     }
 
     @Override
-    public File create(byte[] content, String type) {
+    public File create(byte[] content, FileTypeEnum type) {
         final Map<String, Object> args = new HashMap<>();
         args.put("file_content", content); 
-        args.put("file_type", type); 
+        args.put("file_type", type.ordinal()); 
         final Number file_id = jdbcInsert.executeAndReturnKey(args);
         return new File(file_id.longValue(), content, type);
     }

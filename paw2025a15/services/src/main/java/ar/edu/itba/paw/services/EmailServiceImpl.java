@@ -146,10 +146,10 @@ public class EmailServiceImpl implements EmailService{
             .append("_")
             .append(dateTime.toString().replace(":", "-"))
             .append(".")
-            .append(file.getType().split("/")[1]);
+            .append(file.getType().getName().split("/")[1]);
 
         try {
-            sendMessageWithFileTemplate(patient.getEmail(), "Recieved Study", templateModel, "recievedStudyTemplate", file.getContent(), file.getType(), fileName.toString());
+            sendMessageWithFileTemplate(patient.getEmail(), "Recieved Study", templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString());
         } catch (MessagingException e) {
             // TODO catch
         }

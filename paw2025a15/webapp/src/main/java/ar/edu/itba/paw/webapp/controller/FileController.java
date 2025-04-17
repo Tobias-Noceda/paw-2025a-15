@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.FileTypeEnum;
 
 @Controller
 public class FileController {
@@ -32,13 +33,7 @@ public class FileController {
 
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.POST)
     public ModelAndView createImage(@RequestParam("file") MultipartFile file) throws IOException{
-        String fileType = file.getContentType();
-        if (fileType == null || !(fileType.equals("image/png") || fileType.equals("image/jpeg") || fileType.equals("application/pdf"))) {
-            throw new IllegalArgumentException("Unsupported file type: " + fileType);
-        }
-        
-        byte[] content = file.getBytes();
-        File f = fs.create(content, fileType);
+        File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
@@ -50,17 +45,17 @@ public class FileController {
         }
         
         byte[] content = f.get().getContent();
-        String fileType = f.get().getType();
+        FileTypeEnum fileType = f.get().getType();
         
         MediaType mediaType;
         switch (fileType) {
-            case "image/png":
+            case PNG:
                 mediaType = MediaType.IMAGE_PNG;
                 break;
-            case "image/jpeg":
+            case JPEG:
                 mediaType = MediaType.IMAGE_JPEG;
                 break;
-            case "application/pdf":
+            case PDF:
                 mediaType = MediaType.APPLICATION_PDF;
                 break;
             default:
