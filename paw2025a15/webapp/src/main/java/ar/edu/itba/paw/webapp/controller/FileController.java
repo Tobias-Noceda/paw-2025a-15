@@ -53,20 +53,12 @@ public class FileController {
         String fileType = f.get().getType();
         
         MediaType mediaType;
-        switch (fileType) {
-            case "image/png":
-                mediaType = MediaType.IMAGE_PNG;
-                break;
-            case "image/jpeg":
-                mediaType = MediaType.IMAGE_JPEG;
-                break;
-            case "application/pdf":
-                mediaType = MediaType.APPLICATION_PDF;
-                break;
-            default:
-                mediaType = MediaType.APPLICATION_OCTET_STREAM;
-                break;
-        }
+        mediaType = switch (fileType) {
+            case "image/png" -> MediaType.IMAGE_PNG;
+            case "image/jpeg" -> MediaType.IMAGE_JPEG;
+            case "application/pdf" -> MediaType.APPLICATION_PDF;
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
 
         return ResponseEntity
                 .ok()

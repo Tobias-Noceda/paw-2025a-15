@@ -6,13 +6,14 @@ public class User {
     private final String email;
     private final String password;
     private final String name;
-    private long pictureId = 1;
+    private final long pictureId;
 
     public User(long id, String email, String password, String name){
         this.id = id;
         this. email = email;
         this.password = password;
         this.name= name;
+        this.pictureId = 1;
     }
 
     public User(long id, String email, String password, String name, long pictureId){

@@ -47,24 +47,32 @@
                 <form:options items="${specialtySelectItems}" itemLabel="label" itemValue="value" />
               </form:select>
             </div>
-            
+
             <input type="submit" class="filter-button" value="<spring:message code='landing.filter'/>"/>
           </div>
         </form:form>
       </div>
   
       <h2 class="landing-title"><spring:message code="landing.title"></spring:message></h2>
-  
-      <div class="doctor-landing-container">
-        <c:forEach var="doctor" items="${docList}">
-          <jsp:include page="doctorCard.jsp">
-            <jsp:param name="id" value="${doctor.id}" />
-            <jsp:param name="doctorName" value="${doctor.name}" />
-            <jsp:param name="insurances" value="${doctor.insurances}" />
-            <jsp:param name="speciality" value="${doctor.specialty}" />
-          </jsp:include>
-        </c:forEach>
-      </div>
+      <c:if test="${not empty docList}">
+        <div class="doctor-landing-container">
+          <c:forEach var="doctor" items="${docList}">
+            <jsp:include page="doctorCard.jsp">
+              <jsp:param name="id" value="${doctor.id}" />
+              <jsp:param name="doctorName" value="${doctor.name}" />
+              <jsp:param name="imageId" value="${doctor.imageId}" />
+              <jsp:param name="insurances" value="${doctor.insurances}" />
+              <jsp:param name="speciality" value="${doctor.specialty}" />
+              <jsp:param name="weekdays" value="${doctor.weekdays}" />
+            </jsp:include>
+          </c:forEach>
+        </div>
+      </c:if>
+      <c:if test="${empty docList}">
+        <div class="no-doctors-message-div">
+          <h1><spring:message code="landing.noDoctors"></spring:message></h1>
+        </div>
+      </c:if>
     </div>
   </body>
 </html>

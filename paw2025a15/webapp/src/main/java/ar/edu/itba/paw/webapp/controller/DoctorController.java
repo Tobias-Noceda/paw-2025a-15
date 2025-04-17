@@ -21,15 +21,14 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.form.ShiftsMonthForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
@@ -60,9 +59,6 @@ public class DoctorController {
     @Autowired
     private InsuranceService is;
 
-    @Autowired
-    private EmailService es;
-
     private ModelAndView renderIndexPage(Locale locale) {
         final ModelAndView mav = new ModelAndView("index");
 
@@ -80,12 +76,7 @@ public class DoctorController {
         Locale locale
     ) {
         final ModelAndView mav = renderIndexPage(locale);
-        List<DoctorView> doctors;
-        // if (searchForm.getQuery() != null && !searchForm.getQuery().isEmpty()) {
-        //     doctors = dds.findDoctorsByName(searchForm.getQuery());
-        // } else {
-            doctors = dds.getAllDoctors();
-        //}
+        List<DoctorView> doctors = dds.getAllDoctors();
         mav.addObject("docList", doctors);
         
         return mav;
@@ -129,30 +120,43 @@ public class DoctorController {
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
-    public ModelAndView doctorProfile(@PathVariable("id") long id, @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
+    public ModelAndView doctorProfile(
+        @PathVariable("id") long id,
+        @ModelAttribute("shiftsMonthForm") final ShiftsMonthForm shiftsMonthForm,
+        @ModelAttribute("takeTurnForm") final TakeTurnForm form,
+        Locale locale
+    ) {
         final ModelAndView mav = new ModelAndView("doctorDetail");
         dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances" ,dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
-        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, LocalDate.now().getMonth()));
-        mav.addObject("doctorId", id);
+        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, shiftsMonthForm.getMonth()));
         mav.addObject("searchForm", new SearchForm());
+
+        mav.addObject("shiftsMonthForm", shiftsMonthForm);
+        mav.addObject("possibleMonths", getNextThreeMonths(locale));
 
         return mav;
     }
 
 
     @RequestMapping(value = "/doctors/{id:\\d+}", method = RequestMethod.POST)
-    public ModelAndView takeTurn(@PathVariable("id") long id, @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form, final BindingResult errors) {
+    public ModelAndView takeTurn(
+        @PathVariable("id") long id,
+        @ModelAttribute("shiftsMonthForm") final ShiftsMonthForm shiftsMonthForm,
+        Locale locale,
+        @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
+        final BindingResult errors
+    ) {
         final ModelAndView mav = new ModelAndView("redirect:/");
         if (errors.hasErrors()) {
-            return doctorProfile(id, form);
+            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
         }
 
         User patient = us.getUserByEmail(form.getEmail())
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
-        Appointment appointment = as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+        as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
 
         return mav;
     }
@@ -230,6 +234,19 @@ public class DoctorController {
         }
 
         return weekdays;
+    }
+
+    private List<SelectItem> getNextThreeMonths(Locale locale) {
+        final List<SelectItem> months = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        for (int i = 0; i < 3; i++) {
+            LocalDate nextMonth = currentDate.plusMonths(i);
+            months.add(new SelectItem(
+                nextMonth.getMonth().name(),
+                messageSource.getMessage("month." + nextMonth.getMonth().name(), null, locale) + " " + nextMonth.getYear()
+            ));
+        }
+        return months;
     }
 
     protected class SelectItem {
