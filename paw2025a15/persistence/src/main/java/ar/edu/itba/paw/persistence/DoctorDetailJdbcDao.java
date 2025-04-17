@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,10 +88,12 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> findDoctorsByName(String name) {
+    public List<DoctorView> findDoctorsByName(String name) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
+        if(name == null || name.trim().isEmpty()) return Collections.emptyList();
+        if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
-                new Object[]{ "%" + name + "%" },
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE LOWER(u.user_name) LIKE LOWER(?)",
+                new Object[]{ "%" + name.trim() + "%" },
                 new int[]{ java.sql.Types.VARCHAR },
                 DV_ROW_MAPPER
         );
