@@ -24,6 +24,11 @@
                   </c:if>
                 </p>
               </div>
+              <a href="<c:url value='/supersecret/upload/${patient.id}/${patient.id}'/>">
+                <button class="doctor-btn">
+                  <spring:message code="patient.profile.uploadButton" />
+                </button>
+              </a>
             </div>
         </div>
         <div class="shifts-list-container">
