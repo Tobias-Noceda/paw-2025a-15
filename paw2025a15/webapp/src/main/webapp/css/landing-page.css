@@ -67,7 +67,7 @@
     margin: 0 0 -5px 0;
 }
 
-.doctor-landing-container{
+.doctor-landing-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: left;
@@ -160,4 +160,15 @@
     background-color: #0056b3;
     border-radius: 999px;
     color: white;
+}
+
+.no-doctors-message-div {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #555;
 }
