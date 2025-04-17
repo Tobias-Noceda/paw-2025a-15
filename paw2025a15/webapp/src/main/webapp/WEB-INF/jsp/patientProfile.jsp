@@ -83,6 +83,7 @@
                 <tr>
                   <th>Tipo de estudio</th>
                   <th>Detalles</th>
+                  <th>Fecha</th>
                   <th>Fecha de subida</th>
                 </tr>
               </thead>
@@ -94,6 +95,7 @@
                     </c:set>
                     <td><c:out value="${myStudyType}"/></td>
                     <td><c:out value="${study.comment}"/></td>
+                    <td><c:out value="${study.studyDate}"/></td>
                     <td><c:out value="${study.uploadDate}"/></td><!--TODO: con internacionalizacion se le puede dar e formato preferido por idioma tmb-->
                   </tr>
                 </c:forEach>

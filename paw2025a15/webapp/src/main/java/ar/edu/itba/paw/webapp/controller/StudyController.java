@@ -64,7 +64,7 @@ public class StudyController {
         LocalDateTime dateTime = LocalDateTime.now();
         
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, doctorId, dateTime);
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, doctorId, dateTime, createStudyForm.getDate());
 
 
         es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getComment(), dateTime);

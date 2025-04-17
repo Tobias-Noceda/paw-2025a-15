@@ -27,12 +27,23 @@
                 <form:options items="${studyTypeSelectItems}" itemValue="name" itemLabel="displayName" />
               </form:select>
             </div>
+          </div>
+          <div class="field-container">
+            <form:errors path="date" cssClass="form-error" element="p"/>
+            <div class="field-info-container">
+              <form:label cssClass="form-title" path="date">
+                  <p>Study Date:</p>
+              </form:label>
+              <form:input type="date" path="date" cssClass="form-input" />
+            </div>
+          </div>
           <p class="description-label"><spring:message code="uploadStudies.description"></spring:message></p>
           <div class="description-container">
             <form:input type="text" path="comment" class="upload-input"/>
             <button type="submit" class="upload-button"><spring:message code="uploadStudies.button"></spring:message></button>
           </div>
         </form:form>
+      </div>
       </div>
     </div>
   </body>

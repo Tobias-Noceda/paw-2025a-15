@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Study {
@@ -11,8 +12,9 @@ public class Study {
     private final long userId;
     private final long uploaderId;
     private final LocalDateTime uploadDate;
+    private final LocalDate studyDate;
 
-    public Study(long id, StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate){
+    public Study(long id, StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate){
         this.id = id;
         this.type = type;
         this.comment = comment;
@@ -20,6 +22,7 @@ public class Study {
         this.userId = userId;
         this.uploaderId = uploaderId;
         this.uploadDate = uploadDate;
+        this.studyDate = studyDate;
     }
 
     public long getId(){
@@ -48,5 +51,9 @@ public class Study {
 
     public LocalDateTime getUploadDate(){
         return uploadDate;
+    }
+
+    public LocalDate getStudyDate(){
+        return studyDate;
     }
 }

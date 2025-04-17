@@ -64,6 +64,12 @@ CREATE TABLE IF NOT EXISTS studies (
 --ADD COLUMN study_type INT NOT NULL DEFAULT 0;
 --UPDATE studies
 --SET study_type = 0 WHERE study_type IS NULL;
+--ALTER TABLE studies
+--ADD COLUMN study_date DATE;
+--UPDATE studies
+--SET study_date = upload_date::DATE;
+--ALTER TABLE studies
+--ALTER COLUMN study_date SET NOT NULL;
 
 CREATE TABLE IF NOT EXISTS patient_coverages (
     patient_id BIGINT PRIMARY KEY,
