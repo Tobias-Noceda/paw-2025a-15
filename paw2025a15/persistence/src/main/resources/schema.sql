@@ -44,6 +44,16 @@ CREATE TABLE IF NOT EXISTS studies (
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
+--CHANGES FOR STUDIES TABLE
+--ALTER TABLE studies
+--RENAME COLUMN study_type TO study_comment;
+--ALTER TABLE studies
+--ALTER COLUMN study_comment DROP NOT NULL;
+--ALTER TABLE studies
+--ADD COLUMN study_type INT NOT NULL DEFAULT 0;
+--UPDATE studies
+--SET study_type = 0 WHERE study_type IS NULL;
+
 CREATE TABLE IF NOT EXISTS patient_coverages (
     patient_id BIGINT PRIMARY KEY,
     insurance_id BIGINT NOT NULL,

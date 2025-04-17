@@ -20,6 +20,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.StudyTypeEnum;
 import ar.edu.itba.paw.models.User;
 
 @Controller
@@ -44,6 +45,7 @@ public class StudyController {
         mav.addObject("patientName", patient.getName());
         mav.addObject("patientId", patientId);
         mav.addObject("doctorId", doctorId);
+        mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());//TODO revisar esto con el jsp
         return mav;
     }
 
@@ -61,10 +63,10 @@ public class StudyController {
         LocalDateTime dateTime = LocalDateTime.now();
         
         File f = fs.create(createStudyForm.getFile().getBytes(), createStudyForm.getFile().getContentType());
-        ss.create(createStudyForm.getType(), f.getId(), patientId, doctorId, dateTime);
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, doctorId, dateTime);
 
 
-        es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getType(), dateTime);
+        es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getComment(), dateTime);
 
         return new ModelAndView("redirect:/");
     }

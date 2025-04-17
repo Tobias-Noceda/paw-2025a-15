@@ -13,6 +13,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Study;
+import ar.edu.itba.paw.models.StudyTypeEnum;
 
 @Service
 public class StudyServiceImpl implements StudyService{
@@ -31,11 +32,11 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public Study create(String type, long fileId, long userId, long uploaderId, LocalDateTime uploadDate) {
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate) {
         if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
-        return studyDao.create(type, fileId, userId, uploaderId, uploadDate);   
+        return studyDao.create(type, comment, fileId, userId, uploaderId, uploadDate);   
     }
 
     @Override

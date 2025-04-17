@@ -77,13 +77,18 @@
               <thead>
                 <tr>
                   <th>Tipo de estudio</th>
+                  <th>Detalles</th>
                   <th>Fecha de subida</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="study" items="${patientStudies}">
                   <tr class="appointment-row" data-fileid="<c:out value='${study.fileId}'/>">
-                    <td><c:out value="${study.type}"/></td>
+                    <c:set var="myStudyType">
+                      <spring:message code="studyType.${study.type}"/>
+                    </c:set>
+                    <td><c:out value="${myStudyType}"/></td>
+                    <td><c:out value="${study.comment}"/></td>
                     <td><c:out value="${study.uploadDate}"/></td>
                   </tr>
                 </c:forEach>
