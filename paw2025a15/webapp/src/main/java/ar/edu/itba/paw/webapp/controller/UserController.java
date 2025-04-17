@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientCoverageService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -35,6 +37,9 @@ public class UserController {
     @Autowired
     private StudyService ss;
 
+    @Autowired
+    private DoctorDetailService dds;
+
     @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("patientProfile");
@@ -44,6 +49,7 @@ public class UserController {
         mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(id));
         mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(id));
         mav.addObject("patientStudies", ss.getStudiesByPatientId(id));
+        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(id));
         return mav;
     }
 

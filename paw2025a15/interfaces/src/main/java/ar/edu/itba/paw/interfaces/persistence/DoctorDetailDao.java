@@ -14,6 +14,13 @@ public interface DoctorDetailDao {
 
     public List<DoctorView> getAllDoctors();
 
-    public List<DoctorView> findDoctorsByName(String name);
+    public List<DoctorView> findDoctorsByName(String name);    
 
+    public List<DoctorView> getAuthDoctorsByPatientId(long id);
+
+    public boolean hasAuthDoctor(long patientId, long doctorId);
+
+    public void authDoctor(long patientId, long doctorId);
+
+    public void unauthDoctor(long patientId, long doctorId);
 }

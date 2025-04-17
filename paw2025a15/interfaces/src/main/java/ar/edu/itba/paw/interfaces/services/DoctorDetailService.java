@@ -15,4 +15,8 @@ public interface DoctorDetailService {
     public List<DoctorView> findDoctorsByName(String name);
 
     List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday);
+
+    public List<DoctorView> getAuthDoctorsByPatientId(long id);
+
+    public void toggleAuthDoctor(long patientId, long doctorId);
 }

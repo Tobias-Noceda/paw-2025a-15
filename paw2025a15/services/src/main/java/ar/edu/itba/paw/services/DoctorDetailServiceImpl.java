@@ -106,4 +106,21 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         return specialtyFiltered;
     }
 
+    @Override
+    public List<DoctorView> getAuthDoctorsByPatientId(long id) {
+        return doctorDetailDao.getAuthDoctorsByPatientId(id);
+    }
+
+    @Override
+    public void toggleAuthDoctor(long patientId, long doctorId) {
+        if(doctorDetailDao.hasAuthDoctor(patientId, doctorId)){
+            doctorDetailDao.unauthDoctor(patientId, doctorId);
+        }
+        else{
+            doctorDetailDao.authDoctor(patientId, doctorId);
+        }
+    }
+
+    
+
 }

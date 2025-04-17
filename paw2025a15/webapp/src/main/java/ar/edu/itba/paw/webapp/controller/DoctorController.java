@@ -157,6 +157,13 @@ public class DoctorController {
         return mav;
     }
 
+    @RequestMapping(value = "/patientAuthDoctor/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView authUnauthDoctor(@PathVariable("patientId") long patientId, @PathVariable("doctorId") long doctorId){
+        dds.toggleAuthDoctor(patientId, doctorId);
+        return new ModelAndView("redirect:/patientProfile/" + patientId);
+    }
+
+
     @RequestMapping("/doctor-form")
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
         final ModelAndView mav = new ModelAndView("doctorForm");

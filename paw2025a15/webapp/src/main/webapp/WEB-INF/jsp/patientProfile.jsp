@@ -101,6 +101,27 @@
                 </c:forEach>
               </tbody>
             </table>
+            <table class="appointments-table">
+              <thead>
+                <tr>
+                  <th>Doctor</th>
+                  <th>Especialidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="doctor" items="${patientAuthDoctors}">
+                  <tr class="appointment-row">
+                    <td><c:out value="${doctor.name}"/></td>
+                    <td><c:out value="${doctor.specialty}"/></td>
+                    <td>
+                      <form action="/patientAuthDoctor/${patient.id}/${doctor.id}" method="post" onsubmit="return confirm('¿Estás seguro que quieres eliminar a este medico de la lista?');">
+                        <button type="submit">Retirar</button>
+                      </form>
+                    </td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
         </div>
     </div>
 
