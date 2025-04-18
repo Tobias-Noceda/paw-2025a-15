@@ -72,7 +72,7 @@
 
       <!-- Show only if user is NOT authenticated -->
       <c:if test="${pageContext.request.userPrincipal == null}">
-        <a href="<c:url value="login"/>">
+        <a href="<c:url value="/login"/>">
           <button class="doctor-btn">
             <spring:message code="header.login" />
           </button>
