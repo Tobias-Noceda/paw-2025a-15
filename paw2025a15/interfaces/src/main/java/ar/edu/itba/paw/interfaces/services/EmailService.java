@@ -17,5 +17,5 @@ public interface EmailService {
 
     public void sendTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
 
-
+    public void sendPasswordResetEmail(User user);
 }

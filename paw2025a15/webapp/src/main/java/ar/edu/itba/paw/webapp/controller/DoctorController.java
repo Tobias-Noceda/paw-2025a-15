@@ -192,6 +192,10 @@ public class DoctorController {
         return mav;
     }
 
+    
+
+
+
     @RequestMapping("/register/doctor-form")
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
         final ModelAndView mav = new ModelAndView("doctorForm");

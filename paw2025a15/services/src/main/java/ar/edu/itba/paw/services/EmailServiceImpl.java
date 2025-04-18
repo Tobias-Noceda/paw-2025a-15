@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -93,6 +94,27 @@ public class EmailServiceImpl implements EmailService{
 
         try {
             sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Confirmation", templateModel, "appointmentConfirmationTemplate");
+        } catch (MessagingException e) {
+            // TODO catch
+        }
+    }
+
+    @Override
+    public void sendPasswordResetEmail(User user) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "/resources/icono.jpg");
+        templateModel.put("userName", user.getName());
+
+        String token = UUID.randomUUID().toString(); // o algo más complejo
+        //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
+
+        String recoveryLink = baseURL + "passwordRecovery/" + token;
+        templateModel.put("resetLink", recoveryLink);
+
+
+        try {
+            sendSimpleMessageTemplate(user.getEmail(), "Password Recovery", templateModel, "passwordRecoveryTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }

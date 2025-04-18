@@ -7,6 +7,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
   <title>Recuperar contraseña</title>
@@ -21,7 +22,7 @@
 
 <div class="page-container" style="align-items: center;">
   <div class="doctor-form-container">
-    <form action="${recoverPasswordUrl}" method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
+    <form:form action="${recoverPasswordUrl}" modelAttribute="recoverPass"  method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
 
       <div class="field-container">
         <div class="field-info-container">
@@ -31,7 +32,7 @@
       </div>
 
       <div class="doctor-div">
-        <input type="submit" value="Enviar instrucciones" class="register-button"/>
+        <input type="submit" value="${pass.enviar}" class="register-button"/>
       </div>
 
       <div class="extra-links">
@@ -39,7 +40,7 @@
         <p>¿No tienes cuenta? <a href="${registerUrl}">Regístrate</a></p>
       </div>
 
-    </form>
+    </form:form>
   </div>
 </div>
 
