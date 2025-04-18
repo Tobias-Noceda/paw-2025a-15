@@ -99,7 +99,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
                 new Object[]{id},
                 new int[]{ java.sql.Types.BIGINT },
                 DV_ROW_MAPPER

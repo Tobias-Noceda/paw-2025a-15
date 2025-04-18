@@ -6,7 +6,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareTrace <c:if test="${param.title != null}"> - ${param.title}</c:if></title>
+    <title>
+      CareTrace <c:if test="${param.title != null}"> - <spring:message code="header.${param.title}"></spring:message></c:if>
+      </title>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
     <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
   </head>
@@ -28,11 +30,9 @@
         <a href="<c:url value="/appointments/patient/15"/>" class="nav-item <c:if test='${param.title == appointments}'>active</c:if>">
           <spring:message code="header.appointments" />
         </a>
-      <%--
-        <a href="<c:url value="/insurances"/>" class="nav-item <c:if test='${param.title == ensurance}'>active</c:if>">
-          <spring:message code="header.ensurance" />
+        <a href="<c:url value="/studies/6"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
+          <spring:message code="header.studies" />
         </a>
-      --%>
       </nav>
       <c:set var="barPlaceholder">
         <spring:message code="header.placeholder"/>

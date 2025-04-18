@@ -4,7 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
   <head>
-    <title>Title</title>
     <link rel="stylesheet" href="<c:url value="/css/landing-page.css"/>"/>
   </head>
   <body>
@@ -28,7 +27,7 @@
           <c:forEach var="weekday" items="${fn:split(allWeekdays, ',')}">
             <c:choose>
               <c:when test="${fn:contains(param.weekdays, weekday)}">
-                <p class="weekday-tag active"><spring:message code="weekday.${weekday}.initial"></spring:message></p>
+                <p class="weekday-tag day-active"><spring:message code="weekday.${weekday}.initial"></spring:message></p>
               </c:when>
               <c:otherwise>
                 <p class="weekday-tag"><spring:message code="weekday.${weekday}.initial"></spring:message></p>

@@ -159,7 +159,7 @@ public class DoctorController {
     @RequestMapping(value = "/patientAuthDoctor/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
     public ModelAndView authUnauthDoctor(@PathVariable("patientId") long patientId, @PathVariable("doctorId") long doctorId) {
         dds.toggleAuthDoctor(patientId, doctorId);
-        return new ModelAndView("redirect:/patientProfile/" + patientId);
+        return new ModelAndView("redirect:/studies/" + patientId);
     }
 
     @RequestMapping("/doctor-form")
