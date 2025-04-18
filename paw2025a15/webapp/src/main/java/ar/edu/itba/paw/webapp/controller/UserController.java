@@ -57,7 +57,14 @@ public class UserController {
             ){
         ModelAndView mav = new ModelAndView("login");
         //TODO: desharcodear esto
-        es.sendPasswordResetEmail(us.getUserByEmail(form.getEmail()).orElseThrow(()->new IllegalArgumentException("No such email")));
+
+        try{
+            es.sendPasswordResetEmail(us.getUserByEmail(form.getEmail()).orElseThrow(()->new IllegalArgumentException("No such email")));
+
+        } catch (Exception e) {
+            return mav;
+        }
+
         return mav;
     }
 
