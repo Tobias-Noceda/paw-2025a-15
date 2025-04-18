@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+
 <html>
   <head>
     <meta charset="UTF-8">
@@ -55,14 +57,27 @@
           </form:form>
         </div>
 
+
+
+
       </div>
+        <!-- Show only if user IS authenticated -->
+        <c:if test="${pageContext.request.userPrincipal != null}">
+          <a href="<c:url value="/logout"/>">
+            <button class="doctor-btn">
+              <spring:message code="header.logout" />
+            </button>
+          </a>
+        </c:if>
 
-
-      <a href="<c:url value="/doctor-form"/>">
-        <button class="doctor-btn">
-          <spring:message code="header.doctor" />
-        </button>
-      </a>
+      <!-- Show only if user is NOT authenticated -->
+      <c:if test="${pageContext.request.userPrincipal == null}">
+        <a href="<c:url value="login"/>">
+          <button class="doctor-btn">
+            <spring:message code="header.login" />
+          </button>
+        </a>
+      </c:if>
     </div>
   </body>
 </html>

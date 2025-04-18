@@ -6,6 +6,7 @@ import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +23,10 @@ public class PatientController {
     @Autowired
     private UserService us;
 
-    @RequestMapping("/patient-form")
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @RequestMapping("/register/patient-form")
     public ModelAndView medico(@ModelAttribute("registerPatientForm") final PatientForm form, Locale locale) {
         final ModelAndView mav = new ModelAndView("patientForm");
         mav.addObject("patient", form);
@@ -42,7 +46,8 @@ public class PatientController {
             mav.addObject("searchForm", new SearchForm());
             return mav;
         }
-        us.create(form.getEmail(), form.getPassword(), form.getName() + " " + form.getSurname());
+        System.out.println("Contraseña " + passwordEncoder.encode(form.getPassword()));
+        us.create(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname());
         ModelAndView mav = new ModelAndView("redirect:/");
         return mav;
     }

@@ -73,6 +73,10 @@ public class EmailServiceImpl implements EmailService{
         }
     }
 
+
+
+
+
     @Override
     @Async
     public void sendTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {

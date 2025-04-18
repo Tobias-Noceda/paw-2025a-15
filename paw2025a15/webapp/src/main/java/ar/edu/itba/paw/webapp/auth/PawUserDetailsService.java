@@ -36,7 +36,7 @@ public class PawUserDetailsService implements UserDetailsService {
             us.changePassword(email, user.getPassword());
             return loadUserByUsername(email);
         }
-        System.out.println("superado?  " + user.getEmail() + " " + user.getPassword());
+        //System.out.println("superado?  " + user.getEmail() + " " + user.getPassword());
 
         //TODO:Implement logic to grant only required authorities 
         final Collection<GrantedAuthority> authorities = new HashSet<>();

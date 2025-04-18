@@ -32,4 +32,15 @@ public class UserController {
         mav.addObject("patientAppointments", as.getAppointmentDataByPatientId(id));
         return mav;
     }
+
+    @RequestMapping("/register/choose")
+    public ModelAndView registerChoose(){
+        ModelAndView mav = new ModelAndView("registerOne");
+        return mav;
+    }
+
+    @RequestMapping("/logout")
+    public ModelAndView logout(){
+        return new ModelAndView("redirect:/");
+    }
 }

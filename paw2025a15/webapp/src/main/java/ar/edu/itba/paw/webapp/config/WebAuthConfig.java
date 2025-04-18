@@ -42,9 +42,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final  HttpSecurity http) throws Exception {
         http.sessionManagement()
-                .invalidSessionUrl("/login")
+                .invalidSessionUrl("/home")
                 .and().authorizeRequests()
-                .antMatchers("/login", "doctor-form").anonymous()
+                .antMatchers("/login").anonymous()
+                .antMatchers("/register/**").anonymous()
+                .antMatchers("/", "/home").permitAll()
+                .antMatchers("/createPatient").anonymous()
+                .antMatchers("/createMedic").anonymous()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
                 .antMatchers("/patient/**").hasRole("PATIENT")
@@ -69,7 +73,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403");
+                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403", "/resources/**");
     }
 
 

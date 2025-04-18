@@ -17,7 +17,7 @@
 <c:url value="/createPatient" var="postPath"/>
 <div class="page-container" style="align-items: center;">
     <div class="doctor-form-container">
-        <form:form cssClass="doctor-form" modelAttribute="registerMedicForm" action="${postPath}" method="post">
+        <form:form cssClass="doctor-form" modelAttribute="registerPatientForm" action="${postPath}" method="post">
             <div class="field-container">
                 <form:errors path="name" cssClass="form-error" element="p"/>
                 <div class="field-info-container">

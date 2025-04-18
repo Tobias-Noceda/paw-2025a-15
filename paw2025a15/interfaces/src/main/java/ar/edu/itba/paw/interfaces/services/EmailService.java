@@ -16,4 +16,6 @@ public interface EmailService {
     public void sendTestEmail();
 
     public void sendTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
+
+
 }
