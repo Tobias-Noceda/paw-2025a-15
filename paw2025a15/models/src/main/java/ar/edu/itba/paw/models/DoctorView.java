@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class DoctorView {
-    private long id;
-    private String name;
-    private SpecialtyEnum specialty;
+    private final long id;
+    private final String name;
+    private final SpecialtyEnum specialty;
     private List<Insurance> insurances = null;
     private List<WeekdayEnum> weekdays = null;
 

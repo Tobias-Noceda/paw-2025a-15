@@ -67,7 +67,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
 
-    //TODO estas capaz estan mal que esten aca
+    //TODO estas capaz estan mal que esten aca//TODO fusion de todo lo de "doctor" aca seguro termina siendo
     public List<Insurance> getInsurancesById(long doctorId) {
         String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id")));

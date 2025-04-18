@@ -48,20 +48,12 @@ public class FileController {
         FileTypeEnum fileType = f.get().getType();
         
         MediaType mediaType;
-        switch (fileType) {
-            case PNG:
-                mediaType = MediaType.IMAGE_PNG;
-                break;
-            case JPEG:
-                mediaType = MediaType.IMAGE_JPEG;
-                break;
-            case PDF:
-                mediaType = MediaType.APPLICATION_PDF;
-                break;
-            default:
-                mediaType = MediaType.APPLICATION_OCTET_STREAM;
-                break;
-        }
+        mediaType = switch (fileType) {
+            case PNG -> MediaType.IMAGE_PNG;
+            case JPEG -> MediaType.IMAGE_JPEG;
+            case PDF -> MediaType.APPLICATION_PDF;
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
 
         return ResponseEntity
                 .ok()

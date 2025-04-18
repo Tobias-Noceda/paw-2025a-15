@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User create(String email, String password, String name) {
-        return userDao.create(email, password, name, 1);//TODO armar una funcion en fileService que traiga la picDefault de users
+        return userDao.create(email, password, name, 1);//TODO armar una funcion en fileService que traiga la picDefault de users//O quiza simplemente verificacion y obligar al registrarse ingresar una foto
     }
 
     @Override
@@ -52,5 +53,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<User> getUserByEmail(String email) {
         return userDao.getUserByEmail(email);
+    }
+
+    @Override
+    public List<User> getAuthPatientsByDoctorId(long id) {
+        return userDao.getAuthPatientsByDoctorId(id);
     }
 }

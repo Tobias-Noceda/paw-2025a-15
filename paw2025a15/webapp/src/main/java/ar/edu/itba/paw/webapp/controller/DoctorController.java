@@ -26,10 +26,8 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
@@ -59,9 +57,6 @@ public class DoctorController {
 
     @Autowired
     private InsuranceService is;
-
-    @Autowired
-    private EmailService es;
 
     private ModelAndView renderIndexPage(Locale locale) {
         final ModelAndView mav = new ModelAndView("index");
@@ -152,7 +147,7 @@ public class DoctorController {
 
         User patient = us.getUserByEmail(form.getEmail())
             .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
-        Appointment appointment = as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+        as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
 
         return mav;
     }
@@ -196,7 +191,7 @@ public class DoctorController {
         // Si no hay errores, proceder con la creación del médico
         User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
-        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());//TODO change Schedule model or sth.
+        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
         ModelAndView mav = new ModelAndView("redirect:/");
 
         return mav;

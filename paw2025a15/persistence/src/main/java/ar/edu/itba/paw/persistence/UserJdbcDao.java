@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,5 +51,15 @@ public class UserJdbcDao implements UserDao{
     public Optional<User> getUserByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM users WHERE user_email = ?", new Object[]  {email},
           new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
+    public List<User> getAuthPatientsByDoctorId(long id) {
+        return (List<User>) jdbcTemplate.query(
+                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ?",
+                new Object[]{id},
+                new int[]{ java.sql.Types.BIGINT },
+                ROW_MAPPER
+        );
     }
 }

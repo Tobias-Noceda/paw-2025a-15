@@ -3,7 +3,6 @@ package ar.edu.itba.paw.webapp.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +66,7 @@ public class UserController {
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorFutureAppointments", as.getFutureAppointmentDataByDoctorId(id));
         mav.addObject("doctorOldAppointments", as.getOldAppointmentDataByDoctorId(id));
+        mav.addObject("doctorAuthPatients", us.getAuthPatientsByDoctorId(id));
         return mav;
     }
 

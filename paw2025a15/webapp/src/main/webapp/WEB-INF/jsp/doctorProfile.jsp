@@ -75,6 +75,22 @@
                 </c:forEach>
               </tbody>
             </table>
+            <table class="appointments-table">
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="patient" items="${doctorAuthPatients}">
+                  <tr class="appointment-row">
+                    <td><c:out value="${patient.name}"/></td>
+                    <td><c:out value="${patient.email}"/></td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
         </div>
     </div>
   </body>
