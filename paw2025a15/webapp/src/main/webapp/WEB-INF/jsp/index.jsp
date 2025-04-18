@@ -57,7 +57,7 @@
       <c:if test="${not empty docList}">
         <div class="doctor-landing-container">
           <c:forEach var="doctor" items="${docList}">
-            <jsp:include page="doctorCard.jsp">
+            <jsp:include page="components/doctorCard.jsp">
               <jsp:param name="id" value="${doctor.id}" />
               <jsp:param name="doctorName" value="${doctor.name}" />
               <jsp:param name="imageId" value="${doctor.imageId}" />

@@ -133,3 +133,33 @@ body {
     display: inline-block;
     margin-left: 10px;
 }
+
+/* Dialog Styling */
+.confirmation-dialog {
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    width: 35%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: left;
+    border: 1px solid #6F6F6F;
+}
+
+.confirmation-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+  
+.cancel-button {
+    margin: 0 5px;
+    padding: 8px 15px;
+    background-color: #e60202;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+  
+.cancel-button:hover {
+    background-color: #b90101;
+}

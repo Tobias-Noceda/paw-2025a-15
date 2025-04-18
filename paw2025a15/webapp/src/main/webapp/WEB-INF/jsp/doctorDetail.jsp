@@ -80,9 +80,9 @@
         <table class="appointments-table">
           <thead>
             <tr>
-              <th><spring:message code="doctorDetail.dateColumn"></spring:message></th>
-              <th><spring:message code="doctorDetail.timeColumn"></spring:message></th>
-              <th><spring:message code="doctorDetail.addressColumn"></spring:message></th>
+              <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
+              <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
+              <th><spring:message code="appointmentTable.addressColumn.title"></spring:message></th>
             </tr>
           </thead>
           <tbody>
