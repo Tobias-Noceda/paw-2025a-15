@@ -64,6 +64,13 @@
     overflow: hidden;
 }
 
+.doctor-free-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 20px;
+}
+
 .table-title {
     font-size: 22px;
     font-weight: 700;

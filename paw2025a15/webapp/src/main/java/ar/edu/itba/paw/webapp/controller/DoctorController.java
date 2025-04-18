@@ -23,7 +23,6 @@ import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.form.ShiftsMonthForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -34,6 +33,7 @@ import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
 public class DoctorController {
@@ -52,9 +52,6 @@ public class DoctorController {
     
     @Autowired
     private DoctorShiftService dss;
-    
-    @Autowired
-    private AppointmentService as;
 
     @Autowired
     private InsuranceService is;
@@ -149,16 +146,14 @@ public class DoctorController {
         @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
         final BindingResult errors
     ) {
-        final ModelAndView mav = new ModelAndView("redirect:/");
         if (errors.hasErrors()) {
             return doctorProfile(id, new ShiftsMonthForm(), form, locale);
         }
-
+        
         User patient = us.getUserByEmail(form.getEmail())
-            .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
-        as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+        .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
 
-        return mav;
+        return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
     }
 
     @RequestMapping("/doctor-form")
@@ -247,32 +242,5 @@ public class DoctorController {
             ));
         }
         return months;
-    }
-
-    protected class SelectItem {
-        private String value;
-        private String label;
-
-        // Constructor, getters y setters
-        public SelectItem(String value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
     }
 }
