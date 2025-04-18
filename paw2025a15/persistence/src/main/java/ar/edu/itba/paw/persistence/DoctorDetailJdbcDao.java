@@ -89,7 +89,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public List<DoctorView> findDoctorsByName(String name) {
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
                 new Object[]{ "%" + name + "%" },
                 new int[]{ java.sql.Types.VARCHAR },
                 DV_ROW_MAPPER
