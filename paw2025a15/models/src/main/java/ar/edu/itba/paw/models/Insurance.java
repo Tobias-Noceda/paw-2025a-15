@@ -46,4 +46,8 @@ public class Insurance {
         return Objects.equals(name, insurance.name);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

@@ -44,8 +44,10 @@ public class AppointmentServiceImpl implements AppointmentService{
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("No such doctor"));
         if(date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         Appointment appointment = appointmentDao.addAppointment(shiftId, patientId, date);
-        es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
-        es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
+        if(patient.getId() != doctor.getId()){
+            es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
+            es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
+        }
         
         return appointment;
     }

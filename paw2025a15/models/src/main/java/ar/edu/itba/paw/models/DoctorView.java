@@ -7,19 +7,15 @@ public class DoctorView {
     private final long id;
     private final String name;
     private final SpecialtyEnum specialty;
-    private List<Insurance> insurances = null;
-    private List<WeekdayEnum> weekdays = null;
+    private final long imageId;
+    private final List<WeekdayEnum> weekdays;
+    private final List<Insurance> insurances;
 
-    public DoctorView(long id, String name, SpecialtyEnum specialty){
+    public DoctorView(long id, String name, SpecialtyEnum specialty, long imageId, List<Insurance> insurances, List<WeekdayEnum> weekdays){
         this.id = id;
         this.name = name;
         this.specialty = specialty;
-    }
-
-    public DoctorView(long id, String name, SpecialtyEnum specialty, List<Insurance> insurances, List<WeekdayEnum> weekdays){
-        this.id = id;
-        this.name = name;
-        this.specialty = specialty;
+        this.imageId = imageId;
         this.insurances = insurances;
         this.weekdays = weekdays;
     }
@@ -56,17 +52,11 @@ public class DoctorView {
         return insurances;
     }
 
-
-
-    public List<WeekdayEnum> getWeekdays(){
+    public List<WeekdayEnum> getWeekdays() {
         return weekdays;
     }
 
-    public void setInsurances(List<Insurance> insurances){
-        this.insurances = insurances;
-    }
-
-    public void setWeekdays(List<WeekdayEnum> weekdays){
-        this.weekdays = weekdays;
+    public long getImageId(){
+        return imageId;
     }
 }

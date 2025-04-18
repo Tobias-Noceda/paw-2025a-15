@@ -145,6 +145,4 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
             return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfMonth, endOfMonth);
         }
     }
-
-
 }

@@ -1,13 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
@@ -52,12 +48,6 @@ public class UserController {
         return mav;
     }
 
-    @RequestMapping(value = "/patientCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView patientCancelAppointment(@PathVariable("id") long id, @PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date){
-        as.cancelAppointment(shiftId, date, id);
-        return new ModelAndView("redirect:/patientProfile/" + id);
-    }
-
     @RequestMapping("/doctorProfile/{id:\\d+}")
     public ModelAndView doctorProfile(@PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("doctorProfile");
@@ -68,11 +58,5 @@ public class UserController {
         mav.addObject("doctorOldAppointments", as.getOldAppointmentDataByDoctorId(id));
         mav.addObject("doctorAuthPatients", us.getAuthPatientsByDoctorId(id));
         return mav;
-    }
-
-    @RequestMapping(value = "/doctorCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView cancelAppointment(@PathVariable("id") long id, @PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        as.cancelAppointment(shiftId, date, id);
-        return new ModelAndView("redirect:/doctorProfile/" + id);
     }
 }

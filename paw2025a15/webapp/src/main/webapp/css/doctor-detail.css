@@ -6,6 +6,9 @@
     padding: 20px;
     max-height: min-content;
     overflow: hidden;
+    position: sticky;
+    top: 95px;
+    z-index: 1;
 }
 
 .shifts-list-container {
@@ -54,7 +57,9 @@
 }
 
 .doctor-insurances-div,
-.doctor-specialty-div {
+.doctor-specialty-div,
+.doctor-address-div,
+.doctor-license-div {
     display: flex;
     flex-direction: row;
     font-size: 16px;
@@ -62,7 +67,9 @@
 }
 
 .doctor-insurances-label,
-.doctor-specialty-label {
+.doctor-specialty-label,
+.doctor-address-label,
+.doctor-license-label {
     color: black;
     font-weight: 700;
     margin: 0 5px 0 0;
@@ -75,7 +82,9 @@
 }
 
 .doctor-insurances,
-.doctor-specialty {
+.doctor-specialty,
+.doctor-address,
+.doctor-license {
     color: #555;
     margin: 0;
 }
@@ -117,8 +126,9 @@
 }
 
 .appointments-table thead {
-    background-color: #0d4a85; /* Match your header/nav bar color */
+    background-color: #0d4a85;
     color: white;
+    cursor: default;
 }
 
 .appointments-table tbody tr {
@@ -141,18 +151,6 @@
     .appointments-table {
         font-size: 14px;
     }
-}
-
-/* Table styling remains the same */
-.appointments-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    cursor: pointer;
 }
 
 .appointments-table th, .appointments-table td {
