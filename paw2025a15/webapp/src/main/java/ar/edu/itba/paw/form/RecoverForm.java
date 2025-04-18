@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 
 public class RecoverForm {
 
-    @Size(min = 1, max = 50, message = "email must be less than 100 characters")
+    @Size(min = 1, max = 50, message = "{doctorForm.email.size}")
     @NotEmpty(message = "{doctorForm.email.notEmpty}")
     @Email(message = "{doctorForm.email.invalid}")
     String email;

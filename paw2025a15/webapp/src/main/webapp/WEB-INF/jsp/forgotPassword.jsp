@@ -13,6 +13,10 @@
   <title>Recuperar contraseña</title>
   <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
   <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
+  <style>
+    .error { color: red; }
+    .success { color: green; }
+  </style>
 </head>
 <body>
 
@@ -22,24 +26,30 @@
 
 <div class="page-container" style="align-items: center;">
   <div class="doctor-form-container">
-    <form:form action="${recoverPasswordUrl}" modelAttribute="recoverPass"  method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
+    <form:form action="${recoverPasswordUrl}" modelAttribute="recoverPass" method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
+      <c:if test="${not empty errorMessage}">
+        <p class="error">${errorMessage}</p>
+      </c:if>
+      <c:if test="${not empty successMessage}">
+        <p class="success">${successMessage}</p>
+      </c:if>
 
       <div class="field-container">
         <div class="field-info-container">
           <label class="form-title" for="email">Email:</label>
-          <input id="email" name="email" type="email" class="doctor-form-input" required/>
+          <form:input path="email" id="email" type="email" cssClass="doctor-form-input" required="true"/>
+          <form:errors path="email" cssClass="error"/>
         </div>
       </div>
 
       <div class="doctor-div">
-        <input type="submit" value="${pass.enviar}" class="register-button"/>
+        <input type="submit" value="<spring:message code='pass.enviar'/>" class="register-button"/>
       </div>
 
       <div class="extra-links">
         <p>¿Recordaste tu contraseña? <a href="${loginUrl}">Inicia sesión</a></p>
         <p>¿No tienes cuenta? <a href="${registerUrl}">Regístrate</a></p>
       </div>
-
     </form:form>
   </div>
 </div>
