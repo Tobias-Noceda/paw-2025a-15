@@ -42,7 +42,7 @@ public class PawUserDetailsService implements UserDetailsService {
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         authorities.add(new SimpleGrantedAuthority("ROLE_DOCTOR"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_PATIENT "));
+        authorities.add(new SimpleGrantedAuthority("ROLE_PATIENT"));
 
         return new PawAuthUserDetails(email,user.getPassword(),authorities);
     }
