@@ -23,10 +23,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.TemplateEngine;
@@ -34,19 +36,20 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import java.util.Locale;
+
 @EnableWebMvc
 @EnableAsync
-@ComponentScan({ "ar.edu.itba.paw.webapp.controller" , "ar.edu.itba.paw.services" , "ar.edu.itba.paw.persistence" })
+@ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("classpath:schema.sql")
-     private Resource schemaSql;
+    private Resource schemaSql;
 
     @Bean
     public ViewResolver viewResolver() {
-        final InternalResourceViewResolver viewResolver = new
-        InternalResourceViewResolver();
+        final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix("/WEB-INF/jsp/");
         viewResolver.setSuffix(".jsp");
@@ -66,10 +69,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        //ds.setUrl("jdbc:postgresql://localhost:5432/paw-2025a-15");
-        //ds.setUsername("paw-2025a-15");
-        //ds.setPassword("0meJb9emM");
-
         ds.setUrl("jdbc:postgresql://localhost:5432/paw");
         ds.setUsername("root");
         ds.setPassword("root");
@@ -82,14 +81,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         final DataSourceInitializer dsi = new DataSourceInitializer();
         dsi.setDataSource(ds);
         dsi.setDatabasePopulator(databasePopulator());
- 
+
         return dsi;
     }
- 
+
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(schemaSql);
- 
+
         return populator;
     }
 
@@ -102,6 +101,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
 
         return ms;
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(new Locale("es")); // Español por defecto
+        return slr;
     }
 
     @Bean
@@ -134,7 +140,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setPrefix("classpath:/email_templates/");
-        
+
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding("UTF-8");
@@ -159,5 +165,4 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public Validator getValidator() {
         return validator();
     }
-
 }
