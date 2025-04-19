@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.proxy.NoOp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.concurrent.TimeUnit;
@@ -25,22 +24,21 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PawUserDetailsService userDetailsService;
 
-    //@Autowired
-    //private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CustomAuthenticationFailureHandler authenticationFailureHandler;
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
-    protected void configure(final  HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         http.sessionManagement()
                 .invalidSessionUrl("/home")
                 .and().authorizeRequests()
@@ -56,12 +54,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/patient/**").hasRole("PATIENT")
                 .antMatchers("/**").authenticated()
                 .and().formLogin()
-                .usernameParameter("j_username")
-                .passwordParameter("j_password")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
                 .loginPage("/login")
+                .failureHandler(authenticationFailureHandler)
                 .and().rememberMe()
-                .rememberMeParameter("j_rememberme")
+                .rememberMeParameter("remember-me")
                 .userDetailsService(userDetailsService)
                 .key("mysupersecretketthatnobodyknowsabout")
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
@@ -72,15 +71,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedPage("/403")
                 .and().csrf().disable();
     }
+
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403", "/resources/**");
     }
-
-
-    /*@Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }*/
 }
