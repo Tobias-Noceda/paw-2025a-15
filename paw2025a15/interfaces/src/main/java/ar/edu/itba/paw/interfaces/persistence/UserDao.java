@@ -11,5 +11,5 @@ public interface UserDao {
 
     public Optional<User> getUserByEmail(String email);
 
-    void changePassword(String email, String encode);
+    void changePassword(String email, String password);
 }

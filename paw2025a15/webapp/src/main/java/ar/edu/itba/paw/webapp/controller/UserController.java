@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.form.ChangePasswordForm;
 import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,6 +39,8 @@ public class UserController {
     @Autowired
     private EmailService es;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @RequestMapping("/patients/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id) {
         ModelAndView mav = new ModelAndView("patientProfile");
@@ -105,5 +109,17 @@ public class UserController {
     @RequestMapping("/logout")
     public ModelAndView logout() {
         return new ModelAndView("redirect:/");
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form){
+        if(!form.getPassword().equals(form.getRepeatPassword())){
+            //volver a pedirle al usuario
+        }
+        ModelAndView mav = new ModelAndView("login");
+        us.changePassword("", passwordEncoder.encode(form.getPassword()));
+        return mav;
+
+
     }
 }

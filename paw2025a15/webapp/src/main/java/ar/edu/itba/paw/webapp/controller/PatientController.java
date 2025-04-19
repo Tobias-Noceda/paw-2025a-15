@@ -37,7 +37,7 @@ public class PatientController {
 
     @RequestMapping(value = "/createPatient", method = RequestMethod.POST)
     public ModelAndView registerForm(
-            @Valid @ModelAttribute("registerMedicForm") final PatientForm form,
+            @Valid @ModelAttribute("registerPatientForm") final PatientForm form,
             final BindingResult errors,
             @ModelAttribute("filterForm") final FilterForm filterForm
     ){

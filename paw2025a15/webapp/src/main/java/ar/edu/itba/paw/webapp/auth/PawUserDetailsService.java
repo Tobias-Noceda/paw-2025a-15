@@ -31,11 +31,11 @@ public class PawUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         final User user = us.getUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("No user for email " + email));
-        if(!BCRYPT_PATTERN.matcher(user.getPassword()).matches()){
+        /*if(!BCRYPT_PATTERN.matcher(user.getPassword()).matches()){
             // TODO: pedirle al usuario que actualice contra, por mail y hashearle la contra
             us.changePassword(email, user.getPassword());
             return loadUserByUsername(email);
-        }
+        }*/
         //System.out.println("superado?  " + user.getEmail() + " " + user.getPassword());
 
         //TODO:Implement logic to grant only required authorities 
