@@ -8,12 +8,7 @@
     <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
 </head>
 <body>
-<c:set var="title">
-    <spring:message code="header.doctor"/>
-</c:set>
-<jsp:include page="header.jsp">
-    <jsp:param name="title" value="${title}"/>
-</jsp:include>
+<jsp:include page="components/header.jsp"></jsp:include>
 <c:url value="/createPatient" var="postPath"/>
 <div class="page-container" style="align-items: center;">
     <div class="doctor-form-container">
