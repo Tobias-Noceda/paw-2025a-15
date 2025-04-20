@@ -13,4 +13,6 @@ public interface UserDao {
     public Optional<User> getUserByEmail(String email);
 
     public List<User> getAuthPatientsByDoctorId(long id);
+
+    void changePassword(String email, String password);
 }

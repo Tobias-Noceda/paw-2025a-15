@@ -62,4 +62,9 @@ public class UserJdbcDao implements UserDao{
                 ROW_MAPPER
         );
     }
+
+    @Override
+    public void changePassword(String email, String password) {
+        jdbcTemplate.update("UPDATE users SET user_password = ? WHERE user_email = ?", password, email);
+    }
 }

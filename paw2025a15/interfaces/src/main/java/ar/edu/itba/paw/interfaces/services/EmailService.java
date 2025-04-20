@@ -22,4 +22,6 @@ public interface EmailService {
     public void sendDoctorCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
 
     public void sendPatientCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
+
+    public void sendPasswordResetEmail(User user);
 }

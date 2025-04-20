@@ -31,7 +31,11 @@
       <groupId>ar.edu.itba.paw</groupId>
       <artifactId>models</artifactId>
       <version>${parent.version}</version>
-    </dependency>    
+    </dependency>
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-core</artifactId>
+      </dependency>
   </dependencies>
 
   <build>
