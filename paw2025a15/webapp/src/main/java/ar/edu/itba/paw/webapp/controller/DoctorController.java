@@ -182,7 +182,7 @@ public class DoctorController {
         }
         
         User patient = us.getUserByEmail(form.getEmail())
-            .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
+            .orElseGet(() -> us.create(form.getEmail(), passwordEncoder.encode("12345678"), form.getName() + " " + form.getSurname(), form.getPhoneNumber()));
 
         return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
     }
@@ -223,7 +223,7 @@ public class DoctorController {
         }
 
         // Si no hay errores, proceder con la creación del médico<
-        User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
+        User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), "11 1234-5678", "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
         dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
         ModelAndView mav = new ModelAndView("redirect:/");

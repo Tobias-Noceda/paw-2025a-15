@@ -6,21 +6,27 @@ public class User {
     private final String email;
     private final String password;
     private final String name;
+    private final String telephone;
+    private final UserRoleEnum role;
     private final long pictureId;
 
-    public User(long id, String email, String password, String name){
+    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role) {
         this.id = id;
         this. email = email;
         this.password = password;
         this.name= name;
+        this.telephone = telephone;
+        this.role = role;
         this.pictureId = 1;
     }
 
-    public User(long id, String email, String password, String name, long pictureId){
+    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
         this.id = id;
         this. email = email;
         this.password = password;
         this.name= name;
+        this.telephone = telephone;
+        this.role = role;
         this.pictureId = pictureId;
     }
 
@@ -49,6 +55,14 @@ public class User {
 
     public String getPassword(){
         return password;
+    }
+
+    public String getTelephone(){
+        return telephone;
+    }
+
+    public UserRoleEnum getRole(){
+        return role;
     }
 
     public long getPictureId(){

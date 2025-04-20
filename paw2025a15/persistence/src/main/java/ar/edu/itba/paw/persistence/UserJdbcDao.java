@@ -15,10 +15,11 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserRoleEnum;
 
 @Repository
 public class UserJdbcDao implements UserDao{
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getLong("picture_id"));
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getString("user_telephone"), UserRoleEnum.fromInt(rs.getInt("user_role")),rs.getLong("picture_id"));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,14 +32,16 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public User create(String email, String password, String name, long pictureId) {
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("user_email", email);
         args.put("user_password", password);
         args.put("user_name", name);
+        args.put("user_telephone", telephone);
+        args.put("user_role", role.ordinal());
         args.put("picture_id", pictureId);
         final Number user_id = jdbcInsert.executeAndReturnKey(args);
-        return new User(user_id.longValue(), email, password, name, pictureId);
+        return new User(user_id.longValue(), email, password, name, telephone, role, pictureId);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.form.SearchForm;
@@ -49,7 +48,7 @@ public class PatientController {
         }
         // TODO: Verificar que el email no exista en la base de datos
         System.out.println("Contraseña " + passwordEncoder.encode(form.getPassword()));
-        us.create(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname());
+        us.create(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), "11 1234-5678"); //TODO: Agregar telefono al form
         ModelAndView mav = new ModelAndView("redirect:/");
         return mav;
     }

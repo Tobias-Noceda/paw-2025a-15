@@ -3,7 +3,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-
 <html>
   <head>
     <meta charset="UTF-8">
@@ -29,7 +28,7 @@
         </a>
       </div>
       <nav class="nav-links">
-        <a href="<c:url value="/appointments/patient/15"/>" class="nav-item <c:if test='${param.title == appointments}'>active</c:if>">
+        <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title == "appointments"}'>active</c:if>">
           <spring:message code="header.appointments" />
         </a>
         <a href="<c:url value="/studies/6"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
@@ -54,9 +53,7 @@
             <button type="submit" style="display: none;"></button>
           </form:form>
         </div>
-
-
-
+      </div>
 
       </div>
         <!-- Show only if user IS authenticated -->
@@ -68,14 +65,15 @@
           </a>
         </c:if>
 
-      <!-- Show only if user is NOT authenticated -->
-      <c:if test="${pageContext.request.userPrincipal == null}">
-        <a href="<c:url value="/login"/>">
-          <button class="doctor-btn">
-            <spring:message code="header.login" />
-          </button>
-        </a>
-      </c:if>
+        <!-- Show only if user is NOT authenticated -->
+        <c:if test="${pageContext.request.userPrincipal == null}">
+          <a href="<c:url value="/login"/>">
+            <button class="doctor-btn">
+              <spring:message code="header.login" />
+            </button>
+          </a>
+        </c:if>
+      </div>
     </div>
   </body>
 </html>

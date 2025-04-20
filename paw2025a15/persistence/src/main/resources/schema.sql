@@ -42,6 +42,26 @@ CREATE TABLE IF NOT EXISTS users (
     FOREIGN KEY (picture_id) REFERENCES files(file_id)
 );
 
+-- Add roles
+-- -- Step 1: Add the column with a default value
+-- ALTER TABLE users
+-- ADD COLUMN user_role INT;
+
+-- -- Step 2: Update the values based on the condition
+-- UPDATE users
+-- SET user_role = CASE
+--     WHEN user_id IN (SELECT doctor_id FROM doctor_details) THEN 1
+--     ELSE 0
+-- END;
+
+-- -- Step 3: Enable the NULL constraint on the new column
+-- ALTER TABLE users
+-- ALTER COLUMN user_role SET NOT NULL;
+
+-- Add telephone
+-- ALTER TABLE users
+-- ADD COLUMN user_telephone VARCHAR(20) NOT NULL DEFAULT '1112345678';
+
 CREATE TABLE IF NOT EXISTS studies (
     study_id SERIAL PRIMARY KEY,
     study_type VARCHAR(100) NOT NULL,
