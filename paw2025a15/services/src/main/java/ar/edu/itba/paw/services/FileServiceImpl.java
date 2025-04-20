@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.interfaces.persistence.FileDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.FileTypeEnum;
 
 @Service
 public class FileServiceImpl implements FileService{
@@ -21,7 +22,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public File create(byte[] content, String type) {
+    public File create(byte[] content, FileTypeEnum type) {
         return fileDao.create(content, type);
     }
 

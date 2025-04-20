@@ -8,12 +8,6 @@
     <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
   </head>
   <body>
-    <c:set var="title">
-      <spring:message code="header.doctor"/>
-    </c:set>
-    <jsp:include page="header.jsp">
-      <jsp:param name="title" value="${title}"/>
-    </jsp:include>
     <c:url value="/createMedic" var="postPath"/>
     <div class="page-container" style="align-items: center;">
       <div class="doctor-form-container">
@@ -45,6 +39,16 @@
                 <spring:message code="doctorForm.email"/>
               </form:label>
               <form:input type="text" path="email" class="doctor-form-input"/>
+            </div>
+          </div>
+
+          <div class="field-container">
+            <form:errors path="password" cssClass="form-error" element="p"/>
+            <div class="field-info-container">
+              <form:label cssClass="form-title" path="email">
+                <spring:message code="doctorForm.password"/>
+              </form:label>
+              <form:input type="password" path="password" class="doctor-form-input"/>
             </div>
           </div>
     
@@ -107,19 +111,23 @@
               <form:select path="schedules.endTime" itemLabel="label" itemValue="value" items="${hoursSelectItems}" class="hour-select" />
             </div>
           </div>
-          
+
           <div class="field-container">
             <form:errors path="amount" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="amount">
                 <spring:message code="doctorForm.amount"/>
               </form:label>
-              <form:input type="number" path="amount" class="doctor-form-amount"
-                          oninput="this.value = this.value.slice(0, 3)"
-                          onkeydown="if (this.value.length >= 3 && event.key !== 'Backspace' && event.key !== 'Delete') event.preventDefault();" />
+              <form:select path="amount" cssClass="doctor-form-amount">
+                <form:option value="15" label="15"/>
+                <form:option value="30" label="30"/>
+                <form:option value="45" label="45"/>
+                <form:option value="60" label="60"/>
+              </form:select>
             </div>
           </div>
-    
+
+
           <div class="doctor-div">
             <input type="submit" value="<spring:message code="doctorForm.registerButton"/>" class="register-button"/>
           </div>

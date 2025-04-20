@@ -9,6 +9,13 @@ import ar.edu.itba.paw.form.SearchForm;
 
 @Controller
 public class GeneralController {
+
+    @RequestMapping("/login")
+    public ModelAndView login() {
+        return new ModelAndView("login");
+
+    }
+
     @RequestMapping("/studies")
     public ModelAndView studies() {
         final ModelAndView mav = new ModelAndView("studies");

@@ -104,40 +104,6 @@
     margin: 0;
 }
 
-.month-dropdown-div {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    margin: 0 0 5px 0;
-}
-
-.month-dropdown {
-    max-width: fit-content;
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.month-dropdown:hover {
-    background-color: #0056b3;
-}
-
-.month-dropdown .dropdown-options {
-    display: block;
-    position: absolute;
-    background-color: white;
-    z-index: 100;
-    color: #0d4a85;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 400;
-}
-
 .shift-card {
     display: flex;
     flex-direction: row;
@@ -185,18 +151,6 @@
     .appointments-table {
         font-size: 14px;
     }
-}
-
-/* Table styling remains the same */
-.appointments-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    cursor: pointer;
 }
 
 .appointments-table th, .appointments-table td {
@@ -308,4 +262,11 @@ button:hover {
 .form-group input {
     flex: 1;
     padding: 5px;
+}
+
+/* Error Messages (Above the input) */
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 5px;
 }

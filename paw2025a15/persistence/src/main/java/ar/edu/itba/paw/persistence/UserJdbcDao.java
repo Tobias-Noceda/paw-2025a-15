@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserRoleEnum;
 
 @Repository
 public class UserJdbcDao implements UserDao{
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getLong("picture_id"));
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getString("user_telephone"), UserRoleEnum.fromInt(rs.getInt("user_role")),rs.getLong("picture_id"));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -30,14 +32,16 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public User create(String email, String password, String name, long pictureId) {
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("user_email", email);
         args.put("user_password", password);
         args.put("user_name", name);
+        args.put("user_telephone", telephone);
+        args.put("user_role", role.ordinal());
         args.put("picture_id", pictureId);
         final Number user_id = jdbcInsert.executeAndReturnKey(args);
-        return new User(user_id.longValue(), email, password, name, pictureId);
+        return new User(user_id.longValue(), email, password, name, telephone, role, pictureId);
     }
 
     @Override
@@ -50,5 +54,20 @@ public class UserJdbcDao implements UserDao{
     public Optional<User> getUserByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM users WHERE user_email = ?", new Object[]  {email},
           new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
+    public List<User> getAuthPatientsByDoctorId(long id) {
+        return (List<User>) jdbcTemplate.query(
+                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ?",
+                new Object[]{id},
+                new int[]{ java.sql.Types.BIGINT },
+                ROW_MAPPER
+        );
+    }
+
+    @Override
+    public void changePassword(String email, String password) {
+        jdbcTemplate.update("UPDATE users SET user_password = ? WHERE user_email = ?", password, email);
     }
 }

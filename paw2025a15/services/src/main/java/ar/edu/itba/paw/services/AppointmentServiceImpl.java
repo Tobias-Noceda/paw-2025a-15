@@ -14,6 +14,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AppointmentData;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.User;
 
@@ -43,8 +44,10 @@ public class AppointmentServiceImpl implements AppointmentService{
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("No such doctor"));
         if(date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         Appointment appointment = appointmentDao.addAppointment(shiftId, patientId, date);
-        es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
-        es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
+        if(patient.getId() != doctor.getId()){
+            es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
+            es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
+        }
         
         return appointment;
     }
@@ -62,6 +65,44 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public List<Appointment> getAppointmentsByPatientId(long patientId) {
         return appointmentDao.getAppointmentsByPatientId(patientId);
+    }
+
+    @Override
+    public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId) {
+        return appointmentDao.getFutureAppointmentDataByPatientId(patientId);
+    }
+
+    @Override
+    public List<AppointmentData> getOldAppointmentDataByPatientId(long patientId) {
+        return appointmentDao.getOldAppointmentDataByPatientId(patientId);
+    }
+
+    @Override
+    public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {
+        return appointmentDao.getFutureAppointmentDataByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<AppointmentData> getOldAppointmentDataByDoctorId(long doctorId) {
+        return appointmentDao.getOldAppointmentDataByDoctorId(doctorId);
+    }
+
+    @Override
+    public void cancelAppointment(long shiftId, LocalDate date, long cancelId) {
+        Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(()->new IllegalArgumentException("No such appointment"));
+        User patient = us.getUserById(appointment.getPatientId()).orElseThrow(()->new IllegalArgumentException("No such patient"));
+        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
+        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(()->new IllegalArgumentException("No such doctor"));
+        if(appointmentDao.removeAppointment(shiftId, date)){
+            if(cancelId==patient.getId()){
+                es.sendPatientCancellationConfirmationEmail(patient, doctor, appointment, shift);
+                es.sendDoctorCancelledAppointmentEmail(patient, doctor, appointment, shift);
+            }
+            else if(cancelId==doctor.getId()){
+                es.sendDoctorCancellationConfirmationEmail(patient, doctor, appointment, shift);
+                es.sendPatientCancelledAppointmentEmail(patient, doctor, appointment, shift);
+            }
+        }
     }
 
 }

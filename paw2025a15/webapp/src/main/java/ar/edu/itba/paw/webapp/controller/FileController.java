@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.FileTypeEnum;
 
 @Controller
 public class FileController {
@@ -32,17 +33,11 @@ public class FileController {
 
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.POST)
     public ModelAndView createImage(@RequestParam("file") MultipartFile file) throws IOException{
-        String fileType = file.getContentType();
-        if (fileType == null || !(fileType.equals("image/png") || fileType.equals("image/jpeg") || fileType.equals("application/pdf"))) {
-            throw new IllegalArgumentException("Unsupported file type: " + fileType);
-        }
-        
-        byte[] content = file.getBytes();
-        File f = fs.create(content, fileType);
+        File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")
+    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
         Optional<File> f = fs.findById(id);
         if (!f.isPresent()) {
@@ -50,13 +45,13 @@ public class FileController {
         }
         
         byte[] content = f.get().getContent();
-        String fileType = f.get().getType();
+        FileTypeEnum fileType = f.get().getType();
         
         MediaType mediaType;
         mediaType = switch (fileType) {
-            case "image/png" -> MediaType.IMAGE_PNG;
-            case "image/jpeg" -> MediaType.IMAGE_JPEG;
-            case "application/pdf" -> MediaType.APPLICATION_PDF;
+            case PNG -> MediaType.IMAGE_PNG;
+            case JPEG -> MediaType.IMAGE_JPEG;
+            case PDF -> MediaType.APPLICATION_PDF;
             default -> MediaType.APPLICATION_OCTET_STREAM;
         };
 

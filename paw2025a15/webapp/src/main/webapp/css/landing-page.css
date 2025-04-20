@@ -156,7 +156,7 @@
     font-weight: bold;
 }
 
-.active {
+.day-active {
     background-color: #0056b3;
     border-radius: 999px;
     color: white;

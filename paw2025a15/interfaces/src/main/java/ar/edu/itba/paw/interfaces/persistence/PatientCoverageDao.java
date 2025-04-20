@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
-import java.util.List;
+import java.util.Optional;
 
 import ar.edu.itba.paw.models.Insurance;
 
@@ -10,5 +10,5 @@ public interface PatientCoverageDao {
 
     public boolean removeCoverage(long patientId, long insuranceId);
 
-    public List<Insurance> getInsurancesById(long patientId);
+    public Optional<Insurance> getInsuranceById(long patientId);
 }

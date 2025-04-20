@@ -76,7 +76,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
 
-    //TODO estas capaz estan mal que esten aca
+    //TODO estas capaz estan mal que esten aca//TODO fusion de todo lo de "doctor" aca seguro termina siendo
     public List<Insurance> getInsurancesById(long doctorId) {
         String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id")));
@@ -92,11 +92,36 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         if(name == null || name.trim().isEmpty()) return Collections.emptyList();
         if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE LOWER(u.user_name) LIKE LOWER(?)",
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
                 new Object[]{ "%" + name.trim() + "%" },
                 new int[]{ java.sql.Types.VARCHAR },
                 DV_ROW_MAPPER
         );
+    }
+
+    @Override
+    public List<DoctorView> getAuthDoctorsByPatientId(long id) {
+        return (List<DoctorView>) jdbcTemplate.query(
+                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
+                new Object[]{id},
+                new int[]{ java.sql.Types.BIGINT },
+                DV_ROW_MAPPER
+        );
+    }
+
+    @Override
+    public boolean hasAuthDoctor(long patientId, long doctorId) {
+        return jdbcTemplate.query("SELECT 1 FROM auth_doctors WHERE doctor_id = ? AND patient_id = ?", new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
+    }
+
+    @Override
+    public void authDoctor(long patientId, long doctorId) {
+        jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id) VALUES (?, ?)", patientId, doctorId);
+    }
+
+    @Override
+    public void unauthDoctor(long patientId, long doctorId) {
+        jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ?", patientId, doctorId);
     }
 
 }

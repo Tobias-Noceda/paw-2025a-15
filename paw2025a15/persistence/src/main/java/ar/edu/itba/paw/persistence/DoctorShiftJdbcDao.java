@@ -69,7 +69,6 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE doctor_id = ? AND shift_weekday = ? AND shift_start_time > ?", new Object[]  {doctorId, weekday.ordinal(), startTime},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.TIME}, ROW_MAPPER);
     }
-
     @Override
     public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date){
         return jdbcTemplate.query("SELECT ds.* FROM doctor_shifts AS ds WHERE ds.doctor_id = ? AND ds.shift_weekday = ? AND NOT EXISTS (SELECT 1 FROM appointments AS a WHERE a.appointment_date = ? AND a.shift_id = ds.shift_id)", new Object[]  {doctorId, weekday.ordinal(), date},

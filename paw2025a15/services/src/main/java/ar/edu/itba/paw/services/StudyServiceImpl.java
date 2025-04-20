@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -12,6 +14,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Study;
+import ar.edu.itba.paw.models.StudyTypeEnum;
 
 @Service
 public class StudyServiceImpl implements StudyService{
@@ -30,16 +33,22 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public Study create(String type, long fileId, long userId, long uploaderId, LocalDateTime uploadDate) {
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate) {
         if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
-        return studyDao.create(type, fileId, userId, uploaderId, uploadDate);   
+        LocalDate date = studyDate == null? uploadDate.toLocalDate() : studyDate;
+        return studyDao.create(type, comment, fileId, userId, uploaderId, uploadDate, date);   
     }
 
     @Override
     public Optional<Study> getStudyById(long id) {
         return studyDao.getStudyById(id);
+    }
+
+    @Override
+    public List<Study> getStudiesByPatientId(long id) {
+        return studyDao.getStudiesByPatientId(id);
     }
 
 }

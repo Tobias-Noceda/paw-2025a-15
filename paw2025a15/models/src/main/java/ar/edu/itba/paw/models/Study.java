@@ -1,31 +1,40 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Study {
 
     private final long id;
-    private final String type;
+    private final StudyTypeEnum type;
+    private final String comment;
     private final long fileId;
     private final long userId;
     private final long uploaderId;
     private final LocalDateTime uploadDate;
+    private final LocalDate studyDate;
 
-    public Study(long id, String type, long fileId, long userId, long uploaderId, LocalDateTime uploadDate){
+    public Study(long id, StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate){
         this.id = id;
         this.type = type;
+        this.comment = comment;
         this.fileId = fileId;
         this.userId = userId;
         this.uploaderId = uploaderId;
         this.uploadDate = uploadDate;
+        this.studyDate = studyDate;
     }
 
     public long getId(){
         return id;
     }
 
-    public String getType(){
+    public StudyTypeEnum getType(){
         return type;
+    }
+
+    public String getComment(){
+        return comment;
     }
 
     public long getFileId(){
@@ -40,7 +49,11 @@ public class Study {
         return uploaderId;
     }
 
-    public LocalDateTime getUpLocalDateTime(){
+    public LocalDateTime getUploadDate(){
         return uploadDate;
+    }
+
+    public LocalDate getStudyDate(){
+        return studyDate;
     }
 }

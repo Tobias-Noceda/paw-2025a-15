@@ -8,8 +8,12 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,7 +27,6 @@ import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.form.ShiftsMonthForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -34,6 +37,7 @@ import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
 public class DoctorController {
@@ -52,12 +56,13 @@ public class DoctorController {
     
     @Autowired
     private DoctorShiftService dss;
-    
-    @Autowired
-    private AppointmentService as;
 
     @Autowired
     private InsuranceService is;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     private ModelAndView renderIndexPage(Locale locale) {
         final ModelAndView mav = new ModelAndView("index");
@@ -70,7 +75,29 @@ public class DoctorController {
     }
 
     @RequestMapping("/")
-    public ModelAndView index(
+    public ModelAndView index(Locale locale) {
+        try {
+            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            // Si llegó hasta acá, está logueado
+            final long userId = us.getUserByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("Username not found"))
+                    .getId();
+
+            return new ModelAndView("redirect:/home");
+        } catch (ClassCastException e) {
+            // No está logueado → mostrar landing page
+            return new ModelAndView("redirect:/home");
+        }
+    }
+
+
+
+    @RequestMapping("/home")
+    public ModelAndView index (
         @ModelAttribute("searchForm") final SearchForm searchForm,
         @ModelAttribute("filterForm") final FilterForm filterForm,
         Locale locale
@@ -78,9 +105,10 @@ public class DoctorController {
         final ModelAndView mav = renderIndexPage(locale);
         List<DoctorView> doctors = dds.getAllDoctors();
         mav.addObject("docList", doctors);
-        
+
         return mav;
     }
+
 
     @RequestMapping("/filter")
     public ModelAndView filter(
@@ -149,19 +177,23 @@ public class DoctorController {
         @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
         final BindingResult errors
     ) {
-        final ModelAndView mav = new ModelAndView("redirect:/");
         if (errors.hasErrors()) {
             return doctorProfile(id, new ShiftsMonthForm(), form, locale);
         }
-
+        
         User patient = us.getUserByEmail(form.getEmail())
-            .orElseGet(() -> us.create(form.getEmail(), "12345678", form.getName() + " " + form.getSurname()));
-        as.addAppointment(form.getShiftId(), patient.getId(), LocalDate.parse(form.getDate()));
+            .orElseGet(() -> us.create(form.getEmail(), passwordEncoder.encode("12345678"), form.getName() + " " + form.getSurname(), form.getPhoneNumber()));
 
-        return mav;
+        return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
     }
 
-    @RequestMapping("/doctor-form")
+    @RequestMapping(value = "/patientAuthDoctor/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView authUnauthDoctor(@PathVariable("patientId") long patientId, @PathVariable("doctorId") long doctorId) {
+        dds.toggleAuthDoctor(patientId, doctorId);
+        return new ModelAndView("redirect:/studies/" + patientId);
+    }
+
+    @RequestMapping("/register/doctor-form")
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
         final ModelAndView mav = new ModelAndView("doctorForm");
         mav.addObject("doctor", form);
@@ -190,10 +222,10 @@ public class DoctorController {
             return mav;
         }
 
-        // Si no hay errores, proceder con la creación del médico
-        User doc = us.createDoctor(form.getEmail(), "12345678", form.getName() + " " + form.getSurname(), "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
+        // Si no hay errores, proceder con la creación del médico<
+        User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), "11 1234-5678", "med-licence", form.getSpeciality()); //TODO magicnumber password sacar y getLicence
         dcs.addCoverages(doc.getId(), form.getObrasSociales());
-        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());//TODO change Schedule model or sth.
+        dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
         ModelAndView mav = new ModelAndView("redirect:/");
 
         return mav;
@@ -247,32 +279,5 @@ public class DoctorController {
             ));
         }
         return months;
-    }
-
-    protected class SelectItem {
-        private String value;
-        private String label;
-
-        // Constructor, getters y setters
-        public SelectItem(String value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
     }
 }

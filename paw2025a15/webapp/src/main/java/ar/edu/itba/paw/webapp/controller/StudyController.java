@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
+import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.FileTypeEnum;
+import ar.edu.itba.paw.models.StudyTypeEnum;
 import ar.edu.itba.paw.models.User;
 
 @Controller
@@ -27,6 +31,9 @@ public class StudyController {
 
     @Autowired
     private StudyService ss;
+
+    @Autowired
+    private DoctorDetailService dds;
 
     @Autowired
     private UserService us;
@@ -44,6 +51,7 @@ public class StudyController {
         mav.addObject("patientName", patient.getName());
         mav.addObject("patientId", patientId);
         mav.addObject("doctorId", doctorId);
+        mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());//TODO revisar esto con el jsp
         return mav;
     }
 
@@ -52,7 +60,7 @@ public class StudyController {
         if (errors.hasErrors()) {
             return createStudyForm(patientId, doctorId, createStudyForm);
         }
-        //TODO esta verificacion tendria que e star en el form directamente
+        //TODO esta verificacion tendria que estar en el form directamente
         //if (fileType == null || !(fileType.equals("image/png") || fileType.equals("image/jpeg") || fileType.equals("application/pdf"))) {
         //throw new IllegalArgumentException("Unsupported file type: " + fileType);
         // }
@@ -60,12 +68,26 @@ public class StudyController {
         User doctor = us.getUserById(doctorId).orElseThrow(() -> new IllegalArgumentException("Invalid doctor ID: " + doctorId));
         LocalDateTime dateTime = LocalDateTime.now();
         
-        File f = fs.create(createStudyForm.getFile().getBytes(), createStudyForm.getFile().getContentType());
-        ss.create(createStudyForm.getType(), f.getId(), patientId, doctorId, dateTime);
+        File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, doctorId, dateTime, createStudyForm.getDate());
 
 
-        es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getType(), dateTime);
+        es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getComment(), dateTime);
 
         return new ModelAndView("redirect:/");
+    }
+
+    @RequestMapping("/studies/{id:\\d+}")
+    public ModelAndView patientProfile(
+        @PathVariable("id") long id,
+        @ModelAttribute("searchForm") SearchForm searchForm
+    ) {
+        ModelAndView mav = new ModelAndView("studies");
+
+        mav.addObject("patientId", id);
+        mav.addObject("patientStudies", ss.getStudiesByPatientId(id));
+        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(id));
+
+        return mav;
     }
 }
