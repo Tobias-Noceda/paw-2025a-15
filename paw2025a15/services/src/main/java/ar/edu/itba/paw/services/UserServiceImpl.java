@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
@@ -20,6 +21,13 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private DoctorDetailService dds;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public User create(String email, String password, String name, long pictureId) {
@@ -58,5 +66,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<User> getAuthPatientsByDoctorId(long id) {
         return userDao.getAuthPatientsByDoctorId(id);
+    }
+
+    @Override
+    public void changePassword(String email, String password) {
+        userDao.changePassword(email, password);
     }
 }

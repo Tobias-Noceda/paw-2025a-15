@@ -263,3 +263,10 @@ button:hover {
     flex: 1;
     padding: 5px;
 }
+
+/* Error Messages (Above the input) */
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
