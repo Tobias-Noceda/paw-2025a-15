@@ -262,7 +262,7 @@ public class EmailServiceImpl implements EmailService{
         String token = UUID.randomUUID().toString(); // o algo más complejo
         //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
 
-        String recoveryLink = baseURL + "passwordRecovery/" + token;
+        String recoveryLink = baseURL + "changePassword/" + token + "/" + user.getId();
         templateModel.put("resetLink", recoveryLink);
 
 

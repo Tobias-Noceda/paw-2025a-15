@@ -70,4 +70,10 @@ public class UserJdbcDao implements UserDao{
     public void changePassword(String email, String password) {
         jdbcTemplate.update("UPDATE users SET user_password = ? WHERE user_email = ?", password, email);
     }
+
+    @Override
+    public void changePasswordByID(long id, String password){
+        jdbcTemplate.update("UPDATE users SET user_password = ? WHERE user_id = ?", password, id);
+    }
+
 }

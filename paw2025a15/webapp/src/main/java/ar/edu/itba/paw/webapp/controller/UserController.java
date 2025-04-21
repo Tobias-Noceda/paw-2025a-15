@@ -139,6 +139,13 @@ public class UserController {
         return new ModelAndView("redirect:/");
     }
 
+    /*
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public ModelAndView showChangePassword(){
+
+    }*/
+
+
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form){
         if(!form.getPassword().equals(form.getRepeatPassword())){

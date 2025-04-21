@@ -73,4 +73,9 @@ public class UserServiceImpl implements UserService{
     public void changePassword(String email, String password) {
         userDao.changePassword(email, password);
     }
+
+    @Override
+    public void changePasswordByID(long id, String password) {
+        userDao.changePasswordByID(id, password);
+    }
 }
