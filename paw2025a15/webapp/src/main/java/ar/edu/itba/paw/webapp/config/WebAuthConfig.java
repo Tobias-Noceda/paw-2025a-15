@@ -45,6 +45,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").anonymous()
                 .antMatchers("/register/**").anonymous()
                 .antMatchers("/forgot-password").anonymous()
+                .antMatchers("/search/**").permitAll()
+                .antMatchers("/changePassword/**").anonymous()
                 .antMatchers("/recover-password").anonymous()
                 .antMatchers("/", "/home").permitAll()
                 .antMatchers("/createPatient").anonymous()
@@ -75,6 +77,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403", "/resources/**");
+                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403", "/resources/**", "/supersecret/files/**");
     }
 }

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.form.ChangePasswordForm;
 import ar.edu.itba.paw.form.RecoverForm;
+import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,20 +140,27 @@ public class UserController {
         return new ModelAndView("redirect:/");
     }
 
-    /*
-    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
-    public ModelAndView showChangePassword(){
 
-    }*/
+    @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.GET)
+    public ModelAndView changePassword(@PathVariable("id") long id, @PathVariable("token") String token ,
+                                       @ModelAttribute("passwordForm") ChangePasswordForm form){
+        ModelAndView mav = new ModelAndView("changePassword");
+
+        return mav;
+    }
 
 
-    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-    public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form){
+    @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.POST)
+    public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form,
+                                       @PathVariable("id") long id, @PathVariable("token") String token       ){
+        System.out.println(form);
+        System.out.println("id = " + id);
+        System.out.println(token);
         if(!form.getPassword().equals(form.getRepeatPassword())){
             //volver a pedirle al usuario
         }
         ModelAndView mav = new ModelAndView("login");
-        us.changePassword("", passwordEncoder.encode(form.getPassword()));
+        us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
         return mav;
 
 

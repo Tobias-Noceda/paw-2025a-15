@@ -25,4 +25,12 @@ public class ChangePasswordForm {
     public void setRepeatPassword(String repeatPassword) {
         this.repeatPassword = repeatPassword;
     }
+
+    @Override
+    public String toString() {
+        return "ChangePasswordForm{" +
+                "password='" + password + '\'' +
+                ", repeatPassword='" + repeatPassword + '\'' +
+                '}';
+    }
 }

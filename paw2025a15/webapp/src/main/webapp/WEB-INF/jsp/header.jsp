@@ -54,25 +54,29 @@
           </form:form>
         </div>
       </div>
+      <!-- Show only if user IS authenticated -->
+      <c:if test="${pageContext.request.userPrincipal != null}">
+        <a href="<c:url value="/logout"/>">
+          <button class="doctor-btn">
+            <spring:message code="header.logout" />
+          </button>
+        </a>
+      </c:if>
+
+      <!-- Show only if user is NOT authenticated -->
+      <c:if test="${pageContext.request.userPrincipal == null}">
+        <a href="<c:url value="/login"/>">
+          <button class="doctor-btn">
+            <spring:message code="header.login" />
+          </button>
+        </a>
+      </c:if>
+
+
+
 
       </div>
-        <!-- Show only if user IS authenticated -->
-        <c:if test="${pageContext.request.userPrincipal != null}">
-          <a href="<c:url value="/logout"/>">
-            <button class="doctor-btn">
-              <spring:message code="header.logout" />
-            </button>
-          </a>
-        </c:if>
 
-        <!-- Show only if user is NOT authenticated -->
-        <c:if test="${pageContext.request.userPrincipal == null}">
-          <a href="<c:url value="/login"/>">
-            <button class="doctor-btn">
-              <spring:message code="header.login" />
-            </button>
-          </a>
-        </c:if>
       </div>
     </div>
   </body>
