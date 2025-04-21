@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -152,17 +153,18 @@ public class UserController {
 
     @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.POST)
     public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form,
-                                       @PathVariable("id") long id, @PathVariable("token") String token       ){
+                                       @PathVariable("id") long id, @PathVariable("token") String token){
         System.out.println(form);
         System.out.println("id = " + id);
         System.out.println(token);
         if(!form.getPassword().equals(form.getRepeatPassword())){
             //volver a pedirle al usuario
+            ModelAndView mav = new ModelAndView("changePassword");
+            mav.addObject("errorMessage", "Las contraseñas no coinciden");
+            return mav;
         }
         ModelAndView mav = new ModelAndView("login");
         us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
         return mav;
-
-
     }
 }

@@ -37,7 +37,9 @@ public class EmailServiceImpl implements EmailService{
 
     //private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
     //private final String baseURL = "http://localhost:8080/webapp/";
-    private final String baseURL = "http://localhost:8080/";
+    private final String baseURL = "http://localhost:8080/webapp_war/";
+    //private final String baseURL = "http://localhost:8080/";
+
 
     private void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();

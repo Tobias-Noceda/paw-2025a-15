@@ -12,7 +12,9 @@
 <div class="page-container" style="align-items: center;">
     <div class="doctor-form-container">
         <form:form cssClass="doctor-form" modelAttribute="passwordForm" action="${postPath}" method="post">
-
+            <c:if test="${not empty errorMessage}">
+                <p class="error-message">${errorMessage}</p>
+            </c:if>
             <div class="field-container">
                 <form:errors path="password" cssClass="form-error" element="p"/>
                 <div class="field-info-container">
@@ -28,7 +30,7 @@
                 <form:errors path="repeatPassword" cssClass="form-error" element="p"/>
                 <div class="field-info-container">
                     <form:label cssClass="form-title" path="repeatPassword">
-                        <spring:message code="doctorForm.password"/>
+                        <spring:message code="doctorForm.repeat"/>
                     </form:label>
                     <form:input type="password" path="repeatPassword" class="doctor-form-input"/>
                 </div>
