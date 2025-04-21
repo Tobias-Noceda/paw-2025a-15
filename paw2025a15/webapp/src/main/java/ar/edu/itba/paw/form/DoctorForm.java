@@ -47,6 +47,17 @@ public class DoctorForm {
     @Positive(message = "{doctorForm.amount.positive}")
     private int amount;
 
+    @NotEmpty
+    @Size(min=8, max= 11)
+    private String phoneNumber;
+
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getPassword() {
         return password;

@@ -22,6 +22,18 @@ public class PatientForm {
     @Email(message = "{doctorForm.email.invalid}")
     private String email;
 
+    @NotEmpty
+    @Size(min=8, max= 11)
+    private String phoneNumber;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getName() {
         return name;
     }

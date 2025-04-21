@@ -51,6 +51,16 @@
               <form:input type="password" path="password" class="doctor-form-input"/>
             </div>
           </div>
+
+          <div class="field-container">
+            <form:errors path="phoneNumber" cssClass="form-error" element="p"/>
+            <div class="field-info-container">
+              <form:label cssClass="form-title" path="phoneNumber">
+                <spring:message code="doctorForm.phone"/>
+              </form:label>
+              <form:input type="number" path="phoneNumber" class="doctor-form-input"/>
+            </div>
+          </div>
     
           <div class="field-container">
             <form:errors path="speciality" cssClass="form-error" element="p"/>
