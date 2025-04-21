@@ -168,25 +168,6 @@ public class DoctorController {
         return mav;
     }
 
-
-    @RequestMapping(value = "/doctors/{id:\\d+}", method = RequestMethod.POST)
-    public ModelAndView takeTurn(
-        @PathVariable("id") long id,
-        @ModelAttribute("shiftsMonthForm") final ShiftsMonthForm shiftsMonthForm,
-        Locale locale,
-        @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
-        final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
-        }
-        
-        User patient = us.getUserByEmail(form.getEmail())
-            .orElseGet(() -> us.create(form.getEmail(), passwordEncoder.encode("12345678"), form.getName() + " " + form.getSurname(), form.getPhoneNumber()));
-
-        return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
-    }
-
     @RequestMapping(value = "/patientAuthDoctor/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
     public ModelAndView authUnauthDoctor(@PathVariable("patientId") long patientId, @PathVariable("doctorId") long doctorId) {
         dds.toggleAuthDoctor(patientId, doctorId);

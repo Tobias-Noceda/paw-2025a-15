@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,8 @@ import ar.edu.itba.paw.form.ShiftsMonthForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 
@@ -27,6 +32,9 @@ import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 public class AppointmentController {
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private UserService us;
 
     @Autowired
     private AppointmentService as;
@@ -85,16 +93,20 @@ public class AppointmentController {
         return new ModelAndView("redirect:/doctorProfile/" + id);
     }
 
-    @RequestMapping(value = "/takeAppointment/{takerId:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView takeAppointment(
-        @PathVariable("takerId") long takerId,
-        @PathVariable("shiftId") long shiftId,
-        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
-    ){
-        as.addAppointment(shiftId, takerId, date);
+    @RequestMapping(value = "/takeAppointment", method = RequestMethod.POST)
+    public ModelAndView takeAppointment(@Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
+        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
-        // TODO: patient o doctor segun el rol del usuario logueado
-        return new ModelAndView("redirect:/appointments/patient/" + takerId);
+        us.getUserByEmail(userDetails.getUsername())
+            .ifPresentOrElse(
+                user -> {as.addAppointment(form.getShiftId(), user.getId(), LocalDate.parse(form.getDate()));},
+                () -> {throw new IllegalArgumentException("User not found");}
+            );
+
+        return new ModelAndView("redirect:/appointments");
     }
 
     private List<SelectItem> getNextThreeMonths(Locale locale) {

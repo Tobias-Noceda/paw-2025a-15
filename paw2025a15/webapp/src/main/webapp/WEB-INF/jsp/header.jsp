@@ -14,10 +14,6 @@
     <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
   </head>
   <body>
-    <c:set var="appointments" value="appointments" />
-    <c:set var="ensurance">
-      <spring:message code="header.ensurance"/>
-    </c:set>
     <c:set var="imgSrc">
       <c:url value="/resources/icono.jpg"/>
     </c:set>
@@ -54,26 +50,23 @@
           </form:form>
         </div>
       </div>
+      <!-- Show only if user IS authenticated -->
+      <c:if test="${pageContext.request.userPrincipal != null}">
+        <a href="<c:url value="/logout"/>">
+          <button class="doctor-btn">
+            <spring:message code="header.logout" />
+          </button>
+        </a>
+      </c:if>
 
-      </div>
-        <!-- Show only if user IS authenticated -->
-        <c:if test="${pageContext.request.userPrincipal != null}">
-          <a href="<c:url value="/logout"/>">
-            <button class="doctor-btn">
-              <spring:message code="header.logout" />
-            </button>
-          </a>
-        </c:if>
-
-        <!-- Show only if user is NOT authenticated -->
-        <c:if test="${pageContext.request.userPrincipal == null}">
-          <a href="<c:url value="/login"/>">
-            <button class="doctor-btn">
-              <spring:message code="header.login" />
-            </button>
-          </a>
-        </c:if>
-      </div>
+      <!-- Show only if user is NOT authenticated -->
+      <c:if test="${pageContext.request.userPrincipal == null}">
+        <a href="<c:url value="/login"/>">
+          <button class="doctor-btn">
+            <spring:message code="header.login" />
+          </button>
+        </a>
+      </c:if>
     </div>
   </body>
 </html>
