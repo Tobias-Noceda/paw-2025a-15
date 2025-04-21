@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
   </head>
   <body>
-    <jsp:include page="header.jsp"/>
+    c
     <c:if test="${takeTurnForm.name != null}">
       <c:set var="myLocalDate">
         <spring:message code="dateFormat" arguments="${takeTurnForm.monthDate},${takeTurnForm.month},${takeTurnForm.year}"></spring:message>

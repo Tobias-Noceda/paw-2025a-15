@@ -47,8 +47,8 @@ public class PatientController {
             return mav;
         }
         // TODO: Verificar que el email no exista en la base de datos
-        System.out.println("Contraseña " + passwordEncoder.encode(form.getPassword()));
-        us.create(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), "11 1234-5678"); //TODO: Agregar telefono al form
+        //System.out.println("Contraseña " + passwordEncoder.encode(form.getPassword()));
+        us.create(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber()); //TODO: Agregar telefono al form
         ModelAndView mav = new ModelAndView("redirect:/");
         return mav;
     }
