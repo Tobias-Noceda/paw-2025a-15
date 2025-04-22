@@ -12,11 +12,11 @@ import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 public class DoctorForm {
-    @Size(min = 1, max = 50, message = "{form.name.size}")
+    @Size(min = 1)
     @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
 
-    @Size(min = 1, max = 50, message = "{form.surname.size}")
+    @Size(min = 1)
     @NotEmpty(message = "{form.surname.notEmpty}")
     private String surname;
 
@@ -24,7 +24,6 @@ public class DoctorForm {
     @NotEmpty
     private String password;
 
-    @Size(min=8)
     @NotEmpty
     private String confirmPassword;
 
@@ -41,8 +40,7 @@ public class DoctorForm {
     @NotEmpty(message = "{form.address.notEmpty}")
     private String address;
 
-    @Size(min = 1, max = 100, message = "{form.email.size}")
-    @NotEmpty(message = "{dorm.email.notEmpty}")
+    @NotEmpty(message = "{form.email.notEmpty}")
     @Email(message = "{form.email.invalid}")
     private String email;
 
@@ -51,7 +49,7 @@ public class DoctorForm {
     private int amount;
 
     @NotEmpty
-    @Size(min=8, max=11)
+    @Size(min=8, max=15)
     private String phoneNumber;
 
     public String getPhoneNumber() {

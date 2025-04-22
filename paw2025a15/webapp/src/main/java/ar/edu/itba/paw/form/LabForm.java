@@ -4,14 +4,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-public class PatientForm {
+public class LabForm {
+
     @Size(min = 1)
     @NotEmpty(message = "{doctorForm.name.notEmpty}")
     private String name;
-
-    @Size(min = 1)
-    @NotEmpty(message = "{doctorForm.surname.notEmpty}")
-    private String surname;
 
     @Size(min = 8)
     @NotEmpty
@@ -28,13 +25,9 @@ public class PatientForm {
     @Size(min = 8, max = 20)
     private String phoneNumber;
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+    @Size(min = 1, max = 50, message = "{form.address.size}")
+    @NotEmpty(message = "{form.address.notEmpty}")
+    private String address;
 
     public String getName() {
         return name;
@@ -42,14 +35,6 @@ public class PatientForm {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     public String getPassword() {
@@ -74,5 +59,21 @@ public class PatientForm {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

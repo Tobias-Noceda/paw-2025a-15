@@ -22,6 +22,10 @@
       <form action="<c:url value='/register/patient-form'/>" method="get">
         <input type="submit" value="Soy Paciente" class="register-button"/>
       </form>
+
+      <form action="<c:url value='/register/lab-form'/>" method="get">
+        <input type="submit" value="Somos un laboratorio" class="register-button"/>
+      </form>
     </div>
   </div>
 </div>
