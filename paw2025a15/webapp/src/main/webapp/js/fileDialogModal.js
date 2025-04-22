@@ -5,9 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".study-row").forEach(row => {
         row.addEventListener("click", function () {
-            const fileId = this.dataset.fileid;
-            const fileUrl = `/supersecret/files/${fileId}`;
-            fileViewer.src = fileUrl;
+            fileViewer.src = this.dataset.fileurl;
             fileDialog.showModal();
         });
     });

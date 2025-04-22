@@ -41,7 +41,7 @@
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
                     <tr class="study-row"
-                      data-fileid="<c:out value='${study.fileId}'/>"
+                      data-fileurl="<c:url value='/supersecret/files/${study.fileId}'/>"
                     >
                       <td class="text-cell"><c:out value="${study.type}"/></td>
                       <td class="text-cell"><c:out value="${study.comment}"/></td>
