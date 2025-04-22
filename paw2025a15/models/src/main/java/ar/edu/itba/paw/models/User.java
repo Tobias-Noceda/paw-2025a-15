@@ -68,4 +68,5 @@ public class User {
     public long getPictureId(){
         return pictureId;
     }
+
 }

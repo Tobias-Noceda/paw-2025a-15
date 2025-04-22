@@ -37,6 +37,17 @@ public class FileController {
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
+
+    @RequestMapping(path = "/saveimg", method = RequestMethod.POST)
+    public ModelAndView saveImage(@RequestParam("file") MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
+        }
+        return new ModelAndView("redirect:/profile");
+    }
+
+
+
     @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
         Optional<File> f = fs.findById(id);

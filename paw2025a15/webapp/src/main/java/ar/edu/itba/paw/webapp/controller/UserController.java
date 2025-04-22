@@ -1,15 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.form.ChangePasswordForm;
-import ar.edu.itba.paw.form.RecoverForm;
-import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.interfaces.services.EmailService;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,15 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.itba.paw.form.ChangePasswordForm;
+import ar.edu.itba.paw.form.RecoverForm;
+import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.PatientCoverageService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
-
-import javax.validation.Valid;
 
 @Controller
 public class UserController {
@@ -55,6 +56,7 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id) {
@@ -167,4 +169,23 @@ public class UserController {
         us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
         return mav;
     }
+
+    @RequestMapping("/profile")
+    public ModelAndView profile(@AuthenticationPrincipal UserDetails userDetails, SearchForm form) {
+        ModelAndView mav = new ModelAndView("profileInfo");
+        System.out.println(userDetails.getUsername());
+        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
+        mav.addObject("user", user);
+
+        return mav;
+    }
+/*
+    @RequestMapping("/updateProfile/{id}/{picId}")//TODO esto es a modo de ejemplo, no va en la webapp
+    public ModelAndView updateProfile(@PathVariable("id") long id, @PathVariable("picId") long picId){
+        User user = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("No such user_id"));
+        us.editUser(id, user.getName(), user.getTelephone(), picId);
+        return new ModelAndView("redirect:/");
+    }
+*/
+
 }

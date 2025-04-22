@@ -56,6 +56,14 @@
       </div>
       <!-- Show only if user IS authenticated -->
       <c:if test="${pageContext.request.userPrincipal != null}">
+
+        <a href="<c:url value="/profile"/>">
+          <button class="doctor-btn">
+            <spring:message code="header.profile"/>
+          </button>
+        </a>
+
+
         <a href="<c:url value="/logout"/>">
           <button class="doctor-btn">
             <spring:message code="header.logout" />
