@@ -19,7 +19,7 @@
 
       <div class="field-container">
         <div class="field-info-container">
-          <label class="form-title" for="username"><spring:message code="login.username"/></label>
+          <label class="form-title" for="username"><spring:message code="doctorForm.email"/></label>
           <input id="username" name="username" type="text" class="doctor-form-input" value="${param.username}"/>
         </div>
       </div>

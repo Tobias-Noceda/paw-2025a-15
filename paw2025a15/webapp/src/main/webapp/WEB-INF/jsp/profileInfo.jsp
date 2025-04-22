@@ -41,9 +41,10 @@
 <body>
 <jsp:include page="header.jsp"/>
 <div class="profile-container" style="padding: 20px;">
-  <h1 style="color: #0d4a85; margin-bottom: 20px;">Mi Perfil</h1>
+  <h1 style="color: #0d4a85; margin-bottom: 20px;">
+    <spring:message code="profile.title"/>
+  </h1>
   <form action="/saveimg" method="post" enctype="multipart/form-data">
-
     <div class="doctor-card">
       <div class="doctor-image">
         <div class="edit-image-wrapper">
@@ -58,16 +59,17 @@
       <div class="doctor-info">
         <p class="doctor-name"><c:out value="${user.name}"/></p>
         <p class="doctor-email"><c:out value="${user.email}"/></p>
-
         <div class="doctor-specialty-div">
-          <span class="doctor-specialty-label">Rol:</span>
+          <span class="doctor-specialty-label"><spring:message code="profile.role.label"/>:</span>
           <p class="doctor-specialty"><c:out value="${user.role}"/></p>
         </div>
       </div>
     </div>
     <!-- Guardar cambios -->
     <div class="save-container">
-      <button type="submit" class="save-button">Guardar cambios</button>
+      <button type="submit" class="save-button">
+        <spring:message code="profile.save.button"/>
+      </button>
     </div>
   </form>
 </div>

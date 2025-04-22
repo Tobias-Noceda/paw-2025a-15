@@ -14,9 +14,6 @@
 <div class="page-container" style="align-items: center;">
     <div class="doctor-form-container">
         <h2><spring:message code="recoverPassword.title"/></h2>
-        <c:if test="${not empty successMessage}">
-            <p class="success"><spring:message code="recoverPassword.message.${successMessage}"/></p>
-        </c:if>
         <p><a href="<c:url value='/login'/>"><spring:message code="recoverPassword.backToLogin"/></a></p>
     </div>
 </div>
