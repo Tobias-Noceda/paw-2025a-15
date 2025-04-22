@@ -16,6 +16,8 @@ public interface UserService {
 
     public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality);
 
+    void updatePhoneNumber(long id, String number);
+
     public void editUser(long id, String name, String telephone, long pictureId);
 
     public Optional<User> getUserById(long id);

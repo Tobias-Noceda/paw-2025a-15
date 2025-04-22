@@ -20,4 +20,6 @@ public interface UserDao {
     void changePassword(String email, String password);
 
     void changePasswordByID(long id, String password);
+
+    void UpdatePhoneNumber(long id, String number);
 }

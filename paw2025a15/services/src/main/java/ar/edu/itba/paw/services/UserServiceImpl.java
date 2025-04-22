@@ -83,6 +83,10 @@ public class UserServiceImpl implements UserService {
         userDao.changePasswordByID(id, password);
     }
 
+
+    @Override
+    public  void updatePhoneNumber(long id, String number){ userDao.UpdatePhoneNumber(id, number); }
+
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
         if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
