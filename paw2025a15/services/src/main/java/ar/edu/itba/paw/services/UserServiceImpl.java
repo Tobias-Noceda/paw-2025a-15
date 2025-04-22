@@ -15,7 +15,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
@@ -31,25 +31,25 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User create(String email, String password, String name, String telephone, long pictureId) {
-        return userDao.create(email, password, name, telephone, UserRoleEnum.PATIENT, pictureId);
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
+        return userDao.create(email, password, name, telephone, role, pictureId);
     }
 
     @Override
-    public User create(String email, String password, String name, String telephone) {
-        return userDao.create(email, password, name, telephone, UserRoleEnum.PATIENT, 1);//TODO armar una funcion en fileService que traiga la picDefault de users//O quiza simplemente verificacion y obligar al registrarse ingresar una foto
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role) {
+        return userDao.create(email, password, name, telephone, role, 1); // PictureId por defecto
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality){
-        User doc = userDao.create(email ,password, name, telephone, UserRoleEnum.DOCTOR, 1);
+    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality) {
+        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, 1);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, String teleophone, long pictureID, String licence, SpecialtyEnum speciality){
-        User doc = userDao.create(email ,password, name, teleophone, UserRoleEnum.DOCTOR, pictureID);
+    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality) {
+        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, pictureId);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }

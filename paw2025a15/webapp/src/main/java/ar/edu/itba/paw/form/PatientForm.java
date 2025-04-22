@@ -13,7 +13,7 @@ public class PatientForm {
     @NotEmpty(message = "{doctorForm.surname.notEmpty}")
     private String surname;
 
-    @Size(min=8)
+    @Size(min = 8)
     @NotEmpty
     private String password;
 
@@ -23,7 +23,7 @@ public class PatientForm {
     private String email;
 
     @NotEmpty
-    @Size(min=8, max= 11)
+    @Size(min = 8, max = 20) // Ajustado a 20 para coincidir con la base de datos
     private String phoneNumber;
 
     public String getPhoneNumber() {

@@ -13,6 +13,9 @@
 <div class="page-container" style="align-items: center;">
     <div class="doctor-form-container">
         <form:form cssClass="doctor-form" modelAttribute="registerPatientForm" action="${postPath}" method="post">
+            <!-- Mostrar errores globales -->
+            <form:errors cssClass="form-error" element="p"/>
+
             <div class="field-container">
                 <form:errors path="name" cssClass="form-error" element="p"/>
                 <div class="field-info-container">
@@ -39,7 +42,7 @@
                     <form:label cssClass="form-title" path="email">
                         <spring:message code="doctorForm.email"/>
                     </form:label>
-                    <form:input type="text" path="email" class="doctor-form-input"/>
+                    <form:input type="email" path="email" class="doctor-form-input"/>
                 </div>
             </div>
 
@@ -49,20 +52,19 @@
                     <form:label cssClass="form-title" path="phoneNumber">
                         <spring:message code="doctorForm.phone"/>
                     </form:label>
-                    <form:input type="number" path="phoneNumber" class="doctor-form-input"/>
+                    <form:input type="text" path="phoneNumber" class="doctor-form-input"/>
                 </div>
             </div>
 
             <div class="field-container">
                 <form:errors path="password" cssClass="form-error" element="p"/>
                 <div class="field-info-container">
-                    <form:label cssClass="form-title" path="email">
+                    <form:label cssClass="form-title" path="password">
                         <spring:message code="doctorForm.password"/>
                     </form:label>
                     <form:input type="password" path="password" class="doctor-form-input"/>
                 </div>
             </div>
-
 
             <div class="doctor-div">
                 <input type="submit" value="<spring:message code="doctorForm.registerButton"/>" class="register-button"/>

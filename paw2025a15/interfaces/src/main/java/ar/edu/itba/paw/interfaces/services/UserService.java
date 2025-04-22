@@ -5,15 +5,16 @@ import java.util.Optional;
 
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserRoleEnum;
 
 public interface UserService {
-    public User create(String email, String password, String name, String telephone, long pictureId);
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId);
 
-    public User create(String email, String password, String name, String telephone);
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role);
 
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality);
 
-    public User createDoctor(String email, String password, String name, String telephone, long pictureID, String licence, SpecialtyEnum speciality);
+    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality);
 
     public Optional<User> getUserById(long id);
 
