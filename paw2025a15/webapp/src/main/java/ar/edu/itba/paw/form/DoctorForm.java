@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
-
 public class DoctorForm {
     @Size(min = 1, max = 50, message = "{form.name.size}")
     @NotEmpty(message = "{form.name.notEmpty}")
@@ -24,7 +23,11 @@ public class DoctorForm {
     @Size(min=8)
     @NotEmpty
     private String password;
-    
+
+    @Size(min=8)
+    @NotEmpty
+    private String confirmPassword;
+
     @NotNull(message = "{form.specialty.notNull}")
     private SpecialtyEnum speciality;
 
@@ -48,13 +51,13 @@ public class DoctorForm {
     private int amount;
 
     @NotEmpty
-    @Size(min=8, max= 11)
+    @Size(min=8, max=11)
     private String phoneNumber;
-
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -66,6 +69,15 @@ public class DoctorForm {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
     public String getAddress() {
         return address;
     }

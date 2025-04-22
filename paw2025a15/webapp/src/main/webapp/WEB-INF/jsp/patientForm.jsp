@@ -6,6 +6,26 @@
 <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
     <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
+    <!-- Incluimos FontAwesome para el ícono del ojito -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+        .password-container input {
+            width: 100%;
+            padding-right: 40px; /* Espacio para el ícono */
+        }
+        .password-container .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="components/header.jsp"></jsp:include>
@@ -62,7 +82,27 @@
                     <form:label cssClass="form-title" path="password">
                         <spring:message code="doctorForm.password"/>
                     </form:label>
-                    <form:input type="password" path="password" class="doctor-form-input"/>
+                    <div class="password-container">
+                        <form:input type="password" path="password" class="doctor-form-input" id="password"/>
+                        <span class="toggle-password" onclick="togglePassword('password')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-container">
+                <form:errors path="confirmPassword" cssClass="form-error" element="p"/>
+                <div class="field-info-container">
+                    <form:label cssClass="form-title" path="confirmPassword">
+                        <spring:message code="doctorForm.confirmPassword"/>
+                    </form:label>
+                    <div class="password-container">
+                        <form:input type="password" path="confirmPassword" class="doctor-form-input" id="confirmPassword"/>
+                        <span class="toggle-password" onclick="togglePassword('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -72,5 +112,21 @@
         </form:form>
     </div>
 </div>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = field.nextElementSibling.querySelector('i');
+        if (field.type === "password") {
+            field.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            field.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>
 </body>
 </html>

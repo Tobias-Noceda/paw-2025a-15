@@ -218,6 +218,18 @@ public class DoctorController {
             return mav;
         }
 
+        // Validar que las contraseñas coincidan
+        if (!form.getPassword().equals(form.getConfirmPassword())) {
+            errors.rejectValue("confirmPassword", "error.passwordMismatch", "Las contraseñas no coinciden");
+            ModelAndView mav = new ModelAndView("doctorForm");
+            mav.addObject("obrasSocialesItems", is.getAllInsurances());
+            mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
+            mav.addObject("specialtySelectItems", getListOfSpecialties(locale));
+            mav.addObject("hoursSelectItems", getHoursSelectItems());
+            mav.addObject("searchForm", new SearchForm());
+            return mav;
+        }
+
         // Verificar si el email ya existe
         if (us.getUserByEmail(form.getEmail()).isPresent()) {
             errors.rejectValue("email", "error.emailExists", "El email ya está registrado");

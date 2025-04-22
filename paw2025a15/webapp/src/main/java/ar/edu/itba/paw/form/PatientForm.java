@@ -17,13 +17,17 @@ public class PatientForm {
     @NotEmpty
     private String password;
 
+    @Size(min = 8)
+    @NotEmpty
+    private String confirmPassword;
+
     @Size(min = 1, max = 50, message = "email must be less than 100 characters")
     @NotEmpty(message = "{doctorForm.email.notEmpty}")
     @Email(message = "{doctorForm.email.invalid}")
     private String email;
 
     @NotEmpty
-    @Size(min = 8, max = 20) // Ajustado a 20 para coincidir con la base de datos
+    @Size(min = 8, max = 20)
     private String phoneNumber;
 
     public String getPhoneNumber() {
@@ -56,6 +60,14 @@ public class PatientForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     public String getEmail() {

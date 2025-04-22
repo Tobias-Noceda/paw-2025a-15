@@ -26,11 +26,8 @@ public class PatientController {
     private PasswordEncoder passwordEncoder;
 
     @RequestMapping("/register/patient-form")
-    public ModelAndView medico(
-            @ModelAttribute("registerPatientForm") final PatientForm form
-    ) {
+    public ModelAndView patient(@ModelAttribute("registerPatientForm") final PatientForm form) {
         final ModelAndView mav = new ModelAndView("patientForm");
-        mav.addObject("patient", form);
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }
@@ -42,6 +39,14 @@ public class PatientController {
             @ModelAttribute("filterForm") final FilterForm filterForm
     ) {
         if (errors.hasErrors()) {
+            ModelAndView mav = new ModelAndView("patientForm");
+            mav.addObject("searchForm", new SearchForm());
+            return mav;
+        }
+
+        // Validar que las contraseñas coincidan
+        if (!form.getPassword().equals(form.getConfirmPassword())) {
+            errors.rejectValue("confirmPassword", "error.passwordMismatch", "Las contraseñas no coinciden");
             ModelAndView mav = new ModelAndView("patientForm");
             mav.addObject("searchForm", new SearchForm());
             return mav;
