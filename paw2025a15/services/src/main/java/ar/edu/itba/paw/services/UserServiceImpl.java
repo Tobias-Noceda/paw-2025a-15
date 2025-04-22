@@ -73,4 +73,9 @@ public class UserServiceImpl implements UserService{
     public void changePassword(String email, String password) {
         userDao.changePassword(email, password);
     }
+
+    @Override
+    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name) {
+        return userDao.searchAuthPatientsByDoctorIdAndName(doctorId, name);
+    }
 }

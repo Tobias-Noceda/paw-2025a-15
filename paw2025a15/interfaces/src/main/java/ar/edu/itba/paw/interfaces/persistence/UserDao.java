@@ -15,5 +15,7 @@ public interface UserDao {
 
     public List<User> getAuthPatientsByDoctorId(long id);
 
+    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name);
+
     void changePassword(String email, String password);
 }
