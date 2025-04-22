@@ -14,18 +14,19 @@
 
 <div class="page-container" style="align-items: center;">
   <div class="doctor-form-container">
+    <h2><spring:message code="login.title"/></h2>
     <form action="${loginUrl}" method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
 
       <div class="field-container">
         <div class="field-info-container">
-          <label class="form-title" for="username">Username:</label>
+          <label class="form-title" for="username"><spring:message code="login.username"/></label>
           <input id="username" name="username" type="text" class="doctor-form-input" value="${param.username}"/>
         </div>
       </div>
 
       <div class="field-container">
         <div class="field-info-container">
-          <label class="form-title" for="password">Password:</label>
+          <label class="form-title" for="password"><spring:message code="login.password"/></label>
           <input id="password" name="password" type="password" class="doctor-form-input"/>
         </div>
       </div>
@@ -33,7 +34,7 @@
       <div class="field-container">
         <div class="field-info-container">
           <label class="form-title">
-            <input name="remember-me" type="checkbox"/> Remember me
+            <input name="remember-me" type="checkbox"/> <spring:message code="login.rememberMe"/>
           </label>
         </div>
       </div>
@@ -45,12 +46,12 @@
       </c:if>
 
       <div class="doctor-div">
-        <input type="submit" value="Login!" class="register-button"/>
+        <input type="submit" value="<spring:message code='login.submit'/>" class="register-button"/>
       </div>
 
       <div class="extra-links">
-        <p>¿No tienes cuenta? <a href="${registerUrl}">Regístrate</a></p>
-        <p><a href="${forgotPasswordUrl}">¿Olvidaste tu contraseña?</a></p>
+        <p><spring:message code="login.noAccount"/> <a href="${registerUrl}"><spring:message code="login.register"/></a></p>
+        <p><a href="${forgotPasswordUrl}"><spring:message code="login.forgotPassword"/></a></p>
       </div>
 
     </form>

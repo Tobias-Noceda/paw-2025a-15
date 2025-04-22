@@ -46,7 +46,7 @@ public class PatientController {
 
         // Validar que las contraseñas coincidan
         if (!form.getPassword().equals(form.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "error.passwordMismatch", "Las contraseñas no coinciden");
+            errors.rejectValue("confirmPassword", "error.passwordMismatch");
             ModelAndView mav = new ModelAndView("patientForm");
             mav.addObject("searchForm", new SearchForm());
             return mav;
@@ -54,7 +54,7 @@ public class PatientController {
 
         // Verificar si el email ya existe
         if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists", "El email ya está registrado");
+            errors.rejectValue("email", "error.emailExists");
             ModelAndView mav = new ModelAndView("patientForm");
             mav.addObject("searchForm", new SearchForm());
             return mav;
@@ -70,7 +70,7 @@ public class PatientController {
             );
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
-            errors.reject("error.generic", "Ocurrió un error al registrar el paciente. Por favor, intenta nuevamente.");
+            errors.reject("error.registerPatientFailed");
             ModelAndView mav = new ModelAndView("patientForm");
             mav.addObject("searchForm", new SearchForm());
             return mav;

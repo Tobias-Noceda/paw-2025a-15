@@ -98,7 +98,7 @@ public class UserController {
     @RequestMapping(value = "/recover-password", method = RequestMethod.GET)
     public ModelAndView showRecoverPasswordPage() {
         ModelAndView mav = new ModelAndView("recoverPassword");
-        mav.addObject("successMessage", "Revisa tu correo para continuar con el proceso de recuperación.");
+        mav.addObject("successMessage", "checkEmail");
         return mav;
     }
 
@@ -122,16 +122,16 @@ public class UserController {
             es.sendPasswordResetEmail(user);
             LOGGER.info("Password reset email sent to: {}", form.getEmail());
             mav = new ModelAndView("recoverPassword");
-            mav.addObject("successMessage", "Se ha enviado un enlace de recuperación a tu correo.");
+            mav.addObject("successMessage", "linkSent");
         } catch (IllegalArgumentException e) {
             LOGGER.warn("No user found with email: {}", form.getEmail());
             mav = new ModelAndView("forgotPassword");
-            mav.addObject("errorMessage", "El correo no está registrado.");
+            mav.addObject("errorMessage", "emailNotFound");
             mav.addObject("recoverPass", form);
         } catch (Exception e) {
             LOGGER.error("Error sending password reset email: {}", e.getMessage());
             mav = new ModelAndView("forgotPassword");
-            mav.addObject("errorMessage", "Hubo un error al procesar tu solicitud. Intenta de nuevo más tarde.");
+            mav.addObject("errorMessage", "processingError");
             mav.addObject("recoverPass", form);
         }
 
