@@ -98,7 +98,7 @@ body {
     opacity: 0.8;
 }
 
-.doctor-btn {
+.login-btn {
     background-color: white;
     color: #256395;
     border: none;
@@ -110,9 +110,90 @@ body {
     font-size: larger;
 }
 
-.doctor-btn:hover {
+.login-btn:hover {
     background-color: #ffffffe5;
     color: #0e3b6b;
+}
+
+.user-btn {
+    display: flex;
+    flex-direction: row;
+    background-color: #256395;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 15px;
+    font-weight: normal;
+    font-size: smaller;
+}
+
+.user-btn:hover, .user-btn.active {
+    background-color: #0e3b6b;
+}
+
+.user-btn .user-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.user-btn .user-image img {
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    max-width: 35px;
+    max-height: 35px;
+    margin-right: 5px;
+}
+
+.user-btn .user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-btn .user-info .user-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    color: white;
+    margin: 6px 0;
+}
+
+.user-btn .user-info .user-role {
+    font-size: 12px;
+    color: #D9D9D9;
+    margin: 0;
+}
+
+.user-dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #256395;
+    border: 1px solid #0e3b6b;
+    border-radius: 0 0 5px 5px;
+    top: 65px;
+    right: 20px;
+}
+
+.user-dropdown-menu.show {
+    display: block;
+}
+
+.user-dropdown-menu a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    background-color: #256395;
+    color: white;
+}
+
+.user-dropdown-menu a:hover {
+    background-color: #0e3b6b;
+    color: white;
 }
 
 .form-error{

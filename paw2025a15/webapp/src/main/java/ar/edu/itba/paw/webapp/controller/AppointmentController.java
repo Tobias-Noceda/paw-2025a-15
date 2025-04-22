@@ -42,7 +42,7 @@ public class AppointmentController {
     @Autowired
     private DoctorShiftService dss;
 
-    @RequestMapping("/appointments/patient/{id:\\d+}")
+    @RequestMapping("/appointments")
     public ModelAndView patientProfile(
         @PathVariable("id") long id,
         @ModelAttribute("searchForm") final SearchForm searchForm
@@ -102,8 +102,8 @@ public class AppointmentController {
 
         us.getUserByEmail(userDetails.getUsername())
             .ifPresentOrElse(
-                user -> {as.addAppointment(form.getShiftId(), user.getId(), LocalDate.parse(form.getDate()));},
-                () -> {throw new IllegalArgumentException("User not found");}
+                user -> { as.addAppointment(form.getShiftId(), user.getId(), LocalDate.parse(form.getDate())); },
+                () -> { throw new IllegalArgumentException("User not found"); }
             );
 
         return new ModelAndView("redirect:/appointments");
