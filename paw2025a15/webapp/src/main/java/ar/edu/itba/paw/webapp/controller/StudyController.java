@@ -109,9 +109,12 @@ public class StudyController {
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());
 
 
-        es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), dateTime);
-
-        return new ModelAndView("redirect:/");
+        if(patientId != user.getId()) {
+            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), dateTime);
+            return new ModelAndView("redirect:/patient/" + patientId);
+        } else {
+            return new ModelAndView("redirect:/studies");
+        }
     }
 
     @RequestMapping("/studies")

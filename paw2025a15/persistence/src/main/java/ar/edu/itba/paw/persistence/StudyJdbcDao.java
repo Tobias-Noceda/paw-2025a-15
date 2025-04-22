@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class StudyJdbcDao implements StudyDao{
         args.put("file_id", fileId);
         args.put("user_id", userId);
         args.put("uploader_id", uploaderId);
-        args.put("upload_date", uploadDate);
+        args.put("upload_date", Timestamp.valueOf(uploadDate));
         args.put("study_date", studyDate);
         final Number study_id = jdbcInsert.executeAndReturnKey(args);
         return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, studyDate);

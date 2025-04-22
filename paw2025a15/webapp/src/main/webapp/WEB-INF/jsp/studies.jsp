@@ -16,7 +16,12 @@
     </jsp:include>
     <div class="page-container studies-div" style="display: flex; flex-direction: row;">
       <div class="study-list-container">
-        <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
+        <div class="title-container">
+          <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
+          <a href="<c:url value='/patient/upload/${user.id}'/>" class="upload-button">
+            <spring:message code="patient.details.upload.label"/>
+          </a>
+        </div>
         <div class="study-table-container">
           <div class="studies-table-header">
             <table class="studies-table">
