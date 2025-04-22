@@ -177,10 +177,19 @@ public class DoctorController {
             return doctorProfile(id, new ShiftsMonthForm(), form, locale);
         }
 
-        User patient = us.getUserByEmail(form.getEmail())
-                .orElseGet(() -> us.create(form.getEmail(), passwordEncoder.encode("12345678"), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), UserRoleEnum.PATIENT));
+        // Verificar si el email ya existe
+        if (us.getUserByEmail(form.getEmail()).isPresent()) {
+            errors.rejectValue("email", "error.emailExists");
+            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
+        }
 
-        return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
+        try {
+            User patient = us.create(form.getEmail(), passwordEncoder.encode("12345678"), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), UserRoleEnum.PATIENT);
+            return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
+        } catch (Exception e) {
+            errors.reject("error.takeTurnFailed");
+            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
+        }
     }
 
     @RequestMapping(value = "/patientAuthDoctor/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
@@ -220,7 +229,7 @@ public class DoctorController {
 
         // Validar que las contraseñas coincidan
         if (!form.getPassword().equals(form.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "error.passwordMismatch", "Las contraseñas no coinciden");
+            errors.rejectValue("confirmPassword", "error.passwordMismatch");
             ModelAndView mav = new ModelAndView("doctorForm");
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
@@ -232,7 +241,7 @@ public class DoctorController {
 
         // Verificar si el email ya existe
         if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists", "El email ya está registrado");
+            errors.rejectValue("email", "error.emailExists");
             ModelAndView mav = new ModelAndView("doctorForm");
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
@@ -249,7 +258,7 @@ public class DoctorController {
             dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
-            errors.reject("error.generic", "Ocurrió un error al registrar el doctor. Por favor, intenta nuevamente.");
+            errors.reject("error.registerDoctorFailed");
             ModelAndView mav = new ModelAndView("doctorForm");
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
