@@ -26,6 +26,8 @@ public interface UserService {
 
     public List<User> getAuthPatientsByDoctorId(long id);
 
+    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name);
+
     void changePassword(String email, String password);
 
     void changePasswordByID(long id, String password);

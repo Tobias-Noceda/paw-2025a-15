@@ -14,10 +14,6 @@
     <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
   </head>
   <body>
-    <c:set var="appointments" value="appointments" />
-    <c:set var="ensurance">
-      <spring:message code="header.ensurance"/>
-    </c:set>
     <c:set var="imgSrc">
       <c:url value="/resources/icono.jpg"/>
     </c:set>

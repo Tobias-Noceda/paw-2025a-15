@@ -91,4 +91,9 @@ public class UserServiceImpl implements UserService {
     public void editUser(long id, String name, String telephone, long pictureId) {
         if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
     }
+
+    @Override
+    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name) {
+        return userDao.searchAuthPatientsByDoctorIdAndName(doctorId, name);
+    }
 }

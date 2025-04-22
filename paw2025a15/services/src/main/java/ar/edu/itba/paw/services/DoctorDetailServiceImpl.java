@@ -121,6 +121,8 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         }
     }
 
-    
-
+    @Override
+    public boolean hasAuthDoctor(long patientId, long doctorId) {
+        return doctorDetailDao.hasAuthDoctor(patientId, doctorId);
+    }
 }

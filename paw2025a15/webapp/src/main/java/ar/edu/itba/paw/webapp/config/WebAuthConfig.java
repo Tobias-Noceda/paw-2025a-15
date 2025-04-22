@@ -49,6 +49,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/changePassword/**").anonymous()
                 .antMatchers("/recover-password").anonymous()
                 .antMatchers("/", "/home").permitAll()
+                .antMatchers("/supersecret/files/**").permitAll()
+                .antMatchers("/supersecret/file/icon").permitAll()
                 .antMatchers("/createPatient").anonymous()
                 .antMatchers("/createMedic").anonymous()
                 .antMatchers("/createLab").anonymous()

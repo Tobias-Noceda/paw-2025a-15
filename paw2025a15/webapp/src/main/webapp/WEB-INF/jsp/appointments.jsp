@@ -11,12 +11,15 @@
     <c:set var="title">appointments</c:set>
     <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container appointments-div" style="display: flex; flex-direction: row;">
       <c:set var="confirmationMessage">
         <spring:message code="appointments.cancelConfirm" />
       </c:set>
-      <c:if test="${userType == 'PATIENT'}">
+      <c:if test="${user.role == 'PATIENT'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.future"></spring:message></h3>
           <div class="appointment-table-container">
@@ -108,7 +111,7 @@
           </div>
         </div>
       </c:if>
-      <c:if test="${userType == 'DOCTOR'}">
+      <c:if test="${user.role == 'DOCTOR'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.taken"></spring:message></h3>
           <div class="appointment-table-container">
@@ -162,7 +165,7 @@
         <div class="appointment-list-container">
           <div class="doctor-free-header">
             <h3 class="table-title"><spring:message code="appointments.free"></spring:message></h3>
-            <c:url value="/appointments/doctor/${doctorId}" var="getPath"/>
+            <c:url value="/appointments" var="getPath"/>
             <form:form class="month-dropdown-div" action="${getPath}" method="GET" modelAttribute="shiftsMonthForm">
               <form:select cssClass="month-dropdown" path="month" id="monthSelect" onchange="this.form.submit()">
                 <form:options cssClass="dropdown-options" items="${possibleMonths}" itemValue="value" itemLabel="label" />

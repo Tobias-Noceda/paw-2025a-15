@@ -57,6 +57,10 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @RequestMapping("/login")
+    public ModelAndView login() {
+        return new ModelAndView("login");
+    }
 
     @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id) {

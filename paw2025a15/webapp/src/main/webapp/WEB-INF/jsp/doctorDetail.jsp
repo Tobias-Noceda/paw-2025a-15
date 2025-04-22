@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
@@ -9,32 +10,32 @@
     <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
   </head>
   <body>
-    c
-    <c:if test="${takeTurnForm.name != null}">
-      <c:set var="myLocalDate">
-        <spring:message code="dateFormat" arguments="${takeTurnForm.monthDate},${takeTurnForm.month},${takeTurnForm.year}"></spring:message>
-      </c:set>
-      <c:set var="myTime" value="${takeTurnForm.timeRange}"/>
-      <script>
-        document.addEventListener("DOMContentLoaded", function() {
-          document.getElementById("dateSpan").innerText = "${myLocalDate}";
-          document.getElementById("timeSpan").innerText = "${myTime}";
-
-          document.getElementById("dialogLocalDate").value = "${takeTurnForm.date}";
-          document.getElementById("dialogTime").value = "${myTime}";
-
-          document.getElementById("appointmentDialog").showModal();
-        });
-      </script>
-    </c:if>
+    <jsp:include page="components/header.jsp">
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="role" value="${user.role}"/>
+    </jsp:include>
     <div class="page-container" style="flex-direction: row;">
       <div class="doctor-card">
         <div class="doctor-info">
-          <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+          <div class="doctor-name-div">
+            <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+            <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
+            <form action="${authDoctorPath}" method="POST">
+              <button type="submit" class="doctor-auth-button <c:if test="${isAuthDoctor}">auth</c:if>">
+                <c:if test="${isAuthDoctor}">
+                  <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+                </c:if>
+                <c:if test="${!isAuthDoctor}">
+                  <spring:message code="doctorDetail.toggleButton.authorize"/>
+                </c:if>
+              </button>
+            </form>
+          </div>
           <div class="doctor-image">
             <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
           </div>
-          <p class="doctor-email"><c:out value="${doctor.email}"/></p>
+          <p class="doctor-email"><c:out value="${doctor.email}"/>, <c:out value="${doctor.telephone}"/></p>
           <div class="doctor-insurances-div">
             <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
             <p class="doctor-insurances">
@@ -86,6 +87,7 @@
             </tr>
           </thead>
           <tbody>
+            <c:url value="/takeAppointment" var="appointmentPath"/>
             <c:forEach var="appointment" items="${doctorAppointments}">
               <c:set var="day">
                 <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
@@ -94,16 +96,26 @@
                 <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
               </c:set>
               <c:set var="year" value="${appointment.date.year}" />
-              <tr class="appointment-row"
-                data-shift="${appointment.shiftId}"
-                data-localDate="${appointment.date}"
-                data-formattedDate='<spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>'
-                data-time="${appointment.getStartToEndTime()}">
-                <td>
-                  <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>
-                </td>
+              <c:set var="formatedDate">
+                <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>
+              </c:set>
+              <c:set var="confirmMessage">
+                <spring:message code="takeAppointment.confirmationMessage" arguments="${formatedDate}, ${appointment.startTime}, ${doctor.name}"/>
+              </c:set>
+              <tr class="appointment-row" onclick="submitAppointment(this, '${confirmMessage}')">
+                <td><c:out value="${formatedDate}"/></td>
                 <td><c:out value="${appointment.getStartToEndTime()}"/></td>
                 <td><c:out value="${appointment.address}"/></td>
+                <td style="display: none;">
+                  <form:form
+                    modelAttribute="takeTurnForm"
+                    action="${appointmentPath}"
+                    method="POST"
+                  >
+                    <form:input type="hidden" path="shiftId" value="${appointment.shiftId}"/>
+                    <form:input type="hidden" path="date" value="${appointment.date}"/>
+                  </form:form>
+                </td>
               </tr>
             </c:forEach>
           </tbody>
@@ -111,73 +123,8 @@
       </div>
     </div>
 
-    <!-- Dialog Element -->
-    <dialog id="appointmentDialog">
-      <div class="dialog-content">
-        <h2><spring:message code="doctorDetail.popup.title"></spring:message></h2>
+    <jsp:include page="components/confirmDialog.jsp" />
 
-        <div class="appointment-data">
-          <p class="appointment-data-label">
-            <spring:message code="doctorDetail.popup.date"></spring:message>
-          </p>
-          <span id="dateSpan"></span>
-        </div>
-        <div class="appointment-data">
-          <p class="appointment-data-label"><spring:message code="doctorDetail.popup.time"></spring:message></p>
-          <span id="timeSpan"></span>
-        </div>
-
-        <c:url value="/doctors/${doctor.id}" var="postPath"/>
-        <form:form modelAttribute="takeTurnForm" method="POST" action="${postPath}">
-          <!-- Hidden Fields -->
-          <form:input type="hidden" path="shiftId" id="dialogShiftId"/>
-          <form:input type="hidden" path="date" id="dialogLocalDate"/>
-          <form:input type="hidden" path="timeRange" id="dialogTime"/>
-
-          <!-- Name -->
-          <div class="form-column">
-            <form:errors path="name" cssClass="form-error"/>  
-            <div class="form-group">
-              <form:label path="name"><spring:message code="doctorDetail.popup.name"></spring:message></form:label>
-              <form:input type="text" path="name"/>
-            </div>
-          </div>
-
-          <!-- Surname -->
-          <div class="form-column">
-            <form:errors path="surname" cssClass="form-error"/>
-            <div class="form-group">
-              <form:label path="surname"><spring:message code="doctorDetail.popup.surname"></spring:message></form:label>
-              <form:input type="text" path="surname"/>
-            </div>
-          </div>
-
-          <!-- Email -->
-          <div class="form-column">
-            <form:errors path="email" cssClass="form-error"/>
-            <div class="form-group">
-              <form:label path="email"><spring:message code="doctorDetail.popup.email"></spring:message></form:label>
-              <form:input type="text" path="email"/>
-            </div>
-          </div>
-
-          <!-- Phone -->
-          <div class="form-column">
-            <form:errors path="phoneNumber" cssClass="form-error"/>
-            <div class="form-group">
-              <form:label path="phoneNumber"><spring:message code="doctorDetail.popup.telephone"></spring:message></form:label>
-              <form:input type="tel" path="phoneNumber"/>
-            </div>
-          </div>
-
-          <div class="form-buttons">
-            <button type="submit"><spring:message code="doctorDetail.popup.takeAppointment"></spring:message></button>
-            <button type="button" id="closeDialog"><spring:message code="doctorDetail.popup.cancelAppointment"></spring:message></button>
-          </div>
-        </form:form>
-      </div>
-    </dialog>
-
-    <script src="<c:url value="/js/turnConfirmationModal.js"/>"></script>
+    <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
   </body>
 </html>

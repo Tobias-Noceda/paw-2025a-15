@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,4 +87,16 @@ public class UserJdbcDao implements UserDao{
         jdbcTemplate.update("UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?", name, pictureId, telephone, id);
     }
 
+
+    @Override
+    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
+        if(name == null || name.trim().isEmpty()) return Collections.emptyList();
+        if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
+        return (List<User>) jdbcTemplate.query(
+                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ? AND u.user_name LIKE ?",
+                new Object[]{doctorId, "%" + name.trim() + "%"},
+                new int[]{ java.sql.Types.BIGINT, java.sql.Types.VARCHAR},
+                ROW_MAPPER
+        );
+    }
 }

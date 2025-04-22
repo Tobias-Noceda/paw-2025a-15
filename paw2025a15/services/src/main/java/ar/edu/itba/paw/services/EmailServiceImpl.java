@@ -86,7 +86,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -95,7 +95,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", patient.getEmail());
         // TODO: get phone
-        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("phone", patient.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("uploadLink", baseURL + "supersecret/upload/" + patient.getId() + "/" + doctor.getId());
 
@@ -111,7 +111,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -120,7 +120,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", doctor.getEmail());
         // TODO: get phone
-        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("phone", doctor.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
         // TODO: real shifts list link
         templateModel.put("shiftsLink", baseURL);
@@ -137,7 +137,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendRecievedStudyEmail(User patient, User doctor, File file, String description, LocalDateTime dateTime) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
@@ -164,7 +164,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -189,7 +189,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -212,7 +212,7 @@ public class EmailServiceImpl implements EmailService{
         Map<String, Object> templateModel = new HashMap<>();
 
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -237,7 +237,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", "http://pawserver.it.itba.edu.ar/paw-2025a-15/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -259,7 +259,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPasswordResetEmail(User user) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "/resources/icono.jpg");
+        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
         templateModel.put("userName", user.getName());
 
         String token = UUID.randomUUID().toString(); // o algo más complejo

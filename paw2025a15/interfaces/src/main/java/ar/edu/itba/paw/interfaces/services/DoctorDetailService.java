@@ -23,4 +23,6 @@ public interface DoctorDetailService {
     public List<DoctorView> getAuthDoctorsByPatientId(long id);
 
     public void toggleAuthDoctor(long patientId, long doctorId);
+
+    public boolean hasAuthDoctor(long patientId, long doctorId);
 }

@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,6 +25,9 @@ import ar.edu.itba.paw.models.FileTypeEnum;
 
 @Controller
 public class FileController {
+
+    @Autowired
+    ServletContext servletContext;
 
     @Autowired
     private FileService fs;
@@ -70,5 +76,18 @@ public class FileController {
                 .ok()
                 .contentType(mediaType)
                 .body(content);
+    }
+
+    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getIconForm() throws IOException {
+        String path = servletContext.getRealPath("/resources/icono.jpg");
+        java.io.File imgFile = new java.io.File(path);
+    
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+    
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
     }
 }

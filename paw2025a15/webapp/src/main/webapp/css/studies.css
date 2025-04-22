@@ -193,33 +193,33 @@
     background-color: #b90101;
 }
 
-.file-dialog {
-    border: none;
-    border-radius: 8px;
-    padding: 20px;
-    width: 60%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: left;
-}
-
-.file-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-}
-
-.file-dialog .file-dialog-header {
+.title-container {
     display: flex;
     flex-direction: row;
-    margin-bottom: 10px;
+    justify-content: space-between;
 }
 
-.file-dialog-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin: 0 0 10px 0;
+.upload-button-div {
+    display: flex;
     flex: 1;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
 }
 
-.file-viewer {
-    width: 100%;
-    height: 80vh;
+.upload-button {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    max-height: fit-content;
+}
+
+.upload-button:hover {
+    background-color: #0056b3;
 }

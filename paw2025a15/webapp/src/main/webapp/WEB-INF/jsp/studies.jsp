@@ -8,12 +8,20 @@
   </head>
   <body>
     <c:set var="title">studies</c:set>
-    <jsp:include page="header.jsp">
+    <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container studies-div" style="display: flex; flex-direction: row;">
       <div class="study-list-container">
-        <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
+        <div class="title-container">
+          <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
+          <a href="<c:url value='/patient/upload/${user.id}'/>" class="upload-button">
+            <spring:message code="patient.details.upload.label"/>
+          </a>
+        </div>
         <div class="study-table-container">
           <div class="studies-table-header">
             <table class="studies-table">
@@ -33,7 +41,7 @@
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
                     <tr class="study-row"
-                      data-fileid="<c:out value='${study.fileId}'/>"
+                      data-fileurl="<c:url value='/supersecret/files/${study.fileId}'/>"
                     >
                       <td class="text-cell"><c:out value="${study.type}"/></td>
                       <td class="text-cell"><c:out value="${study.comment}"/></td>
@@ -104,15 +112,6 @@
     </div>
 
     <%@include file="components/confirmDialog.jsp" %>
-    <dialog id="fileDialog" class="file-dialog">
-      <div class="file-dialog-header">
-        <h2 class="file-dialog-title"><spring:message code="studies.fileDialog.title"/></h2>
-        <button id="closeFileDialog" class="cancel-button"><spring:message code="studies.fileDialog.close"/></button>
-      </div>
-      <iframe id="fileViewer" src="" frameborder="0" class="file-viewer"></iframe>
-    </dialog>
-
-    <script src="<c:url value="/js/fileDialogModal.js"/>"></script>
-    <script src="<c:url value="/js/confirmDialogModal.js"/>"></script>
+    <%@include file="components/fileDialog.jsp" %>
   </body>
 </html>

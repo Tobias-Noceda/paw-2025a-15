@@ -76,11 +76,32 @@
   </servlet-mapping>
 
   <!-- Error Pages -->
-  <!--
   <error-page>
-      <error-code>500</error-code>
-      <location>/500</location>
+    <error-code>400</error-code>
+    <location>/errorPages/400</location>
   </error-page>
-  -->
-
+  <error-page>
+    <error-code>401</error-code>
+    <location>/errorPages/401</location>
+  </error-page>
+  <error-page>
+    <error-code>403</error-code>
+    <location>/403</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/errorPages/404</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/errorPages/500</location>
+  </error-page>
+  <error-page>
+    <error-code>502</error-code>
+    <location>/errorPages/502</location>
+  </error-page>
+  <error-page>
+    <error-code>503</error-code>
+    <location>/errorPages/503</location>
+  </error-page>
 </web-app>

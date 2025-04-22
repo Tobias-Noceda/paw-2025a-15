@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,6 +27,8 @@ import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.FileTypeEnum;
 import ar.edu.itba.paw.models.StudyTypeEnum;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 
 @Controller
 public class StudyController {
@@ -44,50 +48,99 @@ public class StudyController {
     @Autowired
     private EmailService es;
 
-    @RequestMapping(path = "/supersecret/upload/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.GET)
-    public ModelAndView createStudyForm(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm){
-        ModelAndView mav = new ModelAndView("createStudy");
+    @RequestMapping(path = "/patient/upload/{patientId:\\d+}", method = RequestMethod.GET)
+    public ModelAndView createStudyForm(
+        @PathVariable("patientId") int patientId,
+        @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm
+    ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
-        mav.addObject("patientName", patient.getName());
+        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
+
+        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+            .getContext()
+            .getAuthentication()
+            .getPrincipal();
+
+        User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        
+        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
+            throw new IllegalArgumentException("User does not have permission to upload study for this patient");
+        }
+        
+        ModelAndView mav = new ModelAndView("createStudy");
+        mav.addObject("patient", patient);
         mav.addObject("patientId", patientId);
-        mav.addObject("doctorId", doctorId);
-        mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());//TODO revisar esto con el jsp
+        mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());
+
         return mav;
     }
 
-    @RequestMapping(path = "/supersecret/upload/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
-    public ModelAndView createStudy(@PathVariable("patientId") int patientId, @PathVariable("doctorId") int doctorId, @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm, BindingResult errors) throws IOException{
-        if (errors.hasErrors()) {
-            return createStudyForm(patientId, doctorId, createStudyForm);
-        }
-        //TODO esta verificacion tendria que estar en el form directamente
-        //if (fileType == null || !(fileType.equals("image/png") || fileType.equals("image/jpeg") || fileType.equals("application/pdf"))) {
-        //throw new IllegalArgumentException("Unsupported file type: " + fileType);
-        // }
+    @RequestMapping(path = "/patient/upload/{patientId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView createStudy(
+        @PathVariable("patientId") int patientId,
+        @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
+        BindingResult errors
+    ) throws IOException{
+        
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
-        User doctor = us.getUserById(doctorId).orElseThrow(() -> new IllegalArgumentException("Invalid doctor ID: " + doctorId));
+        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
+
+        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+            .getContext()
+            .getAuthentication()
+            .getPrincipal();
+
+        User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        
+        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
+            throw new IllegalArgumentException("User does not have permission to upload study for this patient");
+        }
+
+        if (errors.hasErrors()) {
+            return createStudyForm(patientId, createStudyForm);
+        }
+
         LocalDateTime dateTime = LocalDateTime.now();
+
         
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, doctorId, dateTime, createStudyForm.getDate());
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());
 
 
-        es.sendRecievedStudyEmail(patient, doctor, f, createStudyForm.getComment(), dateTime);
-
-        return new ModelAndView("redirect:/");
+        if(patientId != user.getId()) {
+            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), dateTime);
+            return new ModelAndView("redirect:/patient/" + patientId);
+        } else {
+            return new ModelAndView("redirect:/studies");
+        }
     }
 
-    @RequestMapping("/studies/{id:\\d+}")
+    @RequestMapping("/studies")
     public ModelAndView patientProfile(
-        @PathVariable("id") long id,
         @ModelAttribute("searchForm") SearchForm searchForm
     ) {
-        ModelAndView mav = new ModelAndView("studies");
+        try {
+            ModelAndView mav = new ModelAndView("studies");
+        
+            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+            
+            // Si llegó hasta acá, está logueado
+            final User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            
+            mav.addObject("user", user);
+            mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
+            mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+            
+            return mav;
+        } catch (Exception e) {
+        }
 
-        mav.addObject("patientId", id);
-        mav.addObject("patientStudies", ss.getStudiesByPatientId(id));
-        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(id));
-
-        return mav;
+        return new ModelAndView("redirect:/");
     }
 }

@@ -8,7 +8,6 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,8 +35,8 @@ import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
 import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
@@ -64,9 +63,31 @@ public class DoctorController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private ModelAndView renderIndexPage(Locale locale) {
+    private ModelAndView renderLandingPage(List<DoctorView> doctors, List<User> patients, Locale locale) {
+        
         final ModelAndView mav = new ModelAndView("index");
+        
+        try {
+            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+            
+            // Si llegó hasta acá, está logueado
+            final User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            
+            mav.addObject("user", user);
+        } catch (Exception e) {
+            
+        }
 
+        if(patients != null) {
+            mav.addObject("patients", patients);
+        }
+        if(doctors != null) {
+            mav.addObject("docList", doctors);
+        }
         mav.addObject("insurances", is.getAllInsurances());
         mav.addObject("weekdaySelectItems", getListOfWeekdays(locale));
         mav.addObject("specialtySelectItems", getListOfSpecialties(locale));
@@ -74,46 +95,48 @@ public class DoctorController {
         return mav;
     }
 
-    @RequestMapping("/")
-    public ModelAndView index(Locale locale) {
+    @RequestMapping(value = {"/home", "/home/", "/"}, method = RequestMethod.GET)
+    public ModelAndView index (
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("filterForm") final FilterForm filterForm,
+        Locale locale
+    ) {
         try {
             final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getPrincipal();
-
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+            
             // Si llegó hasta acá, está logueado
-            final long userId = us.getUserByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new UsernameNotFoundException("Username not found"))
-                    .getId();
-
-            return new ModelAndView("redirect:/home");
+            final User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            
+            if(null != user.getRole()) switch (user.getRole()) {
+                case PATIENT -> {
+                    return renderLandingPage(dds.getAllDoctors(), null, locale);
+                }
+                case DOCTOR -> {
+                    return renderLandingPage(null, us.getAuthPatientsByDoctorId(user.getId()), locale);
+                }
+                case LABORATORY -> {
+                    return renderLandingPage(null, us.getAuthPatientsByDoctorId(user.getId()), locale);
+                }
+                default -> {
+                }
+            }
         } catch (ClassCastException e) {
-            // No está logueado → mostrar landing page
-            return new ModelAndView("redirect:/home");
+            return renderLandingPage(dds.getAllDoctors(), null, locale);
         }
-    }
-
-    @RequestMapping("/home")
-    public ModelAndView index(
-            @ModelAttribute("searchForm") final SearchForm searchForm,
-            @ModelAttribute("filterForm") final FilterForm filterForm,
-            Locale locale
-    ) {
-        final ModelAndView mav = renderIndexPage(locale);
-        List<DoctorView> doctors = dds.getAllDoctors();
-        mav.addObject("docList", doctors);
-
-        return mav;
+        
+        return renderLandingPage(dds.getAllDoctors(), null, locale);
     }
 
     @RequestMapping("/filter")
     public ModelAndView filter(
-            @ModelAttribute("searchForm") final SearchForm searchForm,
-            @ModelAttribute("filterForm") final FilterForm filterForm,
-            Locale locale
-    ) {
-        ModelAndView mav = renderIndexPage(locale);
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("filterForm") final FilterForm filterForm,
+        Locale locale
+    ){
         Insurance insurance;
         if (filterForm.getInsurances() != null) {
             insurance = is.getInsuranceById(filterForm.getInsurances()).orElse(null);
@@ -127,21 +150,37 @@ public class DoctorController {
                 filterForm.getWeekday()
         );
 
-        mav.addObject("docList", doctors);
-
-        return mav;
+        return renderLandingPage(doctors, null, locale);
     }
 
-    @RequestMapping("/search")
+    @RequestMapping("/doctorSearch")
     public ModelAndView search(
             @ModelAttribute("searchForm") final SearchForm searchForm,
             @ModelAttribute("filterForm") final FilterForm filterForm,
             Locale locale
     ) {
-        ModelAndView mav = renderIndexPage(locale);
-        List<DoctorView> doctors = dds.findDoctorsByName(searchForm.getQuery());
-        mav.addObject("docList", doctors);
-        return mav;
+        return renderLandingPage(dds.findDoctorsByName(searchForm.getQuery()), null, locale);
+    }
+
+    @RequestMapping("/patientSearch")
+    public ModelAndView searchPatient(
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        Locale locale
+    ) {
+        try {
+            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+            
+            final User user = us.getUserByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            
+            return renderLandingPage(null, us.searchAuthPatientsByDoctorIdAndName(user.getId(), searchForm.getQuery()), locale);
+        } catch (Exception e) {
+        }
+
+        return new ModelAndView("redirect:/home");
     }
 
     @RequestMapping("/doctors/{id:\\d+}")
@@ -152,7 +191,23 @@ public class DoctorController {
             Locale locale
     ) {
         final ModelAndView mav = new ModelAndView("doctorDetail");
-        dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));
+       
+        try {
+            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+            
+            // Si llegó hasta acá, está logueado
+            final User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            
+            mav.addObject("user", user);
+            mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), id));
+        } catch (Exception e) {
+        }
+
+        dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
@@ -165,37 +220,23 @@ public class DoctorController {
         return mav;
     }
 
-    @RequestMapping(value = "/doctors/{id:\\d+}", method = RequestMethod.POST)
-    public ModelAndView takeTurn(
-            @PathVariable("id") long id,
-            @ModelAttribute("shiftsMonthForm") final ShiftsMonthForm shiftsMonthForm,
-            Locale locale,
-            @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
-            final BindingResult errors
-    ) {
-        if (errors.hasErrors()) {
-            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
-        }
-
-        // Verificar si el email ya existe
-        if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists");
-            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
-        }
-
+    @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId) {
         try {
-            User patient = us.create(form.getEmail(), passwordEncoder.encode("12345678"), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), UserRoleEnum.PATIENT);
-            return new ModelAndView("redirect:/takeAppointment/" + patient.getId() + "/" + form.getShiftId() + "/" + form.getDate());
+            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+            
+            // Si llegó hasta acá, está logueado
+            final User user = us.getUserByEmail(userDetails.getUsername())
+            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            
+            dds.toggleAuthDoctor(user.getId(), doctorId);
         } catch (Exception e) {
-            errors.reject("error.takeTurnFailed");
-            return doctorProfile(id, new ShiftsMonthForm(), form, locale);
         }
-    }
 
-    @RequestMapping(value = "/patientAuthDoctor/{patientId:\\d+}/{doctorId:\\d+}", method = RequestMethod.POST)
-    public ModelAndView authUnauthDoctor(@PathVariable("patientId") long patientId, @PathVariable("doctorId") long doctorId) {
-        dds.toggleAuthDoctor(patientId, doctorId);
-        return new ModelAndView("redirect:/studies/" + patientId);
+        return new ModelAndView("redirect:/doctors/" + doctorId);
     }
 
     @RequestMapping("/register/doctor-form")
