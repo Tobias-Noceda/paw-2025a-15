@@ -9,7 +9,7 @@
     <c:set var="title">
       <spring:message code="header.ensurance"/>
     </c:set>
-    <jsp:include page="header.jsp">
+    <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
     </jsp:include>
     <div class="page-container">

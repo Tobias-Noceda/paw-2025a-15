@@ -10,11 +10,28 @@
     <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
   </head>
   <body>
-    <jsp:include page="header.jsp"/>
+    <jsp:include page="components/header.jsp">
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="role" value="${user.role}"/>
+    </jsp:include>
     <div class="page-container" style="flex-direction: row;">
       <div class="doctor-card">
         <div class="doctor-info">
-          <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+          <div class="doctor-name-div">
+            <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+            <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
+            <form action="${authDoctorPath}" method="POST">
+              <button type="submit" class="doctor-auth-button <c:if test="${isAuthDoctor}">auth</c:if>">
+                <c:if test="${isAuthDoctor}">
+                  <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+                </c:if>
+                <c:if test="${!isAuthDoctor}">
+                  <spring:message code="doctorDetail.toggleButton.authorize"/>
+                </c:if>
+              </button>
+            </form>
+          </div>
           <div class="doctor-image">
             <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
           </div>

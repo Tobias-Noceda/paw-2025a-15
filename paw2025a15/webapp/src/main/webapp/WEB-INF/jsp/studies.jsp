@@ -8,8 +8,11 @@
   </head>
   <body>
     <c:set var="title">studies</c:set>
-    <jsp:include page="header.jsp">
+    <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container studies-div" style="display: flex; flex-direction: row;">
       <div class="study-list-container">

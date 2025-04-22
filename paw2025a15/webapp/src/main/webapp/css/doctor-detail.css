@@ -41,6 +41,36 @@
     flex: 1;
 }
 
+.doctor-name-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.doctor-auth-button {
+    margin-left: 5px;
+    padding: 8px 15px;
+    background-color: #256395;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.doctor-auth-button:hover {
+    background-color: #0e3b6b;
+}
+
+.doctor-auth-button.auth {
+    background-color: #e60202;
+}
+
+.doctor-auth-button.auth:hover {
+    background-color: #b90101;
+}
+
 .doctor-name {
     font-size: 24px;
     font-weight: bold;

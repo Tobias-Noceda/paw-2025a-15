@@ -165,7 +165,7 @@
         <div class="appointment-list-container">
           <div class="doctor-free-header">
             <h3 class="table-title"><spring:message code="appointments.free"></spring:message></h3>
-            <c:url value="/appointments/doctor/${doctorId}" var="getPath"/>
+            <c:url value="/appointments" var="getPath"/>
             <form:form class="month-dropdown-div" action="${getPath}" method="GET" modelAttribute="shiftsMonthForm">
               <form:select cssClass="month-dropdown" path="month" id="monthSelect" onchange="this.form.submit()">
                 <form:options cssClass="dropdown-options" items="${possibleMonths}" itemValue="value" itemLabel="label" />

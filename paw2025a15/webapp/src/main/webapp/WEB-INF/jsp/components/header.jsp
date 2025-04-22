@@ -30,7 +30,7 @@
               <spring:message code="header.appointments" />
             </a>
             <c:if test="${param.role == 'PATIENT'}">
-              <a href="<c:url value="/studies/6"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
+              <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
               </a>
             </c:if>

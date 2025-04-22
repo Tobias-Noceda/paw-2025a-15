@@ -12,7 +12,7 @@
 <c:set var="title">
     <spring:message code="header.doctor"/>
 </c:set>
-<jsp:include page="header.jsp">
+<jsp:include page="components/header.jsp">
     <jsp:param name="title" value="${title}"/>
 </jsp:include>
 <c:url value="/changePassword" var="postPath"/>
