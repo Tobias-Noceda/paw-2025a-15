@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
@@ -22,6 +23,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private DoctorDetailService dds;
+
+    @Autowired
+    private FileService fs;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -77,5 +81,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public void changePasswordByID(long id, String password) {
         userDao.changePasswordByID(id, password);
+    }
+
+    @Override
+    public void editUser(long id, String name, String telephone, long pictureId) {
+        if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
     }
 }
