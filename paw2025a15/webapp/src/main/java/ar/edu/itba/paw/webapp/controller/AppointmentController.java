@@ -55,9 +55,9 @@ public class AppointmentController {
 
         try {
             final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
             
             // Si llegó hasta acá, está logueado
             final User user = us.getUserByEmail(userDetails.getUsername())

@@ -192,34 +192,3 @@
 .deauthorize-button:hover {
     background-color: #b90101;
 }
-
-.file-dialog {
-    border: none;
-    border-radius: 8px;
-    padding: 20px;
-    width: 60%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: left;
-}
-
-.file-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-}
-
-.file-dialog .file-dialog-header {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-}
-
-.file-dialog-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin: 0 0 10px 0;
-    flex: 1;
-}
-
-.file-viewer {
-    width: 100%;
-    height: 80vh;
-}

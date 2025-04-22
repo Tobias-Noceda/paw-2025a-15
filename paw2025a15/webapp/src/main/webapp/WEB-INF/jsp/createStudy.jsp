@@ -11,9 +11,10 @@
   </head>
   <body>
     <div class="page-container">
-      <h1 style="margin: 0;"><spring:message code="uploadStudies.title" arguments="${patientName}" htmlEscape="true"></spring:message></h1>
+      <h1 style="margin: 0;"><spring:message code="uploadStudies.title" arguments="${patient.name}" htmlEscape="true"></spring:message></h1>
       <div class="upload-card">
-        <form:form modelAttribute="createStudyForm" method="post" action="${pageContext.request.contextPath}/supersecret/upload/${patientId}/${doctorId}" enctype="multipart/form-data">
+        <c:url value='/patient/upload/${patient.id}' var="uploadUrl" />
+        <form:form modelAttribute="createStudyForm" method="post" action="${uploadUrl}" enctype="multipart/form-data">
           <div class="file-container">
             <input name="file" type="file" accept=".png, .jpg, .jpeg, .pdf">
           </div>

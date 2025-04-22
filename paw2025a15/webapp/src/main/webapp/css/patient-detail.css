@@ -1,0 +1,92 @@
+.patient-card { 
+    flex: 0 0 350px; /* Fixed width for left box */
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-height: min-content;
+    overflow: hidden;
+    position: sticky;
+    top: 95px;
+    z-index: 1;
+}
+
+.patient-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 200px;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.patient-image img {
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.patient-info {
+    flex: 1;
+}
+
+.patient-name-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.patient-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.patient-email-div,
+.patient-telephone-div {
+    display: flex;
+    flex-direction: row;
+    font-size: 16px;
+    margin: 3px 0 0 0;
+}
+
+.patient-email-label,
+.patient-telephone-label {
+    color: black;
+    font-weight: 700;
+    margin: 0 5px 0 0;
+}
+
+.patient-email,
+.patient-telephone {
+    color: #555;
+    margin: 0;
+}
+
+.upload-button-div {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+}
+
+.upload-button {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.upload-button:hover {
+    background-color: #0056b3;
+}

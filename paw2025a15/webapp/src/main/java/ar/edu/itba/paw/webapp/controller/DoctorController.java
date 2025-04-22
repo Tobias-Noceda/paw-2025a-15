@@ -175,9 +175,8 @@ public class DoctorController {
                 .getAuthentication()
                 .getPrincipal();
             
-            // Si llegó hasta acá, está logueado
             final User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
             
             return renderLandingPage(null, us.searchAuthPatientsByDoctorIdAndName(user.getId(), searchForm.getQuery()), locale);
         } catch (Exception e) {
@@ -238,7 +237,7 @@ public class DoctorController {
             dds.toggleAuthDoctor(user.getId(), doctorId);
         } catch (Exception e) {
         }
-        
+
         return new ModelAndView("redirect:/doctors/" + doctorId);
     }
 

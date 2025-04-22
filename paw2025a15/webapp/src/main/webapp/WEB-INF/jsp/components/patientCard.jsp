@@ -8,7 +8,7 @@
   </head>
   <body>
     <c:set var="redirectLink">
-      <c:url value="/doctors/${param.id}" />
+      <c:url value="/patient/${param.id}" />
     </c:set>
     <div class="doctor-landing-card">
       <a href="${redirectLink}" class="clickable-card">
