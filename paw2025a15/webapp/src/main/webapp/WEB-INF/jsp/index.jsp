@@ -60,7 +60,7 @@
           </form:form>
         </div>
   
-        <h2 class="landing-title"><spring:message code="landing.patient.title"></spring:message></h2>
+        <h2 class="landing-title"><spring:message code="landing.title"></spring:message></h2>
         <c:if test="${not empty docList}">
           <div class="doctor-landing-container">
             <c:forEach var="doctor" items="${docList}">

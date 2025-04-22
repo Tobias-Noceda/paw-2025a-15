@@ -182,6 +182,7 @@ public class DoctorController {
             return renderLandingPage(null, us.searchAuthPatientsByDoctorIdAndName(user.getId(), searchForm.getQuery()), locale);
         } catch (Exception e) {
         }
+        
         return new ModelAndView("redirect:/home");
     }
 
