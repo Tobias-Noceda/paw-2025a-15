@@ -32,7 +32,13 @@
         </a>
       </nav>
       <c:set var="barPlaceholder">
-        <spring:message code="header.placeholder"/>
+        <c:if test="${user.role == 'PATIENT'}">
+          <spring:message code="header.patient.placeholder"/>
+        </c:if>
+        <c:if test="${user.role == 'DOCTOR'}">
+          <spring:message code="header.doctor.placeholder"/>
+        </c:if>
+        
       </c:set>
 
       <c:set var="searchLink">

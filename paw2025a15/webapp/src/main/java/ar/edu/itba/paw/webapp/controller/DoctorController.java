@@ -74,7 +74,7 @@ public class DoctorController {
                 .getPrincipal();
             
             // Si llegó hasta acá, está logueado
-            final User user = us.getUserByEmail(userDetails.getUsername())
+            final User user = us.getUserByEmail(userDetails.getUsername())//TODO this sounds weird
             .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
             
             mav.addObject("user", user);
