@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,6 +41,9 @@ public class AppointmentController {
     @Autowired
     private DoctorShiftService dss;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/appointments")
     public ModelAndView patientProfile(
         @ModelAttribute("searchForm") final SearchForm searchForm,
@@ -64,7 +68,7 @@ public class AppointmentController {
                 mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonth(user.getId(), shiftsMonthForm.getMonth()));
 
                 mav.addObject("shiftsMonthForm", shiftsMonthForm);
-                mav.addObject("possibleMonths", SelectItem.getNextThreeMonths(locale));
+                mav.addObject("possibleMonths", SelectItem.getNextThreeMonths(messageSource, locale));
             } else if(user != null && user.getRole() == UserRoleEnum.PATIENT) {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
                 mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,9 @@ public class GeneralController {
     @Autowired
     private InsuranceService is;
 
+    @Autowired
+    private MessageSource messageSource;
+
     private ModelAndView renderLandingPage(
         User user,
         List<DoctorView> doctors,
@@ -53,8 +57,8 @@ public class GeneralController {
             mav.addObject("docList", doctors);
         }
         mav.addObject("insurances", is.getAllInsurances());
-        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(locale));
-        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(locale));
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
 
         return mav;
     }

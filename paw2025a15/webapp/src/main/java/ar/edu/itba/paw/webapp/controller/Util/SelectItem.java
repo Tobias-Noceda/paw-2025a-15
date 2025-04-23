@@ -41,7 +41,7 @@ public class SelectItem {
         this.label = label;
     }
 
-    public static List<SelectItem> getListOfSpecialties(Locale locale) {
+    public static List<SelectItem> getListOfSpecialties(MessageSource ms, Locale locale) {
         final List<SelectItem> specialties = new ArrayList<>();
         for (SpecialtyEnum specialty : SpecialtyEnum.values()) {
             specialties.add(new SelectItem(specialty.name(), ms.getMessage("specialty." + specialty.name(), null, locale)));
@@ -49,7 +49,7 @@ public class SelectItem {
         return specialties;
     }
 
-    public static List<SelectItem> getListOfWeekdays(Locale locale) {
+    public static List<SelectItem> getListOfWeekdays(MessageSource ms, Locale locale) {
         final List<SelectItem> weekdays = new ArrayList<>();
         for (WeekdayEnum weekday : WeekdayEnum.values()) {
             weekdays.add(new SelectItem(
@@ -59,7 +59,7 @@ public class SelectItem {
         return weekdays;
     }
 
-    public static List<SelectItem> getNextThreeMonths(Locale locale) {
+    public static List<SelectItem> getNextThreeMonths(MessageSource ms, Locale locale) {
         final List<SelectItem> months = new ArrayList<>();
         LocalDate currentDate = LocalDate.now();
         for (int i = 0; i < 3; i++) {

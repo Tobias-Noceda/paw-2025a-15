@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,6 +44,9 @@ public class RegisterController {
     
     @Autowired
     private DoctorShiftService dss;
+    
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -130,8 +134,8 @@ public class RegisterController {
             final ModelAndView mav = new ModelAndView("doctorForm");
             mav.addObject("doctor", form);
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
-            mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(locale));
-            mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(locale));
+            mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+            mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
             mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
             return mav;
         }

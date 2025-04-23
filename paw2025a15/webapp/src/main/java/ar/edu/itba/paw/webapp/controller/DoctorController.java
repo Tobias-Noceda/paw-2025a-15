@@ -3,7 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -44,6 +44,9 @@ public class DoctorController {
     @Autowired
     private InsuranceService is;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
             @PathVariable("id") long id,
@@ -76,7 +79,7 @@ public class DoctorController {
         mav.addObject("searchForm", new SearchForm());
 
         mav.addObject("shiftsMonthForm", shiftsMonthForm);
-        mav.addObject("possibleMonths", SelectItem.getNextThreeMonths(locale));
+        mav.addObject("possibleMonths", SelectItem.getNextThreeMonths(messageSource, locale));
 
         return mav;
     }
@@ -105,8 +108,8 @@ public class DoctorController {
         final ModelAndView mav = new ModelAndView("doctorForm");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
-        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(locale));
-        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(locale));
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
         mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
         return mav;
     }
