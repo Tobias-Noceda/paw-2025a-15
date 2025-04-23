@@ -62,7 +62,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/createLab").anonymous()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
-                .antMatchers("/**").authenticated()).formLogin(login -> login
+                .antMatchers("/**").permitAll()
+            )
+            .formLogin(login -> login
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
