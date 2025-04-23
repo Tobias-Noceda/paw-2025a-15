@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
   <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
@@ -9,6 +10,15 @@
     .edit-image-wrapper {
       position: relative;
       display: inline-block;
+    }
+
+    .doctor-phone {
+      border: none;
+      border-bottom: 1px solid #ccc;
+      border-radius: 0;
+      outline: none;
+      padding: 4px 0;
+      background-color: transparent; /* opcional si querés que no tenga fondo */
     }
 
     .edit-button {
@@ -39,20 +49,25 @@
   </style>
 </head>
 <body>
-<jsp:include page="header.jsp"/>
+<jsp:include page="components/header.jsp">
+  <jsp:param name="username" value="${user.name}"/>
+  <jsp:param name="pictureId" value="${user.pictureId}"/>
+  <jsp:param name="role" value="${user.role}"/>
+</jsp:include>
 <div class="profile-container" style="padding: 20px;">
   <h1 style="color: #0d4a85; margin-bottom: 20px;">
     <spring:message code="profile.title"/>
   </h1>
-  <form action="/saveimg" method="post" enctype="multipart/form-data">
+  <c:url value='/save-profile' var="saveProfileUrl"/>
+  <form:form modelAttribute="profileForm" method="post" action="${saveProfileUrl}" enctype="multipart/form-data">
     <div class="doctor-card">
       <div class="doctor-image">
         <div class="edit-image-wrapper">
           <img id="prof-image" src="<c:url value='/supersecret/files/${user.pictureId}'/>" alt="Doctor Image" />
-          <button class="edit-button" type="button" onclick="document.getElementById('fileInput').click()">
+          <button class="edit-button" type="button" onclick="handleImageChange()">
             ✏️
           </button>
-          <input type="file" id="fileInput" class="hidden-file-input" accept=".png, .jpg, .jpeg" onchange="handleImageChange(event)">
+          <input type="file" id="fileInput"  name="profileImage" class="hidden-file-input" accept=".png, .jpg, .jpeg" onchange="handleImageChange(event)"/>
         </div>
       </div>
 
@@ -63,28 +78,39 @@
           <span class="doctor-specialty-label"><spring:message code="profile.role.label"/>:</span>
           <p class="doctor-specialty"><c:out value="${user.role}"/></p>
         </div>
+        <div>
+          <label for="phoneNumber"><spring:message code="profile.phone.label"/></label>
+          <form:input path="phoneNumber" value="${user.telephone}" cssClass="doctor-phone" />
+        </div>
+
+
       </div>
     </div>
-    <!-- Guardar cambios -->
+
+
     <div class="save-container">
-      <button type="submit" class="save-button">
+      <button type="submit" class="">
         <spring:message code="profile.save.button"/>
       </button>
     </div>
-  </form>
+  </form:form>
+
 </div>
 
 <script>
   function handleImageChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const objectURL = URL.createObjectURL(file);
-      document.getElementById("prof-image").src = objectURL;
-      console.log("Archivo seleccionado:", file.name);
+    if (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const objectURL = URL.createObjectURL(file);
+        document.getElementById("prof-image").src = objectURL;
+        console.log("Archivo seleccionado:", file.name);
+      }
     } else {
-      console.log("No se seleccionó ningún archivo.");
+      document.getElementById("fileInput").click();
     }
   }
+
 </script>
 
 </body>
