@@ -143,4 +143,6 @@ public class DoctorForm {
     public void setAmount(int amount){
         this.amount = amount;
     }
+
+
 }

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.ProfileForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,21 +176,21 @@ public class UserController {
     }
 
     @RequestMapping("/profile")
-    public ModelAndView profile(@AuthenticationPrincipal UserDetails userDetails, SearchForm form) {
+    public ModelAndView profile(@AuthenticationPrincipal UserDetails userDetails, SearchForm form, @ModelAttribute("profileForm") ProfileForm profileForm) {
         ModelAndView mav = new ModelAndView("profileInfo");
-        System.out.println(userDetails.getUsername());
+        //System.out.println(userDetails.getUsername());
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
         mav.addObject("user", user);
 
         return mav;
     }
-/*
-    @RequestMapping("/updateProfile/{id}/{picId}")//TODO esto es a modo de ejemplo, no va en la webapp
-    public ModelAndView updateProfile(@PathVariable("id") long id, @PathVariable("picId") long picId){
-        User user = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("No such user_id"));
-        us.editUser(id, user.getName(), user.getTelephone(), picId);
-        return new ModelAndView("redirect:/");
-    }
-*/
+
+//    @RequestMapping("/updateProfile/{id}/{picId}")//TODO esto es a modo de ejemplo, no va en la webapp
+//    public ModelAndView updateProfile(@PathVariable("id") long id, @PathVariable("picId") long picId){
+//        User user = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("No such user_id"));
+//        us.editUser(id, user.getName(), user.getTelephone(), picId);
+//        return new ModelAndView("redirect:/profile");
+//    }
+
 
 }

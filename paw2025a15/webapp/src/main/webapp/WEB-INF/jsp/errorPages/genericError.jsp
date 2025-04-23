@@ -73,11 +73,11 @@
         <spring:message code="error.${param.errorCode}.message" />
       </p>
       <c:url value="/" var="homeUrl" />
-      <c:url value="login" var="loginUrl" />
+      <c:url value="/" var="loginUrl" />
       <c:choose>
         <c:when test="${param.errorCode == '403'}">
           <a href="${loginUrl}">
-            <spring:message code="error.login" />
+            <spring:message code="error.backToHome" />
           </a>
         </c:when>
         <c:otherwise>

@@ -6,16 +6,18 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.servlet.ServletContext;
+import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.ProfileForm;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,6 +34,9 @@ public class FileController {
     @Autowired
     private FileService fs;
 
+    @Autowired
+    private UserService us;
+
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
     public ModelAndView getImageForm(){
         return new ModelAndView("createFile");
@@ -44,10 +49,16 @@ public class FileController {
     }
 
 
-    @RequestMapping(path = "/saveimg", method = RequestMethod.POST)
-    public ModelAndView saveImage(@RequestParam("file") MultipartFile file) throws IOException {
-        if (file != null && !file.isEmpty()) {
-            File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
+    @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
+    public ModelAndView saveImage(@AuthenticationPrincipal UserDetails userDetails, @Valid @ModelAttribute("profileForm") ProfileForm profileForm
+    ) throws IOException {
+        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
+        if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
+            File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
+            System.out.println(profileForm.getPhoneNumber());
+            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
+        }else {
+            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
         }
         return new ModelAndView("redirect:/profile");
     }
