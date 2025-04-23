@@ -41,13 +41,16 @@ public class PawUserDetailsService implements UserDetailsService {
 
         //TODO:Implement logic to grant only required authorities 
         final Collection<GrantedAuthority> authorities = new HashSet<>();
-        if(user.getRole().name().equals("Admin")){
+        if(user.getRole().equals(UserRoleEnum.ADMIN)) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }else if(user.getRole().name().equals("Doctor")){
+        }else if(user.getRole().equals(UserRoleEnum.DOCTOR)){
+            System.out.println("inside doctor");
             authorities.add(new SimpleGrantedAuthority("ROLE_DOCTOR"));
-        }else if(user.getRole().name().equals("Laboratory")) {
+        }else if(user.getRole().equals(UserRoleEnum.LABORATORY)) {
+            System.out.println("inside laboratory");
             authorities.add(new SimpleGrantedAuthority("ROLE_LABORATORY"));
-        }else if(user.getRole().name().equals("Patient")) {
+        }else if(user.getRole().equals(UserRoleEnum.PATIENT)) {
+            System.out.println("inside patient");
             authorities.add(new SimpleGrantedAuthority("ROLE_PATIENT"));
         }
 

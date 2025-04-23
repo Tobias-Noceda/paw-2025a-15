@@ -12,6 +12,17 @@
       display: inline-block;
     }
 
+    /* Esto oculta las flechitas en la mayoría de los navegadores */
+    input.doctor-phone::-webkit-inner-spin-button,
+    input.doctor-phone::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input.doctor-phone {
+      -moz-appearance: textfield; /* Firefox */
+    }
+
     .doctor-phone {
       border: none;
       border-bottom: 1px solid #ccc;
@@ -80,7 +91,7 @@
         </div>
         <div>
           <label for="phoneNumber"><spring:message code="profile.phone.label"/></label>
-          <form:input path="phoneNumber" value="${user.telephone}" cssClass="doctor-phone" />
+          <form:input type="number" path="phoneNumber" value="${user.telephone}" cssClass="doctor-phone" />
         </div>
 
 
