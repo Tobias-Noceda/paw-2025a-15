@@ -81,8 +81,10 @@
           </div>
         </button>
         <div id="userDropdownMenu" class="user-dropdown-menu">
-          <a href="/profile"><spring:message code="header.profile"/></a>
-          <a href="/logout"><spring:message code="header.logout"/></a>
+          <c:url value="/profile" var="profile"/>
+          <a href="${profile}"><spring:message code="header.profile"/></a>
+          <c:url value="/logout" var="logout"/>
+          <a href="${logout}"><spring:message code="header.logout"/></a>
         </div>
       </c:if>
 
