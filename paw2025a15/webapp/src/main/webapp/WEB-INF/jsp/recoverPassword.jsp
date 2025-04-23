@@ -5,6 +5,7 @@
 <head>
     <title><spring:message code="recoverPassword.title"/></title>
     <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+    <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
     <link rel="stylesheet" href="<c:url value='/css/doctor-form.css'/>">
     <style>
         .success { color: green; }
