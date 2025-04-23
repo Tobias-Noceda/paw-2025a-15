@@ -54,7 +54,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/supersecret/files/**").permitAll()
                 .antMatchers("/supersecret/file/icon").permitAll()
                 .antMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
-                .antMatchers("/patient/upload/**").authenticated()
+                .antMatchers("/upload-file/**").authenticated()
                 .antMatchers("/takeAppointment").hasRole("PATIENT")
                 .antMatchers("/createPatient").anonymous()
                 .antMatchers("/patientCancelAppointment").hasRole("PATIENT")

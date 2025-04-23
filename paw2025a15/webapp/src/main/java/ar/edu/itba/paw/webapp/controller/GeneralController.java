@@ -47,7 +47,6 @@ public class GeneralController {
 
         if(user != null) {
             mav.addObject("user", user);
-            mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), 0));
         }
 
         if(patients != null) {
@@ -71,7 +70,7 @@ public class GeneralController {
     ) {
         final User user = us.getCurrentUser().orElse(null);
 
-        if(null != user.getRole()) switch (user.getRole()) {
+        if(user != null && null != user.getRole()) switch (user.getRole()) {
             case PATIENT -> {
                 return renderLandingPage(user, dds.getAllDoctors(), null, locale);
             }

@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.FilterForm;
@@ -16,7 +16,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.models.UserRoleEnum;
 
 @Controller
 public class PatientController {
@@ -43,24 +43,24 @@ public class PatientController {
             @ModelAttribute("registerPatientForm") final PatientForm form,
             @ModelAttribute("filterForm") final FilterForm filterForm
     ) {
+        User patient = us.getUserById(patientId)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+
+        if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
+        }
+
         final ModelAndView mav = new ModelAndView("patientDetail");
         
-        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
+        User user = us.getCurrentUser()
+        .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
         
-        // Si llegó hasta acá, está logueado
-        final User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-
         if(!dds.hasAuthDoctor(patientId, user.getId())) {
-            return new ModelAndView("redirect:/");
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to view this patient");
         }
         
         mav.addObject("user", user);
-        
-        mav.addObject("patient", us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId)));
+        mav.addObject("patient", patient);
         mav.addObject("searchForm", new SearchForm());
         mav.addObject("patientStudies", ss.getStudiesByPatientId(patientId));
 

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
@@ -48,24 +50,28 @@ public class StudyController {
     @Autowired
     private EmailService es;
 
-    @RequestMapping(path = "/patient/upload/{patientId:\\d+}", method = RequestMethod.GET)
+    @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm
     ){
-        User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
+        User patient = us.getUserById(patientId).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+
+        if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
+        }
+
         if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
 
-        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
+        User user = us.getCurrentUser()
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
 
-        User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
+        }
         
-        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
-            throw new IllegalArgumentException("User does not have permission to upload study for this patient");
+        if(user.getId() != patientId || !dds.hasAuthDoctor(patientId, user.getId())) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
         }
         
         ModelAndView mav = new ModelAndView("createStudy");
@@ -76,34 +82,34 @@ public class StudyController {
         return mav;
     }
 
-    @RequestMapping(path = "/patient/upload/{patientId:\\d+}", method = RequestMethod.POST)
+    @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.POST)
     public ModelAndView createStudy(
         @PathVariable("patientId") int patientId,
         @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
         BindingResult errors
     ) throws IOException{
-        
-        User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
+        User patient = us.getUserById(patientId).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+
+        if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
+        }
+
         if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
 
-        final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
+        User user = us.getCurrentUser()
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
 
-        User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        
-        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
-            throw new IllegalArgumentException("User does not have permission to upload study for this patient");
+        if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
         }
+        
+        
 
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm);
         }
 
         LocalDateTime dateTime = LocalDateTime.now();
-
         
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());

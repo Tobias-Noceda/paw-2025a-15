@@ -4,13 +4,13 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
@@ -22,8 +22,9 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
+import ar.edu.itba.paw.models.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
@@ -54,24 +55,21 @@ public class DoctorController {
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
-        final ModelAndView mav = new ModelAndView("doctorDetail");
-       
-        try {
-            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-            
-            // Si llegó hasta acá, está logueado
-            final User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-            
-            mav.addObject("user", user);
-            mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), id));
-        } catch (Exception e) {
-        }
+        DoctorDetail detail = dds.getDetailByDoctorId(id)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
 
-        dds.getDetailByDoctorId(id).ifPresent(doctorDetail -> mav.addObject("doctorDetail", doctorDetail));//TODO throw exception if not doctor
+        final ModelAndView mav = new ModelAndView("doctorDetail");
+
+        final User user = us.getCurrentUser()
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not logged in"));
+
+        if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
+        }
+        
+        mav.addObject("doctorDetail", detail);
+        mav.addObject("user", user);
+        mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), id));
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
@@ -86,19 +84,22 @@ public class DoctorController {
 
     @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
     public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId) {
-        try {
-            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        User doctor = us.getUserById(doctorId)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
             
-            // Si llegó hasta acá, está logueado
-            final User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-            
-            dds.toggleAuthDoctor(user.getId(), doctorId);
-        } catch (Exception e) {
+        if(!doctor.getRole().equals(UserRoleEnum.DOCTOR)) {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found");
         }
+
+        User user = us.getCurrentUser()
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not logged in"));
+
+
+        if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to authorize this doctor");
+        }
+
+        dds.toggleAuthDoctor(user.getId(), doctorId);
 
         return new ModelAndView("redirect:/doctors/" + doctorId);
     }

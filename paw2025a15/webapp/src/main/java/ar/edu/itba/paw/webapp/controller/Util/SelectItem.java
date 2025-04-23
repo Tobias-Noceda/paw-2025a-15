@@ -5,16 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.WeekdayEnum;
 
 public class SelectItem {
-
-    @Autowired
-    private static MessageSource ms;
 
     private String value;
     private String label;
