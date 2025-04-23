@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -10,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -33,11 +36,14 @@ public class EmailServiceImpl implements EmailService{
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private MessageSource messageSource;
+
     private final String emailFromString = "caretracehealth@gmail.com";
 
-    //private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
+    private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
     //private final String baseURL = "http://localhost:8080/webapp/";
-    private final String baseURL = "http://localhost:8080/webapp_war/";
+    //private final String baseURL = "http://localhost:8080/webapp_war/";
     //private final String baseURL = "http://localhost:8080/";
 
 
@@ -86,21 +92,24 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        // TODO: get month name
-        templateModel.put("monthName", "April");
+
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", patient.getEmail());
-        // TODO: get phone
         templateModel.put("phone", patient.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
-        templateModel.put("uploadLink", baseURL + "supersecret/upload/" + patient.getId() + "/" + doctor.getId());
+        templateModel.put("uploadLink", baseURL + "appointments/");
+
+        String subject = messageSource.getMessage("takenShift.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Confirmation", templateModel, "doctorAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentConfirmationTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -111,22 +120,24 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        // TODO: get month name
-        templateModel.put("monthName", "April");
+
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", doctor.getEmail());
-        // TODO: get phone
         templateModel.put("phone", doctor.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
-        // TODO: real shifts list link
-        templateModel.put("shiftsLink", baseURL);
+        templateModel.put("shiftsLink", baseURL + "appointments/");
+        
+        String subject = messageSource.getMessage("takenShift.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), "Appointment Confirmation", templateModel, "patientAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentConfirmationTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -137,7 +148,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendRecievedStudyEmail(User patient, User doctor, File file, String description, LocalDateTime dateTime) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
@@ -152,8 +163,11 @@ public class EmailServiceImpl implements EmailService{
             .append(".")
             .append(file.getType().getName().split("/")[1]);
 
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        String subject = messageSource.getMessage("receivedStudy.subject", null, locale);
+
         try {
-            sendMessageWithFileTemplate(patient.getEmail(), "Recieved Study", templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString());
+            sendMessageWithFileTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString());
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -164,21 +178,24 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        // TODO: get month name
-        templateModel.put("monthName", "April");
+
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", patient.getEmail());
-        // TODO: get phone
-        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("phone", patient.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        
+        String subject = messageSource.getMessage("cancelledTurn.doctor.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Cancellation", templateModel, "doctorCancelledAppointmentTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -189,18 +206,22 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        // TODO: get month name
-        templateModel.put("monthName", "April");
+
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        
+        String subject = messageSource.getMessage("cancelledConfirmation.doctor.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), "Appointment Cancellation", templateModel, "doctorCancelledAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentConfirmationTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -212,21 +233,24 @@ public class EmailServiceImpl implements EmailService{
         Map<String, Object> templateModel = new HashMap<>();
 
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        // TODO: get month name
-        templateModel.put("monthName", "April");
+
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", doctor.getEmail());
-        // TODO: get phone
-        templateModel.put("phone", "11 1234-5678");
+        templateModel.put("phone", doctor.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        
+        String subject = messageSource.getMessage("cancelledTurn.patient.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), "Appointment Cancellation", templateModel, "patientCancelledAppointmentTemplate");
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -237,18 +261,22 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        // TODO: get month name
-        templateModel.put("monthName", "April");
+
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        
+        String subject = messageSource.getMessage("cancelledConfirmation.patient.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), "Appointment Cancellation", templateModel, "patientCancelledAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentConfirmationTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -259,7 +287,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPasswordResetEmail(User user) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersaecret/files/logo");
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("userName", user.getName());
 
         String token = UUID.randomUUID().toString(); // o algo más complejo
@@ -268,9 +296,12 @@ public class EmailServiceImpl implements EmailService{
         String recoveryLink = baseURL + "changePassword/" + token + "/" + user.getId();
         templateModel.put("resetLink", recoveryLink);
 
+        Locale locale = Locale.ENGLISH;//TODO el posta
+        String subject = messageSource.getMessage("passwordReset.subject", null, locale);
+
 
         try {
-            sendSimpleMessageTemplate(user.getEmail(), "Password Recovery", templateModel, "passwordRecoveryTemplate");
+            sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "passwordRecoveryTemplate");
         } catch (MessagingException e) {
             // TODO catch
         }
