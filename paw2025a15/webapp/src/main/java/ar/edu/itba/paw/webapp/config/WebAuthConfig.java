@@ -1,11 +1,12 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
-import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -14,7 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.concurrent.TimeUnit;
+import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -39,49 +41,58 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.sessionManagement()
-                .invalidSessionUrl("/home")
-                .and().authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
+        http.sessionManagement(management -> management.invalidSessionUrl("/home"))
+            .authorizeRequests(requests -> requests
                 .antMatchers("/login").anonymous()
                 .antMatchers("/register/**").anonymous()
                 .antMatchers("/forgot-password").anonymous()
-                .antMatchers("/patient/**").hasAnyRole("DOCTOR", "LABORATORY", "PATIENT")
+                .antMatchers("/patient/**").hasAnyRole("DOCTOR", "LABORATORY")
                 .antMatchers("/search/**").permitAll()
                 .antMatchers("/changePassword/**").anonymous()
                 .antMatchers("/recover-password").anonymous()
+                .antMatchers("/", "/home").permitAll()
                 .antMatchers("/supersecret/files/**").permitAll()
                 .antMatchers("/supersecret/file/icon").permitAll()
                 .antMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
-                .antMatchers("/patient/upload/**").permitAll()
+                .antMatchers("/upload-file/**").authenticated()
+                .antMatchers("/takeAppointment").hasRole("PATIENT")
                 .antMatchers("/createPatient").anonymous()
+                .antMatchers("/patientCancelAppointment").hasRole("PATIENT")
                 .antMatchers("/createMedic").anonymous()
                 .antMatchers("/createLab").anonymous()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
-                .antMatchers("/**").authenticated()
-                .and().formLogin()
+                .antMatchers("/**").authenticated()).formLogin(login -> login
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
                 .loginPage("/login")
                 .failureHandler(authenticationFailureHandler)
-                .and().rememberMe()
+            )
+            .rememberMe(me -> me
                 .rememberMeParameter("remember-me")
                 .userDetailsService(userDetailsService)
                 .key("mysupersecretketthatnobodyknowsabout")
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-                .and().logout()
+            )
+            .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
-                .and().exceptionHandling()
-                .accessDeniedPage("/403")
-                .and().csrf().disable();
+            )
+            .exceptionHandling(handling -> handling.accessDeniedPage("/403"))
+            .csrf(csrf -> csrf.disable());
     }
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403", "/resources/**", "/supersecret/files/**");
+    }
+
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

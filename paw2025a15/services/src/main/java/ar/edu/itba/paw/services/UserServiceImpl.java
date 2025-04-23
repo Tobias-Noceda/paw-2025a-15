@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
@@ -26,13 +27,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private FileService fs;
-
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
@@ -95,5 +89,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name) {
         return userDao.searchAuthPatientsByDoctorIdAndName(doctorId, name);
+    }
+
+    @Override
+    public Optional<User> getCurrentUser() {
+        Authentication session = SecurityContextHolder.getContext().getAuthentication();
+
+        if (session != null) {
+            return userDao.getUserByEmail(session.getName());
+        }
+
+        return Optional.empty();
     }
 }

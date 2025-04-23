@@ -19,7 +19,7 @@
       <c:set var="confirmationMessage">
         <spring:message code="appointments.cancelConfirm" />
       </c:set>
-      <c:if test="${user.role == 'ROLE_PATIENT'}">
+      <c:if test="${user.role == 'PATIENT'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.future"></spring:message></h3>
           <div class="appointment-table-container">
@@ -47,17 +47,15 @@
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
                         <td class="text-cell"><c:out value="${appointment.address}"/></td>
                         <td class="cancel-cell">
-                          <form 
-                            action="/patientCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}"
-                            method="post"
-                            onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
-                          >
+                          <c:url var="cancelUrl" value="/patientCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}" />
+                          <form action="${cancelUrl}" method="post" onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)">
                             <button class="cancel-button" type="submit">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
+                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
                               </svg>
                             </button>
                           </form>
+
                         </td>
                       </tr>
                     </c:forEach>
@@ -111,7 +109,7 @@
           </div>
         </div>
       </c:if>
-      <c:if test="${user.role == 'ROLE_DOCTOR'}">
+      <c:if test="${user.role == 'DOCTOR'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.taken"></spring:message></h3>
           <div class="appointment-table-container">
@@ -137,12 +135,14 @@
                         <td class="text-cell"><c:out value="${appointment.date}"/></td>
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
                         <td class="cancel-cell">
-                          <form 
-                            action="/doctorCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}"
-                            method="post"
-                            onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
+                          <c:url var="doctorCancelUrl" value="/doctorCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}" />
+                          <form
+                                  action="${doctorCancelUrl}"
+                                  method="post"
+                                  onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
                           >
-                            <button class="cancel-button" type="submit">
+
+                          <button class="cancel-button" type="submit">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                                 <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
                               </svg>
@@ -179,7 +179,7 @@
                   <tr>
                     <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
                     <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
-                    <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
+<%--                    <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>--%>
                   </tr>
                 </thead>
               </table>
@@ -192,18 +192,18 @@
                       <tr class="appointment-row">
                         <td class="text-cell"><c:out value="${appointment.date}"/></td>
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
-                        <td class="cancel-cell">
-                          <form
-                            action="/takeAppointment/${doctorId}/${appointment.shiftId}/${appointments.date}" method="post"
-                            onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
-                          >
-                            <button class="cancel-button" type="submit">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
-                              </svg>
-                            </button>
-                          </form>
-                        </td>
+<%--                        <td class="cancel-cell">--%>
+<%--                          <form--%>
+<%--                            action="/takeAppointment/${user.id}/${appointment.shiftId}/${appointments.date}" method="post"--%>
+<%--                            onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"--%>
+<%--                          >--%>
+<%--                            <button class="cancel-button" type="submit">--%>
+<%--                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">--%>
+<%--                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>--%>
+<%--                              </svg>--%>
+<%--                            </button>--%>
+<%--                          </form>--%>
+<%--                        </td>--%>
                       </tr>
                     </c:forEach>
                   </tbody>

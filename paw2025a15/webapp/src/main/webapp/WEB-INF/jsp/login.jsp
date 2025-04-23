@@ -4,7 +4,7 @@
 <html>
 <head>
   <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
-  <link rel="stylesheet" href="<c:url value='/css/doctor-form.css'/>">
+  <link rel="stylesheet" href="<c:url value='/css/login-form.css'/>">
 </head>
 <body>
 
@@ -12,8 +12,9 @@
 <c:url value="/register/choose" var="registerUrl" />
 <c:url value="/forgot-password" var="forgotPasswordUrl" />
 
-<div class="page-container" style="align-items: center;">
+<div class="page-container">
   <div class="doctor-form-container">
+    <img src="<c:url value='/resources/favicon.png'/>" alt="Caretrace Logo" class="logo">
     <h2><spring:message code="login.title"/></h2>
     <form action="${loginUrl}" method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
 

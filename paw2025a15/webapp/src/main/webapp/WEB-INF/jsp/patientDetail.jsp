@@ -32,7 +32,7 @@
             <p class="patient-telephone"><c:out value="${patient.telephone}"/></p>
           </div>
           <div class="upload-button-div">
-            <a href="<c:url value='/patient/upload/${patient.id}'/>" class="upload-button">
+            <a href="<c:url value='/upload-file/${patient.id}'/>" class="upload-button">
               <spring:message code="patient.details.upload.label"/>
             </a>
           </div>

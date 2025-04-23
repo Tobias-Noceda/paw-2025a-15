@@ -6,6 +6,7 @@ import ar.edu.itba.paw.form.ProfileForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.ChangePasswordForm;
@@ -57,6 +59,11 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @RequestMapping("/login")
+    public ModelAndView login() {
+        return new ModelAndView("login");
+    }
 
     @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id) {
@@ -145,8 +152,10 @@ public class UserController {
 
 
     @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.GET)
-    public ModelAndView changePassword(@PathVariable("id") long id, @PathVariable("token") String token ,
-                                       @ModelAttribute("passwordForm") ChangePasswordForm form){
+    public ModelAndView changePassword(
+        @PathVariable("id") long id, @PathVariable("token") String token ,
+        @ModelAttribute("passwordForm") ChangePasswordForm form
+    ){
         ModelAndView mav = new ModelAndView("changePassword");
 
         return mav;
@@ -154,11 +163,10 @@ public class UserController {
 
 
     @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.POST)
-    public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form,
-                                       @PathVariable("id") long id, @PathVariable("token") String token){
-        //System.out.println(form);TODO: dont even know if this should be a log or not but NO SYSOUT
-        //System.out.println("id = " + id);
-        //System.out.println(token);
+    public ModelAndView changePassword(
+        @ModelAttribute("passwordForm") final ChangePasswordForm form,
+        @PathVariable("id") long id, @PathVariable("token") String token
+    ){
         if(!form.getPassword().equals(form.getRepeatPassword())){
             //volver a pedirle al usuario
             ModelAndView mav = new ModelAndView("changePassword");
@@ -171,10 +179,14 @@ public class UserController {
     }
 
     @RequestMapping("/profile")
-    public ModelAndView profile(@AuthenticationPrincipal UserDetails userDetails, SearchForm form, @ModelAttribute("profileForm") ProfileForm profileForm) {
+    public ModelAndView profile(
+        @AuthenticationPrincipal UserDetails userDetails,
+        SearchForm form,
+        @ModelAttribute("profileForm") ProfileForm profileForm
+    ) {
         ModelAndView mav = new ModelAndView("profileInfo");
-        //System.out.println(userDetails.getUsername());
-        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
+
+        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
         mav.addObject("user", user);
 
         return mav;
