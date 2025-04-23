@@ -88,7 +88,7 @@ public class AppointmentController {
     @RequestMapping(value = "/patientCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
     public ModelAndView patientCancelAppointment(@PathVariable("id") long id, @PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date){
         as.cancelAppointment(shiftId, date, id);
-        return new ModelAndView("redirect:/appointments/patient/" + id);
+        return new ModelAndView("redirect:/appointments");
     }
 
     @RequestMapping(value = "/doctorCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
@@ -98,7 +98,7 @@ public class AppointmentController {
         @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
         as.cancelAppointment(shiftId, date, id);
-        return new ModelAndView("redirect:/doctorProfile/" + id);
+        return new ModelAndView("redirect:/appointments");
     }
 
     @RequestMapping(value = "/takeAppointment", method = RequestMethod.POST)
