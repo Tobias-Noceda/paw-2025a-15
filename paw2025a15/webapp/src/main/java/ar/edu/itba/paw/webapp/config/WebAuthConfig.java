@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
-import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,7 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.concurrent.TimeUnit;
+import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -40,9 +41,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.sessionManagement()
-                .invalidSessionUrl("/home")
-                .and().authorizeRequests()
+        http.sessionManagement(management -> management.invalidSessionUrl("/home"))
+            .authorizeRequests(requests -> requests
                 .antMatchers("/login").anonymous()
                 .antMatchers("/register/**").anonymous()
                 .antMatchers("/forgot-password").anonymous()
@@ -62,24 +62,25 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/createLab").anonymous()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
-                .antMatchers("/**").authenticated()
-                .and().formLogin()
+                .antMatchers("/**").authenticated()).formLogin(login -> login
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
                 .loginPage("/login")
                 .failureHandler(authenticationFailureHandler)
-                .and().rememberMe()
+            )
+            .rememberMe(me -> me
                 .rememberMeParameter("remember-me")
                 .userDetailsService(userDetailsService)
                 .key("mysupersecretketthatnobodyknowsabout")
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-                .and().logout()
+            )
+            .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
-                .and().exceptionHandling()
-                .accessDeniedPage("/403")
-                .and().csrf().disable();
+            )
+            .exceptionHandling(handling -> handling.accessDeniedPage("/403"))
+            .csrf(csrf -> csrf.disable());
     }
 
     @Override

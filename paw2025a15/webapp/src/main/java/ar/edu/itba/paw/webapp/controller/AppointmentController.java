@@ -1,14 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,8 +30,6 @@ import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
 public class AppointmentController {
-    @Autowired
-    private MessageSource messageSource;
 
     @Autowired
     private UserService us;
@@ -69,7 +64,7 @@ public class AppointmentController {
                 mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonth(user.getId(), shiftsMonthForm.getMonth()));
 
                 mav.addObject("shiftsMonthForm", shiftsMonthForm);
-                mav.addObject("possibleMonths", getNextThreeMonths(locale));
+                mav.addObject("possibleMonths", SelectItem.getNextThreeMonths(locale));
             } else if(user != null && user.getRole() == UserRoleEnum.PATIENT) {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
                 mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
@@ -115,18 +110,5 @@ public class AppointmentController {
             );
 
         return new ModelAndView("redirect:/appointments");
-    }
-
-    private List<SelectItem> getNextThreeMonths(Locale locale) {
-        final List<SelectItem> months = new ArrayList<>();
-        LocalDate currentDate = LocalDate.now();
-        for (int i = 0; i < 3; i++) {
-            LocalDate nextMonth = currentDate.plusMonths(i);
-            months.add(new SelectItem(
-                nextMonth.getMonth().name(),
-                messageSource.getMessage("month." + nextMonth.getMonth().name(), null, locale) + " " + nextMonth.getYear()
-            ));
-        }
-        return months;
     }
 }

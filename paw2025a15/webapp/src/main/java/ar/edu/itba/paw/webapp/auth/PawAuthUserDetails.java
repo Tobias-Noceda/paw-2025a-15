@@ -1,20 +1,27 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-
 import java.util.Collection;
 
-public class PawAuthUserDetails extends User {
+import org.springframework.security.core.GrantedAuthority;
+
+import ar.edu.itba.paw.models.User;
+
+public class PawAuthUserDetails extends org.springframework.security.core.userdetails.User {
 
     private static final long serialVersionUID = 1L;
+    private final User user;
 
-
-    public PawAuthUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public PawAuthUserDetails(User user, Collection<? extends GrantedAuthority> authorities) {
+        super(user.getEmail(), user.getPassword(), authorities);
+        this.user = user;
     }
 
-    public PawAuthUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+    public PawAuthUserDetails(User user, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+        super(user.getEmail(), user.getPassword(), enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

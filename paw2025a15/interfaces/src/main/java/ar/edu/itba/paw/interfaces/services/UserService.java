@@ -31,4 +31,6 @@ public interface UserService {
     void changePassword(String email, String password);
 
     void changePasswordByID(long id, String password);
+
+    public Optional<User> getCurrentUser();
 }

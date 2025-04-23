@@ -57,7 +57,7 @@ public class StudyJdbcDao implements StudyDao{
 
     @Override
     public List<Study> getStudiesByPatientId(long id) {
-        return jdbcTemplate.query("SELECT * FROM studies WHERE user_id = ? ORDER BY upload_date DESC", new Object[]  {id},
+        return jdbcTemplate.query("SELECT * FROM studies WHERE user_id = ? ORDER BY study_date DESC", new Object[]  {id},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER);
     }
 
