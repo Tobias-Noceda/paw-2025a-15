@@ -10,6 +10,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -62,6 +65,11 @@ public class DoctorController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+
 
     private ModelAndView renderLandingPage(List<DoctorView> doctors, List<User> patients, Locale locale) {
         
@@ -251,6 +259,16 @@ public class DoctorController {
         return mav;
     }
 
+
+
+    private void loginUser(String email, String password) {
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authenticationManager.authenticate(authReq);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+
+
     @RequestMapping(value = "/createMedic", method = RequestMethod.POST)
     public ModelAndView registerForm(
             @Valid @ModelAttribute("registerMedicForm") final DoctorForm form,
@@ -297,6 +315,7 @@ public class DoctorController {
             User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), "med-licence", form.getSpeciality());
             dcs.addCoverages(doc.getId(), form.getObrasSociales());
             dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
+            loginUser(form.getEmail(), form.getPassword());
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             errors.reject("error.registerDoctorFailed");

@@ -6,7 +6,7 @@
 <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
     <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
-    <!-- Incluimos FontAwesome para el ícono del ojito -->
+    <link rel="stylesheet" href="<c:url value="/css/main.css" />" />    <!-- Incluimos FontAwesome para el ícono del ojito -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .password-container {
@@ -28,7 +28,6 @@
     </style>
 </head>
 <body>
-<jsp:include page="components/header.jsp"></jsp:include>
 <c:url value="/createPatient" var="postPath"/>
 <div class="page-container" style="align-items: center;">
     <div class="doctor-form-container">

@@ -3,6 +3,9 @@ package ar.edu.itba.paw.webapp.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,12 +42,26 @@ public class PatientController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+
+    private void loginUser(String email, String password) {
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authenticationManager.authenticate(authReq);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+
+
     @RequestMapping("/register/patient-form")
     public ModelAndView patient(@ModelAttribute("registerPatientForm") final PatientForm form) {
         final ModelAndView mav = new ModelAndView("patientForm");
         mav.addObject("searchForm", new SearchForm());
         return mav;
     }
+
+
 
     @RequestMapping(value = "/createPatient", method = RequestMethod.POST)
     public ModelAndView registerForm(
@@ -82,6 +99,7 @@ public class PatientController {
                     form.getPhoneNumber(),
                     UserRoleEnum.PATIENT
             );
+            loginUser(form.getEmail(), form.getPassword());
             return new ModelAndView("redirect:/");
         } catch (Exception e) {
             errors.reject("error.registerPatientFailed");
