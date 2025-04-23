@@ -190,7 +190,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("email", patient.getEmail());
         templateModel.put("phone", patient.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
-        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        templateModel.put("shiftsLink", baseURL + "appointments/");
         
         String subject = messageSource.getMessage("cancelledTurn.doctor.subject", null, locale);
 
@@ -216,7 +216,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("startTime", shift.getStartTime().toString());
-        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        templateModel.put("shiftsLink", baseURL + "appointments/");
         
         String subject = messageSource.getMessage("cancelledConfirmation.doctor.subject", null, locale);
 
@@ -245,7 +245,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("email", doctor.getEmail());
         templateModel.put("phone", doctor.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
-        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        templateModel.put("shiftsLink", baseURL + "doctors/" + doctor.getId());
         
         String subject = messageSource.getMessage("cancelledTurn.patient.subject", null, locale);
 
@@ -271,7 +271,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
         templateModel.put("address", shift.getAddress());
         templateModel.put("startTime", shift.getStartTime().toString());
-        templateModel.put("shiftsLink", baseURL + "doctorProfile/" + doctor.getId());
+        templateModel.put("shiftsLink", baseURL + "doctors/" + doctor.getId());
         
         String subject = messageSource.getMessage("cancelledConfirmation.patient.subject", null, locale);
 
