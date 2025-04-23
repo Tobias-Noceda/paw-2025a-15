@@ -7,8 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,7 +28,6 @@ import ar.edu.itba.paw.models.FileTypeEnum;
 import ar.edu.itba.paw.models.StudyTypeEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
-import ar.edu.itba.paw.webapp.auth.PawAuthUserDetails;
 
 @Controller
 public class StudyController {
@@ -129,26 +126,19 @@ public class StudyController {
     public ModelAndView patientProfile(
         @ModelAttribute("searchForm") SearchForm searchForm
     ) {
-        try {
-            ModelAndView mav = new ModelAndView("studies");
-        
-            final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-            
-            // Si llegó hasta acá, está logueado
-            final User user = us.getUserByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-            
-            mav.addObject("user", user);
-            mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
-            mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
-            
-            return mav;
-        } catch (Exception e) {
+        ModelAndView mav = new ModelAndView("studies");
+    
+        User user = us.getCurrentUser()
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
+
+        if(user.getRole() != UserRoleEnum.PATIENT) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
         }
 
-        return new ModelAndView("redirect:/");
+        mav.addObject("user", user);
+        mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
+        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+        
+        return mav;
     }
 }
