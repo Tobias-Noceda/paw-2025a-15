@@ -95,7 +95,7 @@ public class DoctorController {
         return mav;
     }
 
-    @RequestMapping(value = {"/home", "/home/", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/home", "/home/", "/"}, method = RequestMethod.GET)//TODO reorder mappings in controllers with logic
     public ModelAndView index (
         @ModelAttribute("searchForm") final SearchForm searchForm,
         @ModelAttribute("filterForm") final FilterForm filterForm,
@@ -112,16 +112,17 @@ public class DoctorController {
             .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
             
             if(null != user.getRole()) switch (user.getRole()) {
-                case PATIENT -> {
+                case ROLE_PATIENT -> {
                     return renderLandingPage(dds.getAllDoctors(), null, locale);
                 }
-                case DOCTOR -> {
+                case ROLE_DOCTOR -> {
                     return renderLandingPage(null, us.getAuthPatientsByDoctorId(user.getId()), locale);
                 }
-                case LABORATORY -> {
+                case ROLE_LABORATORY -> {
                     return renderLandingPage(null, us.getAuthPatientsByDoctorId(user.getId()), locale);
                 }
                 default -> {
+                    //TODO add logger case here
                 }
             }
         } catch (ClassCastException e) {

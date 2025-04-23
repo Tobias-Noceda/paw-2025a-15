@@ -17,7 +17,7 @@
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container">
-      <c:if test="${user.role == 'PATIENT' || pageContext.request.userPrincipal == null}">
+      <c:if test="${user.role == 'ROLE_PATIENT' || pageContext.request.userPrincipal == null}">
         <div class="landing-filters-box">
           <h1 class="landing-filters-title"><spring:message code="landing.filter.title"></spring:message></h1>
           <c:set var="filterUrl">
@@ -81,7 +81,7 @@
           </div>
         </c:if>
       </c:if>
-      <c:if test="${user.role == 'DOCTOR' || user.role == 'LABORATORY'}">
+      <c:if test="${user.role == 'ROLE_DOCTOR' || user.role == 'ROLE_LABORATORY'}">
         <h2 class="landing-title"><spring:message code="landing.doctor.title"></spring:message></h2>
         <c:if test="${not empty patients}">
           <div class="doctor-landing-container">

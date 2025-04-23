@@ -19,7 +19,7 @@
       <c:set var="confirmationMessage">
         <spring:message code="appointments.cancelConfirm" />
       </c:set>
-      <c:if test="${user.role == 'PATIENT'}">
+      <c:if test="${user.role == 'ROLE_PATIENT'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.future"></spring:message></h3>
           <div class="appointment-table-container">
@@ -48,7 +48,7 @@
                         <td class="text-cell"><c:out value="${appointment.address}"/></td>
                         <td class="cancel-cell">
                           <form 
-                            action="/patientCancelAppointment/${patient.id}/${appointment.shiftId}/${appointment.date}"
+                            action="/patientCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}"
                             method="post"
                             onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
                           >
@@ -111,7 +111,7 @@
           </div>
         </div>
       </c:if>
-      <c:if test="${user.role == 'DOCTOR'}">
+      <c:if test="${user.role == 'ROLE_DOCTOR'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.taken"></spring:message></h3>
           <div class="appointment-table-container">
@@ -138,7 +138,7 @@
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
                         <td class="cancel-cell">
                           <form 
-                            action="/doctorCancelAppointment/${doctor.id}/${appointment.shiftId}/${appointment.date}"
+                            action="/doctorCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}"
                             method="post"
                             onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
                           >

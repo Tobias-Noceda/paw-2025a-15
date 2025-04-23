@@ -25,11 +25,11 @@
       </div>
       <c:if test="${pageContext.request.userPrincipal != null}">
         <nav class="nav-links">
-          <c:if test="${param.role == 'PATIENT' || param.role == 'DOCTOR'}">
+          <c:if test="${param.role == 'ROLE_PATIENT' || param.role == 'ROLE_DOCTOR'}">
             <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title == "appointments"}'>active</c:if>">
               <spring:message code="header.appointments" />
             </a>
-            <c:if test="${param.role == 'PATIENT'}">
+            <c:if test="${param.role == 'ROLE_PATIENT'}">
               <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
               </a>
@@ -55,13 +55,13 @@
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
             <path fill="white" d="M10 2a8 8 0 015.29 13.71l3.94 3.94-1.42 1.42-3.94-3.94A8 8 0 1110 2m0 2a6 6 0 104.24 10.24A6 6 0 0010 4z"/>
           </svg>
-          <c:if test="${param.role == 'PATIENT' || pageContext.request.userPrincipal == null}">
+          <c:if test="${param.role == 'ROLE_PATIENT' || pageContext.request.userPrincipal == null}">
             <form:form modelAttribute="searchForm" action="${patientSearchLink}" method="get" class="search-bar-form">
               <form:input path="query" class="search-bar-text" placeholder="${barPatientPlaceholder}" />
               <button type="submit" style="display: none;"></button>
             </form:form>
           </c:if>
-          <c:if test="${param.role == 'DOCTOR' || param.role == 'LABORATORY'}">
+          <c:if test="${param.role == 'ROLE_DOCTOR' || param.role == 'ROLE_LABORATORY'}">
             <form:form modelAttribute="searchForm" action="${doctorSearchLink}" method="get" class="search-bar-form">
               <form:input path="query" class="search-bar-text" placeholder="${barDoctorPlaceholder}" />
               <button type="submit" style="display: none;"></button>

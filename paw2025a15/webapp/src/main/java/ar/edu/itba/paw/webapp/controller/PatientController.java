@@ -80,7 +80,7 @@ public class PatientController {
                     passwordEncoder.encode(form.getPassword()),
                     form.getName() + " " + form.getSurname(),
                     form.getPhoneNumber(),
-                    UserRoleEnum.PATIENT
+                    UserRoleEnum.ROLE_PATIENT
             );
             return new ModelAndView("redirect:/");
         } catch (Exception e) {

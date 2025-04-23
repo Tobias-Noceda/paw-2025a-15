@@ -58,11 +58,6 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @RequestMapping("/login")
-    public ModelAndView login() {
-        return new ModelAndView("login");
-    }
-
     @RequestMapping("/patientProfile/{id:\\d+}")
     public ModelAndView patientProfile(@PathVariable("id") long id) {
         ModelAndView mav = new ModelAndView("patientProfile");
@@ -161,9 +156,9 @@ public class UserController {
     @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.POST)
     public ModelAndView changePassword(@ModelAttribute("passwordForm") final ChangePasswordForm form,
                                        @PathVariable("id") long id, @PathVariable("token") String token){
-        System.out.println(form);
-        System.out.println("id = " + id);
-        System.out.println(token);
+        //System.out.println(form);TODO: dont even know if this should be a log or not but NO SYSOUT
+        //System.out.println("id = " + id);
+        //System.out.println(token);
         if(!form.getPassword().equals(form.getRepeatPassword())){
             //volver a pedirle al usuario
             ModelAndView mav = new ModelAndView("changePassword");

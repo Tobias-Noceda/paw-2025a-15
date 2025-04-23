@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.models;
 
 public enum UserRoleEnum {
-    PATIENT("Patient"),
-    DOCTOR("Doctor"),
-    LABORATORY("Laboratory"),
-    ADMIN("Admin");
+    ROLE_PATIENT("Patient"),
+    ROLE_DOCTOR("Doctor"),
+    ROLE_LABORATORY("Laboratory"),
+    ROLE_ADMIN("Admin");
 
     private final String displayName;
 

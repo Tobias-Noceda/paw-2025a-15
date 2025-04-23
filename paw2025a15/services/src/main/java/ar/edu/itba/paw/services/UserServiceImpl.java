@@ -46,14 +46,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality) {
-        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, 1);
+        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.ROLE_DOCTOR, 1);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }
 
     @Override
     public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality) {
-        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, pictureId);
+        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.ROLE_DOCTOR, pictureId);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }

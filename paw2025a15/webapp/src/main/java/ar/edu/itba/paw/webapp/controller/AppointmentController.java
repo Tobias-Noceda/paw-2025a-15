@@ -64,13 +64,13 @@ public class AppointmentController {
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
             
             mav.addObject("user", user);
-            if(user != null && user.getRole() == UserRoleEnum.DOCTOR) {
+            if(user != null && user.getRole() == UserRoleEnum.ROLE_DOCTOR) {
                 mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
                 mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonth(user.getId(), shiftsMonthForm.getMonth()));
 
                 mav.addObject("shiftsMonthForm", shiftsMonthForm);
                 mav.addObject("possibleMonths", getNextThreeMonths(locale));
-            } else if(user != null && user.getRole() == UserRoleEnum.PATIENT) {
+            } else if(user != null && user.getRole() == UserRoleEnum.ROLE_PATIENT) {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
                 mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
             } else {

@@ -31,7 +31,7 @@ public class LabController {
         final ModelAndView mav = new ModelAndView("labForm");
         mav.addObject("lab", form);
         mav.addObject("searchForm", new SearchForm());
-        System.out.println("Redirigiendo a labForm...");
+        //System.out.println("Redirigiendo a labForm..."); TODO should be a log
         return mav;
     }
 
@@ -56,7 +56,7 @@ public class LabController {
             mav.addObject("searchForm", new SearchForm());
             return mav;
         }
-        System.out.println("new lab:" + form.getName());
+        //System.out.println("new lab:" + form.getName());TODO should be a log
         //us.create(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName(), form.getPhoneNumber(), UserRoleEnum.LABORATORY, 1);
         return new ModelAndView("redirect:/");
     }

@@ -32,10 +32,10 @@
         </a>
       </nav>
       <c:set var="barPlaceholder">
-        <c:if test="${user.role == 'PATIENT'}">
+        <c:if test="${user.role == 'ROLE_PATIENT'}">
           <spring:message code="header.patient.placeholder"/>
         </c:if>
-        <c:if test="${user.role == 'DOCTOR'}">
+        <c:if test="${user.role == 'ROLE_DOCTOR'}">
           <spring:message code="header.doctor.placeholder"/>
         </c:if>
         

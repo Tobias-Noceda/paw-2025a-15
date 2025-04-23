@@ -54,7 +54,7 @@ public class StudyController {
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm
     ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
-        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
+        if(patient.getRole() != UserRoleEnum.ROLE_PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
 
         final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
             .getContext()
@@ -84,7 +84,7 @@ public class StudyController {
     ) throws IOException{
         
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Invalid patient ID: " + patientId));
-        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
+        if(patient.getRole() != UserRoleEnum.ROLE_PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
 
         final PawAuthUserDetails userDetails = (PawAuthUserDetails) SecurityContextHolder
             .getContext()
