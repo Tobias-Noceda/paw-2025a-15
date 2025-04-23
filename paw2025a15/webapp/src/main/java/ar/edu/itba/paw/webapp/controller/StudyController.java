@@ -70,7 +70,7 @@ public class StudyController {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
         }
         
-        if(user.getId() != patientId || !dds.hasAuthDoctor(patientId, user.getId())) {
+        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
         }
         
@@ -103,7 +103,9 @@ public class StudyController {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
         }
         
-        
+        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
+        }
 
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm);
