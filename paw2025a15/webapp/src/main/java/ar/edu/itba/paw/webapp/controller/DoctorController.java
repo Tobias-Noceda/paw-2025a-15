@@ -237,7 +237,7 @@ public class DoctorController {
         } catch (Exception e) {
         }
 
-        return new ModelAndView("redirect:/doctors/" + doctorId);
+        return new ModelAndView("redirect:/studies");
     }
 
     @RequestMapping("/register/doctor-form")

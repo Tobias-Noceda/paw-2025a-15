@@ -87,7 +87,7 @@
                       <td class="text-cell"><c:out value="${doctor.specialty}"/></td>
                       <td class="cancel-cell">
                         <form 
-                          action="/patientAuthDoctor/${patientId}/${doctor.id}"
+                          action="/patientAuthDoctor/${doctor.id}"
                           method="post"
                           onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
                         >
