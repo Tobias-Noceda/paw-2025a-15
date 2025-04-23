@@ -179,7 +179,7 @@
                   <tr>
                     <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
                     <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
-                    <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
+<%--                    <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>--%>
                   </tr>
                 </thead>
               </table>
@@ -192,18 +192,18 @@
                       <tr class="appointment-row">
                         <td class="text-cell"><c:out value="${appointment.date}"/></td>
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
-                        <td class="cancel-cell">
-                          <form
-                            action="/takeAppointment/${user.id}/${appointment.shiftId}/${appointments.date}" method="post"
-                            onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
-                          >
-                            <button class="cancel-button" type="submit">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
-                              </svg>
-                            </button>
-                          </form>
-                        </td>
+<%--                        <td class="cancel-cell">--%>
+<%--                          <form--%>
+<%--                            action="/takeAppointment/${user.id}/${appointment.shiftId}/${appointments.date}" method="post"--%>
+<%--                            onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"--%>
+<%--                          >--%>
+<%--                            <button class="cancel-button" type="submit">--%>
+<%--                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">--%>
+<%--                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>--%>
+<%--                              </svg>--%>
+<%--                            </button>--%>
+<%--                          </form>--%>
+<%--                        </td>--%>
                       </tr>
                     </c:forEach>
                   </tbody>
