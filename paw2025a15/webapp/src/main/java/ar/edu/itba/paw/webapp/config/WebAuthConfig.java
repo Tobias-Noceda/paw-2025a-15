@@ -62,7 +62,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/createLab").anonymous()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/doctor/**").hasRole("DOCTOR")
-                .antMatchers("/**").authenticated()).formLogin(login -> login
+                .antMatchers("/**").permitAll()
+            )
+            .formLogin(login -> login
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
@@ -82,13 +84,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling(handling -> handling.accessDeniedPage("/403"))
             .csrf(csrf -> csrf.disable());
     }
-
-    @Override
-    public void configure(final WebSecurity web) throws Exception {
-        web.ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403", "/resources/**", "/supersecret/files/**");
-    }
-
 
     @Bean
     @Override
