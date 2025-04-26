@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import ar.edu.itba.paw.form.constraints.PastDate;
 import ar.edu.itba.paw.models.StudyTypeEnum;
 
 public class CreateStudyForm {
@@ -20,7 +21,8 @@ public class CreateStudyForm {
 
     @Size(max = 100, message = "${uploadStudies.comment.errorMessage}")
     private String comment;
-//TODO constraint de que solo sean fechas anteriores a la actual
+
+    @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 

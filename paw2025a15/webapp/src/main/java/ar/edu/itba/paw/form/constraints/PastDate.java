@@ -10,9 +10,9 @@ import javax.validation.Payload;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD})
-@Constraint(validatedBy= {AvailableTurnValidator.class})
-public @interface AvailableTurn {
-    String message() default "{availableTurn.errorMessage}";
+@Constraint(validatedBy= {PastDateValidator.class})
+public @interface PastDate {
+    String message() default "{pastDate.errorMessage}";
 
     Class<?>[] groups() default {};
 
