@@ -18,6 +18,8 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 
+import javax.validation.Valid;
+
 @Controller
 public class PatientController {
 
@@ -31,7 +33,7 @@ public class PatientController {
     private DoctorDetailService dds;
 
     @RequestMapping("/register/patient-form")
-    public ModelAndView patient(@ModelAttribute("registerPatientForm") final PatientForm form) {
+    public ModelAndView patient( @Valid @ModelAttribute("registerPatientForm") final PatientForm form) {
         final ModelAndView mav = new ModelAndView("patientForm");
         mav.addObject("searchForm", new SearchForm());
         return mav;

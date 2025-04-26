@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.util.Locale;
 
+import ar.edu.itba.paw.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.DoctorForm;
-import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.form.ShiftsMonthForm;
-import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -26,6 +23,8 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+
+import javax.validation.Valid;
 
 @Controller
 public class DoctorController {
@@ -104,8 +103,8 @@ public class DoctorController {
         return new ModelAndView("redirect:/doctors/" + doctorId);
     }
 
-    @RequestMapping("/register/doctor-form")
-    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
+    @RequestMapping("/register")
+    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale,  @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
         final ModelAndView mav = new ModelAndView("doctorForm");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());

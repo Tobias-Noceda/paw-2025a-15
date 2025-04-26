@@ -1,14 +1,15 @@
-.patient-card { 
+.patient-card {
     flex: 0 0 350px; /* Fixed width for left box */
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    max-height: min-content;
+    max-height: min-content; /* Compatible con ambos navegadores */
     overflow: hidden;
     position: sticky;
     top: 95px;
     z-index: 1;
+    box-sizing: border-box; /* Normaliza el modelo de caja */
 }
 
 .patient-image {
@@ -18,6 +19,7 @@
     flex: 0 0 200px;
     width: 100%;
     margin: 20px 0;
+    box-sizing: border-box;
 }
 
 .patient-image img {
@@ -30,6 +32,7 @@
 
 .patient-info {
     flex: 1;
+    box-sizing: border-box;
 }
 
 .patient-name-div {
@@ -37,6 +40,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    box-sizing: border-box;
 }
 
 .patient-name {
@@ -52,6 +56,7 @@
     flex-direction: row;
     font-size: 16px;
     margin: 3px 0 0 0;
+    box-sizing: border-box;
 }
 
 .patient-email-label,
@@ -65,4 +70,12 @@
 .patient-telephone {
     color: #555;
     margin: 0;
+}
+
+/* Ajustes específicos para navegadores */
+@-moz-document url-prefix() {
+    /* Correcciones específicas para Firefox si es necesario */
+    .patient-card {
+        max-height: min-content; /* Asegura consistencia en Firefox */
+    }
 }

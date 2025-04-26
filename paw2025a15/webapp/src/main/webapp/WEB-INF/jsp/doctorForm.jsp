@@ -1,205 +1,363 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
-  <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
-  <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
-  <!-- Incluimos FontAwesome para el ícono del ojito -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    .password-container {
-      position: relative;
-      width: 100%;
-    }
-    .password-container input {
-      width: 100%;
-      padding-right: 40px; /* Espacio para el ícono */
-    }
-    .password-container .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #666;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>"/>
+
+  <!-- Fuente Inter + estilos comunes -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+  <link rel="stylesheet" href="<c:url value='/css/login-form.css'/>">
+
+  <!-- FontAwesome para el icono “ojo” -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 </head>
 <body>
-<c:url value="/createMedic" var="postPath"/>
-<div class="page-container" style="align-items: center;">
-  <div class="doctor-form-container">
-    <form:form cssClass="doctor-form" modelAttribute="registerMedicForm" action="${postPath}" method="post">
-      <!-- Mostrar errores globales -->
-      <form:errors cssClass="form-error" element="p"/>
 
-      <div class="field-container">
-        <form:errors path="name" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="name">
+<c:url value="/createPatient" var="patientPost"/>
+<c:url value="/createMedic"   var="medicPost"/>
+
+<div class="page-container">
+  <div class="login-card">
+
+
+
+
+    <!-- ─── HEADER: título + segmented control ─── -->
+
+    <div class="form-header">
+
+      <h2 class="title">
+
+        <spring:message code="register.signup"/>
+
+      </h2>
+
+      <div class="toggle-btn-group">
+
+        <button type="button"
+
+                class="toggle-btn active"
+
+                data-type="patient"
+
+                onclick="switchForm('patient')">
+
+          <spring:message code="appointmentTable.patientColumn.title"/>
+
+        </button>
+
+        <button type="button"
+
+                class="toggle-btn"
+
+                data-type="medic"
+
+                onclick="switchForm('medic')">
+
+          <spring:message code="appointmentTable.doctorColumn.title"/>
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ─── Sección Paciente ─── -->
+    <div id="patientSection" class="registration-section">
+
+      <form:form cssClass="login-form"
+                 modelAttribute="registerPatientForm"
+                 action="${patientPost}"
+                 method="post">
+
+        <form:errors cssClass="error-box" element="div"/>
+
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.name"/>
-          </form:label>
-          <form:input type="text" path="name" class="doctor-form-input"/>
+          </label>
+          <form:input path="name" type="text" cssClass="login-input"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:errors path="surname" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="surname">
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.surname"/>
-          </form:label>
-          <form:input type="text" path="surname" class="doctor-form-input"/>
+          </label>
+          <form:input path="surname" type="text" cssClass="login-input"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:errors path="email" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="email">
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.email"/>
-          </form:label>
-          <form:input type="text" path="email" class="doctor-form-input"/>
+          </label>
+          <form:input path="email" type="email" cssClass="login-input"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:errors path="password" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="password">
-            <spring:message code="doctorForm.password"/>
-          </form:label>
-          <div class="password-container">
-            <form:input type="password" path="password" class="doctor-form-input" id="password"/>
-            <span class="toggle-password" onclick="togglePassword('password')">
-                            <i class="fas fa-eye"></i>
-                        </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="field-container">
-        <form:errors path="confirmPassword" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="confirmPassword">
-            <spring:message code="doctorForm.confirmPassword"/>
-          </form:label>
-          <div class="password-container">
-            <form:input type="password" path="confirmPassword" class="doctor-form-input" id="confirmPassword"/>
-            <span class="toggle-password" onclick="togglePassword('confirmPassword')">
-                            <i class="fas fa-eye"></i>
-                        </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="field-container">
-        <form:errors path="phoneNumber" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="phoneNumber">
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.phone"/>
-          </form:label>
-          <form:input type="number" path="phoneNumber" class="doctor-form-input"/>
+          </label>
+          <form:input path="phoneNumber" type="text" cssClass="login-input"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:errors path="speciality" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="speciality">
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.password"/>
+          </label>
+          <div class="password-container">
+            <form:input path="password"
+                        id="patientPassword"
+                        type="password"
+                        cssClass="login-input"/>
+            <span class="toggle-password"
+                  onclick="togglePassword('patientPassword')">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.confirmPassword"/>
+          </label>
+          <div class="password-container">
+            <form:input path="confirmPassword"
+                        id="patientConfirmPassword"
+                        type="password"
+                        cssClass="login-input"/>
+            <span class="toggle-password"
+                  onclick="togglePassword('patientConfirmPassword')">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          <spring:message code="doctorForm.registerButton"/>
+        </button>
+      </form:form>
+    </div>
+
+    <!-- ─── Sección Médico ─── -->
+    <div id="medicSection" class="registration-section">
+
+      <form:form cssClass="login-form"
+                 modelAttribute="registerMedicForm"
+                 action="${medicPost}"
+                 method="post">
+
+        <form:errors cssClass="error-box" element="div"/>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.name"/>
+          </label>
+          <form:input path="name" type="text" cssClass="login-input"/>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.surname"/>
+          </label>
+          <form:input path="surname" type="text" cssClass="login-input"/>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.email"/>
+          </label>
+          <form:input path="email" type="email" cssClass="login-input"/>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.password"/>
+          </label>
+          <div class="password-container">
+            <form:input path="password"
+                        id="medicPassword"
+                        type="password"
+                        cssClass="login-input"/>
+            <span class="toggle-password"
+                  onclick="togglePassword('medicPassword')">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.confirmPassword"/>
+          </label>
+          <div class="password-container">
+            <form:input path="confirmPassword"
+                        id="medicConfirmPassword"
+                        type="password"
+                        cssClass="login-input"/>
+            <span class="toggle-password"
+                  onclick="togglePassword('medicConfirmPassword')">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.phone"/>
+          </label>
+          <form:input path="phoneNumber" type="text" cssClass="login-input"/>
+        </div>
+
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.specialty"/>
-          </form:label>
-          <form:select path="speciality" cssClass="form-select">
-            <form:options items="${specialtySelectItems}" itemValue="value" itemLabel="label"/>
+          </label>
+          <form:select path="speciality" cssClass="login-select">
+            <form:options items="${specialtySelectItems}"
+                          itemValue="value"
+                          itemLabel="label"/>
           </form:select>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:errors path="address" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="address">
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.address"/>
-          </form:label>
-          <form:input type="text" path="address" class="doctor-form-input"/>
+          </label>
+          <form:input path="address" type="text" cssClass="login-input"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:label cssClass="form-title" path="obrasSociales" style="margin: 0 0 4px 0;">
-          <spring:message code="doctorForm.obrasSociales"/>
-        </form:label>
-        <div class="checkbox-group">
-          <form:checkboxes path="obrasSociales" items="${obrasSocialesItems}" itemLabel="name" itemValue="id" cssClass="checkbox-inline"/>
+        <div class="field-container">
+          <label class="field-label">
+            <spring:message code="doctorForm.obrasSociales"/>
+          </label>
+          <div class="checkbox-group">
+            <form:checkboxes path="obrasSociales"
+                             items="${obrasSocialesItems}"
+                             itemLabel="name"
+                             itemValue="id"
+                             cssClass="checkbox-inline"/>
+          </div>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:label cssClass="form-title" path="schedules.weekday" style="margin: 0 0 4px 0;">
-          <spring:message code="doctorForm.schedules.weekday"/>
-        </form:label>
-        <div class="checkbox-group">
-          <form:checkboxes path="schedules.weekday" items="${weekdaySelectItems}" itemLabel="label" itemValue="value" cssClass="checkbox-inline"/>
+        <div class="field-container">
+
+          <label class="field-label">
+
+            <spring:message code="doctorForm.schedules.weekday"/>
+
+          </label>
+
+          <div class="weekday-toggle-group">
+
+            <c:forEach var="day" items="${weekdaySelectItems}">
+
+              <label class="weekday-btn">
+
+                <!-- checkbox oculto pero clicable -->
+
+                <form:checkbox path="schedules.weekday"
+
+                               value="${day.value}"
+
+                               cssClass="weekday-checkbox"/>
+
+                <!-- ¡justo después! la span con la inicial -->
+
+                <span class="weekday-label">
+
+          <spring:message code="weekday.${day.value}.initial"/>
+
+        </span>
+
+              </label>
+
+            </c:forEach>
+
+          </div>
+
         </div>
-      </div>
 
-      <div class="field-container">
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="schedules.startTime">
+
+
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.schedules.startTime"/>
-          </form:label>
-          <form:select path="schedules.startTime" itemLabel="label" itemValue="value" items="${hoursSelectItems}" class="hour-select"/>
+          </label>
+          <form:select path="schedules.startTime"
+                       cssClass="login-select"
+                       items="${hoursSelectItems}"
+                       itemLabel="label"
+                       itemValue="value"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="schedules.endTime">
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.schedules.endTime"/>
-          </form:label>
-          <form:select path="schedules.endTime" itemLabel="label" itemValue="value" items="${hoursSelectItems}" class="hour-select"/>
+          </label>
+          <form:select path="schedules.endTime"
+                       cssClass="login-select"
+                       items="${hoursSelectItems}"
+                       itemLabel="label"
+                       itemValue="value"/>
         </div>
-      </div>
 
-      <div class="field-container">
-        <form:errors path="amount" cssClass="form-error" element="p"/>
-        <div class="field-info-container">
-          <form:label cssClass="form-title" path="amount">
+        <div class="field-container">
+          <label class="field-label">
             <spring:message code="doctorForm.amount"/>
-          </form:label>
-          <form:select path="amount" cssClass="doctor-form-amount">
+          </label>
+          <form:select path="amount" cssClass="login-select">
             <form:option value="15" label="15"/>
             <form:option value="30" label="30"/>
             <form:option value="45" label="45"/>
             <form:option value="60" label="60"/>
           </form:select>
         </div>
-      </div>
 
-      <div class="doctor-div">
-        <input type="submit" value="<spring:message code="doctorForm.registerButton"/>" class="register-button"/>
-      </div>
-    </form:form>
+        <button type="submit" class="btn-primary">
+          <spring:message code="doctorForm.registerButton"/>
+        </button>
+      </form:form>
+    </div>
+
   </div>
 </div>
 
 <script>
-  function togglePassword(fieldId) {
-    const field = document.getElementById(fieldId);
-    const icon = field.nextElementSibling.querySelector('i');
-    if (field.type === "password") {
-      field.type = "text";
-      icon.classList.remove("fa-eye");
-      icon.classList.add("fa-eye-slash");
+  // Cambia sección y estado de los botones
+  function switchForm(type) {
+    document.getElementById('patientSection').style.display = type==='patient' ? 'block' : 'none';
+    document.getElementById('medicSection'  ).style.display = type==='medic'   ? 'block' : 'none';
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type===type);
+    });
+  }
+  // al cargar, mostrar paciente
+  window.onload = function(){
+    switchForm('patient');
+  };
+  // Ojo toggle password
+  function togglePassword(id) {
+    var f = document.getElementById(id),
+            i = f.nextElementSibling.querySelector('i');
+    if(f.type==='password'){
+      f.type = 'text';
+      i.classList.replace('fa-eye','fa-eye-slash');
     } else {
-      field.type = "password";
-      icon.classList.remove("fa-eye-slash");
-      icon.classList.add("fa-eye");
+      f.type = 'password';
+      i.classList.replace('fa-eye-slash','fa-eye');
     }
   }
 </script>
+
 </body>
 </html>

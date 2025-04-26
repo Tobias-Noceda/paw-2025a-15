@@ -1,43 +1,382 @@
+/* —————————————————————————————————————————————
+   Variables globales y reset
+   ————————————————————————————————————————————— */
+:root {
+    --font-family: 'Inter', sans-serif;
+    --clr-bg: #f0f4fa;
+    --clr-card: #ffffff;
+    --clr-primary: #4f83cc;
+    --clr-primary-hover: #3b6fa8;
+    --clr-text: #101828;
+    --clr-text-muted: #667085;
+    --clr-error-bg: #fdecea;
+    --clr-error-text: #b42318;
+    --radius: 12px;
+    --transition: 0.2s ease-in-out;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* —————————————————————————————————————————————
+   Body y contenedor central
+   ————————————————————————————————————————————— */
+body {
+    font-family: var(--font-family);
+    background-color: var(--clr-bg);
+    color: var(--clr-text);
+    height: 100vh;
+}
 .page-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #DCEDFE;
+    padding: 20px;
+    height: 100%;
 }
 
-.doctor-form-container {
-    background-color: #ffffff;
-    width: fit-content;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    overflow: hidden;
+/* —————————————————————————————————————————————
+   Tarjeta de login
+   ————————————————————————————————————————————— */
+.login-card {
+    background: var(--clr-card);
+    width: 100%;
+    max-width: 380px;
+    padding: 40px 30px;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
+/* Logo, título y subtítulo */
 .logo {
-    max-width: 100px;
+    width: 72px;
+    margin: 0 auto 24px;
+}
+.title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--clr-text-muted);
+    margin-bottom: 28px;
+}
+
+/* —————————————————————————————————————————————
+   Campos del formulario
+   ————————————————————————————————————————————— */
+.field-container {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.field-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.login-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    transition: border-color var(--transition);
+}
+.login-input::placeholder {
+    color: #a0a5b9;
+}
+.login-input:focus {
+    outline: none;
+    border-color: var(--clr-primary);
+}
+
+/* —————————————————————————————————————————————
+   Remember/Forgot row
+   ————————————————————————————————————————————— */
+.options-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+}
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.checkbox-container input {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}
+.checkbox-label {
+    color: var(--clr-text);
+}
+.link-small {
+    color: var(--clr-primary);
+    text-decoration: none;
+}
+.link-small:hover {
+    text-decoration: underline;
+}
+
+/* —————————————————————————————————————————————
+   Mensaje de error
+   ————————————————————————————————————————————— */
+.error-box {
+    background-color: var(--clr-error-bg);
+    color: var(--clr-error-text);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+/* —————————————————————————————————————————————
+   Botón principal y links extra
+   ————————————————————————————————————————————— */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--clr-primary);
+    color: var(--clr-card);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color var(--transition);
     margin-bottom: 20px;
 }
+.btn-primary:hover {
+    background-color: var(--clr-primary-hover);
+}
+.extra-links p {
+    font-size: 0.9rem;
+    color: var(--clr-text-muted);
+}
+.link-primary {
+    color: var(--clr-primary);
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 4px;
+}
+.link-primary:hover {
+    text-decoration: underline;
+}
 
-.button-group {
+/* —————————————————————————————————————————————
+   Mensaje de éxito
+   ————————————————————————————————————————————— */
+.success-box {
+    background-color: #e6f4ea;   /* verde muy suave */
+    color: #027a48;              /* verde oscuro */
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+
+/* ─── Ensanchar y scroll interno ────────────────── */
+.login-card {
+    max-width: 480px;      /* un poco más ancho */
+    max-height: 90vh;      /* no rompas la pantalla */
+    overflow-y: auto;      /* scroll si hace falta */
+    padding: 40px 30px;
+}
+
+/* ─── Gap global entre fields ──────────────────── */
+.login-form {
     display: flex;
-    gap: 20px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
 }
 
-.register-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
+/* ─── Selector Register as ─────────────────────── */
+.toggle-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 24px;
+}
+.login-select {
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    transition: border-color var(--transition);
+}
+.login-select:focus {
+    outline: none;
+    border-color: var(--clr-primary);
+}
+
+/* ─── Ocultar secciones por defecto ───────────── */
+.registration-section {
+    display: none;
+}
+
+/* ─── Password + ojo ───────────────────────────── */
+.password-container {
+    position: relative;
+}
+.password-container .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
     cursor: pointer;
-    font-size: 16px;
-    width: 150px;
+    color: #667085;
 }
 
-.register-button:hover {
-    background-color: #0056b3;
+/* ─── Grid para checkboxes ────────────────────── */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* (ya debes tener .error-box y .btn-primary definidos) */
+
+/* ─── Segmented control ─────────────────────────── */
+.toggle-btn-group {
+    display: flex;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.toggle-btn {
+    flex: 1;
+    padding: 10px 0;
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--clr-text-muted);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+.toggle-btn:hover {
+    background: #f7f9fc;
+}
+.toggle-btn.active {
+    background: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+/* Envuelve título + botones toggle */
+.form-header {
+    margin-bottom: 32px;
+    text-align: center;
+}
+.form-header .title {
+    margin-bottom: 16px;
+}
+
+/*!* ─── Mejor layout para grupos de checkboxes ────────────────────────── *!*/
+/*.checkbox-group {*/
+/*    display: grid;*/
+/*    !* dos columnas mínimas de 160px, adapta al tamaño de pantalla *!*/
+/*    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));*/
+/*    gap: 12px 24px;    !* 12px vertical, 24px horizontal *!*/
+/*    margin-top: 8px;*/
+/*}*/
+
+/*!* cada checkbox+label alineado centro *!*/
+/*.checkbox-inline {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    gap: 8px;                    !* espacio entre cuadro y texto *!*/
+/*    font-size: 0.95rem;*/
+/*    color: var(--clr-text);*/
+/*    cursor: pointer;*/
+/*}*/
+
+/*!* tamaño homogéneo para los inputs *!*/
+/*.checkbox-inline input[type="checkbox"] {*/
+/*    width: 16px;*/
+/*    height: 16px;*/
+/*    margin: 0;                   !* quitamos márgenes por defecto *!*/
+/*    flex: none;*/
+/*}*/
+
+/*!* opcional: hover sobre la etiqueta para indicar clicable *!*/
+/*.checkbox-inline:hover {*/
+/*    color: var(--clr-primary);*/
+/*}*/
+
+
+/* ─── WEEKDAY PILLS ───────────────────────────────────── */
+.weekday-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.weekday-btn {
+    position: relative;
+    /* inline-block para auto-ajustar al tamaño de la “píldora” */
+    display: inline-block;
+}
+
+/* El checkbox real: invisible pero operativo y encima de todo */
+.weekday-btn > .weekday-checkbox {
+    position: absolute;
+    top:    0;
+    left:   0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding:0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* La “píldora” que ve el usuario */
+.weekday-btn > .weekday-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: var(--clr-card);
+    border: 1px solid var(--clr-text-muted);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    transition:
+            background var(--transition),
+            border-color var(--transition),
+            color var(--transition);
+}
+
+/* Estado “checked” */
+.weekday-btn > .weekday-checkbox:checked + .weekday-label {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+/* Hover visual extra */
+.weekday-btn:hover > .weekday-label {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-card);
 }

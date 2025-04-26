@@ -104,7 +104,7 @@ public class UserController {
 
     @RequestMapping(value = "/recover-password", method = RequestMethod.GET)
     public ModelAndView showRecoverPasswordPage() {
-        ModelAndView mav = new ModelAndView("recoverPassword");
+        ModelAndView mav = new ModelAndView("forgotPassword");
         mav.addObject("successMessage", "checkEmail");
         return mav;
     }
@@ -128,7 +128,7 @@ public class UserController {
             User user = us.getUserByEmail(form.getEmail()).orElseThrow(() -> new IllegalArgumentException("No such email"));
             es.sendPasswordResetEmail(user);
             LOGGER.info("Password reset email sent to: {}", form.getEmail());
-            mav = new ModelAndView("recoverPassword");
+            mav = new ModelAndView("forgotPassword");
             mav.addObject("successMessage", "linkSent");
         } catch (IllegalArgumentException e) {
             LOGGER.warn("No user found with email: {}", form.getEmail());
