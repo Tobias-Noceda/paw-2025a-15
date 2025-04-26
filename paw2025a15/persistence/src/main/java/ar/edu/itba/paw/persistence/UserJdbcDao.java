@@ -45,7 +45,7 @@ public class UserJdbcDao implements UserDao{
         args.put("picture_id", pictureId);
         LocalDate createDate = LocalDate.now();
         args.put("create_date", createDate);
-        args.put("locale", locale);
+        args.put("locale", locale.ordinal());
         final Number user_id = jdbcInsert.executeAndReturnKey(args);
         return new User(user_id.longValue(), email, password, name, telephone, role, pictureId, createDate, locale);
     }

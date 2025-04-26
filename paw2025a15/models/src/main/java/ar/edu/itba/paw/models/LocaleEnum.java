@@ -31,10 +31,9 @@ public enum LocaleEnum {
     }
 
     public static LocaleEnum fromInt(int id) {
-        for (LocaleEnum localeEnum : LocaleEnum.values()) {
-            if (localeEnum.ordinal() == id) {
-                return localeEnum;
-            }
+        LocaleEnum[] values = LocaleEnum.values();
+        if (id >= 0 && id < values.length) {
+            return values[id];
         }
         throw new IllegalArgumentException("Unsupported LocaleEnum ID: " + id);
     }

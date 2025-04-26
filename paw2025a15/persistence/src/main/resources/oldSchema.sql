@@ -166,14 +166,10 @@ CREATE TABLE IF NOT EXISTS patient_details (
     patient_allergies VARCHAR(250),
     patient_diet VARCHAR(100),
     patient_hobbies VARCHAR(100),
-    patient_job VARCHAR(50)
+    patient_job VARCHAR(50),
 
     PRIMARY KEY(patient_id),
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
-):
-
-CREATE TABLE IF NOT EXISTS auth_patient_details (
-    patient_id
 );
 
 CREATE TABLE IF NOT EXISTS auth_doctors (
@@ -184,6 +180,9 @@ CREATE TABLE IF NOT EXISTS auth_doctors (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id),
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
+
+ALTER TABLE auth_doctors
+ADD COLUMN allowed INT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS auth_studies (
     doctor_id BIGINT NOT NULL,

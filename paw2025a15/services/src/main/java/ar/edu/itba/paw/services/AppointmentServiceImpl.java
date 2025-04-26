@@ -44,7 +44,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("No such doctor"));
         if(date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         Appointment appointment = appointmentDao.addAppointment(shiftId, patientId, date);
-        if(patient.getId() != doctor.getId()){
+        if(patient.getId() != doctor.getId()){//TODO lo que no es logica al service, no en controllers
             es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
             es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
         }
@@ -94,7 +94,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(()->new IllegalArgumentException("No such doctor"));
         if(appointmentDao.removeAppointment(shiftId, date)){
-            if(cancelId==patient.getId()){
+            if(cancelId==patient.getId()){//TODO lo que no es logica de negocio al servicio no en controller
                 es.sendPatientCancellationConfirmationEmail(patient, doctor, appointment, shift);
                 es.sendDoctorCancelledAppointmentEmail(patient, doctor, appointment, shift);
             }

@@ -56,8 +56,8 @@ public class EmailServiceImpl implements EmailService{
         emailSender.send(message);
     }
 
-    private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName) throws MessagingException{
-        Context context = new Context();
+    private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, Locale locale) throws MessagingException{
+        Context context = new Context(locale);
         context.setVariables(templateModel);
         String htmlBody = templateEngine.process(templateName, context);
 
@@ -71,8 +71,8 @@ public class EmailServiceImpl implements EmailService{
         emailSender.send(message);
     }
 
-    private void sendMessageWithFileTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, byte[] file, String fileType, String fileName) throws MessagingException {
-        Context context = new Context();
+    private void sendMessageWithFileTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, byte[] file, String fileType, String fileName, Locale locale) throws MessagingException {
+        Context context = new Context(locale);
         context.setVariables(templateModel);
         String htmlBody = templateEngine.process(templateName, context);
 
@@ -97,9 +97,10 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = doctor.getLocale().toLocale();
         
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
+        String month = appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        templateModel.put("monthName", month);
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", patient.getEmail());
         templateModel.put("phone", patient.getTelephone());
@@ -109,7 +110,7 @@ public class EmailServiceImpl implements EmailService{
         String subject = messageSource.getMessage("takenShift.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -125,9 +126,10 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
-        
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
+        Locale locale = patient.getLocale().toLocale();
+
+        String month = appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        templateModel.put("monthName", month);
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", doctor.getEmail());
         templateModel.put("phone", doctor.getTelephone());
@@ -137,7 +139,7 @@ public class EmailServiceImpl implements EmailService{
         String subject = messageSource.getMessage("takenShift.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -163,11 +165,11 @@ public class EmailServiceImpl implements EmailService{
             .append(".")
             .append(file.getType().getName().split("/")[1]);
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = patient.getLocale().toLocale();
         String subject = messageSource.getMessage("receivedStudy.subject", null, locale);
 
         try {
-            sendMessageWithFileTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString());
+            sendMessageWithFileTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString(), locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -183,9 +185,10 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = doctor.getLocale().toLocale();
         
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
+        String month = appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        templateModel.put("monthName", month);
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", patient.getEmail());
         templateModel.put("phone", patient.getTelephone());
@@ -195,7 +198,7 @@ public class EmailServiceImpl implements EmailService{
         String subject = messageSource.getMessage("cancelledTurn.doctor.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -211,9 +214,10 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = doctor.getLocale().toLocale();
         
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
+        String month = appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        templateModel.put("monthName", month);
         templateModel.put("address", shift.getAddress());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("shiftsLink", baseURL + "appointments/");
@@ -221,7 +225,7 @@ public class EmailServiceImpl implements EmailService{
         String subject = messageSource.getMessage("cancelledConfirmation.doctor.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -238,9 +242,10 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = patient.getLocale().toLocale();
         
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
+        String month = appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        templateModel.put("monthName", month);
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", doctor.getEmail());
         templateModel.put("phone", doctor.getTelephone());
@@ -250,7 +255,7 @@ public class EmailServiceImpl implements EmailService{
         String subject = messageSource.getMessage("cancelledTurn.patient.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentTemplate");
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -266,9 +271,10 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = patient.getLocale().toLocale();
         
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, locale));
+        String month = appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        templateModel.put("monthName", month);
         templateModel.put("address", shift.getAddress());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("shiftsLink", baseURL + "doctors/" + doctor.getId());
@@ -276,7 +282,7 @@ public class EmailServiceImpl implements EmailService{
         String subject = messageSource.getMessage("cancelledConfirmation.patient.subject", null, locale);
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentConfirmationTemplate");
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }
@@ -296,12 +302,12 @@ public class EmailServiceImpl implements EmailService{
         String recoveryLink = baseURL + "changePassword/" + token + "/" + user.getId();
         templateModel.put("resetLink", recoveryLink);
 
-        Locale locale = Locale.ENGLISH;//TODO el posta
+        Locale locale = user.getLocale().toLocale();
         String subject = messageSource.getMessage("passwordReset.subject", null, locale);
 
 
         try {
-            sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "passwordRecoveryTemplate");
+            sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "passwordRecoveryTemplate", locale);
         } catch (MessagingException e) {
             // TODO catch
         }

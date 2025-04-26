@@ -192,12 +192,4 @@ public class UserController {
         return mav;
     }
 
-//    @RequestMapping("/updateProfile/{id}/{picId}")//TODO esto es a modo de ejemplo, no va en la webapp
-//    public ModelAndView updateProfile(@PathVariable("id") long id, @PathVariable("picId") long picId){
-//        User user = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("No such user_id"));
-//        us.editUser(id, user.getName(), user.getTelephone(), picId);
-//        return new ModelAndView("redirect:/profile");
-//    }
-
-
 }
