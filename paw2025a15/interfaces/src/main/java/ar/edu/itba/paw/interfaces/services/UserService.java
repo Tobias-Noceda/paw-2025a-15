@@ -3,18 +3,19 @@ package ar.edu.itba.paw.interfaces.services;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 
 public interface UserService {
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId);
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale);
 
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role);
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale);
 
-    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality);
+    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality, LocaleEnum locale);
 
-    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality);
+    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality, LocaleEnum locale);
 
     void updatePhoneNumber(long id, String number);
 

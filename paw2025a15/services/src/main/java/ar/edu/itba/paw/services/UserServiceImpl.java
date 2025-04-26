@@ -12,6 +12,7 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
@@ -29,25 +30,25 @@ public class UserServiceImpl implements UserService {
     private FileService fs;
 
     @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
-        return userDao.create(email, password, name, telephone, role, pictureId);
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale) {
+        return userDao.create(email, password, name, telephone, role, pictureId, locale);
     }
 
     @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role) {
-        return userDao.create(email, password, name, telephone, role, 1); // PictureId por defecto
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
+        return userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality) {
-        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, 1);
+    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality, LocaleEnum locale) {
+        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, 1, locale);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality) {
-        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, pictureId);
+    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality, LocaleEnum locale) {
+        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, pictureId, locale);
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }

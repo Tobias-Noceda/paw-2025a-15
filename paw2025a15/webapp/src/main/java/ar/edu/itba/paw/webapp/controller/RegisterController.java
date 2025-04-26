@@ -26,6 +26,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
@@ -82,7 +83,8 @@ public class RegisterController {
                         passwordEncoder.encode(form.getPassword()),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
-                        UserRoleEnum.PATIENT
+                        UserRoleEnum.PATIENT,
+                        LocaleEnum.EN_US//TODO change this is default hardcoded
                 );
                 loginUser(form.getEmail(), form.getPassword());
                 return new ModelAndView("redirect:/");
@@ -118,7 +120,7 @@ public class RegisterController {
         } else {
             try {
                 // Crear el médico
-                User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), "med-licence", form.getSpeciality());
+                User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), "med-licence", form.getSpeciality(), LocaleEnum.EN_US);//TODO change hardocded local to actual one
                 dcs.addCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
                 loginUser(form.getEmail(), form.getPassword());

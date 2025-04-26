@@ -62,6 +62,17 @@ CREATE TABLE IF NOT EXISTS users (
 -- ALTER TABLE users
 -- ADD COLUMN user_telephone VARCHAR(20) NOT NULL DEFAULT '1112345678';
 
+ALTER TABLE users
+ADD COLUMN locale INT NOT NULL DEFAULT 0;
+
+ALTER TABLE users
+ADD COLUMN create_date DATE;
+--la logica de esto es que esten dispersos similar
+--UPDATE users
+--SET create_date = DATEADD(DAY, (userid * @totalDays / @maxId), @startDate);
+--ALTER TABLE users
+--ALTER COLUMN create_date SET NOT NULL;
+
 CREATE TABLE IF NOT EXISTS studies (
     study_id SERIAL PRIMARY KEY,
     study_type VARCHAR(100) NOT NULL,
@@ -140,6 +151,29 @@ CREATE TABLE IF NOT EXISTS doctor_details (
 
     PRIMARY KEY(doctor_id, doctor_specialty),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS patient_details (
+    patient_id BIGINT NOT NULL,
+    patient_age INT,
+    patient_blood_type INT,
+    patient_height NUMERIC,
+    patient_weight NUMERIC,
+    patient_smokes BOOLEAN,
+    patient_drinks BOOLEAN,
+    patient_meds VARCHAR(250),
+    patient_conditions VARCHAR(250),
+    patient_allergies VARCHAR(250),
+    patient_diet VARCHAR(100),
+    patient_hobbies VARCHAR(100),
+    patient_job VARCHAR(50)
+
+    PRIMARY KEY(patient_id),
+    FOREIGN KEY(patient_id) REFERENCES users(user_id)
+):
+
+CREATE TABLE IF NOT EXISTS auth_patient_details (
+    patient_id
 );
 
 CREATE TABLE IF NOT EXISTS auth_doctors (

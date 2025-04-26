@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +16,13 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 
 @Repository
 public class UserJdbcDao implements UserDao{
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getString("user_telephone"), UserRoleEnum.fromInt(rs.getInt("user_role")),rs.getLong("picture_id"));
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getString("user_telephone"), UserRoleEnum.fromInt(rs.getInt("user_role")), rs.getLong("picture_id"), rs.getDate("create_date").toLocalDate(), LocaleEnum.fromInt(rs.getInt("locale")));
    
     private final JdbcTemplate jdbcTemplate;
 
@@ -33,7 +35,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
+    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale) {
         final Map<String, Object> args = new HashMap<>();
         args.put("user_email", email);
         args.put("user_password", password);
@@ -41,8 +43,11 @@ public class UserJdbcDao implements UserDao{
         args.put("user_telephone", telephone);
         args.put("user_role", role.ordinal());
         args.put("picture_id", pictureId);
+        LocalDate createDate = LocalDate.now();
+        args.put("create_date", createDate);
+        args.put("locale", locale);
         final Number user_id = jdbcInsert.executeAndReturnKey(args);
-        return new User(user_id.longValue(), email, password, name, telephone, role, pictureId);
+        return new User(user_id.longValue(), email, password, name, telephone, role, pictureId, createDate, locale);
     }
 
     @Override

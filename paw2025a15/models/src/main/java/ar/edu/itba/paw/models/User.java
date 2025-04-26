@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDate;
+
 public class User {
 
     private final long id;
@@ -9,8 +11,10 @@ public class User {
     private final String telephone;
     private final UserRoleEnum role;
     private final long pictureId;
+    private final LocalDate createDate;
+    private final LocaleEnum locale;
 
-    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role) {
+    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, LocalDate createDate, LocaleEnum locale) {
         this.id = id;
         this. email = email;
         this.password = password;
@@ -18,9 +22,11 @@ public class User {
         this.telephone = telephone;
         this.role = role;
         this.pictureId = 1;
+        this.createDate = createDate;
+        this.locale = locale;
     }
 
-    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, long pictureId) {
+    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocalDate createDate, LocaleEnum locale) {
         this.id = id;
         this. email = email;
         this.password = password;
@@ -28,6 +34,8 @@ public class User {
         this.telephone = telephone;
         this.role = role;
         this.pictureId = pictureId;
+        this.createDate = createDate;
+        this.locale = locale;
     }
 
     @Override
@@ -67,6 +75,14 @@ public class User {
 
     public long getPictureId(){
         return pictureId;
+    }
+
+    public LocalDate getCreateDate(){
+        return createDate;
+    }
+
+    public LocaleEnum getLocale(){
+        return locale;
     }
 
 }
