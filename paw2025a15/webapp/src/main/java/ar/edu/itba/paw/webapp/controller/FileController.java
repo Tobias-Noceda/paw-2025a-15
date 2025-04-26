@@ -55,9 +55,9 @@ public class FileController {
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
         if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
             File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
-            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
+            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId(),user.getLocale());//TODO actual locale if changed
         }else {
-            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
+            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId(),user.getLocale());//TODO actual locale if changed
         }
         return new ModelAndView("redirect:/profile");
     }

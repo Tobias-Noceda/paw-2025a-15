@@ -15,10 +15,10 @@ public class CreateStudyForm {
     @NotNull(message = "${uploadStudies.file.errorMessage}")
     private MultipartFile file;
 
-    @NotNull(message = "Must specify type")//TODO inter!
+    @NotNull(message = "${uploadStudies.type.errorMessage}")
     private StudyTypeEnum type;
 
-    @Size(min = 1, max = 100, message = "${uploadStudies.type.errorMessage}")
+    @Size(max = 100, message = "${uploadStudies.comment.errorMessage}")
     private String comment;
 //TODO constraint de que solo sean fechas anteriores a la actual
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

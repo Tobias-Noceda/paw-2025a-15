@@ -12,7 +12,7 @@ import javax.validation.Payload;
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Constraint(validatedBy= {AvailableTurnValidator.class})
 public @interface AvailableTurn {
-    String message() default "El turno ya no esta disponible";//TODO internacionalizacion
+    String message() default "${availableTurn.errorMessage}";
 
     Class<?>[] groups() default {};
 

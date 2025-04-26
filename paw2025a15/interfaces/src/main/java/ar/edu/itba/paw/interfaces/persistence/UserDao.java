@@ -10,7 +10,7 @@ import ar.edu.itba.paw.models.UserRoleEnum;
 public interface UserDao {
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale);
 
-    public void editUser(long id, String name, String telephone, long pictureId);
+    public void editUser(long id, String name, String telephone, long pictureId, LocaleEnum locale);
 
     public Optional<User> getUserById(long id);
 

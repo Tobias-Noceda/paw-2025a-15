@@ -19,7 +19,7 @@ public interface UserService {
 
     void updatePhoneNumber(long id, String number);
 
-    public void editUser(long id, String name, String telephone, long pictureId);
+    public void editUser(long id, String name, String telephone, long pictureId, LocaleEnum locale);
 
     public Optional<User> getUserById(long id);
 
