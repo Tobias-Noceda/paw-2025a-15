@@ -88,8 +88,8 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public void editUser(long id, String name, String telephone, long pictureId, LocaleEnum locale) {
-        jdbcTemplate.update("UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? , locale = ? WHERE user_id = ?", name, pictureId, telephone, locale.ordinal(), id);
+    public void editUser(long id, String name, String telephone, long pictureId) {
+        jdbcTemplate.update("UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?", name, pictureId, telephone, id);
     }
 
 
@@ -103,5 +103,10 @@ public class UserJdbcDao implements UserDao{
                 new int[]{ java.sql.Types.BIGINT, java.sql.Types.VARCHAR},
                 ROW_MAPPER
         );
+    }
+
+    @Override
+    public void updateLocale(long userId, LocaleEnum locale) {
+        jdbcTemplate.update("UPDATE users SET locale = ? WHERE user_id = ?", locale.ordinal(), userId);
     }
 }

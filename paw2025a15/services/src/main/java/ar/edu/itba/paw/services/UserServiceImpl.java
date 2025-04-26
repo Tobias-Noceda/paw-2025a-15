@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
     public  void updatePhoneNumber(long id, String number){ userDao.UpdatePhoneNumber(id, number); }
 
     @Override
-    public void editUser(long id, String name, String telephone, long pictureId, LocaleEnum locale) {
-        if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId, locale);
+    public void editUser(long id, String name, String telephone, long pictureId) {
+        if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
     }
 
     @Override
@@ -101,5 +101,10 @@ public class UserServiceImpl implements UserService {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public void updateLocale(long userId, LocaleEnum locale) {
+        userDao.updateLocale(userId, locale);
     }
 }
