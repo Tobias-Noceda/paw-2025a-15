@@ -276,36 +276,38 @@ body {
     height: 80vh;
 }
 
-.month-dropdown-div {
+.week-navigator-div {
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     margin: 0 0 5px 0;
 }
 
-.month-dropdown {
-    max-width: fit-content;
+.navigation-button {
     background-color: #007bff;
     color: white;
-    padding: 8px;
     border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 700;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
+    transition: background-color 0.3s;
 }
 
-.month-dropdown:hover {
+.navigation-button:hover {
     background-color: #0056b3;
 }
 
-.month-dropdown .dropdown-options {
-    display: block;
-    position: absolute;
-    background-color: white;
-    z-index: 100;
+.navigation-button:disabled {
+    background-color: #ccc;
+    color: gray;
+    cursor: not-allowed;
+}
+
+.selected-month {
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: 700;
     color: #0d4a85;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 400;
 }

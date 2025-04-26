@@ -166,10 +166,32 @@
           <div class="doctor-free-header">
             <h3 class="table-title"><spring:message code="appointments.free"></spring:message></h3>
             <c:url value="/appointments" var="getPath"/>
-            <form:form class="month-dropdown-div" action="${getPath}" method="GET" modelAttribute="shiftsMonthForm">
-              <form:select cssClass="month-dropdown" path="month" id="monthSelect" onchange="this.form.submit()">
-                <form:options cssClass="dropdown-options" items="${possibleMonths}" itemValue="value" itemLabel="label" />
-              </form:select>
+            <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
+              <form:hidden path="index" />
+              <button
+                type="submit"
+                name="action"
+                value="previous"
+                class="navigation-button"
+                <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.previousWeek"/>
+              </button>
+              <div class="selected-month">
+                <c:set var="month">
+                  <spring:message code="month.${shiftsWeekForm.month}"/>
+                </c:set>
+                <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
+              </div>
+              <button
+                type="submit"
+                name="action"
+                value="next"
+                class="navigation-button"
+                <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.nextWeek"/>
+              </button>
             </form:form>
           </div>
           <div class="appointment-table-container">

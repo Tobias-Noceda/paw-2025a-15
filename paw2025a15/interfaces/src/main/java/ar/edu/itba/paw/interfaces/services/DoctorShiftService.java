@@ -34,4 +34,18 @@ public interface DoctorShiftService {
     public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate);
 
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonth(long doctorId, Month month);
+
+    /**
+     * * Returns a list of available turns for a doctor in a specific month and week number.
+     * * @param doctorId The ID of the doctor.
+     * * @param month The month for which to retrieve available turns.
+     * * @param weekNumber The week number of the month (0-3). 
+     *                     * 0 = first week (1-7),
+     *                     * 1 = second week (8-14),
+     *                     * 2 = third week (15-21),
+     *                     * 3 = fourth week (22-end).
+     * * @return A list of available turns for the specified doctor, month, and week number.
+     * *         If no turns are available, an empty list is returned.
+     */
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber);
 }

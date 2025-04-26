@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller.Util;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,19 +52,6 @@ public class SelectItem {
                 ms.getMessage("weekday." + weekday.name(), null, locale)));
         }
         return weekdays;
-    }
-
-    public static List<SelectItem> getNextThreeMonths(MessageSource ms, Locale locale) {
-        final List<SelectItem> months = new ArrayList<>();
-        LocalDate currentDate = LocalDate.now();
-        for (int i = 0; i < 3; i++) {
-            LocalDate nextMonth = currentDate.plusMonths(i);
-            months.add(new SelectItem(
-                nextMonth.getMonth().name(),
-                ms.getMessage("month." + nextMonth.getMonth().name(), null, locale) + " " + nextMonth.getYear()
-            ));
-        }
-        return months;
     }
 
     public static List<SelectItem> getHoursSelectItems() {

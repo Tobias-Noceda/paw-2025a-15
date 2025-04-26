@@ -73,39 +73,48 @@
       </div>
       <div class="shifts-list-container">
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
-        <form:form class="month-dropdown-div" action="${getPath}" method="GET" modelAttribute="shiftsMonthForm">
-          <form:select cssClass="month-dropdown" path="month" id="monthSelect" onchange="this.form.submit()">
-            <form:options cssClass="dropdown-options" items="${possibleMonths}" itemValue="value" itemLabel="label" />
-          </form:select>
+        <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
+          <form:hidden path="index" />
+          <button
+            type="submit"
+            name="action"
+            value="previous"
+            class="navigation-button"
+            <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
+          >
+            <spring:message code="doctorDetail.previousWeek"/>
+          </button>
+          <div class="selected-month">
+            <c:set var="month">
+              <spring:message code="month.${shiftsWeekForm.month}"/>
+            </c:set>
+            <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
+          </div>
+          <button
+            type="submit"
+            name="action"
+            value="next"
+            class="navigation-button"
+            <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
+          >
+            <spring:message code="doctorDetail.nextWeek"/>
+          </button>
         </form:form>
         <table class="appointments-table">
           <thead>
             <tr>
-              <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
+              <th><spring:message code="appointmentTable.weekdayColumn.title"></spring:message></th>
+              <th><spring:message code="appointmentTable.monthdayColumn.title"></spring:message></th>
               <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
-              <th><spring:message code="appointmentTable.addressColumn.title"></spring:message></th>
             </tr>
           </thead>
           <tbody>
             <c:url value="/takeAppointment" var="appointmentPath"/>
             <c:forEach var="appointment" items="${doctorAppointments}">
-              <c:set var="day">
-                <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
-              </c:set>
-              <c:set var="month">
-                <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
-              </c:set>
-              <c:set var="year" value="${appointment.date.year}" />
-              <c:set var="formatedDate">
-                <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>
-              </c:set>
-              <c:set var="confirmMessage">
-                <spring:message code="takeAppointment.confirmationMessage" arguments="${formatedDate}, ${appointment.startTime}, ${doctor.name}"/>
-              </c:set>
               <tr class="appointment-row" onclick="submitAppointment(this, '${confirmMessage}')">
-                <td><c:out value="${formatedDate}"/></td>
+                <td><spring:message code="weekday.${appointment.date.dayOfWeek}"></spring:message></td>
+                <td><c:out value="${appointment.date.dayOfMonth}" escapeXml="true"/></td>
                 <td><c:out value="${appointment.getStartToEndTime()}"/></td>
-                <td><c:out value="${appointment.address}"/></td>
                 <td style="display: none;">
                   <form:form
                     modelAttribute="takeTurnForm"
