@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +96,34 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
                 "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE u.user_name LIKE ?",
                 new Object[]{ "%" + name.trim() + "%" },
                 new int[]{ java.sql.Types.VARCHAR },
+                DV_ROW_MAPPER
+        );
+    }
+
+    @Override
+    public List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
+        StringBuilder query = new StringBuilder("SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        if(specialty != null){
+            query.append(" AND dd.doctor_specialty = ? ");
+            params.add(specialty.ordinal());
+            types.add(java.sql.Types.INTEGER);
+        }
+        if(insurance != null){
+            query.append(" AND u.user_id IN (SELECT dc.doctor_id FROM doctor_coverages AS dc WHERE dc.insurance_id = ?)");
+            params.add(insurance.getId());
+            types.add(java.sql.Types.BIGINT);
+        }
+        if(weekday != null){
+            query.append(" AND u.user_id IN (SELECT ds.doctor_id FROM doctor_shifts AS ds WHERE ds.shift_weekday = ?) ");
+            params.add(weekday.ordinal());
+            types.add(java.sql.Types.INTEGER);
+        }
+        return (List<DoctorView>) jdbcTemplate.query(
+                query.toString(),
+                params.toArray(),
+                types.stream().mapToInt(i -> i).toArray(),
                 DV_ROW_MAPPER
         );
     }

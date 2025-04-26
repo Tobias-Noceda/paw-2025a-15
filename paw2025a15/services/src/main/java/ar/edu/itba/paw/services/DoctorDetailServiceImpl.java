@@ -14,6 +14,7 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
+import ar.edu.itba.paw.models.Insurance;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
@@ -41,69 +42,9 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         return doctorDetailDao.findDoctorsByName(name);
     }
 
-    private List<DoctorView> getFilteredDoctorsSpecialty(SpecialtyEnum specialty){
-        List<DoctorView> doctorList = getAllDoctors();
-
-        List<DoctorView> filteredDoctors = new ArrayList<>();
-        for (DoctorView doctor : doctorList) {
-            if (doctor.getSpecialty().equals(specialty) ){
-                filteredDoctors.add(doctor);
-            }
-        }
-
-        return filteredDoctors;
-    }
-
-    private List<DoctorView> getFilteredDoctorsInsurance(Insurance insurance){
-        List<DoctorView> doctorList = getAllDoctors();
-        List<DoctorView> filteredDoctors = new ArrayList<>();
-        for (DoctorView doctor : doctorList) {
-            if (doctor.getInsurances().contains(insurance)){
-                filteredDoctors.add(doctor);
-            }
-        }
-        return filteredDoctors;
-    }
-
-    private  List<DoctorView> getFilteredDoctorsWeekday(WeekdayEnum weekday){
-        List<DoctorView> doctorList = getAllDoctors();
-        List<DoctorView> filteredDoctors = new ArrayList<>();
-        for (DoctorView doctor : doctorList) {
-            if (doctor.getWeekdays().contains(weekday)){
-                filteredDoctors.add(doctor);
-            }
-        }
-        return filteredDoctors;
-    }
-
     @Override
     public List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday){
-        List<DoctorView> specialtyFiltered;
-        List<DoctorView> insuranceFiltered;
-        List<DoctorView> weekdayFiltered;
-
-        if(specialty == null){
-            specialtyFiltered = getAllDoctors();
-        }else{
-            specialtyFiltered = getFilteredDoctorsSpecialty(specialty);
-        }
-
-        if(insurance == null){
-            insuranceFiltered = getAllDoctors();
-        }else{
-            insuranceFiltered = getFilteredDoctorsInsurance(insurance);
-        }
-
-        if(weekday == null){
-            weekdayFiltered = getAllDoctors();
-        }else{
-            weekdayFiltered = getFilteredDoctorsWeekday(weekday);
-        }
-
-        specialtyFiltered.retainAll(insuranceFiltered);
-        specialtyFiltered.retainAll(weekdayFiltered);
-
-        return specialtyFiltered;
+        return doctorDetailDao.getFilteredDoctor(specialty, insurance, weekday);
     }
 
     @Override
@@ -113,7 +54,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
-        if(doctorDetailDao.hasAuthDoctor(patientId, doctorId)){
+        if(hasAuthDoctor(patientId, doctorId)){
             doctorDetailDao.unauthDoctor(patientId, doctorId);
         }
         else{
