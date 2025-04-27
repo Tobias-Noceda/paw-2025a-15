@@ -168,4 +168,10 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         else unauthDoctorAllAccessLevels(patientId, doctorId);
     }
 
+    @Override
+    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
+        String sql = "SELECT DISTINCT access_level FROM auth_doctors WHERE doctor_id = ? AND patient_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum) -> AccessLevelEnum.fromInt(rs.getInt("access_level")));
+    }
+
 }

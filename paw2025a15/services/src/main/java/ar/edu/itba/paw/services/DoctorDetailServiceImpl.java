@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,10 +87,17 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        for (AccessLevelEnum accessLevel : accessLevels) {
-            if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) unauthDoctorWithLevels(patientId, doctorId, accessLevels);
-            else authDoctorWithLevels(patientId, doctorId, accessLevels);
+        List<AccessLevelEnum> toRemove = new ArrayList<>();
+        for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
+            if(currentAccessLevel!=AccessLevelEnum.VIEW_RESTRICTED && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
         }
+        unauthDoctorWithLevels(patientId, doctorId, toRemove);
+        authDoctorWithLevels(patientId, doctorId, accessLevels);
+    }
+
+    @Override
+    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
+        return doctorDetailDao.getAuthAccessLevelEnums(patientId, doctorId);
     }
     
 }

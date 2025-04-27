@@ -34,4 +34,6 @@ public interface DoctorDetailService {
     public boolean hasAuthDoctor(long patientId, long doctorId);
 
     public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
+
+    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId);
 }

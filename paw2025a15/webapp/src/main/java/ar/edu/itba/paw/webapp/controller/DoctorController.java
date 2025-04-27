@@ -73,6 +73,7 @@ public class DoctorController {
         mav.addObject("doctorDetail", detail);
         mav.addObject("user", user);
         mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), id));
+        mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
@@ -86,7 +87,7 @@ public class DoctorController {
     }
 
     @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)//TODO: front and logic here, this is placholder for auth usage
-    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId, @RequestParam List<String> accessLevels) {
+    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId, @RequestParam("action") String action, @RequestParam(value = "accessLevels", required = false) List<String> accessLevels) {
         User doctor = us.getUserById(doctorId)
             .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
             
@@ -102,8 +103,12 @@ public class DoctorController {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to authorize this doctor");
         }
 
-        //dds.toggleAuthDoctor(user.getId(), doctorId);
-        dds.updateAuthDoctor(doctorId, doctorId, accessLevels.stream().map(AccessLevelEnum::valueOf).toList());
+        if ("update".equals(action)) {
+            dds.updateAuthDoctor(user.getId(), doctorId, accessLevels.stream().map(AccessLevelEnum::valueOf).toList());
+        }
+        else if ("toggle".equals(action)) {
+            dds.toggleAuthDoctor(user.getId(), doctorId);
+        }
 
         return new ModelAndView("redirect:/doctors/" + doctorId);
     }

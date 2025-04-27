@@ -32,4 +32,6 @@ public interface DoctorDetailDao {
     public void unauthDoctorAllAccessLevels(long patientId, long doctorId);
 
     public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
+
+    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId);
 }
