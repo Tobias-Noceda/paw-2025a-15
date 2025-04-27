@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,6 +24,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
@@ -82,8 +85,8 @@ public class DoctorController {
         return mav;
     }
 
-    @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
-    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId) {
+    @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)//TODO: front and logic here, this is placholder for auth usage
+    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId, @RequestParam List<String> accessLevels) {
         User doctor = us.getUserById(doctorId)
             .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
             
@@ -99,7 +102,8 @@ public class DoctorController {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to authorize this doctor");
         }
 
-        dds.toggleAuthDoctor(user.getId(), doctorId);
+        //dds.toggleAuthDoctor(user.getId(), doctorId);
+        dds.updateAuthDoctor(doctorId, doctorId, accessLevels.stream().map(AccessLevelEnum::valueOf).toList());
 
         return new ModelAndView("redirect:/doctors/" + doctorId);
     }

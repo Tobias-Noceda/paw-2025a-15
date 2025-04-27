@@ -25,6 +25,8 @@ public interface DoctorDetailService {
 
     public void toggleAuthDoctor(long patientId, long doctorId);
 
+    public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
+
     public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
     public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);

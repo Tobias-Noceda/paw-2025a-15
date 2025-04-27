@@ -22,6 +22,18 @@
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
             <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
             <form action="${authDoctorPath}" method="POST">
+              <label>
+                <input type="checkbox" name="accessLevels" value="VIEW_BASIC" /><!--TODO:front and inter here, this is placeholder with no inter nor style-->
+                  Basic Access
+              </label>
+              <label>
+                  <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" />
+                  Medical Access
+              </label>
+              <label>
+                  <input type="checkbox" name="accessLevels" value="VIEW_LIFESTYLE" />
+                  Lifestyle Access
+              </label>
               <button type="submit" class="doctor-auth-button <c:if test="${isAuthDoctor}">auth</c:if>">
                 <c:if test="${isAuthDoctor}">
                   <spring:message code="doctorDetail.toggleButton.deauthorize"/>

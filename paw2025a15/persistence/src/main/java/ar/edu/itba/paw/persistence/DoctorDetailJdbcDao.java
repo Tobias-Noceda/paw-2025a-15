@@ -153,7 +153,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
         if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) return;
         if(accessLevel!=AccessLevelEnum.VIEW_RESTRICTED && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED);
-        jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id, accessLevel) VALUES (?, ?, ?)", patientId, doctorId, accessLevel.ordinal());
+        jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id, access_level) VALUES (?, ?, ?)", patientId, doctorId, accessLevel.ordinal());
     }
 
     @Override

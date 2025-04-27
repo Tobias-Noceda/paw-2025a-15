@@ -83,5 +83,13 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
         return doctorDetailDao.hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel);
     }
+
+    @Override
+    public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        for (AccessLevelEnum accessLevel : accessLevels) {
+            if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) unauthDoctorWithLevels(patientId, doctorId, accessLevels);
+            else authDoctorWithLevels(patientId, doctorId, accessLevels);
+        }
+    }
     
 }
