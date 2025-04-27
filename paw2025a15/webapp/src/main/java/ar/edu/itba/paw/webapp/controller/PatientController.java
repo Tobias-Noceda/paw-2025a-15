@@ -15,6 +15,7 @@ import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 
@@ -61,6 +62,8 @@ public class PatientController {
         
         mav.addObject("user", user);
         mav.addObject("patient", patient);
+        mav.addObject("isAuthDoctor", dds.hasAuthDoctor(patientId, user.getId()));
+        mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("searchForm", new SearchForm());
         mav.addObject("patientStudies", ss.getStudiesByPatientId(patientId));
 

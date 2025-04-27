@@ -37,6 +37,152 @@
             </a>
           </div>
         </div>
+        <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling and inter-->
+          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_BASIC')}">
+          <div class="basic">
+            <div class="patient-email-div">
+              <p class="patient-email-label">age</p>
+              <c:choose>
+                <c:when test="${patientDetails.age != null}">
+                    <c:out value="${patientDetails.age}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">blood type</p>
+              <c:choose>
+                <c:when test="${patientDetails.bloodType != null}">
+                    <c:out value="${patientDetails.bloodType}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </div>
+          </c:if>
+          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">
+          <div class="med">
+            <div class="patient-email-div">
+              <p class="patient-email-label">height</p>
+              <c:choose>
+                <c:when test="${patientDetails.height != null}">
+                    <c:out value="${patientDetails.height}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">weight</p>
+              <c:choose>
+                <c:when test="${patientDetails.weight != null}">
+                    <c:out value="${patientDetails.weight}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">smokes</p>
+              <c:choose>
+                <c:when test="${patientDetails.smokes != null}">
+                    <c:out value="${patientDetails.smokes}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">drinks</p>
+              <c:choose>
+                <c:when test="${patientDetails.drinks != null}">
+                    <c:out value="${patientDetails.drinks}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">meds</p>
+              <c:choose>
+                <c:when test="${patientDetails.meds != null}">
+                    <c:out value="${patientDetails.meds}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">conditions</p>
+              <c:choose>
+                <c:when test="${patientDetails.conditions != null}">
+                    <c:out value="${patientDetails.conditions}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">allergies</p>
+              <c:choose>
+                <c:when test="${patientDetails.allergies != null}">
+                    <c:out value="${patientDetails.allergies}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </div>
+          </c:if>
+          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_LIFESTYLE')}">
+          <div class="lifestyle">
+            <div class="patient-email-div">
+              <p class="patient-email-label">diet</p>
+              <c:choose>
+                <c:when test="${patientDetails.diet != null}">
+                    <c:out value="${patientDetails.diet}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">hobbies</p>
+              <c:choose>
+                <c:when test="${patientDetails.hobbies != null}">
+                    <c:out value="${patientDetails.hobbies}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label">job</p>
+              <c:choose>
+                <c:when test="${patientDetails.job != null}">
+                    <c:out value="${patientDetails.job}" />
+                </c:when>
+                <c:otherwise>
+                    Not Provided
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </div>
+          </c:if>
+        </div>
       </div>
       <div class="study-list-container">
         <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>

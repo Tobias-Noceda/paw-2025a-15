@@ -65,7 +65,7 @@ public class UserJdbcDao implements UserDao{
     @Override
     public List<User> getAuthPatientsByDoctorId(long id) {
         return (List<User>) jdbcTemplate.query(
-                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ?",
+                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ? GROUP BY u.user_id",
                 new Object[]{id},
                 new int[]{ java.sql.Types.BIGINT },
                 ROW_MAPPER
