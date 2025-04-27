@@ -33,5 +33,12 @@ public class PatientDetailsServiceImpl implements PatientDetailService{
     public Optional<PatientView> getPatientByDoctorId(long patientId, long doctorId) {
         return patientDetailDao.getPatientByDoctorId(patientId, doctorId);
     }
+
+    @Override
+    public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+            Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
+            String hobbies, String job) {
+        patientDetailDao.updatePatientDetails(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+    }
     
 }

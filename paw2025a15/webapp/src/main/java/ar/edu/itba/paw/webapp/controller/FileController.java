@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.FileTypeEnum;
 
@@ -36,6 +37,9 @@ public class FileController {
 
     @Autowired
     private UserService us;
+
+    @Autowired
+    private PatientDetailService pds;
 
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
     public ModelAndView getImageForm(){
@@ -59,6 +63,7 @@ public class FileController {
         }else {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
         }
+        pds.updatePatientDetails(user.getId(), profileForm.getAge(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
         return new ModelAndView("redirect:/profile");
     }
 

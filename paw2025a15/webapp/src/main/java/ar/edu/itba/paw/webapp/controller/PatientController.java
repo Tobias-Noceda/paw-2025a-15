@@ -13,6 +13,7 @@ import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessLevelEnum;
@@ -30,6 +31,9 @@ public class PatientController {
 
     @Autowired
     private DoctorDetailService dds;
+
+    @Autowired
+    private PatientDetailService pds;
 
     @RequestMapping("/register/patient-form")
     public ModelAndView patient(@ModelAttribute("registerPatientForm") final PatientForm form) {
@@ -66,6 +70,7 @@ public class PatientController {
         mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("searchForm", new SearchForm());
         mav.addObject("patientStudies", ss.getStudiesByPatientId(patientId));
+        mav.addObject("patientDetails", pds.getDetailByPatientId(patientId).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
 
         return mav;
     }

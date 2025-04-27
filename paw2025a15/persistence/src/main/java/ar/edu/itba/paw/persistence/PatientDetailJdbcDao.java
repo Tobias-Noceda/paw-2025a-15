@@ -21,7 +21,15 @@ import ar.edu.itba.paw.models.PatientView;
 @Repository
 public class PatientDetailJdbcDao implements PatientDetailDao{
 
-    private static final RowMapper<PatientDetail> ROW_MAPPER = (rs, rowNum) -> new PatientDetail(rs.getLong("patient_id"), rs.getInt("patient_age"), BloodTypeEnum.fromString(rs.getString("patient_blood_type")), rs.getDouble("patient_height"), rs.getDouble("patient_weight"), rs.getBoolean("patient_smokes"), rs.getBoolean("patient_drinks"), rs.getString("patient_meds"), rs.getString("patient_conditions"), rs.getString("patient_allergies"), rs.getString("patient_diet"), rs.getString("patient_hobbies"), rs.getString("patient_job"));
+    private static final RowMapper<PatientDetail> ROW_MAPPER = (rs, rowNum) -> 
+    new PatientDetail(rs.getLong("patient_id"), rs.getObject("patient_age") != null ? rs.getInt("patient_age") : null, 
+    rs.getObject("patient_blood_type") != null ? BloodTypeEnum.fromInt(rs.getInt("patient_blood_type")) : null,
+    rs.getObject("patient_height") != null ? rs.getDouble("patient_height") : null, 
+    rs.getObject("patient_weight") != null ? rs.getDouble("patient_weight") : null, 
+    rs.getObject("patient_smokes") != null ? rs.getBoolean("patient_smokes") : null, 
+    rs.getObject("patient_drinks") != null ? rs.getBoolean("patient_drinks") : null,
+    rs.getString("patient_meds"), rs.getString("patient_conditions"), rs.getString("patient_allergies"), 
+    rs.getString("patient_diet"), rs.getString("patient_hobbies"), rs.getString("patient_job"));
 
     private final RowMapper<PatientView> PV_ROW_MAPPER = (rs, rowNum) -> {
         PatientView pv = new PatientView(
@@ -33,16 +41,15 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
 
         switch(AccessLevelEnum.fromInt(rs.getInt("access_level"))){
             case VIEW_BASIC -> {
-                Integer age = rs.getInt("patient_age");
-                Integer bloodTypeValue = rs.getInt("patient_blood_type");
-                BloodTypeEnum bloodType = bloodTypeValue != null ? BloodTypeEnum.fromInt(bloodTypeValue) : null;
+                Integer age = rs.getObject("patient_age") != null ? rs.getInt("patient_age") : null;
+                BloodTypeEnum bloodType = rs.getObject("patient_blood_type") != null ? BloodTypeEnum.fromInt(rs.getInt("patient_blood_type")) : null;
                 pv.setViewBasic(age, bloodType);
             }
             case VIEW_MEDICAL -> {
-                Double height = rs.getDouble("patient_height"); 
-                Double weight = rs.getDouble("patient_weight");
-                Boolean smokes = rs.getBoolean("patient_smokes");
-                Boolean drinks = rs.getBoolean("patient_drinks");
+                Double height = rs.getObject("patient_height") != null ? rs.getDouble("patient_height") : null;
+                Double weight = rs.getObject("patient_weight") != null ? rs.getDouble("patient_weight") : null; 
+                Boolean smokes = rs.getObject("patient_smokes") != null ? rs.getBoolean("patient_smokes") : null;
+                Boolean drinks = rs.getObject("patient_drinks") != null ? rs.getBoolean("patient_drinks") : null;
                 String meds = rs.getString("patient_meds");
                 String conditions = rs.getString("patient_conditions");
                 String allergies = rs.getString("patient_allergies");
@@ -94,7 +101,7 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
 
     @Override
     public Optional<PatientDetail> getDetailByPatientId(long patientId) {
-        return jdbcTemplate.query("SELECT * FROM patient_details WHERE doctor_id = ?", new Object[]  {patientId},
+        return jdbcTemplate.query("SELECT * FROM patient_details WHERE patient_id = ?", new Object[]  {patientId},
             new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
     }
 
@@ -104,6 +111,16 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
         Optional<PatientView> pv = jdbcTemplate.query(query, new Object[]  {patientId, doctorId},
             new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT}, PV_ROW_MAPPER).stream().findFirst();
         return pv;
+    }
+
+    @Override
+    public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+            Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
+            String hobbies, String job) {
+        String query = "UPDATE patient_details SET patient_age = ?, patient_blood_type = ?, patient_height = ?, patient_weight = ?, patient_smokes = ?, patient_drinks = ?, patient_meds = ?, patient_conditions = ?, patient_allergies = ?, patient_diet = ?, patient_hobbies = ?, patient_job = ? WHERE patient_id = ?";
+        jdbcTemplate.update(query, age, 
+            bloodType != null ? bloodType.ordinal() : null, 
+            height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job, patientId);
     }
     
 }

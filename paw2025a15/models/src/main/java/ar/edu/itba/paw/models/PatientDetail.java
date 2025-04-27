@@ -37,51 +37,51 @@ public class PatientDetail {
         }
 
     public Integer getAge() {
-    return age;
+        return age;
     }
 
     public BloodTypeEnum getBloodType() {
-    return bloodType;
+        return bloodType;
     }
 
     public Double getHeight() {
-    return height;
+        return height;
     }
 
     public Double getWeight() {
-    return weight;
+        return weight;
     }
 
     public Boolean getSmokes() {
-    return smokes;
+        return smokes;
     }
 
     public Boolean getDrinks() {
-    return drinks;
+        return drinks;
     }
 
     public String getMeds() {
-    return meds;
+        return meds;
     }
 
     public String getConditions() {
-    return conditions;
+        return conditions;
     }
 
     public String getAllergies() {
-    return allergies;
+        return allergies;
     }
 
     public String getDiet() {
-    return diet;
+        return diet;
     }
 
     public String getHobbies() {
-    return hobbies;
+        return hobbies;
     }
 
     public String getJob() {
-    return job;
+        return job;
     }
 
 }
