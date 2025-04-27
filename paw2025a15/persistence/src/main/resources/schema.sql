@@ -174,6 +174,12 @@ CREATE TABLE IF NOT EXISTS patient_details (
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
 );
 
+--INSERT INTO patient_details (patient_id)
+--SELECT user_id
+--FROM users
+--WHERE user_role = 0 --patient role
+--  AND user_id NOT IN (SELECT patient_id FROM patient_details);
+
 CREATE TABLE IF NOT EXISTS auth_doctors (
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
@@ -185,6 +191,12 @@ CREATE TABLE IF NOT EXISTS auth_doctors (
 
 --ALTER TABLE auth_doctors
 --ADD COLUMN allowed INT NOT NULL DEFAULT 0;
+--ALTER TABLE auth_doctors
+--RENAME COLUMN allowed TO access_level;
+--ALTER TABLE auth_doctors
+--DROP CONSTRAINT auth_doctors_pkey;
+--ALTER TABLE auth_doctors
+--ADD PRIMARY KEY (doctor_id, patient_id, access_level);
 
 CREATE TABLE IF NOT EXISTS auth_studies (
     doctor_id BIGINT NOT NULL,

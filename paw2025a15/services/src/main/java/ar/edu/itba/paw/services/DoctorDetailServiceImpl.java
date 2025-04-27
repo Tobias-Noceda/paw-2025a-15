@@ -9,10 +9,6 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.models.DoctorDetail;
-import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.SpecialtyEnum;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
@@ -53,10 +49,28 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
         if(hasAuthDoctor(patientId, doctorId)){
-            doctorDetailDao.unauthDoctor(patientId, doctorId);
+            doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
         }
         else{
-            doctorDetailDao.authDoctor(patientId, doctorId);
+            doctorDetailDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED);
+        }
+    }
+
+    @Override
+    public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
+        for (AccessLevelEnum accessLevel: accessLevels) {
+            doctorDetailDao.authDoctor(patientId, doctorId, accessLevel);
+        }
+    }
+
+    @Override
+    public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
+        if(accessLevels.contains(AccessLevelEnum.VIEW_RESTRICTED)){
+            doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
+            return;
+        }
+        for (AccessLevelEnum accessLevel: accessLevels) {
+            doctorDetailDao.unauthDoctorByAccessLevel(patientId, doctorId, accessLevel);
         }
     }
 
@@ -64,4 +78,10 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     public boolean hasAuthDoctor(long patientId, long doctorId) {
         return doctorDetailDao.hasAuthDoctor(patientId, doctorId);
     }
+
+    @Override
+    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        return doctorDetailDao.hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel);
+    }
+    
 }

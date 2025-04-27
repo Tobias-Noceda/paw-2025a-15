@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -27,14 +28,17 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     private final DoctorShiftService dss;
 
+    private final DoctorDetailService dds;
+
     private final AppointmentDao appointmentDao;
 
     @Autowired
-    public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss){
+    public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss, final DoctorDetailService dds){
         this.appointmentDao = appointmentDao;
         this.es = es;
         this.us = us;
         this.dss = dss;
+        this.dds = dds;
     }
 
     @Override
@@ -44,10 +48,12 @@ public class AppointmentServiceImpl implements AppointmentService{
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("No such doctor"));
         if(date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         Appointment appointment = appointmentDao.addAppointment(shiftId, patientId, date);
-        if(patient.getId() != doctor.getId()){//TODO lo que no es logica al service, no en controllers
+        if(patient.getId() != doctor.getId()){
             es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
             es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
         }
+
+        if(appointment != null && !dds.hasAuthDoctor(patientId, doctor.getId())) dds.toggleAuthDoctor(patientId, doctor.getId());//grant doctors access to the patient profile
         
         return appointment;
     }
@@ -94,7 +100,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(()->new IllegalArgumentException("No such doctor"));
         if(appointmentDao.removeAppointment(shiftId, date)){
-            if(cancelId==patient.getId()){//TODO lo que no es logica de negocio al servicio no en controller
+            if(cancelId==patient.getId()){
                 es.sendPatientCancellationConfirmationEmail(patient, doctor, appointment, shift);
                 es.sendDoctorCancelledAppointmentEmail(patient, doctor, appointment, shift);
             }

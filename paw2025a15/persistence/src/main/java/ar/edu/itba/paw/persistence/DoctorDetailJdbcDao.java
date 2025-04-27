@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
+import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
@@ -140,17 +141,31 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
 
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
-        return jdbcTemplate.query("SELECT 1 FROM auth_doctors WHERE doctor_id = ? AND patient_id = ?", new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
+        return jdbcTemplate.query("SELECT 1 FROM auth_doctors WHERE doctor_id = ? AND patient_id = ? LIMIT 1", new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
     }
 
     @Override
-    public void authDoctor(long patientId, long doctorId) {
-        jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id) VALUES (?, ?)", patientId, doctorId);
+    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        return jdbcTemplate.query("SELECT 1 FROM auth_doctors WHERE doctor_id = ? AND patient_id = ? AND access_level = ? LIMIT 1", new Object[]{doctorId, patientId, accessLevel.ordinal()}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.INTEGER}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
     }
 
     @Override
-    public void unauthDoctor(long patientId, long doctorId) {
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) return;
+        if(accessLevel!=AccessLevelEnum.VIEW_RESTRICTED && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED);
+        jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id, accessLevel) VALUES (?, ?, ?)", patientId, doctorId, accessLevel.ordinal());
+    }
+
+    @Override
+    public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {//TODO unauth all study access
+        if(!hasAuthDoctor(patientId, doctorId)) return;
         jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ?", patientId, doctorId);
+    }
+
+    @Override
+    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        if(accessLevel!=AccessLevelEnum.VIEW_RESTRICTED) jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ?", patientId, doctorId, accessLevel.ordinal());
+        else unauthDoctorAllAccessLevels(patientId, doctorId);
     }
 
 }

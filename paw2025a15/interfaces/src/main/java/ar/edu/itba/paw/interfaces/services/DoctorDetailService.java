@@ -3,6 +3,7 @@ package ar.edu.itba.paw.interfaces.services;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
@@ -24,5 +25,11 @@ public interface DoctorDetailService {
 
     public void toggleAuthDoctor(long patientId, long doctorId);
 
+    public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
+
+    public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
+
     public boolean hasAuthDoctor(long patientId, long doctorId);
+
+    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 }
