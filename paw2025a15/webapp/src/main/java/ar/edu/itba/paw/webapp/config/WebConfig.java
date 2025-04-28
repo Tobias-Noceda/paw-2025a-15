@@ -19,7 +19,10 @@ import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -36,6 +39,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 @EnableWebMvc
 @EnableAsync
+@EnableScheduling
 @ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -157,5 +161,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public Validator getValidator() {
         return validator();
+    }
+
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(5); // you can configure how many threads
+        scheduler.setThreadNamePrefix("scheduled-task-");
+        scheduler.initialize();
+        return scheduler;
     }
 }

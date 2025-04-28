@@ -146,4 +146,43 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
             return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfMonth, endOfMonth);
         }
     }
+
+    @Override
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber) {
+        LocalDate now = LocalDate.now();
+        int year = (now.getMonthValue() <= month.getValue()) ? now.getYear() : (now.getYear() + 1);
+        LocalDate startOfWeek;
+        LocalDate endOfWeek;
+        switch (weekNumber) {
+            case 0 -> {
+                startOfWeek = LocalDate.of(year, month, 1);
+                endOfWeek = LocalDate.of(year, month, 7);
+            }
+            case 1 -> {
+                startOfWeek = LocalDate.of(year, month, 8);
+                endOfWeek = LocalDate.of(year, month, 14);
+            }
+            case 2 -> {
+                startOfWeek = LocalDate.of(year, month, 15);
+                endOfWeek = LocalDate.of(year, month, 21);
+            }
+            case 3 -> {
+                startOfWeek = LocalDate.of(year, month, 22);
+                endOfWeek = LocalDate.of(year, month, month.length(isLeapYear(year)));
+            }
+            default -> throw new IllegalArgumentException("Invalid week number: " + weekNumber);
+        }
+        if (now.getMonth().equals(month) && now.getDayOfMonth() > endOfWeek.getDayOfMonth()) {
+            return List.of();
+        }
+        if (now.getMonth().equals(month) && now.getDayOfMonth() > startOfWeek.getDayOfMonth()) {
+            startOfWeek = now;
+        }
+
+        return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfWeek, endOfWeek);
+    }
+
+    private boolean isLeapYear(int year) {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    }
 }

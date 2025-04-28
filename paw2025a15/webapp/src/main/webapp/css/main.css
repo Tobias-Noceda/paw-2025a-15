@@ -229,6 +229,21 @@ body {
 .confirmation-dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
 }
+
+.confirm-dialog-second-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+}
+
+.confirm-dialog-form {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    justify-content: flex-end;
+    margin-top: 15px;
+    text-align: right;
+}
   
 .cancel-button {
     margin: 0 5px;
@@ -243,6 +258,21 @@ body {
   
 .cancel-button:hover {
     background-color: #b90101;
+}
+
+.confirm-button {
+    margin: 0 5px;
+    padding: 8px 15px;
+    background-color: #256395;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.confirm-button:hover {
+    background-color: #0e3b6b;
 }
 
 .file-dialog {
@@ -276,36 +306,38 @@ body {
     height: 80vh;
 }
 
-.month-dropdown-div {
+.week-navigator-div {
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     margin: 0 0 5px 0;
 }
 
-.month-dropdown {
-    max-width: fit-content;
+.navigation-button {
     background-color: #007bff;
     color: white;
-    padding: 8px;
     border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 700;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
+    transition: background-color 0.3s;
 }
 
-.month-dropdown:hover {
+.navigation-button:hover {
     background-color: #0056b3;
 }
 
-.month-dropdown .dropdown-options {
-    display: block;
-    position: absolute;
-    background-color: white;
-    z-index: 100;
+.navigation-button:disabled {
+    background-color: #ccc;
+    color: gray;
+    cursor: not-allowed;
+}
+
+.selected-month {
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: 700;
     color: #0d4a85;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 400;
 }

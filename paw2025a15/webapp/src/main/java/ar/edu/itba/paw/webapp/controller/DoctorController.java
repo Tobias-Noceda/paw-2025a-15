@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.form.ShiftsMonthForm;
+import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
@@ -54,7 +55,8 @@ public class DoctorController {
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
             @PathVariable("id") long id,
-            @ModelAttribute("shiftsMonthForm") final ShiftsMonthForm shiftsMonthForm,
+            @RequestParam(value = "action", required = false) String action,
+            @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
@@ -69,6 +71,13 @@ public class DoctorController {
         if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
         }
+        if (action != null) {
+            if ("previous".equals(action)) {
+                shiftsWeekForm.decrementIndex();
+            } else if ("next".equals(action)) {
+                shiftsWeekForm.incrementIndex();
+            }
+        }
         
         mav.addObject("doctorDetail", detail);
         mav.addObject("user", user);
@@ -77,17 +86,20 @@ public class DoctorController {
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
-        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonth(id, shiftsMonthForm.getMonth()));
+        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(id, shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
         mav.addObject("searchForm", new SearchForm());
 
-        mav.addObject("shiftsMonthForm", shiftsMonthForm);
-        mav.addObject("possibleMonths", SelectItem.getNextThreeMonths(messageSource, locale));
+        mav.addObject("shiftsWeekForm", shiftsWeekForm);
 
         return mav;
     }
 
     @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)//TODO: front and logic here, this is placholder for auth usage
-    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId, @RequestParam("action") String action, @RequestParam(value = "accessLevels", required = false) List<String> accessLevels) {
+    public ModelAndView authUnauthDoctor(
+        @PathVariable("doctorId") long doctorId,
+        @RequestHeader(value = "Referer", required = false) String referer, 
+        @RequestParam("action") String action, 
+        @RequestParam(value = "accessLevels", required = false) List<String> accessLevels) {
         User doctor = us.getUserById(doctorId)
             .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
             
@@ -110,7 +122,11 @@ public class DoctorController {
             dds.toggleAuthDoctor(user.getId(), doctorId);
         }
 
-        return new ModelAndView("redirect:/doctors/" + doctorId);
+        if (referer != null) {
+            return new ModelAndView("redirect:" + referer);
+        }
+
+        return new ModelAndView("redirect:/doctors/" + doctorId);        
     }
 
     @RequestMapping("/register/doctor-form")

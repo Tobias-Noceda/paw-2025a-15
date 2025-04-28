@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
   <head>
@@ -31,6 +32,7 @@
                   <th><spring:message code="studyTable.detailsColumn.title"></spring:message></th>
                   <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
                   <th><spring:message code="studyTable.uploadDateColumn.title"></spring:message></th>
+                  <th class="studies-last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
                 </tr>
               </thead>
             </table>
@@ -40,13 +42,51 @@
               <table class="studies-table">
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
+                    <c:url value="/supersecret/files/${study.fileId}" var="studyLink" />
+                    <c:set var="studyName">
+                      <spring:message code="studyType.${study.type}"/>_${study.studyDate}
+                    </c:set>
                     <tr class="study-row"
-                      data-fileurl="<c:url value='/supersecret/files/${study.fileId}'/>"
+                      onclick="window.open('${studyLink}', '_blank')"
                     >
-                      <td class="text-cell"><c:out value="${study.type}"/></td>
+                      <c:set var="studyDay">
+                        <fmt:formatNumber value="${study.studyDate.dayOfMonth}" pattern="00" />
+                      </c:set>
+                      <c:set var="studyMonth">
+                        <fmt:formatNumber value="${study.studyDate.monthValue}" pattern="00" />
+                      </c:set>
+                      <c:set var="studyYear" value="${study.studyDate.year}" />
+
+                      <c:set var="uploadDay">
+                        <fmt:formatNumber value="${study.uploadDate.dayOfMonth}" pattern="00" />
+                      </c:set>
+                      <c:set var="uploadMonth">
+                        <fmt:formatNumber value="${study.uploadDate.monthValue}" pattern="00" />
+                      </c:set>
+                      <c:set var="uploadYear" value="${study.uploadDate.year}" />
+
+                      <td class="text-cell">
+                        <spring:message code="studyType.${study.type}"/>
+                      </td>
                       <td class="text-cell"><c:out value="${study.comment}"/></td>
-                      <td class="text-cell"><c:out value="${study.studyDate}"/></td>
-                      <td class="text-cell"><c:out value="${study.uploadDate.toLocalDate()}"/></td>
+                      <td class="text-cell">
+                        <spring:message code="dateFormat" arguments="${studyDay},${studyMonth},${studyYear}"/>
+                      </td>
+                      <td class="text-cell">
+                        <spring:message code="dateFormat" arguments="${uploadDay},${uploadMonth},${uploadYear}"/>
+                      </td>
+                      <td class="download-cell">
+                        <a
+                          class="download-button"
+                          href="${studyLink}"
+                          download="${studyName}"
+                          onclick="event.stopPropagation();"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12 16a1 1 0 0 1-.7-.29l-4-4a1 1 0 0 1 1.41-1.41L11 12.59V4a1 1 0 0 1 2 0v8.59l2.29-2.29a1 1 0 0 1 1.41 1.41l-4 4a1 1 0 0 1-.7.29zM19 14a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3a1 1 0 0 0-2 0v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3a1 1 0 0 0-1-1z"/>
+                          </svg>
+                        </a>
+                      </td>
                     </tr>
                   </c:forEach>
                 </tbody>
@@ -69,7 +109,7 @@
                 <tr>
                   <th><spring:message code="appointmentTable.doctorColumn.title"></spring:message></th>
                   <th><spring:message code="studyTable.specialtyColumn.title"></spring:message></th>
-                  <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
+                  <th class="doctors-last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
                 </tr>
               </thead>
             </table>
@@ -84,15 +124,30 @@
                   <c:forEach var="doctor" items="${patientAuthDoctors}">
                     <tr class="doctor-row">
                       <td class="text-cell"><c:out value="${doctor.name}"/></td>
-                      <td class="text-cell"><c:out value="${doctor.specialty}"/></td>
-                      <td class="cancel-cell">
-                        <form 
+                      <td class="text-cell">
+                        <spring:message code="specialty.${doctor.specialty}"/>
+                      </td>
+                      <td class="deauthorize-cell">
+                        <form
+                          id="authDoctorForm"
                           action="/patientAuthDoctor/${doctor.id}"
                           method="post"
-                          onsubmit="return openConfirmDialog(this, '${confirmationMessage}', event)"
                         >
-                          <button class="deauthorize-button" type="submit">
-                            <spring:message code="studies.deauthorize"/>
+                          <c:set var="buttonText">
+                            <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+                          </c:set>
+                          <c:set var="confirmationText">
+                            <spring:message code="doctorDetail.deauthorize.confirm"/>
+                          </c:set>
+                          <c:set var="authCancelText">
+                            <spring:message code="doctorDetail.authorize.cancelButton"/>
+                          </c:set>
+                          <button
+                            type="button" 
+                            class="deauthorize-button"
+                            onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}')"
+                          >
+                            <c:out value="${buttonText}"/>
                           </button>
                         </form>
                       </td>
@@ -110,8 +165,8 @@
         </div>
       </div>
     </div>
+    <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
 
     <%@include file="components/confirmDialog.jsp" %>
-    <%@include file="components/fileDialog.jsp" %>
   </body>
 </html>

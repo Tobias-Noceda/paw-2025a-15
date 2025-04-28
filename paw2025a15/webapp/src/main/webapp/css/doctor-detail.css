@@ -163,6 +163,7 @@
 
 .appointments-table tbody tr {
     border-bottom: 1px solid #ddd;
+    cursor: pointer;
 }
 
 .appointments-table tbody tr:nth-child(even) {

@@ -1,11 +1,15 @@
 package ar.edu.itba.paw.services;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
@@ -31,6 +35,9 @@ public class AppointmentServiceImpl implements AppointmentService{
     private final DoctorDetailService dds;
 
     private final AppointmentDao appointmentDao;
+
+    @Autowired
+    private TaskScheduler taskScheduler;
 
     @Autowired
     public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss, final DoctorDetailService dds){
@@ -111,4 +118,20 @@ public class AppointmentServiceImpl implements AppointmentService{
         }
     }
 
+    @Override
+    public void removeAppointment(long shiftId, LocalDate date, long doctorId) {
+        addAppointment(shiftId, doctorId, date);
+        
+        // Schedule something after 3 months
+        Runnable task = () -> {
+            System.out.println("3 months passed! Running the scheduled task.");//TODO: should be a log
+            
+            appointmentDao.removeAppointment(shiftId, date);
+        };
+
+        // Calculate future date
+        Instant triggerTime = Instant.now().plus(3, ChronoUnit.MONTHS);
+
+        taskScheduler.schedule(task, Date.from(triggerTime));
+    }
 }
