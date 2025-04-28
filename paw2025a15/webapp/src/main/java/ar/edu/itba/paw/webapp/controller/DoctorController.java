@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -91,7 +92,10 @@ public class DoctorController {
     }
 
     @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
-    public ModelAndView authUnauthDoctor(@PathVariable("doctorId") long doctorId) {
+    public ModelAndView authUnauthDoctor(
+        @PathVariable("doctorId") long doctorId,
+        @RequestHeader(value = "Referer", required = false) String referer
+    ) {
         User doctor = us.getUserById(doctorId)
             .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
             
@@ -109,7 +113,11 @@ public class DoctorController {
 
         dds.toggleAuthDoctor(user.getId(), doctorId);
 
-        return new ModelAndView("redirect:/doctors/" + doctorId);
+        if (referer != null) {
+            return new ModelAndView("redirect:" + referer);
+        }
+
+        return new ModelAndView("redirect:/doctors/" + doctorId);        
     }
 
     @RequestMapping("/register/doctor-form")

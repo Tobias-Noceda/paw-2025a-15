@@ -229,6 +229,21 @@ body {
 .confirmation-dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
 }
+
+.confirm-dialog-second-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 5px 0;
+}
+
+.confirm-dialog-form {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    justify-content: flex-end;
+    margin-top: 15px;
+    text-align: right;
+}
   
 .cancel-button {
     margin: 0 5px;
@@ -243,6 +258,21 @@ body {
   
 .cancel-button:hover {
     background-color: #b90101;
+}
+
+.confirm-button {
+    margin: 0 5px;
+    padding: 8px 15px;
+    background-color: #256395;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.confirm-button:hover {
+    background-color: #0e3b6b;
 }
 
 .file-dialog {

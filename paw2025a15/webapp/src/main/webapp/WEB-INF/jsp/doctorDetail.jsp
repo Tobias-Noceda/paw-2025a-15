@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
@@ -21,14 +20,32 @@
           <div class="doctor-name-div">
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
             <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
-            <form action="${authDoctorPath}" method="POST">
-              <button type="submit" class="doctor-auth-button <c:if test="${isAuthDoctor}">auth</c:if>">
-                <c:if test="${isAuthDoctor}">
-                  <spring:message code="doctorDetail.toggleButton.deauthorize"/>
-                </c:if>
-                <c:if test="${!isAuthDoctor}">
-                  <spring:message code="doctorDetail.toggleButton.authorize"/>
-                </c:if>
+            <c:if test="${isAuthDoctor}">
+              <c:set var="buttonText">
+                <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+              </c:set>
+              <c:set var="confirmationText">
+                <spring:message code="doctorDetail.deauthorize.confirm"/>
+              </c:set>
+            </c:if>
+            <c:if test="${!isAuthDoctor}">
+              <c:set var="buttonText">
+                <spring:message code="doctorDetail.toggleButton.authorize"/>
+              </c:set>
+              <c:set var="confirmationText">
+                <spring:message code="doctorDetail.authorize.confirm"/>
+              </c:set>
+            </c:if>
+            <c:set var="authCancelText">
+              <spring:message code="doctorDetail.authorize.cancelButton"/>
+            </c:set>
+            <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
+              <button
+                type="button" 
+                class="doctor-auth-button <c:if test="${isAuthDoctor}">auth</c:if>" 
+                onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}')"
+              >
+                <c:out value="${buttonText}"/>
               </button>
             </form>
           </div>
@@ -111,10 +128,32 @@
           <tbody>
             <c:url value="/takeAppointment" var="appointmentPath"/>
             <c:forEach var="appointment" items="${doctorAppointments}">
-              <tr class="appointment-row" onclick="submitAppointment(this, '${confirmMessage}')">
+              <c:set var="day">
+                <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
+              </c:set>
+              <c:set var="month">
+                <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
+              </c:set>
+              <c:set var="year" value="${appointment.date.year}" />
+              <c:set var="formattedDate">
+                <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"></spring:message>
+              </c:set>
+              <c:set var="confirmMessage">
+                <spring:message code="takeAppointment.confirmationMessage" arguments="${formattedDate}, ${appointment.startTime}, ${doctor.name}"/>
+              </c:set>
+              <c:set var="secondText">
+                <spring:message code="doctorDetail.confirmApp.secondText" arguments="${doctor.name}"/>
+              </c:set>
+              <c:set var="cancelText">
+                <spring:message code="doctorDetail.confirmApp.cancel"/>
+              </c:set>
+              <c:set var="confirmText">
+                <spring:message code="doctorDetail.confirmApp.confirm"/>
+              </c:set>
+              <tr class="appointment-row" onclick="submitAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}')">
                 <td><spring:message code="weekday.${appointment.date.dayOfWeek}"></spring:message></td>
                 <td><c:out value="${appointment.date.dayOfMonth}" escapeXml="true"/></td>
-                <td><c:out value="${appointment.getStartToEndTime()}"/></td>
+                <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
                 <td style="display: none;">
                   <form:form
                     modelAttribute="takeTurnForm"
@@ -132,8 +171,9 @@
       </div>
     </div>
 
-    <jsp:include page="components/confirmDialog.jsp" />
+    <%@include file="components/confirmDialog.jsp" %>
 
     <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
+    <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
   </body>
 </html>

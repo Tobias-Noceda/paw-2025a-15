@@ -9,13 +9,10 @@
   <body>
     <dialog class="confirmation-dialog" id="customConfirmDialog">
       <h3 id="confirmDialogMessage"></h3>
-      <form method="dialog" style="display: flex; flex-direction: row; flex: 1; justify-content: flex-end; margin-top: 15px; text-align: right;">
-        <button class="cancel-button" onclick="submitPendingForm()">
-          <spring:message code="confirmDialog.yes"></spring:message>
-        </button>
-        <button class="cancel-button" style="background-color: gray;" onclick="closeConfirmDialog()">
-          <spring:message code="confirmDialog.no"></spring:message>
-        </button>
+      <p id="confirmDialogSecondText" class="confirm-dialog-second-text"></p>
+      <form method="dialog" class="confirm-dialog-form">
+        <button id="confirmButton" class="confirm-button" onclick="submitPendingForm()"></button>
+        <button id="cancelButton" class="cancel-button" onclick="closeConfirmDialog()"></button>
       </form>
     </dialog>
     <script src="<c:url value='/js/confirmDialogModal.js'/>"></script>

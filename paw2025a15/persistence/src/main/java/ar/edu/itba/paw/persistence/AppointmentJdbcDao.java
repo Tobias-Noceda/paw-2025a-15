@@ -80,7 +80,7 @@ public class AppointmentJdbcDao implements AppointmentDao{
 
     @Override
     public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {
-        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE ds.doctor_id = ? AND (a.appointment_date + ds.shift_start_time) > ? ORDER BY a.appointment_date ASC, ds.shift_start_time ASC",
+        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE ds.doctor_id = ? AND ds.doctor_id <> a.patient_id AND (a.appointment_date + ds.shift_start_time) > ? ORDER BY a.appointment_date ASC, ds.shift_start_time ASC",
           new Object[]  {doctorId, LocalDateTime.now()},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.TIMESTAMP}, (rs, rowNum) -> new AppointmentData(rs.getLong("shift_id"), rs.getString("patient_name"), rs.getString("doctor_name"), rs.getDate("appointment_date").toLocalDate(), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_end_time").toLocalTime(), rs.getString("shift_address")));
     }

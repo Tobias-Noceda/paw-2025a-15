@@ -48,13 +48,12 @@ public class AppointmentController {
     ) {
         ModelAndView mav = new ModelAndView("appointments");
 
-        User user = us.getCurrentUser().orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found or not authorized to view appointments"));  
+        User user = us.getCurrentUser().orElse(null);
         
         mav.addObject("user", user);
         switch (user.getRole()) {
             case DOCTOR -> {
                 mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
-                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonth(user.getId(), shiftsWeekForm.getMonth()));
                 if (action != null) {
                     if ("previous".equals(action)) {
                         shiftsWeekForm.decrementIndex();
@@ -62,7 +61,7 @@ public class AppointmentController {
                         shiftsWeekForm.incrementIndex();
                     }
                 }
-                
+                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(user.getId(), shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
                 mav.addObject("shiftsWeekForm", shiftsWeekForm);
             }
             case PATIENT -> {
@@ -109,6 +108,18 @@ public class AppointmentController {
         
         as.addAppointment(form.getShiftId(), user.getId(), LocalDate.parse(form.getDate()));
 
+        return new ModelAndView("redirect:/appointments");
+    }
+
+    @RequestMapping(value = "/removeAppointment/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
+    public ModelAndView removeAppointment(
+        @PathVariable("shiftId") long shiftId,
+        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        User user = us.getCurrentUser().orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found or not authorized to cancel this appointment"));
+        
+        as.removeAppointment(shiftId, date, user.getId());
+        
         return new ModelAndView("redirect:/appointments");
     }
 }
