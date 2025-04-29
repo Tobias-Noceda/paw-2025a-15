@@ -59,6 +59,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Override
     public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
+        if(accessLevels==null || accessLevels.isEmpty()) return;
         for (AccessLevelEnum accessLevel: accessLevels) {
             doctorDetailDao.authDoctor(patientId, doctorId, accessLevel);
         }
@@ -66,6 +67,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Override
     public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
+        if(accessLevels==null || accessLevels.isEmpty()) return;
         if(accessLevels.contains(AccessLevelEnum.VIEW_RESTRICTED)){
             doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
             return;

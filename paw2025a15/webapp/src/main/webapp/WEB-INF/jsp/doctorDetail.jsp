@@ -17,37 +17,77 @@
     <div class="page-container" style="flex-direction: row;">
       <div class="doctor-card">
         <div class="doctor-info">
+          <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
+          <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
           <div class="doctor-name-div">
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
-            <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/><!--TODO:front and inter here, this is placeholder with no inter nor style-->
-            <form action="${authDoctorPath}" method="POST">
               <c:if test="${isAuthDoctor}">
-              <label>
-                <input type="checkbox" name="accessLevels" value="VIEW_BASIC" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_BASIC')}">checked</c:if>/>
-                  Basic Access
-              </label>
-              <label>
-                  <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
-                  Medical Access
-              </label>
-              <label>
-                  <input type="checkbox" name="accessLevels" value="VIEW_LIFESTYLE" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_LIFESTYLE')}">checked</c:if>/>
-                  Lifestyle Access
-              </label>
-              <button type="submit" name="action" value="update" class="doctor-auth-button">
-                  Update
+                  <c:set var="buttonText">
+                    <spring:message code='doctorDetail.toggleButton.deauthorize'/>
+                  </c:set>
+                  <c:set var="confirmationText">
+                    <spring:message code='doctorDetail.deauthorize.confirm'/>
+                  </c:set>
+              </c:if>
+              <c:if test="${!isAuthDoctor}">
+                  <c:set var="buttonText">
+                    <spring:message code='doctorDetail.toggleButton.authorize'/>
+                  </c:set>
+                  <c:set var="confirmationText">
+                    <spring:message code='doctorDetail.authorize.confirm'/>
+                  </c:set>
+              </c:if>
+              <c:set var="authCancelText">
+                <spring:message code='doctorDetail.authorize.cancelButton'/>
+              </c:set>
+
+              <button 
+                  type="button" 
+                  name="action" 
+                  value="toggle" 
+                  onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)" 
+                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}">
+                  <c:out value="${buttonText}"/>
               </button>
-            </c:if>
-              <button type="submit" name="action" value="toggle" class="doctor-auth-button <c:if test="${isAuthDoctor}">auth</c:if>">
-                <c:if test="${isAuthDoctor}">
-                  <spring:message code="doctorDetail.toggleButton.deauthorize"/>
-                </c:if>
-                <c:if test="${!isAuthDoctor}">
-                  <spring:message code="doctorDetail.toggleButton.authorize"/>
-                </c:if>
-              </button>
-            </form>
           </div>
+          <div class="doctor-info"><!--TODO:front here, this is placeholder with no style-->
+            <c:if test="${isAuthDoctor}">
+            <spring:message code='doctorDetail.update.currentPermits'/>
+            <div class="doctor-name-div">
+                <label>
+                  <input type="checkbox" name="accessLevels" value="VIEW_BASIC" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_BASIC')}">checked</c:if>/>
+                    <spring:message code='doctorDetail.update.basicAccess'/>
+                </label>
+                <label>
+                    <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
+                    <spring:message code='doctorDetail.update.medicalAccess'/>
+                </label>
+                <label>
+                    <input type="checkbox" name="accessLevels" value="VIEW_LIFESTYLE" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_LIFESTYLE')}">checked</c:if>/>
+                    <spring:message code='doctorDetail.update.lifestyleAccess'/>
+                </label>
+                <c:set var="buttonTextUpdate">
+                    <spring:message code='doctorDetail.update.confirmButton'/>
+                  </c:set>
+                  <c:set var="authCancelTextUpdate">
+                    <spring:message code='doctorDetail.update.cancelButton'/>
+                  </c:set>
+                <c:set var="confirmationTextUpdate">
+                    <spring:message code='doctorDetail.update.confirm'/>
+                  </c:set>
+                <button 
+                  type="button" 
+                  name="action" 
+                  value="update" 
+                  onclick="confirmAuthDoctor('${confirmationTextUpdate}', null, '${buttonTextUpdate}', '${authCancelTextUpdate}', this.name, this.value)" 
+                  class="doctor-auth-button">
+                  <spring:message code='doctorDetail.update.updateButton'/>
+                </button>
+              </c:if>
+            </div>
+          </form>
+          </div>
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="doctor-image">
             <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
           </div>
