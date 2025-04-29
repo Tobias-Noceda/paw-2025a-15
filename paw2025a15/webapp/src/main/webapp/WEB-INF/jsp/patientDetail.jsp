@@ -37,28 +37,28 @@
             </a>
           </div>
         </div>
-        <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling and inter-->
+        <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling-->
           <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_BASIC')}">
           <div class="basic">
             <div class="patient-email-div">
-              <p class="patient-email-label">age</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.age"/>:</p>
               <c:choose>
                 <c:when test="${patientDetails.age != null}">
                     <c:out value="${patientDetails.age}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">blood type</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.bloodType"/>:</p>
               <c:choose>
                 <c:when test="${patientDetails.bloodType != null}">
                     <c:out value="${patientDetails.bloodType}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
@@ -67,79 +67,79 @@
           <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">
           <div class="med">
             <div class="patient-email-div">
-              <p class="patient-email-label">height</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.height"/></p>
               <c:choose>
                 <c:when test="${patientDetails.height != null}">
                     <c:out value="${patientDetails.height}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">weight</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.wieght"/></p>
               <c:choose>
                 <c:when test="${patientDetails.weight != null}">
                     <c:out value="${patientDetails.weight}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">smokes</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.smokes"/></p>
               <c:choose>
                 <c:when test="${patientDetails.smokes != null}">
                     <c:out value="${patientDetails.smokes}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">drinks</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.drinks"/></p>
               <c:choose>
                 <c:when test="${patientDetails.drinks != null}">
                     <c:out value="${patientDetails.drinks}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">meds</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.meds"/></p>
               <c:choose>
-                <c:when test="${patientDetails.meds != null}">
+                <c:when test="${not empty patientDetails.meds}">
                     <c:out value="${patientDetails.meds}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">conditions</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.conditions"/></p>
               <c:choose>
-                <c:when test="${patientDetails.conditions != null}">
+                <c:when test="${not empty patientDetails.conditions}">
                     <c:out value="${patientDetails.conditions}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">allergies</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.allergies"/></p>
               <c:choose>
-                <c:when test="${patientDetails.allergies != null}">
+                <c:when test="${not empty patientDetails.allergies}">
                     <c:out value="${patientDetails.allergies}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
@@ -148,35 +148,35 @@
           <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_LIFESTYLE')}">
           <div class="lifestyle">
             <div class="patient-email-div">
-              <p class="patient-email-label">diet</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.diet"/></p>
               <c:choose>
-                <c:when test="${patientDetails.diet != null}">
+                <c:when test="${not empty patientDetails.diet}">
                     <c:out value="${patientDetails.diet}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">hobbies</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.hobbies"/></p>
               <c:choose>
-                <c:when test="${patientDetails.hobbies != null}">
+                <c:when test="${not empty patientDetails.hobbies}">
                     <c:out value="${patientDetails.hobbies}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label">job</p>
+              <p class="patient-email-label"><spring:message code="profileInfo.job"/></p>
               <c:choose>
-                <c:when test="${patientDetails.job != null}">
+                <c:when test="${not empty patientDetails.job}">
                     <c:out value="${patientDetails.job}" />
                 </c:when>
                 <c:otherwise>
-                    Not Provided
+                  <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
