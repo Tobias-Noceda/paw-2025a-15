@@ -94,7 +94,7 @@ public class DoctorController {
         return mav;
     }
 
-    @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)//TODO: front and logic here, this is placholder for auth usage
+    @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
     public ModelAndView authUnauthDoctor(
         @PathVariable("doctorId") long doctorId,
         @RequestHeader(value = "Referer", required = false) String referer, 

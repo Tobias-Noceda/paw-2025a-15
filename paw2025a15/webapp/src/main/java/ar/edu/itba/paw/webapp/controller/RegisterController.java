@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -84,7 +85,7 @@ public class RegisterController {
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         UserRoleEnum.PATIENT,
-                        LocaleEnum.EN_US//TODO change this is default hardcoded
+                        LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
                 loginUser(form.getEmail(), form.getPassword());
                 return new ModelAndView("redirect:/");
@@ -120,7 +121,7 @@ public class RegisterController {
         } else {
             try {
                 // Crear el médico
-                User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), "med-licence", form.getSpeciality(), LocaleEnum.EN_US);//TODO change hardocded local to actual one
+                User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), "med-licence", form.getSpeciality(), LocaleEnum.fromLocale(LocaleContextHolder.getLocale()));
                 dcs.addCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
                 loginUser(form.getEmail(), form.getPassword());

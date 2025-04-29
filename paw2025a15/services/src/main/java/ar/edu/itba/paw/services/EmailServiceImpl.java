@@ -11,6 +11,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
@@ -29,6 +31,8 @@ import ar.edu.itba.paw.models.User;
 
 @Service
 public class EmailServiceImpl implements EmailService{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     @Autowired
     private JavaMailSender emailSender;
@@ -112,7 +116,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending doctor taking shift email to {}: {}", doctor.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -141,7 +145,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending patient taking shift email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -171,7 +175,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendMessageWithFileTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString(), locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending received study email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -200,7 +204,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending doctor cancelled appointment email to {}: {}", doctor.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -227,7 +231,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorCancelledAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending doctor cancellation confirmation email to {}: {}", doctor.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -257,7 +261,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending patient cancelled appointment email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -284,7 +288,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientCancelledAppointmentConfirmationTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending patient cancellation confirmation email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
     }
 
@@ -309,7 +313,7 @@ public class EmailServiceImpl implements EmailService{
         try {
             sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "passwordRecoveryTemplate", locale);
         } catch (MessagingException e) {
-            // TODO catch
+            LOGGER.error("Error sending user reset password email to {}: {}", user.getEmail(), e.getMessage(), e);
         }
     }
 }

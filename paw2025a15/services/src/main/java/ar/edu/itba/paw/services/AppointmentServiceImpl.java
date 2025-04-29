@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ import ar.edu.itba.paw.models.User;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
     private final EmailService es;
 
@@ -124,7 +128,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         
         // Schedule something after 3 months
         Runnable task = () -> {
-            System.out.println("3 months passed! Running the scheduled task.");//TODO: should be a log
+            LOGGER.info("3 months passed! Running the scheduled task.");
             
             appointmentDao.removeAppointment(shiftId, date);
         };

@@ -27,7 +27,8 @@ public enum LocaleEnum {
                 return localeEnum;
             }
         }
-        //throw new IllegalArgumentException("Unsupported Locale: " + locale); TODO esto tendria que ser un log, vamos a forzar que ante uno desconocido sea ingles
+        
+        //Unsupported Locale, assigning english as default
         return EN_US;
     }
 

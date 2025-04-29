@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
     <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
   </head>
-  <body><!--TODO: if not used, delete this file-->
+  <body><!--TODO: if not used, delete this file, if used inter needed-->
     <div class="page-container" style="display: flex; flex-direction: row;">
         <div class="doctor-card">
             <div class="doctor-info">
