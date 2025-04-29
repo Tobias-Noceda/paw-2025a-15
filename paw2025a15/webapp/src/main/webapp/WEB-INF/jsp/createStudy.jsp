@@ -22,7 +22,7 @@
             <form:errors path="type" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="type">
-                <p>Type:</p><!--TODO inter!!-->
+                <p><spring:message code="createStudy.type"/>:</p>
               </form:label>
               <form:select  path="type" cssClass="form-select">
                 <form:options items="${studyTypeSelectItems}" itemValue="name" itemLabel="displayName" />
@@ -33,7 +33,7 @@
             <form:errors path="date" cssClass="form-error" element="p"/>
             <div class="field-info-container">
               <form:label cssClass="form-title" path="date">
-                  <p>Study Date:</p>
+                  <p><spring:message code="createStudy.date"/>:</p>
               </form:label>
               <form:input type="date" path="date" cssClass="form-input" />
             </div>
