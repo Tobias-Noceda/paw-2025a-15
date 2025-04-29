@@ -57,7 +57,7 @@
     .hidden-file-input {
       display: none;
     }
-  </style>
+  </style><!--TODO: is style here ok?-->
 </head>
 <body>
 <jsp:include page="components/header.jsp">
@@ -99,70 +99,70 @@
     </div>
 
     <div class="doctor-card">
-      <div class="patient-info-div"><!--TODO: needs styling and inter, its only placeholder-->
-        <label for="patient-age">Age:</label>
+      <div class="patient-info-div"><!--TODO: needs styling, its only placeholder-->
+        <label for="patient-age"><spring:message code="profileInfo.age"/>:</label>
         <input type="number" id="patient-age" name="age" value="${patientDetails.age}" />
       </div>
       <div class="patient-info-div">
-        <label for="patient-blood-type">Blood Type:</label>
+        <label for="patient-blood-type"><spring:message code="profileInfo.bloodType"/>:</label>
         <select id="patient-blood-type" name="bloodType">
-            <option value="" <c:if test="${patientDetails.bloodType == null}">selected</c:if>>Select Blood Type</option>
-            <option value="A_POSITIVE" <c:if test="${patientDetails.bloodType == 'A_POSITIVE'}">selected</c:if>>A+</option>
-            <option value="A_NEGATIVE" <c:if test="${patientDetails.bloodType == 'A_NEGATIVE'}">selected</c:if>>A-</option>
-            <option value="B_POSITIVE" <c:if test="${patientDetails.bloodType == 'B_POSITIVE'}">selected</c:if>>B+</option>
-            <option value="B_NEGATIVE" <c:if test="${patientDetails.bloodType == 'B_NEGATIVE'}">selected</c:if>>B-</option>
-            <option value="O_POSITIVE" <c:if test="${patientDetails.bloodType == 'O_POSITIVE'}">selected</c:if>>O+</option>
-            <option value="O_NEGATIVE" <c:if test="${patientDetails.bloodType == 'O_NEGATIVE'}">selected</c:if>>O-</option>
-            <option value="AB_POSITIVE" <c:if test="${patientDetails.bloodType == 'AB_POSITIVE'}">selected</c:if>>AB+</option>
-            <option value="AB_NEGATIVE" <c:if test="${patientDetails.bloodType == 'AB_NEGATIVE'}">selected</c:if>>AB-</option>
+          <option value="" <c:if test="${patientDetails.bloodType == null}">selected</c:if>>
+            <spring:message code="profileInfo.bloodType.select"/>
+          </option>
+          <c:forEach var="bloodType" items="${bloodTypes}">
+              <option value="${bloodType.name()}"
+                  <c:if test="${patientDetails.bloodType == bloodType}">selected</c:if>>
+                  ${bloodType.getName()}
+              </option>
+          </c:forEach>
         </select>
       </div>
       <div class="patient-info-div">
-        <label for="patient-height">Height (m):</label>
+        <label for="patient-height"><spring:message code="profileInfo.height"/>:</label>
         <input type="number" step="0.01" id="patient-height" name="height" value="${patientDetails.height}" />
       </div>
       <div class="patient-info-div">
-        <label for="patient-weight">Weight (kg):</label>
+        <label for="patient-weight"><spring:message code="profileInfo.weight"/>:</label>
         <input type="number" step="0.01" id="patient-weight" name="weight" value="${patientDetails.weight}" />
       </div>
       <div class="patient-info-div">
-        <label for="patient-smokes">Smokes:</label>
+        <label for="patient-smokes"><spring:message code="profileInfo.smokes"/>:</label>
         <select id="patient-smokes" name="smokes">
-          <option value="" <c:if test="${patientDetails.smokes == null}">selected</c:if>>Select</option>
-            <option value="true" <c:if test="${patientDetails.smokes}">selected</c:if>>Yes</option>
-            <option value="false" <c:if test="${patientDetails.smokes == false}">selected</c:if>>No</option>
+          <option value="" <c:if test="${patientDetails.smokes == null}">selected</c:if>><spring:message code="profileInfo.select"/></option>
+            <option value="true" <c:if test="${patientDetails.smokes}">selected</c:if>><spring:message code="profileInfo.yes"/></option>
+            <option value="false" <c:if test="${patientDetails.smokes == false}">selected</c:if>><spring:message code="profileInfo.no"/></option>
         </select>
       </div>
       <div class="patient-info-div">
-        <label for="patient-drinks">Drinks:</label>
+        <label for="patient-drinks"><spring:message code="profileInfo.drinks"/>:</label>
         <select id="patient-drinks" name="drinks">
-          <option value="" <c:if test="${patientDetails.drinks == null}">selected</c:if>>Select</option>
-            <option value="true" <c:if test="${patientDetails.drinks}">selected</c:if>>Yes</option>
-            <option value="false" <c:if test="${patientDetails.drinks == false}">selected</c:if>>No</option>
+          <option value="" <c:if test="${patientDetails.drinks == null}">selected</c:if>><spring:message code="profileInfo.select"/></option>
+            <option value="true" <c:if test="${patientDetails.drinks}">selected</c:if>><spring:message code="profileInfo.yes"/></option>
+            <option value="false" <c:if test="${patientDetails.drinks == false}">selected</c:if>><spring:message code="profileInfo.no"/></option>
         </select>
       </div>
       <div class="patient-info-div">
-        <label for="patient-meds">Medications:</label>
+        <label for="patient-meds"><spring:message code="profileInfo.meds"/>:</label>
         <textarea id="patient-meds" name="meds"><c:out value="${patientDetails.meds}"/></textarea>
       </div>
       <div class="patient-info-div">
-        <label for="patient-conditions">Conditions:</label>
+        <label for="patient-conditions"><spring:message code="profileInfo.conditions"/>:</label>
         <textarea id="patient-conditions" name="conditions"><c:out value="${patientDetails.conditions}"/></textarea>
       </div>
       <div class="patient-info-div">
-        <label for="patient-allergies">Allergies:</label>
+        <label for="patient-allergies"><spring:message code="profileInfo.allergies"/>:</label>
         <textarea id="patient-allergies" name="allergies"><c:out value="${patientDetails.allergies}"/></textarea>
       </div>
       <div class="patient-info-div">
-        <label for="patient-diet">Diet:</label>
+        <label for="patient-diet"><spring:message code="profileInfo.diet"/>:</label>
         <textarea id="patient-diet" name="diet"><c:out value="${patientDetails.diet}"/></textarea>
       </div>
       <div class="patient-info-div">
-        <label for="patient-hobbies">Hobbies:</label>
+        <label for="patient-hobbies"><spring:message code="profileInfo.hobbies"/>:</label>
         <textarea id="patient-hobbies" name="hobbies"><c:out value="${patientDetails.hobbies}"/></textarea>
       </div>
       <div class="patient-info-div">
-        <label for="patient-job">Job:</label>
+        <label for="patient-job"><spring:message code="profileInfo.job"/>:</label>
         <textarea id="patient-job" name="job"><c:out value="${patientDetails.job}"/></textarea>
       </div>
     </div>
