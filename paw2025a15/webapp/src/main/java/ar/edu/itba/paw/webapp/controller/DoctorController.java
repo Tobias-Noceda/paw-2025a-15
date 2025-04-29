@@ -114,9 +114,9 @@ public class DoctorController {
         if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to authorize this doctor");
         }
-
+        
         if ("update".equals(action)) {
-            dds.updateAuthDoctor(user.getId(), doctorId, accessLevels.stream().map(AccessLevelEnum::valueOf).toList());
+            dds.updateAuthDoctor(user.getId(), doctorId, (accessLevels==null? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
         }
         else if ("toggle".equals(action)) {
             dds.toggleAuthDoctor(user.getId(), doctorId);

@@ -89,6 +89,9 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        if(accessLevels==null || accessLevels.isEmpty()){
+            doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
+        }
         List<AccessLevelEnum> toRemove = new ArrayList<>();
         for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
             if(currentAccessLevel!=AccessLevelEnum.VIEW_RESTRICTED && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
