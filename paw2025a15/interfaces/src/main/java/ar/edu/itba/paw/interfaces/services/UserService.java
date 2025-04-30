@@ -13,6 +13,8 @@ public interface UserService {
 
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale);
 
+    public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale);
+
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality, LocaleEnum locale);
 
     public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality, LocaleEnum locale);

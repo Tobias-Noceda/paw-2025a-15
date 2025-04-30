@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.SpecialtyEnum;
@@ -27,6 +28,9 @@ public class UserServiceImpl implements UserService {
     private DoctorDetailService dds;
 
     @Autowired
+    private PatientDetailService pds;
+
+    @Autowired
     private FileService fs;
 
     @Override
@@ -37,6 +41,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
         return userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
+    }
+
+    @Override//TODO check porfa
+    public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
+        User user = userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
+        pds.create(user.getId(), null, null, null, null, null, null, telephone, telephone, email, password, name, telephone)
+        return user;
     }
 
     @Override
