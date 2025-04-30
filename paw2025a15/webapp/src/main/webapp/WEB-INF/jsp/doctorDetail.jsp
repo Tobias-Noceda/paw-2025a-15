@@ -67,19 +67,27 @@
                     <spring:message code='doctorDetail.update.socialAccess'/>
                 </label>
                 <c:set var="buttonTextUpdate">
-                    <spring:message code='doctorDetail.update.confirmButton'/>
-                  </c:set>
-                  <c:set var="authCancelTextUpdate">
-                    <spring:message code='doctorDetail.update.cancelButton'/>
-                  </c:set>
+                  <spring:message code='doctorDetail.update.confirmButton'/>
+                </c:set>
+                <c:set var="authCancelTextUpdate">
+                  <spring:message code='doctorDetail.update.cancelButton'/>
+                </c:set>
                 <c:set var="confirmationTextUpdate">
-                    <spring:message code='doctorDetail.update.confirm'/>
-                  </c:set>
+                  <spring:message code='doctorDetail.update.confirm'/>
+                </c:set>
+                <spring:message code="doctorDetail.update.confirm.basic" var="msgBasic"/>
+                <spring:message code="doctorDetail.update.confirm.medical" var="msgMedical"/>
+                <spring:message code="doctorDetail.update.confirm.lifestyle" var="msgLifestyle"/>
+                <spring:message code="doctorDetail.update.confirm.extra" var="msgExtra"/>
+                <c:set var="confirmationSecondaryTextUpdate">
+                  <ul><li>${msgBasic}</li><li>${msgMedical}</li><li>${msgLifestyle}</li></ul>${msgExtra}
+                  
+                </c:set>
                 <button 
                   type="button" 
                   name="action" 
                   value="update" 
-                  onclick="confirmAuthDoctor('${confirmationTextUpdate}', null, '${buttonTextUpdate}', '${authCancelTextUpdate}', this.name, this.value)" 
+                  onclick="confirmAuthDoctor('${confirmationTextUpdate}', '${confirmationSecondaryTextUpdate}', '${buttonTextUpdate}', '${authCancelTextUpdate}', this.name, this.value)" 
                   class="doctor-auth-button">
                   <spring:message code='doctorDetail.update.updateButton'/>
                 </button>

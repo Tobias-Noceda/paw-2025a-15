@@ -70,6 +70,24 @@ ADD COLUMN create_date DATE;
 --la logica de esto es que esten dispersos similar
 --UPDATE users
 --SET create_date = DATEADD(DAY, (userid * @totalDays / @maxId), @startDate);
+-- DO $$
+-- DECLARE
+--     start_date DATE := DATE '2025-03-12';
+--     end_date DATE := CURRENT_DATE;
+--     max_id INT;
+--     min_id INT;
+--     total_days INT;
+-- BEGIN
+--     -- Obtener mínimo y máximo user_id
+--     SELECT MIN(user_id), MAX(user_id) INTO min_id, max_id FROM users;
+--     total_days := end_date - start_date;
+
+--     -- Actualizar fechas proporcionalmente
+--     UPDATE users
+--     SET create_date = start_date + make_interval(days =>
+--         ROUND(((user_id - min_id) * total_days * 1.0) / (max_id - min_id))::INT
+--     );
+-- END $$;
 --ALTER TABLE users
 --ALTER COLUMN create_date SET NOT NULL;
 
