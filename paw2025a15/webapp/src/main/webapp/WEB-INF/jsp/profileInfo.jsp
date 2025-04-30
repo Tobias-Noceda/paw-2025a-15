@@ -89,16 +89,18 @@
           <span class="doctor-specialty-label"><spring:message code="profile.role.label"/>:</span>
           <p class="doctor-specialty"><c:out value="${user.role}"/></p>
         </div>
-        <div>
-          <label for="phoneNumber"><spring:message code="profile.phone.label"/></label>
-          <form:input type="number" path="phoneNumber" value="${user.telephone}" cssClass="doctor-phone" />
-        </div>
 
 
       </div>
     </div>
 
     <div class="doctor-card">
+      <p><spring:message code="profileInfo.basic"/></p>
+      <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+      <div>
+        <label for="phoneNumber"><spring:message code="profile.phone.label"/></label>
+        <form:input type="number" path="phoneNumber" value="${user.telephone}" cssClass="doctor-phone" />
+      </div>
       <div class="patient-info-div"><!--TODO: needs styling, its only placeholder-->
         <label for="patient-age"><spring:message code="profileInfo.age"/>:</label>
         <input type="number" id="patient-age" name="age" value="${patientDetails.age}" />
@@ -125,6 +127,8 @@
         <label for="patient-weight"><spring:message code="profileInfo.weight"/>:</label>
         <input type="number" step="0.01" id="patient-weight" name="weight" value="${patientDetails.weight}" />
       </div>
+      <p><spring:message code="profileInfo.habits"/></p>
+      <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
       <div class="patient-info-div">
         <label for="patient-smokes"><spring:message code="profileInfo.smokes"/>:</label>
         <select id="patient-smokes" name="smokes">
@@ -142,6 +146,12 @@
         </select>
       </div>
       <div class="patient-info-div">
+        <label for="patient-diet"><spring:message code="profileInfo.diet"/>:</label>
+        <textarea id="patient-diet" name="diet"><c:out value="${patientDetails.diet}"/></textarea>
+      </div>
+      <p><spring:message code="profileInfo.medical"/></p>
+      <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+      <div class="patient-info-div">
         <label for="patient-meds"><spring:message code="profileInfo.meds"/>:</label>
         <textarea id="patient-meds" name="meds"><c:out value="${patientDetails.meds}"/></textarea>
       </div>
@@ -153,10 +163,8 @@
         <label for="patient-allergies"><spring:message code="profileInfo.allergies"/>:</label>
         <textarea id="patient-allergies" name="allergies"><c:out value="${patientDetails.allergies}"/></textarea>
       </div>
-      <div class="patient-info-div">
-        <label for="patient-diet"><spring:message code="profileInfo.diet"/>:</label>
-        <textarea id="patient-diet" name="diet"><c:out value="${patientDetails.diet}"/></textarea>
-      </div>
+      <p><spring:message code="profileInfo.social"/></p>
+      <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
       <div class="patient-info-div">
         <label for="patient-hobbies"><spring:message code="profileInfo.hobbies"/>:</label>
         <textarea id="patient-hobbies" name="hobbies"><c:out value="${patientDetails.hobbies}"/></textarea>

@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +53,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
             doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
         }
         else{
-            doctorDetailDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED);
+            doctorDetailDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
         }
     }
 
@@ -68,7 +68,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
         if(accessLevels==null || accessLevels.isEmpty()) return;
-        if(accessLevels.contains(AccessLevelEnum.VIEW_RESTRICTED)){
+        if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
             doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
             return;
         }
@@ -89,12 +89,16 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        List<AccessLevelEnum> toRemove;
         if(accessLevels==null || accessLevels.isEmpty()){
-            doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
+            toRemove = getAuthAccessLevelEnums(patientId, doctorId);
+            toRemove.remove(AccessLevelEnum.VIEW_BASIC);
         }
-        List<AccessLevelEnum> toRemove = new ArrayList<>();
-        for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
-            if(currentAccessLevel!=AccessLevelEnum.VIEW_RESTRICTED && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
+        else{
+            toRemove = Collections.emptyList();
+            for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
+                if(currentAccessLevel!=AccessLevelEnum.VIEW_BASIC && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
+            }
         }
         unauthDoctorWithLevels(patientId, doctorId, toRemove);
         authDoctorWithLevels(patientId, doctorId, accessLevels);

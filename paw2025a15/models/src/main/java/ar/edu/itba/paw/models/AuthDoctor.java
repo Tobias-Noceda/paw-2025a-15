@@ -8,7 +8,7 @@ public class AuthDoctor {
     public AuthDoctor(long doctorId, long patientId){
         this.doctorId = doctorId;
         this.patientId = patientId;
-        this.accessLevel = AccessLevelEnum.VIEW_RESTRICTED;
+        this.accessLevel = AccessLevelEnum.VIEW_BASIC;
     }
 
     public AuthDoctor(long doctorId, long patientId, AccessLevelEnum accessLevel){

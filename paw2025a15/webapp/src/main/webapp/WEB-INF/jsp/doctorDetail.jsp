@@ -55,16 +55,16 @@
             <spring:message code='doctorDetail.update.currentPermits'/>
             <div class="doctor-name-div">
                 <label>
-                  <input type="checkbox" name="accessLevels" value="VIEW_BASIC" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_BASIC')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.basicAccess'/>
-                </label>
-                <label>
                     <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
                     <spring:message code='doctorDetail.update.medicalAccess'/>
                 </label>
                 <label>
-                    <input type="checkbox" name="accessLevels" value="VIEW_LIFESTYLE" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_LIFESTYLE')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.lifestyleAccess'/>
+                    <input type="checkbox" name="accessLevels" value="VIEW_HABITS" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">checked</c:if>/>
+                    <spring:message code='doctorDetail.update.habitsAccess'/>
+                </label>
+                <label>
+                  <input type="checkbox" name="accessLevels" value="VIEW_SOCIAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">checked</c:if>/>
+                    <spring:message code='doctorDetail.update.socialAccess'/>
                 </label>
                 <c:set var="buttonTextUpdate">
                     <spring:message code='doctorDetail.update.confirmButton'/>

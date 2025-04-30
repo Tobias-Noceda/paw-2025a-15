@@ -152,7 +152,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
         if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) return;
-        if(accessLevel!=AccessLevelEnum.VIEW_RESTRICTED && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_RESTRICTED);
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_BASIC)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
         jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id, access_level) VALUES (?, ?, ?)", patientId, doctorId, accessLevel.ordinal());
     }
 
@@ -164,7 +164,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
 
     @Override
     public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        if(accessLevel!=AccessLevelEnum.VIEW_RESTRICTED) jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ?", patientId, doctorId, accessLevel.ordinal());
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC) jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ?", patientId, doctorId, accessLevel.ordinal());
         else unauthDoctorAllAccessLevels(patientId, doctorId);
     }
 

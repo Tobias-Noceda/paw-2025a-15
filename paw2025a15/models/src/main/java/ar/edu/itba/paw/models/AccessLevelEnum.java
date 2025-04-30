@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.models;
 
 public enum AccessLevelEnum {
-    VIEW_RESTRICTED("Only access to necessary user data"),
-    VIEW_BASIC("Basic access to the patient's age and blood type"),
+    VIEW_BASIC("Only access to necessary user data"),
     VIEW_MEDICAL("Access to medical details: conditions, meds, allergies"),
-    VIEW_LIFESTYLE("Access to lifestyle details: diet, hobbies, job");
+    VIEW_HABITS("Access to habits details: smokes, drinks, diet"),
+    VIEW_SOCIAL("Access to social details: hobbies, job");
 
     private final String description;
 

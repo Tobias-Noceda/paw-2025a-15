@@ -19,12 +19,16 @@ public class PatientView {
     private String hobbies = null;
     private String job = null;
 
-    public PatientView(long id, String email, String name, String telephone, long pictureId) {
+    public PatientView(long id, String email, String name, String telephone, long pictureId, Integer age, BloodTypeEnum bloodType, Double height, Double weight) {
         this.id = id;
         this. email = email;
         this.name= name;
         this.telephone = telephone;
         this.pictureId = pictureId;
+        this.age = age;
+        this.bloodType = bloodType;
+        this.height = height;
+        this.weight = weight;
     }
 
     public PatientView(long id, String email, String name, String telephone, long pictureId, Integer age, BloodTypeEnum bloodType, Double height, Double weight, 
@@ -48,23 +52,26 @@ public class PatientView {
         this.job = job;
     }
 
-    public void setViewBasic(Integer age, BloodTypeEnum bloodType){
+    public void setViewBasic(Integer age, BloodTypeEnum bloodType, Double height, Double weight){
         this.age = age;
         this.bloodType = bloodType;
-    }
-
-    public void setViewMedical(Double height, Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies){
         this.height = height;
         this.weight = weight;
-        this.smokes = smokes;
-        this.drinks = drinks;
+    }
+
+    public void setViewMedical(String meds, String conditions, String allergies){
         this.meds = meds;
         this.conditions = conditions;
         this.allergies = allergies;
     }
 
-    public void setViewLifeStyle(String diet, String hobbies, String job){
+    public void setViewHabits(Boolean smokes, Boolean drinks, String diet){
+        this.smokes = smokes;
+        this.drinks = drinks;
         this.diet = diet;
+    }
+
+    public void setViewSocial(String hobbies, String job){
         this.hobbies = hobbies;
         this.job = job;
     }

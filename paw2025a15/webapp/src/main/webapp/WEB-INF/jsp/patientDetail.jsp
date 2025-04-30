@@ -23,6 +23,13 @@
           <div class="patient-image">
             <img src="<c:url value='/supersecret/files/${patient.pictureId}'/>" alt="Doctor Image" />
           </div>
+          <div class="upload-button-div">
+            <a href="<c:url value='/upload-file/${patient.id}'/>" class="upload-button">
+              <spring:message code="patient.details.upload.label"/>
+            </a>
+          </div>
+          <p><spring:message code="profileInfo.basic"/></p>
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="patient-email-div">
             <p class="patient-email-label"><spring:message code="patient.details.email.label"/></p>
             <p class="patient-email"><c:out value="${patient.email}"/></p>
@@ -30,11 +37,6 @@
           <div class="patient-telephone-div">
             <p class="patient-telephone-label"><spring:message code="patient.details.telephone.label"/></p>
             <p class="patient-telephone"><c:out value="${patient.telephone}"/></p>
-          </div>
-          <div class="upload-button-div">
-            <a href="<c:url value='/upload-file/${patient.id}'/>" class="upload-button">
-              <spring:message code="patient.details.upload.label"/>
-            </a>
           </div>
         </div>
         <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling-->
@@ -55,17 +57,13 @@
               <p class="patient-email-label"><spring:message code="profileInfo.bloodType"/>:</p>
               <c:choose>
                 <c:when test="${patientDetails.bloodType != null}">
-                    <c:out value="${patientDetails.bloodType}" />
+                    <c:out value="${patientDetails.bloodType.getName()}" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
                 </c:otherwise>
               </c:choose>
             </div>
-          </div>
-          </c:if>
-          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">
-          <div class="med">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.height"/></p>
               <c:choose>
@@ -78,7 +76,7 @@
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label"><spring:message code="profileInfo.wieght"/></p>
+              <p class="patient-email-label"><spring:message code="profileInfo.weight"/></p>
               <c:choose>
                 <c:when test="${patientDetails.weight != null}">
                     <c:out value="${patientDetails.weight}" />
@@ -88,6 +86,12 @@
                 </c:otherwise>
               </c:choose>
             </div>
+          </div>
+          </c:if>
+          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">
+          <p><spring:message code="profileInfo.habits"/></p>
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <div class="habits">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.smokes"/></p>
               <c:choose>
@@ -110,6 +114,23 @@
                 </c:otherwise>
               </c:choose>
             </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label"><spring:message code="profileInfo.diet"/></p>
+              <c:choose>
+                <c:when test="${not empty patientDetails.diet}">
+                    <c:out value="${patientDetails.diet}" />
+                </c:when>
+                <c:otherwise>
+                  <spring:message code="profileInfo.notProvided"/>
+                </c:otherwise>
+              </c:choose>
+            </div>
+          </div>
+          </c:if>
+          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">
+          <p><spring:message code="profileInfo.medical"/></p>
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <div class="med">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.meds"/></p>
               <c:choose>
@@ -145,19 +166,10 @@
             </div>
           </div>
           </c:if>
-          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_LIFESTYLE')}">
+          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">
+          <p><spring:message code="profileInfo.social"/></p>
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="lifestyle">
-            <div class="patient-email-div">
-              <p class="patient-email-label"><spring:message code="profileInfo.diet"/></p>
-              <c:choose>
-                <c:when test="${not empty patientDetails.diet}">
-                    <c:out value="${patientDetails.diet}" />
-                </c:when>
-                <c:otherwise>
-                  <spring:message code="profileInfo.notProvided"/>
-                </c:otherwise>
-              </c:choose>
-            </div>
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.hobbies"/></p>
               <c:choose>
