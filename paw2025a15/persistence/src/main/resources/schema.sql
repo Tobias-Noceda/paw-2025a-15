@@ -64,22 +64,22 @@ CREATE TABLE IF NOT EXISTS users (
 -- ALTER TABLE users
 -- ADD COLUMN user_telephone VARCHAR(20) NOT NULL DEFAULT '1112345678';
 
---ALTER TABLE users
---ADD COLUMN locale INT NOT NULL DEFAULT 0;
+-- ALTER TABLE users
+-- ADD COLUMN locale INT NOT NULL DEFAULT 0;
 
---ALTER TABLE users
---ADD COLUMN create_date DATE;
---la logica de esto es que esten dispersos similar
---UPDATE users
---SET create_date = DATEADD(DAY, (userid * @totalDays / @maxId), @startDate);
---ALTER TABLE users
---ALTER COLUMN create_date SET NOT NULL;
-
---UPDATE users
---SET create_date = DATE '2025-04-09';
-
---ALTER TABLE users
---ALTER COLUMN create_date SET NOT NULL;
+-- ALTER TABLE users
+-- ADD COLUMN create_date DATE;
+-- -- la logica de esto es que esten dispersos similar
+-- UPDATE users
+-- SET create_date = DATEADD(DAY, (userid * @totalDays / @maxId), @startDate);
+-- ALTER TABLE users
+-- ALTER COLUMN create_date SET NOT NULL;
+--
+-- UPDATE users
+-- SET create_date = DATE '2025-04-09';
+-- --
+-- ALTER TABLE users
+-- ALTER COLUMN create_date SET NOT NULL;
 
 CREATE TABLE IF NOT EXISTS studies (
     study_id SERIAL PRIMARY KEY,
@@ -180,10 +180,10 @@ CREATE TABLE IF NOT EXISTS patient_details (
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
 );
 
---INSERT INTO patient_details (patient_id)
---SELECT user_id
---FROM users
---WHERE user_role = 0 --patient role
+-- INSERT INTO patient_details (patient_id)
+-- SELECT user_id
+-- FROM users
+-- WHERE user_role = 0 --patient role
 --  AND user_id NOT IN (SELECT patient_id FROM patient_details);
 
 CREATE TABLE IF NOT EXISTS auth_doctors (

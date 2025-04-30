@@ -84,4 +84,5 @@ public class PatientDetail {
         return job;
     }
 
+
 }

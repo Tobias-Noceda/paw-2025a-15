@@ -58,7 +58,7 @@ public class FileController {
     ) throws IOException {
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
         if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
-            File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
+            File f = fs.create(profileForm.getProfileImage().getBytes()., FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
         }else {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
