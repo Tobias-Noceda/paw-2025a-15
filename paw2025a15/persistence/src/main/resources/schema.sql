@@ -195,14 +195,14 @@ CREATE TABLE IF NOT EXISTS auth_doctors (
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
 
---ALTER TABLE auth_doctors
---ADD COLUMN allowed INT NOT NULL DEFAULT 0;
---ALTER TABLE auth_doctors
---RENAME COLUMN allowed TO access_level;
---ALTER TABLE auth_doctors
---DROP CONSTRAINT auth_doctors_pkey;
---ALTER TABLE auth_doctors
---ADD PRIMARY KEY (doctor_id, patient_id, access_level);
+-- ALTER TABLE auth_doctors
+-- ADD COLUMN allowed INT NOT NULL DEFAULT 0;
+-- ALTER TABLE auth_doctors
+-- RENAME COLUMN allowed TO access_level;
+-- ALTER TABLE auth_doctors
+-- DROP CONSTRAINT auth_doctors_pkey;
+-- ALTER TABLE auth_doctors
+-- ADD PRIMARY KEY (doctor_id, patient_id, access_level);
 
 CREATE TABLE IF NOT EXISTS auth_studies (
     doctor_id BIGINT NOT NULL,
