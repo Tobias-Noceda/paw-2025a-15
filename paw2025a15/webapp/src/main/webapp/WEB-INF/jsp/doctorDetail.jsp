@@ -75,12 +75,12 @@
                 <c:set var="confirmationTextUpdate">
                   <spring:message code='doctorDetail.update.confirm'/>
                 </c:set>
-                <spring:message code="doctorDetail.update.confirm.basic" var="msgBasic"/>
+                <spring:message code="doctorDetail.update.confirm.habits" var="msgHabits"/>
                 <spring:message code="doctorDetail.update.confirm.medical" var="msgMedical"/>
-                <spring:message code="doctorDetail.update.confirm.lifestyle" var="msgLifestyle"/>
+                <spring:message code="doctorDetail.update.confirm.social" var="msgSocial"/>
                 <spring:message code="doctorDetail.update.confirm.extra" var="msgExtra"/>
                 <c:set var="confirmationSecondaryTextUpdate">
-                  <ul><li>${msgBasic}</li><li>${msgMedical}</li><li>${msgLifestyle}</li></ul>${msgExtra}
+                  <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}
                   
                 </c:set>
                 <button 

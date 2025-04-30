@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +96,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
             toRemove.remove(AccessLevelEnum.VIEW_BASIC);
         }
         else{
-            toRemove = Collections.emptyList();
+            toRemove = new ArrayList<>();
             for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
                 if(currentAccessLevel!=AccessLevelEnum.VIEW_BASIC && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
             }
