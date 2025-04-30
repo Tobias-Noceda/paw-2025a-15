@@ -79,7 +79,7 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                us.create(
+                us.createPatient(
                         form.getEmail(),
                         passwordEncoder.encode(form.getPassword()),
                         form.getName() + " " + form.getSurname(),
