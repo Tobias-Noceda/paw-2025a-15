@@ -96,8 +96,14 @@ public class RegisterController {
         }
 
         if (!isValid) {
-            final ModelAndView mav = new ModelAndView("patientForm");
+            final ModelAndView mav = new ModelAndView("doctorForm");
             mav.addObject("registerPatientForm", form);
+            // Agregar los atributos usados por el formulario de médicos
+            mav.addObject("registerMedicForm", new DoctorForm()); // si Spring necesita esto
+            mav.addObject("obrasSocialesItems", is.getAllInsurances());
+            mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, Locale.getDefault()));
+            mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, Locale.getDefault()));
+            mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
             return mav;
         } else {
             return new ModelAndView("redirect:/");
@@ -111,19 +117,36 @@ public class RegisterController {
             Locale locale
     ) {
         boolean isValid = true;
+
         if (errors.hasErrors()) {
             isValid = false;
         } else if (!form.getPassword().equals(form.getConfirmPassword())) {
             errors.rejectValue("confirmPassword", "error.passwordMismatch");
-            isValid = false;            
+            isValid = false;
         } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
             errors.rejectValue("email", "error.emailExists");
+            isValid = false;
         } else {
             try {
                 // Crear el médico
-                User doc = us.createDoctor(form.getEmail(), passwordEncoder.encode(form.getPassword()), form.getName() + " " + form.getSurname(), form.getPhoneNumber(), "med-licence", form.getSpeciality(), LocaleEnum.fromLocale(LocaleContextHolder.getLocale()));
+                User doc = us.createDoctor(
+                        form.getEmail(),
+                        passwordEncoder.encode(form.getPassword()),
+                        form.getName() + " " + form.getSurname(),
+                        form.getPhoneNumber(),
+                        "med-licence",
+                        form.getSpeciality(),
+                        LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
+                );
                 dcs.addCoverages(doc.getId(), form.getObrasSociales());
-                dss.createShifts(doc.getId(), form.getSchedules().getWeekday(), form.getAddress(), LocalTime.parse(form.getSchedules().getStartTime()), LocalTime.parse(form.getSchedules().getEndTime()), form.getAmount());
+                dss.createShifts(
+                        doc.getId(),
+                        form.getSchedules().getWeekday(),
+                        form.getAddress(),
+                        LocalTime.parse(form.getSchedules().getStartTime()),
+                        LocalTime.parse(form.getSchedules().getEndTime()),
+                        form.getAmount()
+                );
                 loginUser(form.getEmail(), form.getPassword());
             } catch (Exception e) {
                 errors.reject("error.registerDoctorFailed");
@@ -135,7 +158,8 @@ public class RegisterController {
             return new ModelAndView("redirect:/home");
         } else {
             final ModelAndView mav = new ModelAndView("doctorForm");
-            mav.addObject("doctor", form);
+            mav.addObject("registerMedicForm", form);
+            mav.addObject("registerPatientForm", new PatientForm());
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
             mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
@@ -143,6 +167,7 @@ public class RegisterController {
             return mav;
         }
     }
+
 
     @RequestMapping(value = "/createLab", method = RequestMethod.POST)
     public ModelAndView registerForm(

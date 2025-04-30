@@ -5,8 +5,9 @@
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    max-height: min-content;
+    max-height: min-content; /* Compatible con ambos navegadores */
     overflow: hidden;
+    box-sizing: border-box; /* Normaliza el modelo de caja */
 }
 
 .upload-card form {
@@ -16,21 +17,20 @@
 .file-container {
     display: flex;
     flex-direction: row;
+    box-sizing: border-box;
 }
 
 .description-container {
     display: flex;
     flex-direction: row;
     margin: 5px 0 0 0;
+    box-sizing: border-box;
 }
 
 .description-label {
     font-size: 16px;
     font-weight: 700;
-    margin-top: 15px;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
+    margin: 15px 0 0 0; /* Simplificado para mayor claridad */
 }
 
 .upload-input {
@@ -39,6 +39,10 @@
     padding: 2px 0 2px 4px;
     border: 1px solid #ccc;
     border-radius: 6px;
+    box-sizing: border-box;
+    -webkit-appearance: none; /* Normaliza la apariencia en Chrome */
+    -moz-appearance: none; /* Normaliza la apariencia en Firefox */
+    appearance: none; /* Estándar */
 }
 
 .upload-button {
@@ -50,10 +54,21 @@
     cursor: pointer;
     font-size: 16px;
     font-weight: 700;
-    width: fit-content;
+    width: -moz-fit-content; /* Soporte para Firefox */
+    width: fit-content; /* Estándar para Chrome y otros navegadores */
     margin: 0 0 0 10px;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
 }
 
 .upload-button:hover {
     background-color: #0056b3;
+}
+
+/* Ajustes específicos para navegadores */
+@-moz-document url-prefix() {
+    /* Correcciones específicas para Firefox si es necesario */
+    .upload-input {
+        padding: 2px 0 2px 4px; /* Asegura consistencia en Firefox */
+    }
 }

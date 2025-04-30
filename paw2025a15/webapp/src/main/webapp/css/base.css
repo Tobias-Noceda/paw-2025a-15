@@ -1,0 +1,493 @@
+/* base.css */
+/* —————————————————————————————————————————————
+   Variables globales y reset
+   ————————————————————————————————————————————— */
+:root {
+    --font-family: 'Inter', sans-serif;
+    --clr-bg: #f0f4fa;
+    --clr-card: #ffffff;
+    --clr-primary: #4f83cc;
+    --clr-primary-hover: #3b6fa8;
+    --clr-text: #101828;
+    --clr-text-muted: #667085;
+    --clr-error-bg: #fdecea;
+    --clr-error-text: #b42318;
+    --radius: 12px;
+    --transition: 0.2s ease-in-out;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--clr-bg);
+    color: var(--clr-text);
+    min-height: 100vh;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Tarjeta genérica */
+.card {
+    background: var(--clr-card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    padding: 30px 25px;
+}
+
+/* Titulares */
+.title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--clr-text);
+    margin-bottom: 10px;
+    text-align: center;
+}
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--clr-text-muted);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Formularios, campos y botones */
+.login-form, .landing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.field-container {
+    display: flex;
+    flex-direction: column;
+}
+.field-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--clr-text);
+}
+.login-input, .login-select, .filter-select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    transition: border-color var(--transition);
+    background: #fff;
+}
+.login-input:focus, .login-select:focus, .filter-select:focus {
+    outline: none;
+    border-color: var(--clr-primary);
+}
+.btn-primary, .filter-button {
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color var(--transition);
+    background-color: var(--clr-primary);
+    color: var(--clr-card);
+}
+.btn-primary:hover, .filter-button:hover {
+    background-color: var(--clr-primary-hover);
+}
+
+/* Reutilizamos tu error/success-box si quieres */
+.error-box {
+    background-color: var(--clr-error-bg);
+    color: var(--clr-error-text);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Un par de utilidades */
+.link-primary {
+    color: var(--clr-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+.link-primary:hover {
+    text-decoration: underline;
+}
+
+/* En base.css (o un archivo compartido) */
+
+
+/* Hacemos clickeable todo el interior */
+
+.clickable-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    height: 100%;
+
+    text-decoration: none;
+
+    color: inherit;
+
+}
+
+
+/* Tag de día inactivo / activo */
+
+.weekday-tag {
+
+    display: inline-block;
+
+    padding: 4px 8px;
+
+    font-size: 0.8rem;
+
+    border-radius: var(--radius);
+
+    background: var(--clr-card);
+
+    border: 1px solid #d0d5dd;
+
+    color: var(--clr-text);
+
+    transition: background var(--transition), border-color var(--transition);
+
+}
+
+
+.weekday-tag.day-active {
+
+    background-color: var(--clr-primary);
+
+    border-color: var(--clr-primary);
+
+    color: var(--clr-card);
+
+}
+
+
+
+
+     /* 1) que los hijos de .page-container ocupen el 100% de ancho */
+
+ .landing-page .page-container {
+
+     align-items: stretch;   /* en lugar de center */
+
+     padding: 20px;
+
+ }
+
+
+/* 2) que .filter-card no tenga max-width */
+
+.landing-page .filter-card {
+
+    width: 100%;            /* ocupa todo el ancho del contenedor */
+
+    max-width: none;        /* quita cualquier límite */
+
+    margin-bottom: 30px;    /* separación con el listado */
+
+}
+
+
+/* Si quieres en pantallas enormes añadir un padding lateral */
+
+.landing-page .filter-card {
+
+    padding: 30px;
+
+}
+
+
+/* 3) mantiene tu estilo de card de base.css */
+
+.card {
+
+    background: var(--clr-card);
+
+    border-radius: var(--radius);
+
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+
+    /* padding lo pones aquí o en .filter-card */
+
+}
+
+
+/* -------------------------------------------------
+   Doctor Card
+   ------------------------------------------------- */
+.doctor-card {
+    width: 100%;            /* deja que el grid/flex padre controle el ancho */
+    max-width: 260px;       /* tamaño fijo / responsivo */
+    background: var(--clr-card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.doctor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+/* El enlace ocupa todo el interior */
+.doctor-card__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    padding: 24px 16px;
+}
+
+/* Avatar circular */
+.doctor-card__avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--clr-primary);
+}
+
+/* Espacio entre avatar y texto */
+.doctor-card__info {
+    text-align: center;
+    margin-top: 16px;
+}
+
+/* Nombre */
+.doctor-card__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--clr-text);
+}
+
+/* Especialidad */
+.doctor-card__specialty {
+    font-size: 0.9rem;
+    color: var(--clr-text-muted);
+    margin-bottom: 4px;
+}
+
+/* Obras sociales */
+.doctor-card__insurances {
+    font-size: 0.8rem;
+    color: var(--clr-text-muted);
+}
+
+/* Horarios (píldoras) */
+.doctor-card__schedule {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Reusa tus weekday-tag */
+.weekday-tag {
+    display: inline-block;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid #d0d5dd;
+    background: var(--clr-card);
+    color: var(--clr-text);
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.weekday-tag.day-active {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+
+/* ─── TÍTULOS DE SECCIÓN ─────────────────────────── */
+.section-title {
+    font-size: 1.75rem;              /* agranda un poco */
+    font-weight: 600;
+    color: var(--clr-text);
+    text-align: center;
+    margin: 40px auto 24px;
+    position: relative;
+    line-height: 1.2;
+}
+
+/* línea (pill) decorativa centrada debajo */
+.section-title::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--clr-primary);
+    border-radius: var(--radius);
+    margin: 8px auto 0;
+}
+
+/* ─── NOMBRE DEL DOCTOR MÁS DESTACADO ───────────── */
+.doctor-card__name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--clr-primary);
+    margin-bottom: 8px;
+}
+
+
+/* reutilizadas del bloque de filtros + doctores */
+.filter-card {
+    width: 100%;
+    max-width: none;
+    background: var(--clr-card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    padding: 30px 20px;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--clr-text);
+    text-align: center;
+    margin: 0 0 24px;
+    position: relative;
+}
+.section-title::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: var(--clr-primary);
+    border-radius: var(--radius);
+    margin: 8px auto 0;
+}
+
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+/* mensaje de “sin datos” */
+.no-data-message {
+    text-align: center;
+    padding: 40px 0;
+}
+.no-data-message .subtitle {
+    font-size: 1rem;
+    color: var(--clr-text-muted);
+}
+
+
+
+/* Hacemos que doctor-card y patient-card compartan estilos */
+.doctor-card,
+.patient-card {
+    width: 100%;
+    max-width: 260px;
+    background: var(--clr-card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.doctor-card:hover,
+.patient-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+/* Enlace interior idéntico */
+.doctor-card__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Avatar redondo */
+.doctor-card__avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--clr-primary);
+}
+
+/* Info centradita bajo el avatar */
+.doctor-card__info {
+    text-align: center;
+    margin-top: 16px;
+}
+
+/* Nombre destacado */
+.doctor-card__name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--clr-primary);
+    margin-bottom: 8px;
+}
+
+/* Contactos del paciente (en lugar de specialty/insurances) */
+.patient-card__contacts {
+    font-size: 0.9rem;
+    color: var(--clr-text-muted);
+    margin: 4px 0;
+}
+
+
+/* convierte el form en un grid de 3 columnas */
+
+.landing-form {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;             /* espacio entre columnas y filas */
+
+    align-items: end;      /* alinea los labels/selects y el botón abajo */
+
+}
+
+
+/* hace que el botón ocupe las 3 columnas completas */
+
+.landing-form .filter-button {
+
+    grid-column: 1 / -1;
+
+}
+
+.doctor-landing-container {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 20px;
+
+    justify-content: center;   /* ahora centra */
+
+    margin: 0 auto;            /* opcional para asegurar centrado */
+
+}

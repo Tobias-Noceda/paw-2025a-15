@@ -17,6 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
+import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
@@ -129,8 +130,8 @@ public class DoctorController {
         return new ModelAndView("redirect:/doctors/" + doctorId);        
     }
 
-    @RequestMapping("/register/doctor-form")
-    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale) {
+    @RequestMapping("/register")
+    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale,  @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
         final ModelAndView mav = new ModelAndView("doctorForm");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());

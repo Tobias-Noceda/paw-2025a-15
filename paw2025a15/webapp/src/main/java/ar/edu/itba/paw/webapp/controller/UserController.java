@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.form.ProfileForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.ChangePasswordForm;
+import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
@@ -91,7 +91,7 @@ public class UserController {
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorFutureAppointments", as.getFutureAppointmentDataByDoctorId(id));
         mav.addObject("doctorOldAppointments", as.getOldAppointmentDataByDoctorId(id));
-        mav.addObject("doctorAuthPatients", us.getAuthPatientsByDoctorId(id));
+        mav.addObject("doctorAuthPatients", us.getAuthPatientsPageByDoctorId(id, 1, 1000000));
         return mav;
     }
 
@@ -109,7 +109,7 @@ public class UserController {
 
     @RequestMapping(value = "/recover-password", method = RequestMethod.GET)
     public ModelAndView showRecoverPasswordPage() {
-        ModelAndView mav = new ModelAndView("recoverPassword");
+        ModelAndView mav = new ModelAndView("forgotPassword");
         mav.addObject("successMessage", "checkEmail");
         return mav;
     }
@@ -133,7 +133,7 @@ public class UserController {
             User user = us.getUserByEmail(form.getEmail()).orElseThrow(() -> new IllegalArgumentException("No such email"));
             es.sendPasswordResetEmail(user);
             LOGGER.info("Password reset email sent to: {}", form.getEmail());
-            mav = new ModelAndView("recoverPassword");
+            mav = new ModelAndView("forgotPassword");
             mav.addObject("successMessage", "linkSent");
         } catch (IllegalArgumentException e) {
             LOGGER.warn("No user found with email: {}", form.getEmail());

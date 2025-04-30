@@ -5,27 +5,23 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 public class PatientForm {
-    @Size(min = 1)
-    @NotEmpty(message = "{doctorForm.name.notEmpty}")
+    @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
 
-    @Size(min = 1)
-    @NotEmpty(message = "{doctorForm.surname.notEmpty}")
+    @NotEmpty(message = "{form.surname.notEmpty}")
     private String surname;
 
-    @Size(min = 8)
-    @NotEmpty
+    @Size(min=8, message="{form.password.size}")
     private String password;
 
-    @NotEmpty
     private String confirmPassword;
 
-    @NotEmpty(message = "{doctorForm.email.notEmpty}")
-    @Email(message = "{doctorForm.email.invalid}")
+    @NotEmpty(message = "{form.email.notEmpty}")
+    @Email(message = "{form.email.invalid}")
     private String email;
 
-    @NotEmpty
-    @Size(min = 8, max = 20)
+    @NotEmpty(message = "{form.phoneNumber.notEmpty}")
+    @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
     public String getPhoneNumber() {

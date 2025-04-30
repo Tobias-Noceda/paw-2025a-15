@@ -1,18 +1,19 @@
-.doctor-card { 
-    flex: 0 0 350px; /* Fixed width for left box */
+.doctor-card {
+    flex: 0 0 350px;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     max-height: min-content;
     overflow: hidden;
+    position: -webkit-sticky; /* Safari */
     position: sticky;
     top: 95px;
     z-index: 1;
 }
 
 .shifts-list-container {
-    flex: 1; /* Right box takes remaining space */
+    flex: 1;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -33,6 +34,7 @@
     height: auto;
     border-radius: 50%;
     object-fit: cover;
+    -o-object-fit: cover; /* Opera/Firefox fallback */
     max-width: 200px;
     max-height: 200px;
 }
@@ -80,7 +82,6 @@
 
 .doctor-email {
     font-size: 18px;
-    margin-top: 0;
     font-weight: bold;
     color: black;
     margin: 0 0 10px 0;
@@ -184,20 +185,6 @@
     }
 }
 
-.appointments-table th, .appointments-table td {
-    padding: 12px 15px;
-    text-align: left;
-}
-
-.appointments-table thead {
-    background-color: #0d4a85;
-    color: white;
-}
-
-.appointments-table tbody tr:hover {
-    background-color: #e9ecef;
-}
-
 .appointment-data {
     display: flex;
     flex-direction: row;
@@ -208,4 +195,37 @@
 .appointment-data-label {
     font-weight: bold;
     margin: 0 5px 0 0;
+}
+
+/* Scrollbar compatible with Firefox and WebKit */
+.shifts-list-container::-webkit-scrollbar,
+.doctor-card::-webkit-scrollbar {
+    width: 5px;
+}
+
+.shifts-list-container::-webkit-scrollbar-track,
+.doctor-card::-webkit-scrollbar-track {
+    background: white;
+    border-radius: 4px;
+}
+
+.shifts-list-container::-webkit-scrollbar-thumb,
+.doctor-card::-webkit-scrollbar-thumb {
+    background-color: #0d4a85;
+    border-radius: 4px;
+}
+
+.shifts-list-container::-webkit-scrollbar-thumb:hover,
+.doctor-card::-webkit-scrollbar-thumb:hover {
+    background-color: #0e3b6b;
+}
+
+.shifts-list-container {
+    scrollbar-color: #0d4a85 white; /* Firefox */
+    scrollbar-width: thin;
+}
+
+.doctor-card {
+    scrollbar-color: #0d4a85 white;
+    scrollbar-width: thin;
 }

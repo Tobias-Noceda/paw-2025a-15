@@ -17,9 +17,9 @@
         border-radius: 0 0 8px 8px;
         overflow-y: auto;
         width: 100%;
-        border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         cursor: pointer;
+        box-sizing: border-box; /* Normaliza el modelo de caja */
     }
 }
 
@@ -28,29 +28,30 @@
     .study-list-container table {
         font-size: 14px;
     }
-    
+
     .studies-table thead {
         background-color: #0d4a85; /* Match your header/nav bar color */
         color: white;
         font-size: 16px;
         cursor: default;
     }
-    
+
     /* Scrollable body container */
     .studies-table-body {
         max-height: calc(100vh - 232px);
         border-radius: 0 0 8px 8px;
         overflow-y: auto;
         width: 100%;
-        border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         cursor: pointer;
+        box-sizing: border-box; /* Normaliza el modelo de caja */
     }
 }
 
 .studies-div {
     flex-direction: row;
     flex: 1;
+    box-sizing: border-box;
 }
 
 .study-list-container {
@@ -62,6 +63,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .doctor-free-header {
@@ -69,6 +71,7 @@
     flex-direction: row;
     justify-content: start;
     gap: 20px;
+    box-sizing: border-box;
 }
 
 .table-title {
@@ -81,6 +84,7 @@
 .studies-table-header {
     border-radius: 8px 8px 0 0;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* Ensure both tables have the same column widths */
@@ -89,6 +93,7 @@
     border-collapse: collapse;
     table-layout: fixed;
     cursor: default;
+    box-sizing: border-box;
 }
 
 .no-studies-container {
@@ -97,6 +102,7 @@
     justify-content: center;
     align-items: center;
     flex: 1;
+    box-sizing: border-box;
 }
 
 .no-studies-text {
@@ -105,7 +111,7 @@
     color: #555;
     margin: 5px;
 }
-  
+
 .studies-table th,
 .studies-table .text-cell {
     padding: 12px 15px;
@@ -113,6 +119,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    box-sizing: border-box;
 }
 
 .studies-table .deauthorize-cell {
@@ -122,6 +129,7 @@
     width: 105px;
     max-width: 105px;
     min-width: 105px;
+    box-sizing: border-box;
 }
 
 .studies-table .deauthorize-cell form {
@@ -146,7 +154,8 @@
 }
 
 .cancel-button {
-    max-width: fit-content;
+    max-width: -moz-fit-content; /* Soporte para Firefox */
+    max-width: fit-content; /* Estándar para Chrome y otros navegadores */
     background-color: #e60202;
     color: white;
     font-weight: 600;
@@ -154,28 +163,33 @@
     padding: 5px 10px;
     cursor: pointer;
     border-radius: 5px;
+    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
+    box-sizing: border-box;
 }
-  
+
 .cancel-button:hover {
     background-color: #b90101;
 }
-  
+
 .studies-table tbody tr {
     border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
 }
-  
+
 .studies-table tbody tr:nth-child(even) {
     background-color: #f8f9fa;
 }
-  
+
 .studies-table tbody tr:hover {
     background-color: #e9ecef;
+    transition: background-color 0.2s ease; /* Suaviza el efecto hover */
 }
 
 .doctors-last-column {
     width: 95px;
     min-width: 95px;
     max-width: 95px;
+    box-sizing: border-box;
 }
 
 .studies-last-column {
@@ -187,17 +201,18 @@
 .studies-table-body::-webkit-scrollbar {
     width: 5px;
 }
-  
+
 .studies-table-body::-webkit-scrollbar-track {
     background: white;
     border-radius: 4px;
 }
-  
+
 .studies-table-body::-webkit-scrollbar-thumb {
     background-color: #0d4a85;
     border-radius: 4px;
+    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
 }
-  
+
 .studies-table-body::-webkit-scrollbar-thumb:hover {
     background-color: #0e3b6b;
 }
@@ -237,8 +252,10 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
+    box-sizing: border-box;
 }
-  
+
 .deauthorize-button:hover {
     background-color: #b90101;
 }
@@ -247,6 +264,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    box-sizing: border-box;
 }
 
 .upload-button-div {
@@ -256,6 +274,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 25px;
+    box-sizing: border-box;
 }
 
 .upload-button {
@@ -267,9 +286,29 @@
     border-radius: 6px;
     text-decoration: none;
     cursor: pointer;
-    max-height: fit-content;
+    max-height: -moz-fit-content; /* Soporte para Firefox */
+    max-height: fit-content; /* Estándar para Chrome y otros navegadores */
+    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
+    box-sizing: border-box;
 }
 
 .upload-button:hover {
     background-color: #0056b3;
+}
+
+/* Ajustes específicos para navegadores */
+@-moz-document url-prefix() {
+    /* Correcciones específicas para Firefox si es necesario */
+    .studies-table-body {
+        scrollbar-width: thin; /* Personaliza el scrollbar en Firefox */
+        scrollbar-color: #0d4a85 white; /* Color del thumb y track en Firefox */
+    }
+
+    .studies-table-body::-webkit-scrollbar-thumb {
+        background-color: #0d4a85; /* Fallback para compatibilidad */
+    }
+
+    .studies-table-body::-webkit-scrollbar-thumb:hover {
+        background-color: #0e3b6b;
+    }
 }

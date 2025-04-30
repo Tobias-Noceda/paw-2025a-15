@@ -1,10 +1,12 @@
 .doctor-form-container {
     background-color: #ffffff;
-    width: fit-content;
+    width: -moz-fit-content; /* Soporte para Firefox */
+    width: fit-content; /* Estándar para Chrome y otros navegadores */
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     overflow: hidden;
+    box-sizing: border-box; /* Normaliza el modelo de caja */
 }
 
 .doctor-form {
@@ -15,12 +17,13 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    box-sizing: border-box;
 }
 
 .field-info-container {
     display: flex;
     flex-direction: row;
-    align-content: center;
+    align-items: center; /* Cambiado de align-content a align-items para mejor compatibilidad */
     gap: 10px;
 }
 
@@ -31,9 +34,10 @@
 
 .form-title {
     font-weight: bold;
+    width: -moz-fit-content; /* Soporte para Firefox */
     width: fit-content;
     display: flex;
-    align-content: center;
+    align-items: center; /* Cambiado de align-content a align-items */
 }
 
 .doctor-form-amount,
@@ -46,6 +50,10 @@
     padding: 2px 0 2px 4px;
     border: 1px solid #ccc;
     border-radius: 6px;
+    box-sizing: border-box;
+    -webkit-appearance: none; /* Normaliza la apariencia en Chrome */
+    -moz-appearance: none; /* Normaliza la apariencia en Firefox */
+    appearance: none; /* Estándar */
 }
 
 .form-select-doctor,
@@ -55,6 +63,7 @@
 }
 
 .hour-select {
+    width: -moz-fit-content; /* Soporte para Firefox */
     width: fit-content;
 }
 
@@ -77,8 +86,22 @@
     cursor: pointer;
     font-size: 16px;
     width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
 }
 
 .register-button:hover {
     background-color: #0056b3;
+}
+
+/* Ajustes específicos para navegadores */
+@-moz-document url-prefix() {
+    /* Correcciones específicas para Firefox si es necesario */
+    .doctor-form-amount,
+    .hour-select,
+    .form-select-doctor,
+    .doctor-form-input,
+    .form-select {
+        padding: 2px 0 2px 4px; /* Asegura consistencia en Firefox */
+    }
 }

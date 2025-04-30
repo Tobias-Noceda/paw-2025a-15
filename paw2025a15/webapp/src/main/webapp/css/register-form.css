@@ -380,3 +380,55 @@ body {
     border-color: var(--clr-primary-hover);
     color: var(--clr-card);
 }
+
+.insurance-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.insurance-btn {
+    position: relative;
+    display: inline-block;
+}
+
+.insurance-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.insurance-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: var(--clr-card);
+    border: 1px solid var(--clr-text-muted);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    transition: background var(--transition),
+    border-color var(--transition),
+    color var(--transition);
+}
+
+.insurance-checkbox:checked + .insurance-label {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+.insurance-btn:hover > .insurance-label {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-card);
+}

@@ -1,58 +1,102 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><spring:message code="login.title"/></title>
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+
+  <!-- Fuente moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Hoja de estilos mejorada -->
   <link rel="stylesheet" href="<c:url value='/css/login-form.css'/>">
 </head>
 <body>
 
 <c:url value="/login" var="loginUrl" />
-<c:url value="/register/choose" var="registerUrl" />
+<c:url value="/register" var="registerUrl" />
 <c:url value="/forgot-password" var="forgotPasswordUrl" />
 
 <div class="page-container">
-  <div class="doctor-form-container">
-    <img src="<c:url value='/resources/favicon.png'/>" alt="Caretrace Logo" class="logo">
-    <h2><spring:message code="login.title"/></h2>
-    <form action="${loginUrl}" method="post" class="doctor-form" enctype="application/x-www-form-urlencoded">
+  <div class="login-card">
 
+    <!-- Logo -->
+    <img src="<c:url value='/resources/favicon.png'/>"
+         alt="Caretrace Logo"
+         class="logo">
+
+    <!-- Título y subtítulo -->
+    <h2 class="title"><spring:message code="login.title"/></h2>
+    <p class="subtitle"><spring:message code="login.welcome"/></p>
+
+    <!-- Formulario -->
+    <form action="${loginUrl}"
+          method="post"
+          class="login-form"
+          enctype="application/x-www-form-urlencoded">
+
+      <!-- Email -->
       <div class="field-container">
-        <div class="field-info-container">
-          <label class="form-title" for="username"><spring:message code="doctorForm.email"/></label>
-          <input id="username" name="username" type="text" class="doctor-form-input" value="${param.username}"/>
-        </div>
+        <label for="username" class="field-label">
+          <spring:message code="doctorForm.email"/>
+        </label>
+        <input id="username"
+               name="username"
+               type="text"
+               class="login-input"
+               placeholder="you@example.com"
+               value="${param.username}" />
       </div>
 
+      <!-- Password -->
       <div class="field-container">
-        <div class="field-info-container">
-          <label class="form-title" for="password"><spring:message code="login.password"/></label>
-          <input id="password" name="password" type="password" class="doctor-form-input"/>
-        </div>
+        <label for="password" class="field-label">
+          <spring:message code="login.password"/>
+        </label>
+        <input id="password"
+               name="password"
+               type="password"
+               class="login-input"
+               placeholder="••••••••••" />
       </div>
 
-      <div class="field-container">
-        <div class="field-info-container">
-          <label class="form-title">
-            <input name="remember-me" type="checkbox"/> <spring:message code="login.rememberMe"/>
-          </label>
-        </div>
+      <!-- Remember + Forgot -->
+      <div class="options-row">
+        <label class="checkbox-container">
+          <input name="remember-me" type="checkbox" />
+          <span class="checkbox-label"><spring:message code="login.rememberMe"/></span>
+        </label>
+        <a href="${forgotPasswordUrl}" class="link-small">
+          <spring:message code="login.forgotPassword"/>
+        </a>
       </div>
 
+      <!-- Error message -->
       <c:if test="${not empty errorMessage}">
-        <div style="color: red;">
+        <div class="error-box">
           <spring:message code="${errorMessage}"/>
         </div>
       </c:if>
 
-      <div class="doctor-div">
-        <input type="submit" value="<spring:message code='login.submit'/>" class="register-button"/>
-      </div>
+      <!-- Submit -->
+      <button type="submit" class="btn-primary">
+        <spring:message code="login.submit"/>
+      </button>
 
+      <!-- Link extra -->
       <div class="extra-links">
-        <p><spring:message code="login.noAccount"/> <a href="${registerUrl}"><spring:message code="login.register"/></a></p>
-        <p><a href="${forgotPasswordUrl}"><spring:message code="login.forgotPassword"/></a></p>
+        <p>
+          <spring:message code="login.noAccount"/>
+          <a href="${registerUrl}" class="link-primary">
+            <spring:message code="login.register"/>
+          </a>
+        </p>
       </div>
 
     </form>
