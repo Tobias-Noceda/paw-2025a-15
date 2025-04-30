@@ -15,7 +15,7 @@
   <!-- Fuente Inter + estilos comunes -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
         rel="stylesheet">
-  <link rel="stylesheet" href="<c:url value='/css/login-form.css'/>">
+  <link rel="stylesheet" href="<c:url value='/css/register-form.css'/>">
 
   <!-- FontAwesome para el icono “ojo” -->
   <link rel="stylesheet"
@@ -236,17 +236,19 @@
           <form:input path="address" type="text" cssClass="login-input"/>
         </div>
 
-        <div class="field-container">
-          <label class="field-label">
-            <spring:message code="doctorForm.obrasSociales"/>
-          </label>
-          <div class="checkbox-group">
-            <form:checkboxes path="obrasSociales"
-                             items="${obrasSocialesItems}"
-                             itemLabel="name"
-                             itemValue="id"
-                             cssClass="checkbox-inline"/>
-          </div>
+        <div class="insurance-toggle-group">
+          <c:forEach var="insurance" items="${obrasSocialesItems}">
+            <div class="insurance-btn">
+              <input type="checkbox"
+                     id="insurance-${insurance.id}"
+                     name="obrasSociales"
+                     value="${insurance.id}"
+                     class="insurance-checkbox"/>
+              <label for="insurance-${insurance.id}" class="insurance-label">
+                  ${insurance.name}
+              </label>
+            </div>
+          </c:forEach>
         </div>
 
         <div class="field-container">
@@ -260,27 +262,16 @@
           <div class="weekday-toggle-group">
 
             <c:forEach var="day" items="${weekdaySelectItems}">
-
-              <label class="weekday-btn">
-
-                <!-- checkbox oculto pero clicable -->
-
-                <form:checkbox path="schedules.weekday"
-
-                               value="${day.value}"
-
-                               cssClass="weekday-checkbox"/>
-
-                <!-- ¡justo después! la span con la inicial -->
-
-                <span class="weekday-label">
-
-          <spring:message code="weekday.${day.value}.initial"/>
-
-        </span>
-
-              </label>
-
+              <div class="weekday-btn">
+                <input type="checkbox"
+                       id="day-${day.value}"
+                       name="schedules.weekday"
+                       value="${day.value}"
+                       class="weekday-checkbox"/>
+                <label for="day-${day.value}" class="weekday-label">
+                  <spring:message code="weekday.${day.value}.initial"/>
+                </label>
+              </div>
             </c:forEach>
 
           </div>
