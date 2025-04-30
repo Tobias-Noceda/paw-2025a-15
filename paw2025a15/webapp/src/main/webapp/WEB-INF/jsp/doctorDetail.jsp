@@ -49,7 +49,6 @@
           </div>
           <div class="doctor-info"><!--TODO:front here, this is placeholder with no style-->
             <c:if test="${isAuthDoctor}">
-<<<<<<< HEAD
               <spring:message code='doctorDetail.update.currentPermits'/>
               <div class="doctor-name-div">
                 <label>
@@ -64,31 +63,6 @@
                   <input type="checkbox" name="accessLevels" value="VIEW_SOCIAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">checked</c:if>/>
                   <spring:message code='doctorDetail.update.socialAccess'/>
                 </label>
-=======
-            <spring:message code='doctorDetail.update.currentPermits'/>
-            <div class="doctor-name-div">
-              <div class="weekday-toggle-group">
-                <div class="weekday-btn">
-                  <label>
-                    <input class="weekday-checkbox" type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.medicalAccess'/>
-                  </label>
-                </div>
-                <div class="weekday-btn">
-                  <label>
-                    <input class="weekday-checkbox" type="checkbox" name="accessLevels" value="VIEW_HABITS" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.habitsAccess'/>
-                  </label>
-                </div>
-
-                <div class="weekday-btn">
-                  <label>
-                    <input class="weekday-checkbox" type="checkbox" name="accessLevels" value="VIEW_SOCIAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.socialAccess'/>
-                  </label>
-                </div>
-              </div>
->>>>>>> 4f61516f3bade59aee821f46b416d16cf7d10153
                 <c:set var="buttonTextUpdate">
                   <spring:message code='doctorDetail.update.confirmButton'/>
                 </c:set>
