@@ -75,6 +75,12 @@ CREATE TABLE IF NOT EXISTS users (
 --ALTER TABLE users
 --ALTER COLUMN create_date SET NOT NULL;
 
+--UPDATE users
+--SET create_date = DATE '2025-04-09';
+
+--ALTER TABLE users
+--ALTER COLUMN create_date SET NOT NULL;
+
 CREATE TABLE IF NOT EXISTS studies (
     study_id SERIAL PRIMARY KEY,
     study_type VARCHAR(100) NOT NULL,
