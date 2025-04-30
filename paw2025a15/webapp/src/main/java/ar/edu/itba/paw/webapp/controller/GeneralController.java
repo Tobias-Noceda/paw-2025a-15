@@ -62,8 +62,10 @@ public class GeneralController {
         if(doctors != null) {
             mav.addObject("docList", doctors);
         }
+        // ceilling of the divition
+        int totalPages = (int) Math.ceil((double) totalLength / PAGE_SIZE);
         mav.addObject("page", page);
-        mav.addObject("totalPages", totalLength / PAGE_SIZE);
+        mav.addObject("totalPages", totalPages);
         mav.addObject("insurances", is.getAllInsurances());
         mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
         mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));

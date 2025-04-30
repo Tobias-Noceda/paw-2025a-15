@@ -18,29 +18,25 @@
       <div class="doctor-card">
         <div class="doctor-info">
           <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
-          <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
           <div class="doctor-name-div">
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
-              <c:if test="${isAuthDoctor}">
-                  <c:set var="buttonText">
-                    <spring:message code='doctorDetail.toggleButton.deauthorize'/>
-                  </c:set>
-                  <c:set var="confirmationText">
-                    <spring:message code='doctorDetail.deauthorize.confirm'/>
-                  </c:set>
-              </c:if>
+            <c:set var="confirmationText">
+              <spring:message code='doctorDetail.authorize.confirm'/>
+            </c:set>
+            <c:set var="authCancelText">
+              <spring:message code='doctorDetail.authorize.cancelButton'/>
+            </c:set>
+            <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
               <c:if test="${!isAuthDoctor}">
-                  <c:set var="buttonText">
-                    <spring:message code='doctorDetail.toggleButton.authorize'/>
-                  </c:set>
-                  <c:set var="confirmationText">
-                    <spring:message code='doctorDetail.authorize.confirm'/>
-                  </c:set>
+                <c:set var="buttonText">
+                  <spring:message code='doctorDetail.toggleButton.authorize'/>
+                </c:set>
               </c:if>
-              <c:set var="authCancelText">
-                <spring:message code='doctorDetail.authorize.cancelButton'/>
-              </c:set>
-
+              <c:if test="${isAuthDoctor}">
+                <c:set var="buttonText">
+                  <spring:message code='doctorDetail.toggleButton.deauthorize'/>
+                </c:set>
+              </c:if>
               <button 
                   type="button" 
                   name="action" 
@@ -49,22 +45,23 @@
                   class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}">
                   <c:out value="${buttonText}"/>
               </button>
+            </form>
           </div>
           <div class="doctor-info"><!--TODO:front here, this is placeholder with no style-->
             <c:if test="${isAuthDoctor}">
-            <spring:message code='doctorDetail.update.currentPermits'/>
-            <div class="doctor-name-div">
+              <spring:message code='doctorDetail.update.currentPermits'/>
+              <div class="doctor-name-div">
                 <label>
-                    <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.medicalAccess'/>
+                  <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
+                  <spring:message code='doctorDetail.update.medicalAccess'/>
                 </label>
                 <label>
-                    <input type="checkbox" name="accessLevels" value="VIEW_HABITS" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.habitsAccess'/>
+                  <input type="checkbox" name="accessLevels" value="VIEW_HABITS" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">checked</c:if>/>
+                  <spring:message code='doctorDetail.update.habitsAccess'/>
                 </label>
                 <label>
                   <input type="checkbox" name="accessLevels" value="VIEW_SOCIAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">checked</c:if>/>
-                    <spring:message code='doctorDetail.update.socialAccess'/>
+                  <spring:message code='doctorDetail.update.socialAccess'/>
                 </label>
                 <c:set var="buttonTextUpdate">
                   <spring:message code='doctorDetail.update.confirmButton'/>
@@ -80,8 +77,7 @@
                 <spring:message code="doctorDetail.update.confirm.social" var="msgSocial"/>
                 <spring:message code="doctorDetail.update.confirm.extra" var="msgExtra"/>
                 <c:set var="confirmationSecondaryTextUpdate">
-                  <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}
-                  
+                  <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}    
                 </c:set>
                 <button 
                   type="button" 
@@ -91,9 +87,8 @@
                   class="doctor-auth-button">
                   <spring:message code='doctorDetail.update.updateButton'/>
                 </button>
-              </c:if>
-            </div>
-          </form>
+              </div>
+            </c:if>
           </div>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="doctor-image">
