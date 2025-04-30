@@ -12,19 +12,15 @@ import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 
 public class DoctorForm {
-    @Size(min = 1)
-    @NotEmpty(message = "{form.name.notEmpty}")
+    @NotEmpty(message = "{doctorForm.name.notEmpty}")
     private String name;
 
-    @Size(min = 1)
-    @NotEmpty(message = "{form.surname.notEmpty}")
+    @NotEmpty(message = "{doctorForm.surname.notEmpty}")
     private String surname;
 
-    @Size(min=8)
-    @NotEmpty
+    @Size(min=8, message="{form.password.size}")
     private String password;
 
-    @NotEmpty
     private String confirmPassword;
 
     @NotNull(message = "{form.specialty.notNull}")
@@ -36,20 +32,17 @@ public class DoctorForm {
     @NotNull(message = "{form.schedules.notNull}")
     private Schedule schedules;
 
-    @Size(min = 1, max = 50, message = "{form.address.size}")
     @NotEmpty(message = "{form.address.notEmpty}")
     private String address;
 
-    @NotEmpty(message = "{form.email.notEmpty}")
-    @Email(message = "{form.email.invalid}")
+    @NotEmpty(message = "{doctorForm.email.notEmpty}")
+    @Email(message = "{doctorForm.email.invalid}")
     private String email;
 
-    @NotNull(message = "{doctorForm.amount.notNull}")
-    @Positive(message = "{doctorForm.amount.positive}")
     private int amount;
 
-    @NotEmpty
-    @Size(min=8, max=15)
+    @NotEmpty(message = "{form.phoneNumber.notEmpty}")
+    @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
     public String getPhoneNumber() {
