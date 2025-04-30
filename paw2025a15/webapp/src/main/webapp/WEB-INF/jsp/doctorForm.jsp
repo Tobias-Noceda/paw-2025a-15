@@ -213,15 +213,25 @@
 
 <script>
   function switchForm(type) {
+    state = type;
+    localStorage.setItem("formState", type); // Guardamos en localStorage
+
     document.getElementById('patientSection').style.display = type === 'patient' ? 'block' : 'none';
     document.getElementById('medicSection').style.display = type === 'medic' ? 'block' : 'none';
+
     document.querySelectorAll('.toggle-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.type === type);
     });
   }
-  window.onload = function() {
-    switchForm('patient');
+
+  window.onload = function () {
+    const savedState = localStorage.getItem("formState"); // Leemos de localStorage
+    if (savedState === 'medic' || savedState === 'patient') {
+      state = savedState;
+    }
+    switchForm(state);
   };
+
   function togglePassword(id) {
     const f = document.getElementById(id),
             i = f.nextElementSibling.querySelector('i');
@@ -234,6 +244,7 @@
     }
   }
 </script>
+
 
 </body>
 </html>
