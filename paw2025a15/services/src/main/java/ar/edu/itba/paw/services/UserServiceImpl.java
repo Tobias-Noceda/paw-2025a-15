@@ -64,8 +64,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAuthPatientsByDoctorId(long id) {
-        return userDao.getAuthPatientsByDoctorId(id);
+    public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize) {
+        return userDao.getAuthPatientsPageByDoctorId(id, page, pageSize);
+    }
+
+    @Override
+    public int getAuthPatientsCountByDoctorId(long id) {
+        return userDao.getAuthPatientsCountByDoctorId(id);
+    }
+    
+    @Override
+    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
+        return userDao.searchAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize);
+    }
+
+    @Override
+    public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
+        return userDao.searchAuthPatientsCountByDoctorIdAndName(doctorId, name);
     }
 
     @Override
@@ -78,18 +93,12 @@ public class UserServiceImpl implements UserService {
         userDao.changePasswordByID(id, password);
     }
 
-
     @Override
     public  void updatePhoneNumber(long id, String number){ userDao.UpdatePhoneNumber(id, number); }
 
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
         if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
-    }
-
-    @Override
-    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name) {
-        return userDao.searchAuthPatientsByDoctorIdAndName(doctorId, name);
     }
 
     @Override

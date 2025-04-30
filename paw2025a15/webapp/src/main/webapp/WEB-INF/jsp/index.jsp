@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
@@ -78,6 +79,9 @@
         <c:if test="${empty docList}">
           <div class="no-doctors-message-div">
             <h1><spring:message code="landing.noDoctors"></spring:message></h1>
+            <a href="<c:url value='/'/>" class="no-doctors-button">
+              <spring:message code="landing.noDoctors.button" />
+            </a>
           </div>
         </c:if>
       </c:if>
@@ -102,6 +106,62 @@
           </div>
         </c:if>
       </c:if>
+      <c:set var="queryString">
+        <c:forEach var="param" items="${paramValues}">
+          <c:if test="${param.key != 'page'}">
+            <c:forEach var="value" items="${param.value}">
+              <c:out value="${fn:escapeXml(param.key)}=${fn:escapeXml(value[0])}&"/>
+            </c:forEach>
+          </c:if>
+        </c:forEach>
+      </c:set>
+      <div class="page-navigator-div">
+        <!-- Previous Button -->
+        <form method="get" style="margin-block-end: 0px; margin-right: 3px;">
+          ${queryParams}
+          <input type="hidden" name="page" value="${1}" />
+          <button type="submit" class="page-navigation-button"
+            <c:if test="${page == 1}">disabled</c:if>
+          >
+            <spring:message code="landing.pagination.first"/>
+          </button>
+        </form>
+
+        <form method="get" style="margin-block-end: 0px; margin-right: 3px;">
+          ${queryParams}
+          <input type="hidden" name="page" value="${page - 1}" />
+          <button type="submit" class="page-navigation-button"
+            <c:if test="${page == 1}">disabled</c:if>
+          >
+            <spring:message code="doctorDetail.previousWeek"/>
+          </button>
+        </form>
+
+        <div class="page-button">
+          ${page} / ${totalPages}
+        </div>
+
+        <!-- Next Button -->
+        <form method="get" style="margin-block-end: 0px; margin-left: 3px;">
+          ${queryParams}
+          <input type="hidden" name="page" value="${page + 1}" />
+          <button type="submit" class="page-navigation-button"
+            <c:if test="${page == totalPages}">disabled</c:if>
+          >
+            <spring:message code="doctorDetail.nextWeek"/>
+          </button>
+        </form>
+
+        <form method="get" style="margin-block-end: 0px; margin-left: 3px;">
+          ${queryParams}
+          <input type="hidden" name="page" value="${totalPages}" />
+          <button type="submit" class="page-navigation-button"
+            <c:if test="${page == totalPages}">disabled</c:if>
+          >
+            <spring:message code="landing.pagination.last"/>
+          </button>
+        </form>
+      </div>
     </div>
   </body>
 </html>

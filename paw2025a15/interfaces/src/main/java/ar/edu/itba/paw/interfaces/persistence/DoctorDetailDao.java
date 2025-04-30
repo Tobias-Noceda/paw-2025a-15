@@ -6,20 +6,26 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.WeekdayEnum;
-import ar.edu.itba.paw.models.Insurance;
 
 public interface DoctorDetailDao {
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty);
 
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId);
 
-    public List<DoctorView> getAllDoctors();
+    public List<DoctorView> getDoctorsPage(int page, int pageSize);
 
-    public List<DoctorView> findDoctorsByName(String name);    
+    public int getTotalDoctors();
 
-    List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday);
+    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize);
+
+    public int getTotalDoctorsByName(String name);
+
+    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize);
+
+    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday);
 
     public List<DoctorView> getAuthDoctorsByPatientId(long id);
 

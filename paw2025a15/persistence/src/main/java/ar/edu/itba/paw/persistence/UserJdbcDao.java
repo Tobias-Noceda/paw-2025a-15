@@ -63,12 +63,65 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public List<User> getAuthPatientsByDoctorId(long id) {
+    public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize) {
+        if(page < 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+
         return (List<User>) jdbcTemplate.query(
-                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ? GROUP BY u.user_id",
-                new Object[]{id},
-                new int[]{ java.sql.Types.BIGINT },
+                """
+                    SELECT u.*
+                    FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
+                    WHERE ad.doctor_id = ? GROUP BY u.user_id
+                    LIMIT ? OFFSET ?
+                """,
+                new Object[]{id, pageSize, offset},
+                new int[]{ java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.INTEGER },
                 ROW_MAPPER
+        );
+    }
+
+    @Override
+    public int getAuthPatientsCountByDoctorId(long id) {
+        return jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM auth_doctors WHERE doctor_id = ?",
+            new Object[]{id},
+            new int[]{java.sql.Types.INTEGER},
+            Integer.class
+        );
+    }
+
+    @Override
+    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
+        if(page < 0 || pageSize <= 0) return Collections.emptyList();
+        if(name == null || name.trim().isEmpty()) return Collections.emptyList();
+        if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
+        int offset = (page - 1) * pageSize;
+        return (List<User>) jdbcTemplate.query(
+                """
+                    SELECT u.*
+                    FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
+                    WHERE ad.doctor_id = ? AND u.user_name LIKE ?
+                    LIMIT ? OFFSET ?
+                """,
+                new Object[]{doctorId, "%" + name.trim() + "%", pageSize, offset},
+                new int[]{ java.sql.Types.BIGINT, java.sql.Types.VARCHAR, java.sql.Types.INTEGER, java.sql.Types.INTEGER },
+                ROW_MAPPER
+        );
+    }
+
+    @Override
+    public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
+        if(name == null || name.trim().isEmpty()) return 0;
+        if(name.contains(";") || name.contains("--") || name.contains("'")) return 0;//TODO hotfix prevention, should be changed
+        return jdbcTemplate.queryForObject(
+            """
+                SELECT COUNT(*)
+                FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
+                WHERE ad.doctor_id = ? AND u.user_name LIKE ?
+            """,
+            new Object[]{doctorId, "%" + name.trim() + "%"},
+            new int[]{java.sql.Types.BIGINT, java.sql.Types.VARCHAR},
+            Integer.class
         );
     }
 
@@ -90,19 +143,6 @@ public class UserJdbcDao implements UserDao{
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
         jdbcTemplate.update("UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?", name, pictureId, telephone, id);
-    }
-
-
-    @Override
-    public List<User> searchAuthPatientsByDoctorIdAndName(long doctorId, String name) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
-        if(name == null || name.trim().isEmpty()) return Collections.emptyList();
-        if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
-        return (List<User>) jdbcTemplate.query(
-                "SELECT u.* FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id WHERE ad.doctor_id = ? AND u.user_name LIKE ?",
-                new Object[]{doctorId, "%" + name.trim() + "%"},
-                new int[]{ java.sql.Types.BIGINT, java.sql.Types.VARCHAR},
-                ROW_MAPPER
-        );
     }
 
     @Override

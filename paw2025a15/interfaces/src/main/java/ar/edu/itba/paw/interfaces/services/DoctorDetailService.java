@@ -15,11 +15,17 @@ public interface DoctorDetailService {
 
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId);
 
-    public List<DoctorView> getAllDoctors();
+    public List<DoctorView> getDoctorsPage(int page, int pageSize);
 
-    public List<DoctorView> findDoctorsByName(String name);
+    public int getTotalDoctors();
 
-    List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday);
+    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize);
+
+    public int getTotalDoctorsByName(String name);
+
+    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize);
+
+    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday);
 
     public List<DoctorView> getAuthDoctorsByPatientId(long id);
 

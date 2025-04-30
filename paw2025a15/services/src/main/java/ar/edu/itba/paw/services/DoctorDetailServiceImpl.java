@@ -1,16 +1,20 @@
 package ar.edu.itba.paw.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.models.AccessLevelEnum;
+import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.SpecialtyEnum;
+import ar.edu.itba.paw.models.WeekdayEnum;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
@@ -29,18 +33,33 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     }
 
     @Override
-    public List<DoctorView> getAllDoctors() {
-        return doctorDetailDao.getAllDoctors();
+    public List<DoctorView> getDoctorsPage(int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPage(page, pageSize);
     }
 
     @Override
-    public List<DoctorView> findDoctorsByName(String name) {
-        return doctorDetailDao.findDoctorsByName(name);
+    public int getTotalDoctors() {
+        return doctorDetailDao.getTotalDoctors();
     }
 
     @Override
-    public List<DoctorView> getFilteredDoctor(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday){
-        return doctorDetailDao.getFilteredDoctor(specialty, insurance, weekday);
+    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize) {
+        return doctorDetailDao.findDoctorsPageByName(name, page, pageSize);
+    }
+
+    @Override
+    public int getTotalDoctorsByName(String name) {
+        return doctorDetailDao.getTotalDoctorsByName(name);
+    }
+
+    @Override
+    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
+        return doctorDetailDao.getFilteredDoctorsPage(specialty, insurance, weekday, page, pageSize);
+    }
+
+    @Override
+    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
+        return doctorDetailDao.getTotalFilteredDoctors(specialty, insurance, weekday);
     }
 
     @Override
@@ -94,8 +113,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         if(accessLevels==null || accessLevels.isEmpty()){
             toRemove = getAuthAccessLevelEnums(patientId, doctorId);
             toRemove.remove(AccessLevelEnum.VIEW_BASIC);
-        }
-        else{
+        } else {
             toRemove = new ArrayList<>();
             for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
                 if(currentAccessLevel!=AccessLevelEnum.VIEW_BASIC && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
