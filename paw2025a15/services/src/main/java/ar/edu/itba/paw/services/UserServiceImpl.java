@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override//TODO check porfa
     public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
         User user = userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
-        pds.create(user.getId(), null, null, null, null, null, null, telephone, telephone, email, password, name, telephone)
+        pds.create(user.getId(), null, null, null, null, null, null, null, null, null, null, null, null);
         return user;
     }
 
