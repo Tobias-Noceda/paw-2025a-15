@@ -33,6 +33,8 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.User;
 
+import java.util.NoSuchElementException;
+
 @Controller
 public class UserController {
 

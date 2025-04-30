@@ -1,6 +1,8 @@
 /* —————————————————————————————————————————————
    Variables globales y reset
    ————————————————————————————————————————————— */
+
+
 :root {
     --font-family: 'Inter', sans-serif;
     --clr-bg: #f0f4fa;
