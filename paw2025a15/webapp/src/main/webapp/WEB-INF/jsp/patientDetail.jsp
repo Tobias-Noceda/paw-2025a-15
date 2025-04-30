@@ -78,7 +78,7 @@
               </c:choose>
             </div>
             <div class="patient-email-div">
-              <p class="patient-email-label"><spring:message code="profileInfo.wieght"/></p>
+              <p class="patient-email-label"><spring:message code="profileInfo.weight"/></p>
               <c:choose>
                 <c:when test="${patientDetails.weight != null}">
                     <c:out value="${patientDetails.weight}" />

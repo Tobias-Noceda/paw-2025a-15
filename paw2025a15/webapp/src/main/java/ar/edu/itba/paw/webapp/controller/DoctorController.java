@@ -116,7 +116,7 @@ public class DoctorController {
         }
         
         if ("update".equals(action)) {
-            dds.updateAuthDoctor(user.getId(), doctorId, (accessLevels==null? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
+            dds.updateAuthDoctor(user.getId(), doctorId, (accessLevels == null ? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
         }
         else if ("toggle".equals(action)) {
             dds.toggleAuthDoctor(user.getId(), doctorId);

@@ -9,7 +9,7 @@ function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   if(secondaryMessage == null || secondaryMessage == undefined || secondaryMessage == "") {
     secondaryMessageElement.style.display = 'none';
   } else {
-    secondaryMessageElement.textContent = secondaryMessage;
+    secondaryMessageElement.innerHTML = secondaryMessage;
   }
   const acceptButton = document.getElementById('confirmButton');
   acceptButton.textContent = accept;
