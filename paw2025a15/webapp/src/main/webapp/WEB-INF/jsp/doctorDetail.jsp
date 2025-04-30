@@ -45,7 +45,7 @@
                   class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}">
                   <c:out value="${buttonText}"/>
               </button>
-            </form>
+
           </div>
           <div class="doctor-info"><!--TODO:front here, this is placeholder with no style-->
             <c:if test="${isAuthDoctor}">
@@ -87,6 +87,7 @@
                   class="doctor-auth-button">
                   <spring:message code='doctorDetail.update.updateButton'/>
                 </button>
+              </form>
               </div>
             </c:if>
           </div>

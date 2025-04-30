@@ -31,7 +31,9 @@ import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.BloodTypeEnum;
+import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.UserRoleEnum;
 
 import java.util.NoSuchElementException;
 
@@ -195,7 +197,8 @@ public class UserController {
 
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
         mav.addObject("user", user);
-        mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
+        if(user.getRole().equals(UserRoleEnum.PATIENT)) mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
+        else mav.addObject("patientDetails", null);
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         return mav;
     }

@@ -65,6 +65,7 @@
                       cssClass="input-field"
                       value="${user.telephone}"/>
         </div>
+        <c:if test="${patientDetails != null}">
         <div class="field-container">
           <label for="patient-age"><spring:message code="profileInfo.age"/></label>
           <input id="patient-age"
@@ -176,10 +177,11 @@
           <textarea id="patient-job" name="job" class="input-field" rows="1">${patientDetails.job}</textarea>
         </div>
       </div>
+    </c:if>
     </div>
 
     <!-- Botón guardar -->
-    <div class="save-container">
+    <div class="save-container" style="margin-top: 15px;">
       <button type="submit" class="btn-primary">
         <spring:message code="profile.save.button"/>
       </button>
