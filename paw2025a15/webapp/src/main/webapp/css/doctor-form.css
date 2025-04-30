@@ -16,7 +16,6 @@
 .field-container {
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
     box-sizing: border-box;
 }
 

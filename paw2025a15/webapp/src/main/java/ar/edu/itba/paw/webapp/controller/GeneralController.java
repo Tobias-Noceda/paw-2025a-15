@@ -28,7 +28,7 @@ import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 @Controller
 public class GeneralController {
 
-    private final static int PAGE_SIZE = 1;
+    private final static int PAGE_SIZE = 8;
 
     @Autowired
     private UserService us;

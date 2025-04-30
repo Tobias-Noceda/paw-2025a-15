@@ -11,7 +11,7 @@
     <link rel="icon" href="<c:url value='/resources/favicon.png'/>">
     <!-- CSS base compartido -->
     <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
-
+    <link rel="stylesheet" href="<c:url value='/css/landing-page.css'/>">
   </head>
   <body class="landing-page">
     <jsp:include page="components/header.jsp"> <jsp:param name="username" value="${user.name}"/>
