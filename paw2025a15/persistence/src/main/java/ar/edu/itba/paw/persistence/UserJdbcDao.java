@@ -136,7 +136,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public void UpdatePhoneNumber(long id, String number) {
+    public void updatePhoneNumber(long id, String number) {
         jdbcTemplate.update("UPDATE users SET user_telephone = ? WHERE user_id = ?", number, id);
     }
 

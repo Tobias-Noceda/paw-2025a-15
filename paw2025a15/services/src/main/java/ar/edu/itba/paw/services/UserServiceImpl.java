@@ -105,7 +105,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public  void updatePhoneNumber(long id, String number){ userDao.UpdatePhoneNumber(id, number); }
+    public  void updatePhoneNumber(long id, String number){ 
+        userDao.updatePhoneNumber(id, number); 
+    }
 
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {

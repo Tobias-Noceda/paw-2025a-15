@@ -38,17 +38,6 @@ public class User {
         this.locale = locale;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", pictureId=" + pictureId +
-                '}';
-    }
-
     public long getId(){
         return id;
     }
@@ -83,6 +72,50 @@ public class User {
 
     public LocaleEnum getLocale(){
         return locale;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof User)) return false;
+
+        User o = (User) other;
+
+        return (this.id==o.id) && (this.name.equals(o.name)) 
+        && (this.email.equals(o.email)) && (this.password.equals(o.password))
+        && (this.telephone.equals(o.telephone)) && (this.role.equals(o.role))
+        && (this.pictureId == o.pictureId) && (this.createDate.equals(o.createDate))
+        && (this.locale.equals(o.locale));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(id);
+        result = 31 * result + name.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + telephone.hashCode();
+        result = 31 * result + role.hashCode();
+        result = 31 * result + Long.hashCode(pictureId);
+        result = 31 * result + createDate.hashCode();
+        result = 31 * result + locale.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "User{" +
+            "id=" + id +
+            ", name=" + name +
+            ", email=" + email +
+            ", password=" + password +
+            ", telephone=" + telephone +
+            ", role=" + role +
+            ", pictureId=" + pictureId +
+            ", createDate=" + createDate +
+            ", locale=" + locale +
+            '}';
     }
 
 }

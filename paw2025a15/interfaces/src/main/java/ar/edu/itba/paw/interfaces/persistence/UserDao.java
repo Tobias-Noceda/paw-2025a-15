@@ -30,5 +30,5 @@ public interface UserDao {
 
     void changePasswordByID(long id, String password);
 
-    void UpdatePhoneNumber(long id, String number);
+    void updatePhoneNumber(long id, String number);
 }

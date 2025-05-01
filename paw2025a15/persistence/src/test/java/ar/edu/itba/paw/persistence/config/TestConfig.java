@@ -11,9 +11,13 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @ComponentScan({ "ar.edu.itba.paw.persistence" })
 @Configuration
+@EnableTransactionManagement(proxyTargetClass = true)
 public class TestConfig {
 
     @Value("classpath:pgsql.sql") 
@@ -48,5 +52,10 @@ public class TestConfig {
  
          return populator;
      }
+
+     @Bean
+    public TransactionManager transactionManager(DataSource ds){
+        return new JdbcTransactionManager(ds);
+    }
 
 }
