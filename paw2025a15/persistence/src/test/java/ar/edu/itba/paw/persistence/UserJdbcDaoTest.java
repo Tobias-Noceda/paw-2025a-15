@@ -46,7 +46,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreate(){
-        final User USER = TestData.Users.newPatient;
         final String USEREMAIL = TestData.Users.newPatient.getEmail();
         final String PASSWORD = TestData.Users.newPatient.getPassword();
         final String USERNAME = TestData.Users.newPatient.getName();
@@ -58,7 +57,6 @@ public class UserJdbcDaoTest {
         User user = userDao.create(USEREMAIL, PASSWORD, USERNAME, USER_TELEPHONE, USER_ROLE, PICTURE_ID, USER_LOCALE);
 
         Assert.assertNotNull(user);
-        Assert.assertEquals(USER, user);
         Assert.assertEquals(USEREMAIL, user.getEmail());
         Assert.assertEquals(PASSWORD, user.getPassword());
         Assert.assertEquals(USERNAME, user.getName());

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Arrays;
+
 public class File {
 
     private final long id;
@@ -32,13 +34,13 @@ public class File {
 
         File o = (File) other;
 
-        return (this.id==o.id) && (this.type.equals(o.type)) && (this.content.equals(o.content));
+        return (this.id==o.id) && (this.type.equals(o.type)) && Arrays.equals(this.content,o.content);
     }
 
     @Override
     public int hashCode() {
         int result = Long.hashCode(id);
-        result = 31 * result + content.hashCode();
+        result = 31 * result + Arrays.hashCode(content);
         result = 31 * result + type.hashCode();
         return result;
     }

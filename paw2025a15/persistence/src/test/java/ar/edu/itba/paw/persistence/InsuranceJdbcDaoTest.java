@@ -47,14 +47,14 @@ public class InsuranceJdbcDaoTest {
 
     @Test
     public void testCreate(){
-        final Insurance INSURANCE = TestData.Insurances.newInsurance;
         final String NAME = TestData.Insurances.newInsurance.getName();
         final long PICTURE_ID = TestData.Insurances.newInsurance.getPictureId();
 
         Insurance insurance = insuranceDao.create(NAME, PICTURE_ID);
 
         Assert.assertNotNull(insurance);
-        Assert.assertEquals(INSURANCE, insurance);
+        Assert.assertEquals(NAME, insurance.getName());
+        Assert.assertEquals(PICTURE_ID, insurance.getPictureId());
     }
 
     @Test
