@@ -162,6 +162,7 @@
               <label for="insurance-${insurance.id}" class="insurance-label">${insurance.name}</label>
             </div>
           </c:forEach>
+          <form:errors path="ObrasSociales" cssClass="error-box" element="div"/>
         </div>
 
         <div class="field-container">
