@@ -22,6 +22,7 @@
   <jsp:param name="role"      value="${user.role}"/>
 </jsp:include>
 
+<c:url value='/save-profile' var="saveProfileUrl"/>
 <div class="page-container">
   <form:form modelAttribute="profileForm"
              action="${saveProfileUrl}"
