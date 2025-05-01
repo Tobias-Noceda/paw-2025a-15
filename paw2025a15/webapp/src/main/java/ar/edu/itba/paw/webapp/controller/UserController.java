@@ -26,7 +26,6 @@ import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.BloodTypeEnum;
-import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 

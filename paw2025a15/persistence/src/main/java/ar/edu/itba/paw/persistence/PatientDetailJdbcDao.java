@@ -13,10 +13,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
-import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.PatientDetail;
-import ar.edu.itba.paw.models.PatientView;
 
 @Repository
 public class PatientDetailJdbcDao implements PatientDetailDao{
@@ -30,43 +28,6 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
     rs.getObject("patient_drinks") != null ? rs.getBoolean("patient_drinks") : null,
     rs.getString("patient_meds"), rs.getString("patient_conditions"), rs.getString("patient_allergies"), 
     rs.getString("patient_diet"), rs.getString("patient_hobbies"), rs.getString("patient_job"));
-
-    private final RowMapper<PatientView> PV_ROW_MAPPER = (rs, rowNum) -> {
-        PatientView pv = new PatientView(
-            rs.getLong("patient_id"), 
-            rs.getString("user_email"), 
-            rs.getString("user_name"), 
-            rs.getString("user_telephone"), 
-            rs.getLong("picture_id"),
-            rs.getObject("patient_age") != null ? rs.getInt("patient_age") : null,
-            rs.getObject("patient_blood_type") != null ? BloodTypeEnum.fromInt(rs.getInt("patient_blood_type")) : null,
-            rs.getObject("patient_height") != null ? rs.getDouble("patient_height") : null,
-            rs.getObject("patient_weight") != null ? rs.getDouble("patient_weight") : null
-        );
-
-        switch(AccessLevelEnum.fromInt(rs.getInt("access_level"))){
-            case VIEW_MEDICAL -> {
-                String meds = rs.getString("patient_meds");
-                String conditions = rs.getString("patient_conditions");
-                String allergies = rs.getString("patient_allergies");
-                pv.setViewMedical(meds, conditions, allergies);
-            }
-            case VIEW_HABITS -> {
-                Boolean smokes = rs.getObject("patient_smokes") != null ? rs.getBoolean("patient_smokes") : null;
-                Boolean drinks = rs.getObject("patient_drinks") != null ? rs.getBoolean("patient_drinks") : null;
-                String diet = rs.getString("patient_diet");
-                pv.setViewHabits(smokes, drinks, diet);
-            }
-            case VIEW_SOCIAL -> {
-                String hobbies = rs.getString("patient_hobbies");
-                String job = rs.getString("patient_job");
-                pv.setViewSocial(hobbies, job);
-            }
-            case VIEW_BASIC -> {}
-        }
-
-        return pv;
-    };
 
     private final JdbcTemplate jdbcTemplate;
 

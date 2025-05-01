@@ -149,6 +149,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @Override
     public LocalValidatorFactoryBean getValidator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource());
