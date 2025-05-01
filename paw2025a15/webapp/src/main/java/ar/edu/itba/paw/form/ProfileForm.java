@@ -13,41 +13,41 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
     
     MultipartFile profileImage;
 
-    @Size(min = 5, max = 15, message = "Phone number must be between 5 and 15 characters")
+    @Size(min = 5, max = 15, message = "{form.phoneNumber.invalid}")
     String phoneNumber;
 
-    @Min(value = 0, message = "Age cannot be less than 0")
-    @Max(value = 120, message = "Age cannot be greater than 120")
+    @Positive
+    @Max(value = 140, message = "{form.age.invalid}")
     private Integer age;
 
     private BloodTypeEnum bloodType;
 
-    @Positive(message = "Height must be positive")
+    @Positive
     private Double height;
 
-    @Positive(message = "Weight must be positive")
+    @Positive
     private Double weight;
 
     private Boolean smokes;
 
     private Boolean drinks;
 
-    @Size(max = 250, message = "Medications field cannot exceed 250 characters")
+    @Size(max = 250)
     private String meds;
 
-    @Size(max = 250, message = "Medications field cannot exceed 250 characters")
+    @Size(max = 250)
     private String conditions;
 
-    @Size(max = 250, message = "Medications field cannot exceed 250 characters")
+    @Size(max = 250)
     private String allergies;
 
-    @Size(max = 100, message = "Medications field cannot exceed 100 characters")
+    @Size(max = 100)
     private String diet;
 
-    @Size(max = 100, message = "Medications field cannot exceed 100 characters")
+    @Size(max = 100)
     private String hobbies;
 
-    @Size(max = 50, message = "Medications field cannot exceed 50 characters")
+    @Size(max = 50)
     private String job;
 
     public MultipartFile getProfileImage() {

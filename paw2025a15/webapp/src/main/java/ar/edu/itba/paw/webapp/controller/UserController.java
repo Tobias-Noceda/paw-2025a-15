@@ -129,8 +129,7 @@ public class UserController {
         // Si hay errores de validación, volver a la página forgotPassword
         if (result.hasErrors()) {
             LOGGER.debug("Validation errors found for email: {}", form.getEmail());
-            mav = new ModelAndView("forgotPassword");
-            return mav;
+            return new ModelAndView("forgotPassword");
         }
 
         try {
@@ -186,20 +185,29 @@ public class UserController {
         us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
         return mav;
     }
-
     @RequestMapping("/profile")
     public ModelAndView profile(
-        @AuthenticationPrincipal UserDetails userDetails,
-        SearchForm form,
-        @ModelAttribute("profileForm") ProfileForm profileForm
+            @AuthenticationPrincipal UserDetails userDetails,
+            SearchForm form,
+            @ModelAttribute("profileForm") ProfileForm profileForm
     ) {
         ModelAndView mav = new ModelAndView("profileInfo");
 
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
         mav.addObject("user", user);
-        if(user.getRole().equals(UserRoleEnum.PATIENT)) mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
-        else mav.addObject("patientDetails", null);
+
+        if (profileForm.getPhoneNumber() == null) { // u otro campo clave
+            profileForm.setPhoneNumber(user.getTelephone());
+            // podés completar otros campos acá también
+        }
+
         mav.addObject("bloodTypes", BloodTypeEnum.values());
+        if(user.getRole().equals(UserRoleEnum.PATIENT)) {
+            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
+        } else {
+            mav.addObject("patientDetails", null);
+        }
+
         return mav;
     }
 
