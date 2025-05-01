@@ -61,13 +61,11 @@ public class DoctorController {
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
-        DoctorDetail detail = dds.getDetailByDoctorId(id)
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found"));
+        DoctorDetail detail = dds.getDetailByDoctorId(id).orElse(null);
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 
-        final User user = us.getCurrentUser()
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not logged in"));
+        final User user = us.getCurrentUser();
 
         if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
@@ -108,8 +106,7 @@ public class DoctorController {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Doctor not found");
         }
 
-        User user = us.getCurrentUser()
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not logged in"));
+        User user = us.getCurrentUser();
 
 
         if(!user.getRole().equals(UserRoleEnum.PATIENT)) {

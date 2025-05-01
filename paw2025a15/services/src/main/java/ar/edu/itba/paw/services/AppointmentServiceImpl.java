@@ -1,17 +1,11 @@
 package ar.edu.itba.paw.services;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
@@ -28,8 +22,6 @@ import ar.edu.itba.paw.models.User;
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
-
     private final EmailService es;
 
     private final UserService us;
@@ -39,9 +31,6 @@ public class AppointmentServiceImpl implements AppointmentService{
     private final DoctorDetailService dds;
 
     private final AppointmentDao appointmentDao;
-
-    @Autowired
-    private TaskScheduler taskScheduler;
 
     @Autowired
     public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss, final DoctorDetailService dds){
@@ -62,26 +51,18 @@ public class AppointmentServiceImpl implements AppointmentService{
         if(patient.getId() != doctor.getId()){
             es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
             es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
+            
+            if(appointment != null && !dds.hasAuthDoctor(patientId, doctor.getId())) {
+                dds.toggleAuthDoctor(patientId, doctor.getId());//grant doctors access to the patient profile
+            }
         }
-
-        if(appointment != null && !dds.hasAuthDoctor(patientId, doctor.getId())) dds.toggleAuthDoctor(patientId, doctor.getId());//grant doctors access to the patient profile
         
         return appointment;
     }
 
     @Override
-    public List<Appointment> getAppointmentsByShiftId(long shiftId) {
-        return appointmentDao.getAppointmentsByShiftId(shiftId);
-    }
-
-    @Override
     public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
         return appointmentDao.getAppointmentsByShiftIdAndDate(shiftId, date);
-    }
-
-    @Override
-    public List<Appointment> getAppointmentsByPatientId(long patientId) {
-        return appointmentDao.getAppointmentsByPatientId(patientId);
     }
 
     @Override
@@ -97,11 +78,6 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {
         return appointmentDao.getFutureAppointmentDataByDoctorId(doctorId);
-    }
-
-    @Override
-    public List<AppointmentData> getOldAppointmentDataByDoctorId(long doctorId) {
-        return appointmentDao.getOldAppointmentDataByDoctorId(doctorId);
     }
 
     @Override
@@ -125,17 +101,10 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public void removeAppointment(long shiftId, LocalDate date, long doctorId) {
         addAppointment(shiftId, doctorId, date);
-        
-        // Schedule something after 3 months
-        Runnable task = () -> {
-            LOGGER.info("3 months passed! Running the scheduled task.");
-            
-            appointmentDao.removeAppointment(shiftId, date);
-        };
+    }
 
-        // Calculate future date
-        Instant triggerTime = Instant.now().plus(3, ChronoUnit.MONTHS);
-
-        taskScheduler.schedule(task, Date.from(triggerTime));
+    @Override
+    public void clearRemovedAppointmentBeforeDate(LocalDate date) {
+        appointmentDao.clearRemovedAppointmentBeforeDate(date);
     }
 }

@@ -107,14 +107,6 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
     }
 
     @Override
-    public Optional<PatientView> getPatientByDoctorId(long patientId, long doctorId) {
-        String query = "SELECT * FROM patient_details AS pd JOIN users AS u ON u.user_id = pd.patient_id JOIN auth_doctors AS ad ON ad.patient_id = pd.patient_id WHERE ad.patient_id = ? AND ad.doctor_id = ?";
-        Optional<PatientView> pv = jdbcTemplate.query(query, new Object[]  {patientId, doctorId},
-            new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT}, PV_ROW_MAPPER).stream().findFirst();
-        return pv;
-    }
-
-    @Override
     public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {

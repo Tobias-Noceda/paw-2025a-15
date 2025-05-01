@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.List;
@@ -11,29 +10,11 @@ import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.WeekdayEnum;
 
 public interface DoctorShiftService {
-    public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime);
-
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);
 
     public Optional<DoctorShift> getShiftById(long id);
 
-    public List<DoctorShift> getShiftsByDoctorId(long doctorId);
-
     public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId);
-
-    public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday);
-
-    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime);
-
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date);
-
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday, LocalDate date, LocalTime time);
-
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date);
-
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate);
-
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonth(long doctorId, Month month);
 
     /**
      * * Returns a list of available turns for a doctor in a specific month and week number.

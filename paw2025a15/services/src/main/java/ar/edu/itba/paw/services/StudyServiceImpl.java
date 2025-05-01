@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,13 +41,7 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public Optional<Study> getStudyById(long id) {
-        return studyDao.getStudyById(id);
-    }
-
-    @Override
     public List<Study> getStudiesByPatientId(long id) {
         return studyDao.getStudiesByPatientId(id);
     }
-
 }

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -19,8 +21,6 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
-
-import javax.validation.Valid;
 
 @Controller
 public class PatientController {
@@ -59,8 +59,7 @@ public class PatientController {
 
         final ModelAndView mav = new ModelAndView("patientDetail");
         
-        User user = us.getCurrentUser()
-        .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
+        User user = us.getCurrentUser();
         
         if(!dds.hasAuthDoctor(patientId, user.getId())) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to view this patient");

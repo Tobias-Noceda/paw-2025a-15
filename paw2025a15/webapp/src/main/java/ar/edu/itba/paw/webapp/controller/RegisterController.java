@@ -142,7 +142,7 @@ public class RegisterController {
                         form.getSpeciality(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                dcs.addCoverages(doc.getId(), form.getObrasSociales());
+                dcs.setCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),

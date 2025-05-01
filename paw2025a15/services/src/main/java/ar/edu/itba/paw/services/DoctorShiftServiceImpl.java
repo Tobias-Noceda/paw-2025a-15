@@ -30,17 +30,12 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     }
 
     @Override
-    public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime) {
-        return doctorShiftDao.create(doctorId, weekday, address, startTime, endTime);
-    }
-
-    @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
         long amount =  Duration.between(startTime,endTime).toMinutes()/slot;
         //long slot = Duration.between(startTime, endTime).toMinutes() / amount;
         for (WeekdayEnum weekday : weekdays) {
             for (int i = 1; i <= amount; i++) {
-                create(doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i));
+                doctorShiftDao.create(doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i));
             }
         }
     }
@@ -48,11 +43,6 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Override
     public Optional<DoctorShift> getShiftById(long id) {
         return doctorShiftDao.getShiftById(id);
-    }
-
-    @Override
-    public List<DoctorShift> getShiftsByDoctorId(long doctorId) {
-        return doctorShiftDao.getShiftsByDoctorId(doctorId);
     }
 
     @Override
@@ -88,63 +78,26 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
 
         return toReturn;
     }
-    
-    @Override
-    public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday) {
-        return doctorShiftDao.getShiftsByDoctorIdAndWeekday(doctorId, weekday);
-    }
 
-    @Override
-    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime) {
-        return doctorShiftDao.getShiftsByDoctorIdAndWeekdayAndStartTime(doctorId, weekday, startTime);
-    }
-
-    @Override
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date){
-        return doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, weekday, date);
-    }
-
-    @Override
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday, LocalDate date, LocalTime time){
-        return doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, weekday, date, time);
-    }
-
-    @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
+    private List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
         List<AvailableTurn> turns = new ArrayList<>();
         List<DoctorShift> shifts;
         if(date.isBefore(LocalDate.now())) return turns;
-        else if(date.isEqual(LocalDate.now())) shifts = getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date, LocalTime.now());
-        else shifts = getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date);
+        else if(date.isEqual(LocalDate.now())) shifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date, LocalTime.now());
+        else shifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date);
         for (DoctorShift shift : shifts) {
             turns.add(new AvailableTurn(date, shift.getStartTime(), shift.getEndTime(), shift.getAddress(), shift.getId()));
         }
         return turns;
     }
 
-    @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate) {
+    private List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate) {
         List<AvailableTurn> allTurns = new ArrayList<>();
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             List<AvailableTurn> turnsForDay = getAvailableTurnsByDoctorIdAndDate(doctorId, date);
             allTurns.addAll(turnsForDay);
         }
         return allTurns;
-    }
-
-    @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonth(long doctorId, Month month) {
-        LocalDate now = LocalDate.now();
-        int year = (now.getMonthValue() <= month.getValue()) ? now.getYear() : (now.getYear() + 1);
-        LocalDate startOfMonth = LocalDate.of(year, month, 1);
-        LocalDate endOfMonth = LocalDate.of(year, month, startOfMonth.lengthOfMonth());
-
-        if(now.getMonth().equals(month)){
-            return getAvailableTurnsByDoctorIdBetweenDates(doctorId, now, endOfMonth);
-        }
-        else{
-            return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfMonth, endOfMonth);
-        }
     }
 
     @Override

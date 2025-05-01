@@ -33,13 +33,7 @@ public interface DoctorDetailService {
 
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
-    public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
-
-    public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
-
     public boolean hasAuthDoctor(long patientId, long doctorId);
-
-    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId);
 }

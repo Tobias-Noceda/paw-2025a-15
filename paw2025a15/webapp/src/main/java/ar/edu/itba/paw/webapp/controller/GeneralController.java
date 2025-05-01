@@ -80,7 +80,7 @@ public class GeneralController {
         @RequestParam(defaultValue = "1") int page,
         Locale locale
     ) {
-        final User user = us.getCurrentUser().orElse(null);
+        final User user = us.getCurrentUser();
 
         if(user != null && null != user.getRole()) switch (user.getRole()) {
             case PATIENT -> {
@@ -109,7 +109,7 @@ public class GeneralController {
         @RequestParam(defaultValue = "1") int page,
         Locale locale
     ){
-        final User user = us.getCurrentUser().orElse(null);
+        final User user = us.getCurrentUser();
 
         Insurance insurance;
         SpecialtyEnum specialty = filterForm.getSpecialty();
@@ -132,7 +132,7 @@ public class GeneralController {
             @RequestParam(defaultValue = "1") int page,
             Locale locale
     ) {
-        final User user = us.getCurrentUser().orElse(null);
+        final User user = us.getCurrentUser();
         final List<DoctorView> doctors = dds.findDoctorsPageByName(searchForm.getQuery(), page, PAGE_SIZE);
 
         return renderLandingPage(user, doctors, null, page, dds.getTotalDoctorsByName(searchForm.getQuery()), locale);
@@ -144,7 +144,7 @@ public class GeneralController {
         @RequestParam(defaultValue = "1") int page,
         Locale locale
     ) {
-        User user = us.getCurrentUser().orElse(null);
+        User user = us.getCurrentUser();
         
         List<User> patients = us.searchAuthPatientsPageByDoctorIdAndName(user.getId(), searchForm.getQuery(), page, PAGE_SIZE);
         return renderLandingPage(user, null, patients, 1, us.searchAuthPatientsCountByDoctorIdAndName(user.getId(), searchForm.getQuery()), locale);
