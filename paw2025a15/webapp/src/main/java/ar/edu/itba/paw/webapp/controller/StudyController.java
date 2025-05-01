@@ -60,8 +60,7 @@ public class StudyController {
 
         if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
 
-        User user = us.getCurrentUser()
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
+        User user = us.getCurrentUser();
 
         if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
@@ -93,8 +92,7 @@ public class StudyController {
 
         if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
 
-        User user = us.getCurrentUser()
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
+        User user = us.getCurrentUser();
 
         if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
@@ -128,8 +126,7 @@ public class StudyController {
     ) {
         ModelAndView mav = new ModelAndView("studies");
     
-        User user = us.getCurrentUser()
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found"));
+        User user = us.getCurrentUser();
 
         if(user.getRole() != UserRoleEnum.PATIENT) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");

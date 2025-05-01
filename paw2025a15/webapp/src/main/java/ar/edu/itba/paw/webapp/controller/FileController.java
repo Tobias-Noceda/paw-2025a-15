@@ -9,22 +9,22 @@ import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
 import ar.edu.itba.paw.form.ProfileForm;
+import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.FileTypeEnum;
 
 @Controller
 public class FileController {
@@ -54,9 +54,28 @@ public class FileController {
 
 
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
-    public ModelAndView saveImage(@AuthenticationPrincipal UserDetails userDetails, @Valid @ModelAttribute("profileForm") ProfileForm profileForm
+    public ModelAndView saveProfileInfo(@AuthenticationPrincipal UserDetails userDetails,
+                                  @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
+                                  BindingResult result,
+                                  @ModelAttribute("searchForm") final SearchForm searchForm
     ) throws IOException {
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
+        if (result.hasErrors()) {
+            ModelAndView mav = new ModelAndView("profileInfo");
+
+            mav.addObject("profileForm", profileForm);
+            mav.addObject("bloodTypes", BloodTypeEnum.values());
+            mav.addObject("user", user);
+
+            if(user.getRole().equals(UserRoleEnum.PATIENT)) {
+                mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElse(null));
+            } else {
+                mav.addObject("patientDetails", null);
+            }
+
+            return mav;
+        }
+
         if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
             File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());

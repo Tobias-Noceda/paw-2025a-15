@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -126,6 +127,9 @@ public class RegisterController {
         } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
             errors.rejectValue("email", "error.emailExists");
             isValid = false;
+        } else if (!isRangeValid(form.getSchedules().getStartTime(), form.getSchedules().getEndTime())) {
+            errors.rejectValue("schedules.endTime","error.invalidRange");
+            isValid = false;
         } else {
             try {
                 // Crear el médico
@@ -138,7 +142,7 @@ public class RegisterController {
                         form.getSpeciality(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                dcs.addCoverages(doc.getId(), form.getObrasSociales());
+                dcs.setCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),
@@ -168,38 +172,12 @@ public class RegisterController {
         }
     }
 
-
-    @RequestMapping(value = "/createLab", method = RequestMethod.POST)
-    public ModelAndView registerForm(
-            @Valid @ModelAttribute("registerLabForm") final LabForm form,
-            final BindingResult errors
-    ) {
-        boolean isValid = true;
-
-        if(errors.hasErrors()) {
-            isValid = false;
-        } else if (!form.getPassword().equals(form.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "error.passwordMismatch");
-            isValid = false;
-        } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists");
-            isValid = false;
-        } else {
-            try {
-                // TODO: Crear el laboratorio
-            } catch (Exception e) {
-                errors.reject("error.registerLaboratoryFailed");
-                isValid = false;
-            }
-        }
-
-        if(!isValid) {
-            final ModelAndView mav = new ModelAndView("labForm");
-            mav.addObject("lab", form);
-            return mav;
-        } else {
-            return new ModelAndView("redirect:/");
-        }
-
+    private static boolean isRangeValid(String startTime, String endTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime start = LocalTime.parse(startTime, formatter);
+        LocalTime end = LocalTime.parse(endTime, formatter);
+        System.out.println("startTime: " + startTime + " endTime: " + endTime);
+        System.out.println("y el rango es: " +start.isBefore(end));
+        return start.isBefore(end);
     }
 }

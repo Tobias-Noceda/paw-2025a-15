@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -47,12 +46,6 @@ public class StudyJdbcDao implements StudyDao{
         args.put("study_date", studyDate);
         final Number study_id = jdbcInsert.executeAndReturnKey(args);
         return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, studyDate);
-    }
-
-    @Override
-    public Optional<Study> getStudyById(long id) {
-        return jdbcTemplate.query("SELECT * FROM studies WHERE study_id = ?", new Object[]  {id},
-          new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
     }
 
     @Override

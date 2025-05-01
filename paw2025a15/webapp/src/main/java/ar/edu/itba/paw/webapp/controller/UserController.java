@@ -22,20 +22,13 @@ import ar.edu.itba.paw.form.ChangePasswordForm;
 import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
-import ar.edu.itba.paw.interfaces.services.PatientCoverageService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
-
-import java.util.NoSuchElementException;
 
 @Controller
 public class UserController {
@@ -44,21 +37,6 @@ public class UserController {
 
     @Autowired
     private UserService us;
-
-    @Autowired
-    private PatientCoverageService pcs;
-
-    @Autowired
-    private DoctorCoverageService dcs;
-
-    @Autowired
-    private AppointmentService as;
-
-    @Autowired
-    private StudyService ss;
-
-    @Autowired
-    private DoctorDetailService dds;
 
     @Autowired
     private PatientDetailService pds;
@@ -72,31 +50,6 @@ public class UserController {
     @RequestMapping("/login")
     public ModelAndView login() {
         return new ModelAndView("login");
-    }
-
-    @RequestMapping("/patientProfile/{id:\\d+}")
-    public ModelAndView patientProfile(@PathVariable("id") long id) {
-        ModelAndView mav = new ModelAndView("patientProfile");
-        User patient = us.getUserById(id).orElseThrow(() -> new IllegalArgumentException("No such patient"));
-        mav.addObject("patient", patient);
-        mav.addObject("patientInsurance", pcs.getInsuranceById(id));
-        mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(id));
-        mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(id));
-        mav.addObject("patientStudies", ss.getStudiesByPatientId(id));
-        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(id));
-        return mav;
-    }
-
-    @RequestMapping("/doctorProfile/{id:\\d+}")
-    public ModelAndView doctorProfile(@PathVariable("id") long id){
-        ModelAndView mav = new ModelAndView("doctorProfile");
-        User patient = us.getUserById(id).orElseThrow(()->new IllegalArgumentException("No such doctor"));
-        mav.addObject("doctor", patient);
-        mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
-        mav.addObject("doctorFutureAppointments", as.getFutureAppointmentDataByDoctorId(id));
-        mav.addObject("doctorOldAppointments", as.getOldAppointmentDataByDoctorId(id));
-        mav.addObject("doctorAuthPatients", us.getAuthPatientsPageByDoctorId(id, 1, 1000000));
-        return mav;
     }
 
     @RequestMapping("/register/choose")
@@ -129,8 +82,7 @@ public class UserController {
         // Si hay errores de validación, volver a la página forgotPassword
         if (result.hasErrors()) {
             LOGGER.debug("Validation errors found for email: {}", form.getEmail());
-            mav = new ModelAndView("forgotPassword");
-            return mav;
+            return new ModelAndView("forgotPassword");
         }
 
         try {
@@ -186,20 +138,29 @@ public class UserController {
         us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
         return mav;
     }
-
     @RequestMapping("/profile")
     public ModelAndView profile(
-        @AuthenticationPrincipal UserDetails userDetails,
-        SearchForm form,
-        @ModelAttribute("profileForm") ProfileForm profileForm
+            @AuthenticationPrincipal UserDetails userDetails,
+            SearchForm form,
+            @ModelAttribute("profileForm") ProfileForm profileForm
     ) {
         ModelAndView mav = new ModelAndView("profileInfo");
 
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
         mav.addObject("user", user);
-        if(user.getRole().equals(UserRoleEnum.PATIENT)) mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
-        else mav.addObject("patientDetails", null);
+
+        if (profileForm.getPhoneNumber() == null) { // u otro campo clave
+            profileForm.setPhoneNumber(user.getTelephone());
+            // podés completar otros campos acá también
+        }
+
         mav.addObject("bloodTypes", BloodTypeEnum.values());
+        if(user.getRole().equals(UserRoleEnum.PATIENT)) {
+            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
+        } else {
+            mav.addObject("patientDetails", null);
+        }
+
         return mav;
     }
 

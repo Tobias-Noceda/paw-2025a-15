@@ -1,13 +1,17 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +43,8 @@ public class AppointmentController {
     @Autowired
     private DoctorShiftService dss;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
+
     @RequestMapping("/appointments")
     public ModelAndView patientProfile(
         @RequestParam(value = "action", required = false) String action,
@@ -48,7 +54,7 @@ public class AppointmentController {
     ) {
         ModelAndView mav = new ModelAndView("appointments");
 
-        User user = us.getCurrentUser().orElse(null);
+        User user = us.getCurrentUser();
         
         mav.addObject("user", user);
         switch (user.getRole()) {
@@ -76,7 +82,7 @@ public class AppointmentController {
 
     @RequestMapping(value = "/patientCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
     public ModelAndView patientCancelAppointment(@PathVariable("id") long id, @PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date){
-        User user = us.getCurrentUser().orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found or not authorized to cancel this appointment"));
+        User user = us.getCurrentUser();
 
         if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
@@ -92,7 +98,7 @@ public class AppointmentController {
         @PathVariable("shiftId") long shiftId,
         @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ){
-        User user = us.getCurrentUser().orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found or not authorized to cancel this appointment"));
+        User user = us.getCurrentUser();
         
         if(!user.getRole().equals(UserRoleEnum.DOCTOR)) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
@@ -104,7 +110,7 @@ public class AppointmentController {
 
     @RequestMapping(value = "/takeAppointment", method = RequestMethod.POST)
     public ModelAndView takeAppointment(@Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
-        User user = us.getCurrentUser().orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found or not authorized to cancel this appointment"));
+        User user = us.getCurrentUser();
         
         as.addAppointment(form.getShiftId(), user.getId(), LocalDate.parse(form.getDate()));
 
@@ -116,10 +122,16 @@ public class AppointmentController {
         @PathVariable("shiftId") long shiftId,
         @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        User user = us.getCurrentUser().orElseThrow(() -> new HttpClientErrorException(HttpStatus.FORBIDDEN, "User not found or not authorized to cancel this appointment"));
-        
+        User user = us.getCurrentUser();
         as.removeAppointment(shiftId, date, user.getId());
         
         return new ModelAndView("redirect:/appointments");
+    }
+
+    @Scheduled(cron = "0 0 3 * * ?", zone = "America/Argentina/Buenos_Aires")
+    public void clearRemovedAppointmentBeforeDate() {
+        LocalDate date = LocalDate.now().minusDays(1);
+        as.clearRemovedAppointmentBeforeDate(date);
+        LOGGER.info("Removed appointments before " + date + " cleared. At " + LocalDateTime.now().toLocalTime());
     }
 }

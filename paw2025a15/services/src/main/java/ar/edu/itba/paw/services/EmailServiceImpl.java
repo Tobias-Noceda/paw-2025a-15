@@ -47,16 +47,6 @@ public class EmailServiceImpl implements EmailService{
 
     private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
 
-
-    private void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setFrom(emailFromString);
-        message.setText(text);
-        emailSender.send(message);
-    }
-
     private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, Locale locale) throws MessagingException{
         Context context = new Context(locale);
         context.setVariables(templateModel);

@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <!-- Nuevo CSS de perfil -->
   <link rel="stylesheet" href="<c:url value='/css/profile-info.css'/>">
+  <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
 </head>
 <body>
 <jsp:include page="components/header.jsp">
@@ -64,7 +65,10 @@
           <form:input path="phoneNumber"
                       type="text"
                       cssClass="input-field"
-                      value="${user.telephone}"/>
+                      value="${user.telephone}"
+                      onkeydown="return blockInvalidKeys(event)"
+                      onpaste="return blockNegativePaste(event)"/>
+          <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
         <c:if test="${patientDetails != null}">
         <div class="field-container">
@@ -73,7 +77,11 @@
                  name="age"
                  type="number"
                  class="input-field"
-                 value="${patientDetails.age}"/>
+                 value="${patientDetails.age}"
+                 onkeydown="return blockInvalidKeys(event)"
+                 onpaste="return blockNegativePaste(event)"/>
+          <form:errors path="age" cssClass="error-box" element="div"/>
+
         </div>
         <div class="field-container">
           <label for="patient-blood-type"><spring:message code="profileInfo.bloodType"/></label>
@@ -98,7 +106,9 @@
                  type="number"
                  step="0.01"
                  class="input-field"
-                 value="${patientDetails.height}"/>
+                 value="${patientDetails.height}"
+                 onkeydown="return blockInvalidKeys(event)"
+                 onpaste="return blockNegativePaste(event)"/>
         </div>
         <div class="field-container">
           <label for="patient-weight"><spring:message code="profileInfo.weight"/></label>
@@ -107,7 +117,9 @@
                  type="number"
                  step="0.01"
                  class="input-field"
-                 value="${patientDetails.weight}"/>
+                 value="${patientDetails.weight}"
+                 onkeydown="return blockInvalidKeys(event)"
+                 onpaste="return blockNegativePaste(event)"/>
         </div>
       </div>
     </div>
@@ -141,7 +153,8 @@
           <textarea id="patient-diet"
                     name="diet"
                     class="input-field"
-                    rows="2">${patientDetails.diet}</textarea>
+                    rows="2"
+                    maxlength="100">${patientDetails.diet}</textarea>
         </div>
       </div>
     </div>
@@ -152,15 +165,15 @@
       <div class="field-grid">
         <div class="field-container full-width">
           <label for="patient-meds"><spring:message code="profileInfo.meds"/></label>
-          <textarea id="patient-meds" name="meds" class="input-field" rows="2">${patientDetails.meds}</textarea>
+          <textarea id="patient-meds" name="meds" class="input-field" rows="2" maxlength="250">${patientDetails.meds}</textarea>
         </div>
         <div class="field-container full-width">
           <label for="patient-conditions"><spring:message code="profileInfo.conditions"/></label>
-          <textarea id="patient-conditions" name="conditions" class="input-field" rows="2">${patientDetails.conditions}</textarea>
+          <textarea id="patient-conditions" name="conditions" class="input-field" rows="2" maxlength="250">${patientDetails.conditions}</textarea>
         </div>
         <div class="field-container full-width">
           <label for="patient-allergies"><spring:message code="profileInfo.allergies"/></label>
-          <textarea id="patient-allergies" name="allergies" class="input-field" rows="2">${patientDetails.allergies}</textarea>
+          <textarea id="patient-allergies" name="allergies" class="input-field" rows="2" maxlength="250">${patientDetails.allergies}</textarea>
         </div>
       </div>
     </div>
@@ -171,11 +184,11 @@
       <div class="field-grid">
         <div class="field-container full-width">
           <label for="patient-hobbies"><spring:message code="profileInfo.hobbies"/></label>
-          <textarea id="patient-hobbies" name="hobbies" class="input-field" rows="2">${patientDetails.hobbies}</textarea>
+          <textarea id="patient-hobbies" name="hobbies" class="input-field" rows="2" maxlength="100">${patientDetails.hobbies}</textarea>
         </div>
         <div class="field-container full-width">
           <label for="patient-job"><spring:message code="profileInfo.job"/></label>
-          <textarea id="patient-job" name="job" class="input-field" rows="1">${patientDetails.job}</textarea>
+          <textarea id="patient-job" name="job" class="input-field" rows="1" maxlength="50">${patientDetails.job}</textarea>
         </div>
       </div>
     </c:if>
@@ -199,6 +212,19 @@
     } else {
       document.getElementById("fileInput").click();
     }
+  }
+  function blockInvalidKeys(event) {
+    // Bloquear "-" y "e"
+    return event.key !== '-' && event.key !== 'e';
+  }
+
+  function blockNegativePaste(event) {
+    const paste = (event.clipboardData || window.clipboardData).getData('text');
+    if (paste.includes('-')) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
   }
 </script>
 </body>

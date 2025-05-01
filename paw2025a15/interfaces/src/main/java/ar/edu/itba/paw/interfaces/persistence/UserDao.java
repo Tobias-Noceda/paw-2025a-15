@@ -26,9 +26,5 @@ public interface UserDao {
 
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 
-    void changePassword(String email, String password);
-
     void changePasswordByID(long id, String password);
-
-    void updatePhoneNumber(long id, String number);
 }

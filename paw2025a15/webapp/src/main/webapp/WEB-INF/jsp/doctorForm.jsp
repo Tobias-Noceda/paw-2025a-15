@@ -158,10 +158,11 @@
         <div class="insurance-toggle-group">
           <c:forEach var="insurance" items="${obrasSocialesItems}">
             <div class="insurance-btn">
-              <input type="checkbox" id="insurance-${insurance.id}" name="obrasSociales" value="${insurance.id}" class="insurance-checkbox"/>
+              <input type="checkbox" id="insurance-${insurance.id}" name="ObrasSociales" value="${insurance.id}" class="insurance-checkbox"/>
               <label for="insurance-${insurance.id}" class="insurance-label">${insurance.name}</label>
             </div>
           </c:forEach>
+          <form:errors path="ObrasSociales" cssClass="error-box" element="div"/>
         </div>
 
         <div class="field-container">

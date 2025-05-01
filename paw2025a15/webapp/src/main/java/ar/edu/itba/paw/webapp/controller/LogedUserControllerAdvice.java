@@ -18,6 +18,6 @@ public class LogedUserControllerAdvice {
 
     @ModelAttribute(name = "user_data", binding = false)
     public User getLoggedUser() {
-        return us.getCurrentUser().orElse(null);
+        return us.getCurrentUser();
     }
 }
