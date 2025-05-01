@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.FileTypeEnum;
 import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.Insurance;
 
 //Readable output of all the data inputed in test/resources
 public class TestData {
@@ -14,6 +15,13 @@ public class TestData {
     public class Images{
         public static final File validImage = new File(1L, "D".getBytes(), FileTypeEnum.JPEG);
         public static final File validImage2 = new File(2L, "O".getBytes(), FileTypeEnum.JPEG);
+        public static final File newImage = new File(0, "N".getBytes(), FileTypeEnum.JPEG);
+    }
+
+    public class Insurances{
+        public static final Insurance validInsurance = new Insurance(1, "OSDE", 1);
+        public static final Insurance validInsurance2 = new Insurance(2, "Galeno", 1);
+        public static final Insurance newInsurance = new Insurance(3, "Swiss Medical", 1);
     }
 
     public class Users{

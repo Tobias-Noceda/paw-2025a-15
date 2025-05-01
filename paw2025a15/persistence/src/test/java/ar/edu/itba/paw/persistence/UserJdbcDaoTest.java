@@ -138,7 +138,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void changePassword(){
+    public void testChangePassword(){
         final String USEREMAIL = TestData.Users.patient.getEmail();
         final String PASSWORD = TestData.Users.patient.getPassword();
         final String NEW_PASSWORD = PASSWORD + "1";
@@ -152,7 +152,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void changePasswordNonexistentUser(){
+    public void testChangePasswordNonexistentUser(){
         final String USEREMAIL = "";
         final String PASSWORD = TestData.Users.patient.getPassword();
 
@@ -163,7 +163,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void changePasswordByID(){
+    public void testChangePasswordByID(){
         final long USER_ID = TestData.Users.patient.getId();
         final String PASSWORD = TestData.Users.patient.getPassword();
         final String NEW_PASSWORD = PASSWORD + "1";
@@ -177,7 +177,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void changePasswordByIDNonexistentUser(){
+    public void testChangePasswordByIDNonexistentUser(){
         final long USER_ID = 0;
         final String PASSWORD = TestData.Users.patient.getPassword();
 
@@ -188,7 +188,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void updatePhoneNumber(){
+    public void testUpdatePhoneNumber(){
         final long USER_ID = TestData.Users.patient.getId();
         final String USER_TELEPHONE = TestData.Users.patient.getTelephone();
         final String NEW_TELEPHONE = "1111111111";
@@ -202,7 +202,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void updatePhoneNumberNonexistentUser(){
+    public void testUpdatePhoneNumberNonexistentUser(){
         final long USER_ID = 0;
         final String NEW_TELEPHONE = "1111111111";
 
@@ -213,7 +213,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void editUser(){
+    public void testEditUser(){
         final long USER_ID = TestData.Users.patient.getId();
         final String USER_TELEPHONE = TestData.Users.patient.getTelephone();
         final String USERNAME = TestData.Users.patient.getName();
@@ -231,7 +231,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void editUserNonexistentUser(){
+    public void testEditUserNonexistentUser(){
         final long USER_ID = 0;
         final String USERNAME = TestData.Users.patient.getName();
         final String NEW_TELEPHONE = "1111111111";
@@ -245,7 +245,7 @@ public class UserJdbcDaoTest {
    }
 
     @Test
-    public void editUserNameOnly(){
+    public void testEditUserNameOnly(){
         final long USER_ID = TestData.Users.patient.getId();
         final String USER_TELEPHONE = TestData.Users.patient.getTelephone();
         final String USERNAME = TestData.Users.patient.getName();
@@ -261,7 +261,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void editUserTelephoneOnly(){
+    public void testEditUserTelephoneOnly(){
         final long USER_ID = TestData.Users.patient.getId();
         final String USER_TELEPHONE = TestData.Users.patient.getTelephone();
         final String USERNAME = TestData.Users.patient.getName();
@@ -277,7 +277,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void editUserPicOnly(){
+    public void testEditUserPicOnly(){
         final long USER_ID = TestData.Users.patient.getId();
         final String USER_TELEPHONE = TestData.Users.patient.getTelephone();
         final String USERNAME = TestData.Users.patient.getName();
@@ -293,7 +293,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void updateLocale(){
+    public void testUpdateLocale(){
         final long USER_ID = TestData.Users.patient.getId();
         final LocaleEnum LOCALE = TestData.Users.patient.getLocale();
         final LocaleEnum NEW_LOCALE = LocaleEnum.ES_AR;
@@ -307,7 +307,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void updateLocaleNonexistentUser(){
+    public void testUpdateLocaleNonexistentUser(){
         final long USER_ID = 0;
         final LocaleEnum NEW_LOCALE = LocaleEnum.ES_AR;
 

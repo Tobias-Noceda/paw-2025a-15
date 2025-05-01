@@ -23,4 +23,32 @@ public class File {
     public FileTypeEnum getType(){
         return type;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof File)) return false;
+
+        File o = (File) other;
+
+        return (this.id==o.id) && (this.type.equals(o.type)) && (this.content.equals(o.content));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(id);
+        result = 31 * result + content.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "File{" +
+            "id=" + id +
+            ", type=" + type +
+            ", content=" + content +
+            '}';
+    }
 }

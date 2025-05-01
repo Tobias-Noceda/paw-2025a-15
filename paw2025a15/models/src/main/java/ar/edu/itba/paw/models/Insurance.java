@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import java.util.Objects;
-
 public class Insurance {
     private final long id;
     private String name;
@@ -11,11 +9,6 @@ public class Insurance {
         this.id = id;
         this.name = name;
         this.pictureId = pictureId;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     public long getId(){
@@ -39,15 +32,30 @@ public class Insurance {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Insurance insurance = (Insurance) o;
-        return Objects.equals(name, insurance.name);
+    public String toString() {
+        return "Insurance{" +
+            "id=" + id +
+            ", name=" + name +
+            ", pictureId=" + pictureId +
+            '}';
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(this == other) return true;
+
+        if(!(other instanceof Insurance)) return false;
+
+        Insurance o = (Insurance) other;
+
+        return (this.id==o.id) && (this.name.equals(o.name)) && (this.pictureId == o.pictureId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        int result = Long.hashCode(id);
+        result = 31 * result + name.hashCode();
+        result = 31 * result + Long.hashCode(pictureId);
+        return result;
     }
 }

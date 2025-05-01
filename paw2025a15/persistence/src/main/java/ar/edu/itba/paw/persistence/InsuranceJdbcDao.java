@@ -40,7 +40,7 @@ public class InsuranceJdbcDao implements InsuranceDao{
         return new Insurance(insurance_id.longValue(), name, pictureId);
     }
 
-    @Override
+    @Override//TODO este tytpe check tiene que estar en todas las querys, si no es aca hay otros archivos donde no esta
     public void edit(long id, String name, long pictureId) {
         String sql = "UPDATE insurances SET insurance_name = ?, picture_id = ? WHERE insurance_id = ?";
         jdbcTemplate.update(sql,
