@@ -2,17 +2,21 @@ package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorCoverage;
+import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.PatientDetail;
 
@@ -50,6 +54,15 @@ public class TestData {
     public class DoctorCoverages{
         public static final DoctorCoverage doctorCoverage = new DoctorCoverage(2, 1);
         public static final DoctorCoverage doctorCoverage2 = new DoctorCoverage(2, 2);
+    }
+
+    public class DoctorShifts{
+        public static final DoctorShift doctorShift = new DoctorShift(1, 2, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final DoctorShift doctorShift2 = new DoctorShift(2, 2, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:15:00"), LocalTime.parse("10:30:00"));
+    }
+
+    public class Appointments{
+        public static final Appointment appointment = new Appointment(1, 1, LocalDate.parse("2025-10-09"));
     }
 
     public class PatientDetails{

@@ -44,4 +44,40 @@ public class DoctorShift {
     public LocalTime getEndTime() {
         return endTime;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof DoctorShift)) return false;
+
+        DoctorShift o = (DoctorShift) other;
+
+        return (this.id==o.id) && (this.doctorId==o.doctorId)
+        && (this.weekday.equals(o.weekday)) && (this.address.equals(o.address))
+        && (this.startTime.equals(o.startTime)) && (this.endTime.equals(o.endTime));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(id);
+        result = 31 * result + Long.hashCode(doctorId);
+        result = 31 * result + weekday.hashCode();
+        result = 31 * result + address.hashCode();
+        result = 31 * result + startTime.hashCode();
+        result = 31 * result + endTime.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "File{" +
+            "id=" + id +
+            "," + "doctorId=" + doctorId +
+            "," + "weekday=" + weekday +
+            "," + "address=" + address +
+            "," + "startTime=" + startTime +
+            "," + "endTime=" + endTime +
+            '}';
+    }
 }
