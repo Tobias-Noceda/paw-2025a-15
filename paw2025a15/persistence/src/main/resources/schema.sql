@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS patient_details (
     patient_id BIGINT NOT NULL,
     patient_age INT,
     patient_blood_type INT,
-    patient_height NUMERIC,
-    patient_weight NUMERIC,
+    patient_height NUMERIC(10,2),--TODO: constraints consistentes en toda la webapp a manejar hasta 2 decimales de esto
+    patient_weight NUMERIC(10,2),
     patient_smokes BOOLEAN,
     patient_drinks BOOLEAN,
     patient_meds VARCHAR(250),
