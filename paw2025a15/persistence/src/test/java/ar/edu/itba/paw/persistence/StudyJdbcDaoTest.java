@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -15,6 +16,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.models.Study;
@@ -84,6 +86,29 @@ public class StudyJdbcDaoTest {//TODO-check que el userId sea de un patient
         Assert.assertEquals(UPLOADER_ID, study.getUploaderId());
         Assert.assertEquals(STUDY_DATE, study.getStudyDate());
         Assert.assertEquals(ACTUAL_DATE, study.getUploadDate().toLocalDate());   
+    }
+
+    @Test
+    public void testFindStudyById(){
+        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final long STUDY_ID = TestData.Studies.validStudyWithDate.getId();
+
+        Optional<Study> foundStudy = studyDao.findStudyById(STUDY_ID);
+
+        Assert.assertTrue(foundStudy.isPresent());
+        Assert.assertEquals(STUDY, foundStudy.get());
+        Assert.assertEquals(1, 
+                            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "studies", String.format("study_id = %d", STUDY_ID)));
+
+    }
+
+    @Test
+    public void testFindStudyByIdNonexistentStudy(){
+        final long STUDY_ID = TestData.Studies.newStudyWithDate.getId();
+
+        Optional<Study> foundStudy = studyDao.findStudyById(STUDY_ID);
+
+        Assert.assertFalse(foundStudy.isPresent());
     }
 
     @Test
