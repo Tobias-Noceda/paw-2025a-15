@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class FileController {
@@ -44,18 +45,12 @@ public class FileController {
 
     @Autowired
     private PatientDetailService pds;
-
-    @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
-    public ModelAndView getImageForm(){
-        return new ModelAndView("createFile");
-    }
-
+    
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.POST)
     public ModelAndView createImage(@RequestParam("file") MultipartFile file) throws IOException{
         File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
-
 
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
     public ModelAndView saveProfileInfo(@AuthenticationPrincipal UserDetails userDetails,
@@ -63,14 +58,17 @@ public class FileController {
                                   BindingResult result,
                                   @ModelAttribute("searchForm") final SearchForm searchForm
     ) throws IOException {
-        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
+        User user = us.getCurrentUser();
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
         if (result.hasErrors()) {
             ModelAndView mav = new ModelAndView("profileInfo");
 
             mav.addObject("profileForm", profileForm);
             mav.addObject("bloodTypes", BloodTypeEnum.values());
             mav.addObject("user", user);
-
+            
             if(user.getRole().equals(UserRoleEnum.PATIENT)) {
                 mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElse(null));
             } else {
@@ -90,7 +88,26 @@ public class FileController {
         return new ModelAndView("redirect:/profile");
     }
 
+    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getIconForm() throws IOException {
+        String path = servletContext.getRealPath("/resources/icono.jpg");
+        java.io.File imgFile = new java.io.File(path);
+    
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+    
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
+    }
+    
 
+    
+    // TODO: Dividir files en imagenes de perfil, imagenes de obra social y estudios
+    @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
+    public ModelAndView getImageForm(){
+        return new ModelAndView("createFile");
+    }
 
     @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
@@ -114,18 +131,5 @@ public class FileController {
                 .ok()
                 .contentType(mediaType)
                 .body(content);
-    }
-
-    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getIconForm() throws IOException {
-        String path = servletContext.getRealPath("/resources/icono.jpg");
-        java.io.File imgFile = new java.io.File(path);
-    
-        byte[] bytes = Files.readAllBytes(imgFile.toPath());
-    
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(bytes);
     }
 }

@@ -6,23 +6,20 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import ar.edu.itba.paw.form.constraints.AvailableTurn;
-
-@AvailableTurn
-public class TakeTurnForm {
+public class AppointmentForm {
+    
     @NotNull
-    private int shiftId;
+    private Long shiftId;
 
     @NotNull
-    @AvailableTurn
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 
-    public int getShiftId() {
+    public Long getShiftId() {
         return shiftId;
     }
 
-    public void setShiftId(int shiftId) {
+    public void setShiftId(Long shiftId) {
         this.shiftId = shiftId;
     }
 
@@ -32,5 +29,10 @@ public class TakeTurnForm {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public void setDate(String date) {
+        System.out.println("Date string: " + date);
+        this.date = LocalDate.parse(date);
     }
 }
