@@ -7,13 +7,17 @@ import java.time.format.DateTimeFormatter;
 
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.Appointment;
+import ar.edu.itba.paw.models.AuthDoctor;
 import ar.edu.itba.paw.models.DoctorCoverage;
+import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
@@ -51,6 +55,10 @@ public class TestData {
         public static final User newDoctor = new User(3, "batata@example.com", "supersecret123", "batata", "1144445555", UserRoleEnum.DOCTOR, 1, LocalDate.now() , LocaleEnum.EN_US);
     }
 
+    public class DoctorDetails{
+        public static final DoctorDetail doctorDetail = new DoctorDetail(2, "med-licence", SpecialtyEnum.CARDIOLOGY);
+    }
+
     public class DoctorCoverages{
         public static final DoctorCoverage doctorCoverage = new DoctorCoverage(2, 1);
         public static final DoctorCoverage doctorCoverage2 = new DoctorCoverage(2, 2);
@@ -70,5 +78,10 @@ public class TestData {
         public static final PatientDetail newPatientDetail = new PatientDetail(1, 30, BloodTypeEnum.AB_POSITIVE, 1.75, 89.00, false, true, null, null, null, null, null, null);
         public static final PatientDetail newPatientDetailNotNullValues = new PatientDetail(1, 30, BloodTypeEnum.AB_POSITIVE, 1.75, 89.00, false, true, "a", "a", "a", "a", "a", "a");
         public static final PatientDetail newPatientDetailNullValues = new PatientDetail(1, null, null, null, null, null, null, null, null, null, null, null, null);
+    }
+
+    public class AuthDoctors{
+        public static final AuthDoctor authDoctor = new AuthDoctor(2, 1, AccessLevelEnum.VIEW_BASIC);
+        public static final AuthDoctor authDoctorSocialLevel = new AuthDoctor(2, 1, AccessLevelEnum.VIEW_SOCIAL);
     }
 }

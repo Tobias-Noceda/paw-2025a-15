@@ -1,0 +1,1 @@
+INSERT INTO auth_doctors(doctor_id, patient_id, access_level) VALUES(2, 1, 3);

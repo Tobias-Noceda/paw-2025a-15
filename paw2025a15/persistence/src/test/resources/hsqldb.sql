@@ -88,7 +88,7 @@ CREATE TABLE doctor_details (--TODO-check que el userId sea de un doctor
     doctor_licence VARCHAR(50) NOT NULL,
     doctor_specialty INT NOT NULL,
 
-    PRIMARY KEY(doctor_id, doctor_specialty),
+    PRIMARY KEY(doctor_id, doctor_specialty),--TODO si no vamos a permitir mas de una specialty eliminar (ya lo asumimos al tener getDetailByDoctorId no mas y otras cosas)
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 

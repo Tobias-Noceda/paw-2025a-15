@@ -83,12 +83,12 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public int getTotalDoctors() {
+    public int getTotalDoctors() {//TODO hasta que no se saque la primary key compuesta en la tabla esto es FALSO porque puede haber duplicados por specialty
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM doctor_details", Integer.class);
     }
 
     //TODO estas capaz estan mal que esten aca fusion de todo lo de "doctor" aca seguro termina siendo
-    private List<Insurance> getInsurancesById(long doctorId) {
+    private List<Insurance> getInsurancesById(long doctorId) {//esta repetida aca y en coverage (posible fusion)
         String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id")));
     }

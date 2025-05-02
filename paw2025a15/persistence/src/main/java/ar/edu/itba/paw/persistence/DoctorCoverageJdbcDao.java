@@ -46,7 +46,7 @@ public class DoctorCoverageJdbcDao implements DoctorCoverageDao{
     }
 
     @Override
-    public List<Insurance> getInsurancesById(long doctorId) {
+    public List<Insurance> getInsurancesById(long doctorId) {//TODO esta repetida aca y en detail (posible fusion)
         String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, ROW_MAPPER);
     }
