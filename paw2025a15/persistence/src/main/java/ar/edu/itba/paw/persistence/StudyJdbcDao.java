@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 @Repository
 public class StudyJdbcDao implements StudyDao{
@@ -63,6 +64,20 @@ public class StudyJdbcDao implements StudyDao{
         args.put("study_date", Date.valueOf(uploadDate.toLocalDate()));
         final Number study_id = jdbcInsert.executeAndReturnKey(args);
         return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, uploadDate.toLocalDate());
+    }
+
+    @Override
+    public Optional<Study> findStudyById(long id) {
+        return jdbcTemplate.query(
+            """
+                SELECT *
+                FROM studies
+                WHERE study_id = ?
+            """,
+            new Object[]  {id},
+            new int[] {java.sql.Types.BIGINT},
+            ROW_MAPPER
+        ).stream().findFirst();
     }
 
     @Override

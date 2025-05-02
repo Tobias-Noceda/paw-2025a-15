@@ -19,9 +19,9 @@ import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 

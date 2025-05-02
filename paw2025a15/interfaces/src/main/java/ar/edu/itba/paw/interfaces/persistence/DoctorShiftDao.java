@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorShiftDao {
     public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime);

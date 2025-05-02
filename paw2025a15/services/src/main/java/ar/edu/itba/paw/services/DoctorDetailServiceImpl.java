@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.SpecialtyEnum;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{

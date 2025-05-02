@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+
 public class Study {
 
     private final long id;

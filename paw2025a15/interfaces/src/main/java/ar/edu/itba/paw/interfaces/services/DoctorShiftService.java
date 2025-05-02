@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorShiftService {
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);

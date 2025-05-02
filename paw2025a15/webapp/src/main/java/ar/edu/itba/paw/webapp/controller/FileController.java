@@ -12,6 +12,10 @@ import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -16,9 +16,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
-import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @Repository
 public class UserJdbcDao implements UserDao{

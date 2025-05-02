@@ -1,6 +1,12 @@
 package ar.edu.itba.paw.webapp.config;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,17 +15,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.GenericFilterBean;
 
 import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.WebUserAuthDecision;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Configuration
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
+@SuppressWarnings("deprecation")
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -27,6 +39,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CustomAuthenticationFailureHandler authenticationFailureHandler;
+
+    @Autowired
+    private WebUserAuthDecision ad;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,33 +53,43 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
+    @Bean
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().requestMatchers("/css/**", "/js/**", "/resources/**", "/403");
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         http.sessionManagement(management -> management.invalidSessionUrl("/home"))
-            .authorizeRequests(requests -> requests
-                .antMatchers("/login").anonymous()
-                .antMatchers("/register/**").anonymous()
-                .antMatchers("/forgot-password").anonymous()
-                .antMatchers("/patient/**").hasAnyRole("DOCTOR", "LABORATORY")
-                .antMatchers("/search/**").permitAll()
-                .antMatchers("/changePassword/**").anonymous()
-                .antMatchers("/recover-password").anonymous()
-                .antMatchers("/studies").hasRole("PATIENT")
-                .antMatchers("/", "/home").permitAll()
-                .antMatchers("/supersecret/files/**").permitAll()
-                .antMatchers("/supersecret/file/icon").permitAll()
-                .antMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
-                .antMatchers("/upload-file/**").authenticated()
-                .antMatchers("/takeAppointment").hasRole("PATIENT")
-                .antMatchers("/createPatient").anonymous()
-                .antMatchers("/patientCancelAppointment").hasRole("PATIENT")
-                .antMatchers("/createMedic").anonymous()
-                .antMatchers("/createLab").anonymous()
-                .antMatchers("/doctors/**").authenticated()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/doctor/**").hasRole("DOCTOR")
-                .antMatchers("/removeAppointment/**").hasRole("DOCTOR")
-                .antMatchers("/**").permitAll()
+            .authorizeHttpRequests(requests -> requests
+                // general
+                .requestMatchers("/", "/home").permitAll()
+                .requestMatchers("/supersecret/file/icon").permitAll()
+                .requestMatchers("/user-profile-picture/{userId}").permitAll()
+                .requestMatchers("/doctors/{doctorId}").hasRole("PATIENT")
+                .requestMatchers("/patient/{patientId}")
+                    .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
+                .requestMatchers("/login", "/register/**", "/forgot-password", "/changePassword/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
+                .requestMatchers("/403").permitAll()
+                // appointments
+                .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
+                .requestMatchers("/cancelAppointment").hasAnyRole("DOCTOR", "PATIENT")
+                .requestMatchers("/takeAppointment").hasRole("PATIENT")
+                .requestMatchers("/removeAppointment/**").hasRole("DOCTOR")
+                // studies
+                .requestMatchers("/studies").hasRole("PATIENT")
+                .requestMatchers("/study/{studyId}")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
+                .requestMatchers("/upload-study/{patientId}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
+                // temporary
+                .requestMatchers("/**").permitAll()
             )
             .formLogin(login -> login
                 .usernameParameter("username")
@@ -83,13 +108,19 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
             )
-            .exceptionHandling(handling -> handling.accessDeniedPage("/403"))
-            .csrf(csrf -> csrf.disable());
+            .csrf(csrf -> csrf.disable())
+            .addFilterBefore(new DecisionExceptionHandler(), UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    private class DecisionExceptionHandler extends GenericFilterBean {
+        @Override
+        public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+                throws IOException, ServletException {
+            try {
+                chain.doFilter(req, res);
+            } catch (NotFoundException e) {
+                req.getRequestDispatcher("/404").forward(req, res);
+            }
+        }
     }
 }

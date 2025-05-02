@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.PatientDetail;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 @Service
 public class PatientDetailsServiceImpl implements PatientDetailService{

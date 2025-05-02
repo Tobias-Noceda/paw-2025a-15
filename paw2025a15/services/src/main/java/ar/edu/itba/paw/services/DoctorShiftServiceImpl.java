@@ -17,7 +17,7 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Service
 public class DoctorShiftServiceImpl implements DoctorShiftService{

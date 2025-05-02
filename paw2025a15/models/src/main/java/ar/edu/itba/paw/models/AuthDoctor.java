@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+
 public class AuthDoctor {
     private final long doctorId;
     private final long patientId;

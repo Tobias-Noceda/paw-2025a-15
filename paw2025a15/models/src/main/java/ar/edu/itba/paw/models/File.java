@@ -2,6 +2,8 @@ package ar.edu.itba.paw.models;
 
 import java.util.Arrays;
 
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+
 public class File {
 
     private final long id;

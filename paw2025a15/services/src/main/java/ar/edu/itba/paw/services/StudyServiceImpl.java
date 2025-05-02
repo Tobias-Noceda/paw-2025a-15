@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 @Service
 public class StudyServiceImpl implements StudyService{
@@ -46,6 +47,11 @@ public class StudyServiceImpl implements StudyService{
         if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
         return studyDao.create(type, comment, fileId, userId, uploaderId);   
+    }
+
+    @Override
+    public Optional<Study> getStudyById(long id) {
+        return studyDao.findStudyById(id);
     }
 
     @Override

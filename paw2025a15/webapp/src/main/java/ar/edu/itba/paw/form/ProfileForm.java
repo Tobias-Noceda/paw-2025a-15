@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import ar.edu.itba.paw.models.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 public class ProfileForm {//TODO constraints en Strings por el largo del input, prob tmb una que prevenga sql injection
     

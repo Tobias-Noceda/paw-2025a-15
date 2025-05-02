@@ -26,10 +26,10 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller

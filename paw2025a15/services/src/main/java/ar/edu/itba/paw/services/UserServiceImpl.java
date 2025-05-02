@@ -14,10 +14,10 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.LocaleEnum;
-import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @Service
 public class UserServiceImpl implements UserService {

@@ -18,9 +18,9 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @Controller
 public class PatientController {

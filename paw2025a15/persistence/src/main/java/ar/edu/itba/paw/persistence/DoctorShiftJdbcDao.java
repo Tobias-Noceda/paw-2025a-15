@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
 public class DoctorShiftJdbcDao implements DoctorShiftDao{
@@ -69,7 +69,4 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         return jdbcTemplate.query("SELECT ds.* FROM doctor_shifts AS ds WHERE ds.doctor_id = ? AND ds.shift_weekday = ? AND ds.shift_start_time > ? AND NOT EXISTS (SELECT 1 FROM appointments AS a WHERE a.appointment_date = ? AND a.shift_id = ds.shift_id)", new Object[]  {doctorId, weekday.ordinal(), time, date},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.TIME, java.sql.Types.DATE}, ROW_MAPPER);
     }
-
-
-
 }

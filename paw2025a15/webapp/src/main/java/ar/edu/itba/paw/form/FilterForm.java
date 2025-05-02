@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.form;
 
-import ar.edu.itba.paw.models.SpecialtyEnum;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public class FilterForm {
     private SpecialtyEnum specialty;

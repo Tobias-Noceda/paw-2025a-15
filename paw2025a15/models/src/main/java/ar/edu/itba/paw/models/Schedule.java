@@ -2,6 +2,8 @@ package ar.edu.itba.paw.models;
 
 import java.util.List;
 
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
+
 public class Schedule {
     
     private List<WeekdayEnum> weekday;
