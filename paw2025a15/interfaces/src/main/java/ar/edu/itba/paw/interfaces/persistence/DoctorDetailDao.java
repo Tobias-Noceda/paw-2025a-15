@@ -3,12 +3,12 @@ package ar.edu.itba.paw.interfaces.persistence;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.SpecialtyEnum;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorDetailDao {
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty);

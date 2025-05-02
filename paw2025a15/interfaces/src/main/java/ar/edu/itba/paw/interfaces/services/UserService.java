@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.LocaleEnum;
-import ar.edu.itba.paw.models.SpecialtyEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 public interface UserService {
     public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale);

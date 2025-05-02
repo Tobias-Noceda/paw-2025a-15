@@ -9,7 +9,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.models.Schedule;
-import ar.edu.itba.paw.models.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
 public class DoctorForm {
     @NotEmpty(message = "{form.name.notEmpty}")

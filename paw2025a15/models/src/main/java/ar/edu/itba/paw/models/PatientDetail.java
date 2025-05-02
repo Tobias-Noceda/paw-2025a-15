@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+
 public class PatientDetail {
     private final long patientId;
     private final Integer age;

@@ -6,8 +6,8 @@ import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 
-import ar.edu.itba.paw.models.SpecialtyEnum;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public class SelectItem {
 

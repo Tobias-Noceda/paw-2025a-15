@@ -2,6 +2,8 @@ package ar.edu.itba.paw.models;
 
 import java.time.LocalTime;
 
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
+
 public class DoctorShift {
     private final long id;
     private final long doctorId;

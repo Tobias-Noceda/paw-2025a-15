@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ar.edu.itba.paw.interfaces.persistence.FileDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
 
 @Service
 public class FileServiceImpl implements FileService{

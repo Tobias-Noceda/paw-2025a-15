@@ -19,19 +19,22 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
+    
     <org.springframework.version>5.3.33</org.springframework.version>
+    <spring-security.version>5.8.11</spring-security.version>
+    <org.postgresql.version>42.2.5</org.postgresql.version>
+    <org.hibernate.validator>6.2.4.Final</org.hibernate.validator>
+    <thymeleaf.version>3.1.0.RELEASE</thymeleaf.version>
+    <commons-fileupload.version>1.4</commons-fileupload.version>
+
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
     <org.hsqldb.version>2.3.1</org.hsqldb.version>
-    <org.postgresql.version>42.2.5</org.postgresql.version>
+    
     <servlet-api.version>2.5</servlet-api.version>
     <jstl.version>1.2</jstl.version>
-    <commons-fileupload.version>1.4</commons-fileupload.version>
     <javax-mail.version>1.6.2</javax-mail.version>
-    <thymeleaf.version>3.1.0.RELEASE</thymeleaf.version>
     <javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
-    <org.hibernate.validator>6.2.4.Final</org.hibernate.validator>
-    <spring-security.version>5.3.13.RELEASE</spring-security.version>
   </properties>
           
   <dependencyManagement>
@@ -180,9 +183,11 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.53.v20231009</version>
+        <version>10.0.19</version>
         <!-- O la última versión disponible -->
         <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds> <!-- Scan every 5 seconds -->
+          <reload>automatic</reload>
           <webApp>
             <contextPath>/</contextPath>
           </webApp>

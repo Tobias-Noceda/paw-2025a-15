@@ -82,10 +82,10 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, long cancelId) {
-        Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(()->new IllegalArgumentException("No such appointment"));
-        User patient = us.getUserById(appointment.getPatientId()).orElseThrow(()->new IllegalArgumentException("No such patient"));
+        Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(() -> new IllegalArgumentException("No such appointment"));
+        User patient = us.getUserById(appointment.getPatientId()).orElseThrow(() -> new IllegalArgumentException("No such patient"));
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
-        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(()->new IllegalArgumentException("No such doctor"));
+        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("No such doctor"));
         if(appointmentDao.removeAppointment(shiftId, date)){
             if(cancelId==patient.getId()){
                 es.sendPatientCancellationConfirmationEmail(patient, doctor, appointment, shift);

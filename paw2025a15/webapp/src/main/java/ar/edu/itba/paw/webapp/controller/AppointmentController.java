@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.SearchForm;
@@ -28,7 +26,6 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
 
 
 @Controller
@@ -74,37 +71,17 @@ public class AppointmentController {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
                 mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
             }
-            default -> throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to view appointments");
+            default -> { return new ModelAndView("redirect:/login"); }
         }
             
         return mav;        
     }
 
-    @RequestMapping(value = "/patientCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView patientCancelAppointment(@PathVariable("id") long id, @PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date){
+    @RequestMapping(value = "/cancelAppointment/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
+    public ModelAndView cancelAppointment(@PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date){
         User user = us.getCurrentUser();
 
-        if(!user.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
-        }
-
-        as.cancelAppointment(shiftId, date, id);
-        return new ModelAndView("redirect:/appointments");
-    }
-
-    @RequestMapping(value = "/doctorCancelAppointment/{id:\\d+}/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView cancelAppointment(
-        @PathVariable("id") long id,
-        @PathVariable("shiftId") long shiftId,
-        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
-    ){
-        User user = us.getCurrentUser();
-        
-        if(!user.getRole().equals(UserRoleEnum.DOCTOR)) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to cancel this appointment");
-        }
-
-        as.cancelAppointment(shiftId, date, id);
+        as.cancelAppointment(shiftId, date, user.getId());
         return new ModelAndView("redirect:/appointments");
     }
 

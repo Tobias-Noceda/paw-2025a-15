@@ -3,6 +3,8 @@ package ar.edu.itba.paw.models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+
 public class Study {
 
     private final long id;

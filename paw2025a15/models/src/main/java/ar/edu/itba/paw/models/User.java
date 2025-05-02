@@ -2,6 +2,9 @@ package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
 
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
+
 public class User {
 
     private final long id;

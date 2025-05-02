@@ -13,8 +13,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
-import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.PatientDetail;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 @Repository
 public class PatientDetailJdbcDao implements PatientDetailDao{

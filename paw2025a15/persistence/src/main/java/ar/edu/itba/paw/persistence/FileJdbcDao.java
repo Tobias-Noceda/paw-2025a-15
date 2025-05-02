@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.FileDao;
 import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
 
 @Repository
 public class FileJdbcDao implements FileDao{
