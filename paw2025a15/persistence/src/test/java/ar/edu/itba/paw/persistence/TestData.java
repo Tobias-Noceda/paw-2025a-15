@@ -6,12 +6,14 @@ import java.time.format.DateTimeFormatter;
 
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.StudyTypeEnum;
+import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.FileTypeEnum;
 import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.UserRoleEnum;
 import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.PatientDetail;
 
 //Readable output of all the data inputed in test/resources
 public class TestData {
@@ -37,6 +39,15 @@ public class TestData {
 
     public class Users{
         public static final User patient = new User(1, "donna@example.com", "supersecret123", "donna", "1144445555", UserRoleEnum.PATIENT, 1, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US);
-        public static final User newPatient = new User(2, "sophie@example.com", "supersecret123", "sophie", "1144445555", UserRoleEnum.PATIENT, 1, LocalDate.now() , LocaleEnum.EN_US);
+        public static final User newPatient = new User(3, "sophie@example.com", "supersecret123", "sophie", "1144445555", UserRoleEnum.PATIENT, 1, LocalDate.now() , LocaleEnum.EN_US);
+
+
+        public static final User doctor = new User(2, "membrillo@example.com", "supersecret123", "membrillo", "1144445555", UserRoleEnum.DOCTOR, 1, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US);
+        public static final User newDoctor = new User(3, "batata@example.com", "supersecret123", "batata", "1144445555", UserRoleEnum.DOCTOR, 1, LocalDate.now() , LocaleEnum.EN_US);
+    }
+
+    public class PatientDetails{
+        public static final PatientDetail patientDetail = new PatientDetail(1, null, null, null, null, null, null, null, null, null, null, null, "carpenter");
+        public static final PatientDetail newPatientDetail = new PatientDetail(1, 30, BloodTypeEnum.AB_POSITIVE, 1.75, 89.0, false, true, null, null, null, null, null, null);
     }
 }

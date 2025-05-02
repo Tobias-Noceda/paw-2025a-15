@@ -28,7 +28,7 @@ import ar.edu.itba.paw.persistence.config.TestConfig;
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class StudyJdbcDaoTest {
+public class StudyJdbcDaoTest {//TODO-check que el userId sea de un patient
 
     @Autowired
     private DataSource ds;  

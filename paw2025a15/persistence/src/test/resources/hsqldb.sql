@@ -41,7 +41,7 @@ CREATE TABLE studies (
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE patient_coverages (
+CREATE TABLE patient_coverages (--TODO-check que el userId sea de un patient y insurance existente
     patient_id BIGINT PRIMARY KEY,
     insurance_id BIGINT NOT NULL,
 
@@ -49,7 +49,7 @@ CREATE TABLE patient_coverages (
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
 
-CREATE TABLE doctor_coverages (
+CREATE TABLE doctor_coverages (--TODO-check que el userId sea de un doctor y insurance existente
     doctor_id BIGINT NOT NULL,
     insurance_id BIGINT NOT NULL,
 
@@ -58,7 +58,7 @@ CREATE TABLE doctor_coverages (
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
 
-CREATE TABLE doctor_shifts (
+CREATE TABLE doctor_shifts (--TODO-check que el userId sea de un doctor
     shift_id SERIAL PRIMARY KEY,
     doctor_id BIGINT NOT NULL,
     shift_weekday INT NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE doctor_shifts (
     CONSTRAINT valid_time_range CHECK (shift_start_time < shift_end_time)
 );
 
-CREATE TABLE appointments (
+CREATE TABLE appointments (--TODO-check que el userId sea de un patient
     shift_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
     appointment_date DATE NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE appointments (
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE doctor_details (
+CREATE TABLE doctor_details (--TODO-check que el userId sea de un doctor 
     doctor_id BIGINT NOT NULL,
     doctor_licence VARCHAR(50) NOT NULL,
     doctor_specialty INT NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE doctor_details (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE patient_details (
+CREATE TABLE patient_details (--TODO-check que el userId sea de un patient
     patient_id BIGINT NOT NULL,
     patient_age INT,
     patient_blood_type INT,
@@ -111,7 +111,7 @@ CREATE TABLE patient_details (
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE auth_doctors (
+CREATE TABLE auth_doctors (--TODO-check que el userId sea de un patient y el de doctor de doctor
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
     access_level INT NOT NULL DEFAULT 0,
@@ -121,7 +121,7 @@ CREATE TABLE auth_doctors (
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE auth_studies (
+CREATE TABLE auth_studies (--TODO-check que el userId sea de undoctor y que el study exista
     doctor_id BIGINT NOT NULL,
     study_id BIGINT NOT NULL,
 
