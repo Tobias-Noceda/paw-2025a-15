@@ -18,9 +18,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.LocaleEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")

@@ -5,14 +5,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.StudyTypeEnum;
-import ar.edu.itba.paw.models.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.DoctorCoverage;
 import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.FileTypeEnum;
-import ar.edu.itba.paw.models.LocaleEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.PatientDetail;
 
