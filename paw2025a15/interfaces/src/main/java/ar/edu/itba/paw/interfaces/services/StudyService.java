@@ -8,7 +8,9 @@ import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.StudyTypeEnum;
 
 public interface StudyService {
-    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate);
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate);
+
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId);
 
     public List<Study> getStudiesByPatientId(long id);
 }

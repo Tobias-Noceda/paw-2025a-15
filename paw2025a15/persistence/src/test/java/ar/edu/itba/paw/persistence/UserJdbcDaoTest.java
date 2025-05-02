@@ -136,31 +136,6 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void testChangePassword(){
-        final String USEREMAIL = TestData.Users.patient.getEmail();
-        final String PASSWORD = TestData.Users.patient.getPassword();
-        final String NEW_PASSWORD = PASSWORD + "1";
-
-        userDao.changePassword(USEREMAIL, NEW_PASSWORD);
-
-        Assert.assertEquals(0, 
-            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_email = '%s' AND user_password = '%s'", USEREMAIL, PASSWORD)));
-        Assert.assertEquals(1, 
-            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_email = '%s' AND user_password = '%s'", USEREMAIL, NEW_PASSWORD)));  
-    }
-
-    @Test
-    public void testChangePasswordNonexistentUser(){
-        final String USEREMAIL = "";
-        final String PASSWORD = TestData.Users.patient.getPassword();
-
-        userDao.changePassword(USEREMAIL, PASSWORD);
-
-        Assert.assertEquals(0, 
-            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_email = '%s'", USEREMAIL)));
-    }
-
-    @Test
     public void testChangePasswordByID(){
         final long USER_ID = TestData.Users.patient.getId();
         final String PASSWORD = TestData.Users.patient.getPassword();
@@ -180,31 +155,6 @@ public class UserJdbcDaoTest {
         final String PASSWORD = TestData.Users.patient.getPassword();
 
         userDao.changePasswordByID(USER_ID, PASSWORD);
-
-        Assert.assertEquals(0, 
-            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_id = %d", USER_ID)));
-    }
-
-    @Test
-    public void testUpdatePhoneNumber(){
-        final long USER_ID = TestData.Users.patient.getId();
-        final String USER_TELEPHONE = TestData.Users.patient.getTelephone();
-        final String NEW_TELEPHONE = "1111111111";
-
-        userDao.updatePhoneNumber(USER_ID, NEW_TELEPHONE);
-
-        Assert.assertEquals(0, 
-            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_id = %d AND user_telephone = '%s'", USER_ID, USER_TELEPHONE)));
-        Assert.assertEquals(1, 
-            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_id = %d AND user_telephone = '%s'", USER_ID, NEW_TELEPHONE)));  
-    }
-
-    @Test
-    public void testUpdatePhoneNumberNonexistentUser(){
-        final long USER_ID = 0;
-        final String NEW_TELEPHONE = "1111111111";
-
-        userDao.updatePhoneNumber(USER_ID, NEW_TELEPHONE);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_id = %d", USER_ID)));

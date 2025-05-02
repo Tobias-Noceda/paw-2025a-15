@@ -1,7 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
+import ar.edu.itba.paw.models.Study;
+import ar.edu.itba.paw.models.StudyTypeEnum;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.FileTypeEnum;
 import ar.edu.itba.paw.models.LocaleEnum;
@@ -22,6 +26,13 @@ public class TestData {
         public static final Insurance validInsurance = new Insurance(1, "OSDE", 1);
         public static final Insurance validInsurance2 = new Insurance(2, "Galeno", 1);
         public static final Insurance newInsurance = new Insurance(3, "Swiss Medical", 1);
+    }
+
+    public class Studies{
+        public static final Study validStudyWithDate = new Study(1, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study validStudyWithoutDate = new Study(2, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study newStudyWithDate = new Study(3, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.now(), LocalDate.parse("2025-04-09"));
+        public static final Study newStudyWithoutDate = new Study(3, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.now(), LocalDate.now());
     }
 
     public class Users{

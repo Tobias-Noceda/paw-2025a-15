@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 public class Study {
 
@@ -55,5 +56,46 @@ public class Study {
 
     public LocalDate getStudyDate(){
         return studyDate;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof Study)) return false;
+
+        Study o = (Study) other;
+
+        return (this.id==o.id) && (this.type.equals(o.type))
+        && (this.comment.equals(o.comment)) && (this.fileId==o.fileId)
+        && (this.userId==o.userId) && (this.uploaderId==o.uploaderId)
+        && (this.uploadDate.equals(o.uploadDate)) && (this.studyDate.equals(o.studyDate));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(id);
+        result = 31 * result + type.hashCode();
+        result = 31 * result + comment.hashCode();
+        result = 31 * result + Long.hashCode(fileId);
+        result = 31 * result + Long.hashCode(userId);
+        result = 31 * result + Long.hashCode(uploaderId);
+        result = 31 * result + uploadDate.hashCode();
+        result = 31 * result + studyDate.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "File{" +
+            "id=" + id +
+            ", type=" + type +
+            ", comment=" + comment +
+            ", fileId=" + fileId +
+            ", userId=" + userId +
+            ", uploaderId=" + uploaderId +
+            ", uploadDate=" + uploadDate +
+            ", studyDate=" + studyDate +
+            '}';
     }
 }

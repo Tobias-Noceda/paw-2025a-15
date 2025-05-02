@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,17 +36,33 @@ public class StudyJdbcDao implements StudyDao{
     }
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate) {
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
         final Map<String, Object> args = new HashMap<>();
         args.put("study_type", type.ordinal());
         args.put("study_comment", comment);
         args.put("file_id", fileId);
         args.put("user_id", userId);
         args.put("uploader_id", uploaderId);
+        LocalDateTime uploadDate = LocalDateTime.now();
         args.put("upload_date", Timestamp.valueOf(uploadDate));
         args.put("study_date", studyDate);
         final Number study_id = jdbcInsert.executeAndReturnKey(args);
         return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, studyDate);
+    }
+    
+    @Override
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("study_type", type.ordinal());
+        args.put("study_comment", comment);
+        args.put("file_id", fileId);
+        args.put("user_id", userId);
+        args.put("uploader_id", uploaderId);
+        LocalDateTime uploadDate = LocalDateTime.now();
+        args.put("upload_date", Timestamp.valueOf(uploadDate));
+        args.put("study_date", Date.valueOf(uploadDate.toLocalDate()));
+        final Number study_id = jdbcInsert.executeAndReturnKey(args);
+        return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, uploadDate.toLocalDate());
     }
 
     @Override

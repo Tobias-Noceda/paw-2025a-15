@@ -32,12 +32,20 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate) {
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
         if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
         if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
-        LocalDate date = studyDate == null? uploadDate.toLocalDate() : studyDate;
-        return studyDao.create(type, comment, fileId, userId, uploaderId, uploadDate, date);   
+        if(studyDate == null) return create(type, comment, fileId, userId, uploaderId);
+        return studyDao.create(type, comment, fileId, userId, uploaderId, studyDate);   
+    }
+
+    @Override
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
+        if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
+        if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
+        if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
+        return studyDao.create(type, comment, fileId, userId, uploaderId);   
     }
 
     @Override

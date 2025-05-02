@@ -105,15 +105,13 @@ public class StudyController {
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm);
         }
-
-        LocalDateTime dateTime = LocalDateTime.now();
         
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), createStudyForm.getDate());
 
 
         if(patientId != user.getId()) {
-            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), dateTime);
+            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), LocalDateTime.now());
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {
             return new ModelAndView("redirect:/studies");
