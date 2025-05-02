@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.StudyTypeEnum;
 import ar.edu.itba.paw.models.BloodTypeEnum;
+import ar.edu.itba.paw.models.DoctorCoverage;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.FileTypeEnum;
 import ar.edu.itba.paw.models.LocaleEnum;
@@ -44,6 +45,11 @@ public class TestData {
 
         public static final User doctor = new User(2, "membrillo@example.com", "supersecret123", "membrillo", "1144445555", UserRoleEnum.DOCTOR, 1, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US);
         public static final User newDoctor = new User(3, "batata@example.com", "supersecret123", "batata", "1144445555", UserRoleEnum.DOCTOR, 1, LocalDate.now() , LocaleEnum.EN_US);
+    }
+
+    public class DoctorCoverages{
+        public static final DoctorCoverage doctorCoverage = new DoctorCoverage(2, 1);
+        public static final DoctorCoverage doctorCoverage2 = new DoctorCoverage(2, 2);
     }
 
     public class PatientDetails{
