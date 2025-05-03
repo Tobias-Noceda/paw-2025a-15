@@ -14,7 +14,6 @@ public class TakeTurnForm {
     private int shiftId;
 
     @NotNull
-    @AvailableTurn
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 

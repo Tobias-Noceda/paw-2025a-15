@@ -71,6 +71,8 @@ public class AppointmentController {
         
         mav.addObject("searchForm", new SearchForm());
         mav.addObject("appointmentForm", new AppointmentForm());
+        mav.addObject("takeTurnForm", new TakeTurnForm());
+
         return mav;
     }
 
@@ -103,8 +105,6 @@ public class AppointmentController {
         }
 
         User user = us.getCurrentUser();
-        
-        
         try {
             as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
         } catch (IllegalArgumentException e) {
@@ -116,17 +116,18 @@ public class AppointmentController {
 
     @RequestMapping(value = "/removeAppointment", method = RequestMethod.POST)
     public ModelAndView removeAppointment(
-        @Valid @ModelAttribute("appointmentForm") final AppointmentForm form,
+        @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
         final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            throw new NotFoundException("Error in appointment form");
+            throw new NotFoundException("Error in form");
         }
+
         User user = us.getCurrentUser();
         try {
             as.removeAppointment(form.getShiftId(), form.getDate(), user.getId());
         } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Error in appointment form");
+            throw new NotFoundException("Error in form");
         }
         
         return new ModelAndView("redirect:/appointments");

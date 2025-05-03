@@ -272,7 +272,7 @@
                             <spring:message code="appointments.cancel"/>
                           </c:set>
                           <form:form
-                            modelAttribute="appointmentForm"
+                            modelAttribute="takeTurnForm"
                             action="/removeAppointment"
                             method="post"
                             id="removeAppointmentForm"
