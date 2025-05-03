@@ -17,6 +17,7 @@ import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+
 
 @Controller
 public class FileController {
@@ -100,6 +102,20 @@ public class FileController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(bytes);
     }
+
+    @GetMapping("/favicon.ico")
+    public ResponseEntity<byte[]> getFavicon() throws IOException {
+        String path = servletContext.getRealPath("/resources/favicon.png");
+        java.io.File imgFile = new java.io.File(path);
+
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+        
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+    
     
 
     
@@ -130,6 +146,16 @@ public class FileController {
         return ResponseEntity
                 .ok()
                 .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"file_" + id + getExtension(fileType) + "\"")
                 .body(content);
+    }
+
+    private String getExtension(FileTypeEnum mediaType) {
+        return switch (mediaType) {
+            case PNG -> ".png";
+            case JPEG -> ".jpg";
+            case PDF -> ".pdf";
+            default -> "";
+        };
     }
 }
