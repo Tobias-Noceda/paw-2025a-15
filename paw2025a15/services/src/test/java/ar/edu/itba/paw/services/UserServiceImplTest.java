@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -31,12 +33,20 @@ public class UserServiceImplTest {
     private static final FileTypeEnum PIC_FILE_TYPE = FileTypeEnum.JPEG;
     private static final File PICTURE = new File(PIC_ID, PIC_CONTENT, PIC_FILE_TYPE);
 
+    private static final long PIC2_ID = 1L;
+    private static final byte[] PIC2_CONTENT = "Image2".getBytes();
+    private static final FileTypeEnum PIC2_FILE_TYPE = FileTypeEnum.JPEG;
+    private static final File PICTURE2 = new File(PIC2_ID, PIC2_CONTENT, PIC2_FILE_TYPE);
+
     private static final long PATIENT_ID = 1L;
     private static final long PATIENT_PIC_ID = PIC_ID;
+    private static final long PATIENT_PIC2_ID = PIC2_ID;
     private static final String PATIENT_EMAIL = "grace@example.com";
     private static final String PATIENT_NAME = "grace";
+    private static final String PATIENT_NAME2 = "gracie";
     private static final String PATIENT_PASSWORD = "goodgraces";
     private static final String PATIENT_TELEPHONE = "1144445555";
+    private static final String PATIENT_TELEPHONE2 = "1144446666";
     private static final UserRoleEnum PATIENT_ROLE = UserRoleEnum.PATIENT;
     private static final LocaleEnum PATIENT_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
@@ -46,7 +56,7 @@ public class UserServiceImplTest {
     private static final long DOC_PIC_ID = PIC_ID;
     private static final String DOC_EMAIL = "sabrina@example.com";
     private static final String DOC_NAME = "sabrina";
-    private static final String DOC_PASSWORD = "goodgraces";
+    private static final String DOC_PASSWORD = "shortandsweet";
     private static final String DOC_TELEPHONE = "1144445555";
     private static final UserRoleEnum DOC_ROLE = UserRoleEnum.DOCTOR;
     private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
@@ -137,6 +147,55 @@ public class UserServiceImplTest {
         Optional<File> file = us.getUserPicture(PATIENT_ID);
 
         Assert.assertTrue(file.isEmpty());
+    }
+
+    @Test
+    public void testChangePasswordByID(){
+        Mockito.when(passwordEncoder.encode(Mockito.eq(DOC_PASSWORD))).thenReturn("userPassEnc");
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+
+        us.changePasswordByID(PATIENT_ID, DOC_PASSWORD);
+
+        Mockito.verify(userDaoMock).changePasswordByID(PATIENT_ID, "userPassEnc");
+    }
+
+    @Test
+    public void testChangePasswordByIDNonexistentUser(){
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+
+        us.changePasswordByID(PATIENT_ID, DOC_PASSWORD);
+
+        Mockito.verify(userDaoMock, Mockito.never()).changePasswordByID(Mockito.anyLong(), Mockito.anyString());
+    }
+
+    @Test
+    public void testEditUser(){
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(fs.findById(PATIENT_PIC2_ID)).thenReturn(Optional.of(PICTURE2));
+
+        us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID);
+
+        Mockito.verify(userDaoMock).editUser(Mockito.eq(PATIENT_ID), Mockito.eq(PATIENT_NAME2), Mockito.eq(PATIENT_TELEPHONE2), Mockito.eq(PATIENT_PIC2_ID));
+        Mockito.verify(fs).findById(PATIENT_PIC2_ID);
+    }
+
+    @Test
+    public void testEditUserNonexistent(){
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+
+        us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID);
+
+        Mockito.verify(userDaoMock, Mockito.never()).editUser(Mockito.anyLong(), Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
+    }
+
+    @Test
+    public void testEditUserNonexistentPicture(){
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(fs.findById(PATIENT_PIC2_ID)).thenReturn(Optional.empty());
+
+        us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID);
+
+        Mockito.verify(userDaoMock, Mockito.never()).editUser(Mockito.anyLong(), Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
     }
 
 }

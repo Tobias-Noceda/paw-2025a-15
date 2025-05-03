@@ -93,12 +93,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePasswordByID(long id, String password) {
-        userDao.changePasswordByID(id, passwordEncoder.encode(password));
+        if(getUserById(id).isPresent()) userDao.changePasswordByID(id, passwordEncoder.encode(password));
     }
 
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
-        if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
+        User user = getUserById(id).orElse(null);
+        if(user == null) return;
+        if(fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
     }
 
     @Override
