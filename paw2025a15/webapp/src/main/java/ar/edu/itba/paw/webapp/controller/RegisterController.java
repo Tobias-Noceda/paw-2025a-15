@@ -51,9 +51,6 @@ public class RegisterController {
     private MessageSource messageSource;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
     private void loginUser(String email, String password) {
@@ -81,7 +78,7 @@ public class RegisterController {
             try {
                 us.createPatient(
                         form.getEmail(),
-                        passwordEncoder.encode(form.getPassword()),
+                        form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         UserRoleEnum.PATIENT,
@@ -134,7 +131,7 @@ public class RegisterController {
                 // Crear el médico
                 User doc = us.createDoctor(
                         form.getEmail(),
-                        passwordEncoder.encode(form.getPassword()),
+                        form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         "med-licence",

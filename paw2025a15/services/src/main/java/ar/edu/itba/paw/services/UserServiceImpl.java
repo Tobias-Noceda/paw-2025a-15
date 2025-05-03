@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
@@ -34,16 +35,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private FileService fs;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override//TODO check porfa
     public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
-        User user = userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
+        if(getUserByEmail(email).isPresent()) return null;
+        User user = userDao.create(email, passwordEncoder.encode(password), name, telephone, role, 1, locale); // PictureId por defecto
         pds.create(user.getId(), null, null, null, null, null, null, null, null, null, null, null, null);
         return user;
     }
 
     @Override
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality, LocaleEnum locale) {
-        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, 1, locale);
+        if(getUserByEmail(email).isPresent()) return null;
+        User doc = userDao.create(email, passwordEncoder.encode(password), name, telephone, UserRoleEnum.DOCTOR, 1, locale); // PictureId por defecto
         dds.create(doc.getId(), licence, speciality);
         return doc;
     }
@@ -88,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePasswordByID(long id, String password) {
-        userDao.changePasswordByID(id, password);
+        userDao.changePasswordByID(id, passwordEncoder.encode(password));
     }
 
     @Override

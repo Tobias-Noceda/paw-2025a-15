@@ -43,9 +43,6 @@ public class UserController {
     @Autowired
     private EmailService es;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @RequestMapping("/login")
     public ModelAndView login() {
         return new ModelAndView("login");
@@ -134,7 +131,7 @@ public class UserController {
             return mav;
         }
         ModelAndView mav = new ModelAndView("login");
-        us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
+        us.changePasswordByID(id, form.getPassword());
         return mav;
     }
     @RequestMapping("/profile")
