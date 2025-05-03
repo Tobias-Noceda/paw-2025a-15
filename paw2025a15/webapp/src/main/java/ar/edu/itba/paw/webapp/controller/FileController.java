@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -85,8 +86,8 @@ public class FileController {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
         }else {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
-        }
-        pds.updatePatientDetails(user.getId(), profileForm.getAge(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
+        }//TODO:en vez de calcular el birthdate por la age deberia ser al reves. pedir input de birthdate directamente
+        pds.updatePatientDetails(user.getId(), LocalDate.of(LocalDate.now().getYear() - profileForm.getAge(), 1, 1), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
         return new ModelAndView("redirect:/profile");
     }
 
