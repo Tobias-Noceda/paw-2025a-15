@@ -13,6 +13,7 @@ import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
@@ -49,5 +50,13 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public List<Study> getStudiesByPatientId(long id) {
         return studyDao.getStudiesByPatientId(id);
+    }
+
+    @Override
+    public Optional<File> getStudyFile(long id) {
+        Study study = studyDao.findStudyById(id).orElse(null);
+        if (study == null) return Optional.empty();
+
+        return fs.findById(study.getFileId());
     }
 }

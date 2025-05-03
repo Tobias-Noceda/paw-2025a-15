@@ -28,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.StudyService;
 
 @Controller
 public class FileController {
@@ -43,7 +45,87 @@ public class FileController {
     private UserService us;
 
     @Autowired
+    private InsuranceService is;
+
+    @Autowired
+    private StudyService ss;
+
+    @Autowired
     private PatientDetailService pds;
+
+    //===================================TODO: new, needs mappind in auth=================================================
+
+    @RequestMapping(path = "/getUserPic/{id:\\d+}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> getUserPicture(@PathVariable("id") long id){
+        Optional<File> f = us.getUserPicture(id);
+        if (!f.isPresent()) {
+            throw new NoSuchElementException("Profile picture not found for user with ID: " + id);
+        }
+        
+        byte[] content = f.get().getContent();
+        FileTypeEnum fileType = f.get().getType();
+        
+        MediaType mediaType;
+        mediaType = switch (fileType) {
+            case PNG -> MediaType.IMAGE_PNG;
+            case JPEG -> MediaType.IMAGE_JPEG;
+            default -> throw new IllegalArgumentException("The profile picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de perfil de usuario
+        };
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .body(content);
+    }
+
+    @RequestMapping(path = "/getInsurancePic/{id:\\d+}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> getInsurancePicture(@PathVariable("id") long id){
+        Optional<File> f = is.getInsurancePicture(id);
+        if (!f.isPresent()) {
+            throw new NoSuchElementException("Logo picture not found for insurance with ID: " + id);
+        }
+        
+        byte[] content = f.get().getContent();
+        FileTypeEnum fileType = f.get().getType();
+        
+        MediaType mediaType;
+        mediaType = switch (fileType) {
+            case PNG -> MediaType.IMAGE_PNG;
+            case JPEG -> MediaType.IMAGE_JPEG;
+            default -> throw new IllegalArgumentException("The logo picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de logo de insurance
+        };
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .body(content);
+    }
+
+    @RequestMapping(method=RequestMethod.GET, path="/getStudy/{id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
+    public @ResponseBody ResponseEntity<byte[]> getStudy(@PathVariable("id") long id){
+        Optional<File> f = ss.getStudyFile(id);
+        if (!f.isPresent()) {
+            throw new NoSuchElementException("Study not found with ID: " + id);
+        }
+        
+        byte[] content = f.get().getContent();
+        FileTypeEnum fileType = f.get().getType();
+        
+        MediaType mediaType;
+        mediaType = switch (fileType) {
+            case PNG -> MediaType.IMAGE_PNG;
+            case JPEG -> MediaType.IMAGE_JPEG;
+            case PDF -> MediaType.APPLICATION_PDF;
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
+
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .body(content);
+    }
+
+    //====================================================================================================================
 
     @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
     public ModelAndView getImageForm(){

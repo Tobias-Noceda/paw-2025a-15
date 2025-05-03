@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
@@ -14,4 +15,6 @@ public interface StudyService {
     public Optional<Study> getStudyById(long id);
 
     public List<Study> getStudiesByPatientId(long id);
+
+    public Optional<File> getStudyFile(long id);
 }
