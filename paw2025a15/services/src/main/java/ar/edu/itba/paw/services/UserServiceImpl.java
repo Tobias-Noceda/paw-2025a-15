@@ -61,9 +61,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<File> getUserPicture(long id) {
-        User user = userDao.getUserById(id).orElse(null);
+        User user = getUserById(id).orElse(null);
         if (user == null) return Optional.empty();
-
         return fs.findById(user.getPictureId());
     }
 
@@ -103,13 +102,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getCurrentUser() {
+    public User getCurrentUser() {//TODO: capaz va directo en advice, por lo que no testee
         Authentication session = SecurityContextHolder.getContext().getAuthentication();
-
-        if (session != null) {
-            return userDao.getUserByEmail(session.getName()).orElse(null);
-        }
-
+        if (session != null) return userDao.getUserByEmail(session.getName()).orElse(null);
         return null;
     }
 
