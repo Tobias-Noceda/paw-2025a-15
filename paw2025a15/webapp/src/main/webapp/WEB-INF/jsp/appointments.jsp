@@ -271,9 +271,10 @@
                           <c:set var="cancelRemoveText">
                             <spring:message code="appointments.cancel"/>
                           </c:set>
+                          <c:set var="removeUrl" value="/removeAppointment" />
                           <form:form
                             modelAttribute="takeTurnForm"
-                            action="/removeAppointment"
+                            action="${removeUrl}"
                             method="post"
                             id="removeAppointmentForm"
                           >

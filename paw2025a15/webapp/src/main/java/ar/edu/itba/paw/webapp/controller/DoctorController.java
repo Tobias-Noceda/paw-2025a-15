@@ -92,8 +92,11 @@ public class DoctorController {
             throw new NotFoundException("Doctor not found");
         }
 
+        System.out.println("Updating auth doctor: " + doctorId);
+        System.out.println("action: " + action);
+        System.out.println("referer: " + referer);
+
         User user = us.getCurrentUser();
-        
         if ("update".equals(action)) {
             dds.updateAuthDoctor(user.getId(), doctorId, (accessLevels == null ? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
         }
