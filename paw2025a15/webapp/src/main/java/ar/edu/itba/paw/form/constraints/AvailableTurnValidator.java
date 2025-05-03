@@ -1,8 +1,5 @@
 package ar.edu.itba.paw.form.constraints;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -22,6 +19,6 @@ public class AvailableTurnValidator implements ConstraintValidator<AvailableTurn
 
     @Override
     public boolean isValid(TakeTurnForm form, ConstraintValidatorContext context){
-        return as.getAppointmentsByShiftIdAndDate(form.getShiftId(), LocalDate.parse(form.getDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))).isEmpty();
+        return as.getAppointmentsByShiftIdAndDate(form.getShiftId(), form.getDate()).isEmpty();
     }
 }

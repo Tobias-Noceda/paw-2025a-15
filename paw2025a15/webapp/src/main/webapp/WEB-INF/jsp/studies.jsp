@@ -121,6 +121,15 @@
             <div class="studies-table-body">
               <table class="studies-table">
                 <tbody>
+                  <c:set var="buttonText">
+                    <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+                  </c:set>
+                  <c:set var="confirmationText">
+                    <spring:message code="doctorDetail.deauthorize.confirm"/>
+                  </c:set>
+                  <c:set var="authCancelText">
+                    <spring:message code="doctorDetail.authorize.cancelButton"/>
+                  </c:set>
                   <c:forEach var="doctor" items="${patientAuthDoctors}">
                     <tr class="doctor-row">
                       <td class="text-cell"><c:out value="${doctor.name}"/></td>
@@ -128,24 +137,18 @@
                         <spring:message code="specialty.${doctor.specialty}"/>
                       </td>
                       <td class="deauthorize-cell">
+                        <c:url value="/patientAuthDoctor/${doctor.id}" var="deauthDoctorUrl" />
                         <form
                           id="authDoctorForm"
-                          action="/patientAuthDoctor/${doctor.id}"
+                          action="${deauthDoctorUrl}"
                           method="post"
                         >
-                          <c:set var="buttonText">
-                            <spring:message code="doctorDetail.toggleButton.deauthorize"/>
-                          </c:set>
-                          <c:set var="confirmationText">
-                            <spring:message code="doctorDetail.deauthorize.confirm"/>
-                          </c:set>
-                          <c:set var="authCancelText">
-                            <spring:message code="doctorDetail.authorize.cancelButton"/>
-                          </c:set>
                           <button
                             type="button" 
+                            name="action"
+                            value="toggle"
                             class="deauthorize-button"
-                            onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}')"
+                            onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value);"
                           >
                             <c:out value="${buttonText}"/>
                           </button>
