@@ -13,5 +13,7 @@ public interface InsuranceService {
 
     public Optional<Insurance> getInsuranceById(long id);
 
+    public Optional<Insurance> getInsuranceByName(String name);
+
     public List<Insurance> getAllInsurances();
 }

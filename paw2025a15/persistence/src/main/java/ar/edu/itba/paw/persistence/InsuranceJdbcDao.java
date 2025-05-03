@@ -59,5 +59,11 @@ public class InsuranceJdbcDao implements InsuranceDao{
         String sql = "SELECT * from insurances";
         return jdbcTemplate.query(sql, ROW_MAPPER);
     }
+
+    @Override
+    public Optional<Insurance> getInsuranceByName(String name) {//TODO: prevent sql inject via testing string
+            return jdbcTemplate.query("SELECT * FROM insurances WHERE insurance_name = ?", new Object[]  {name},
+              new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
+        }
     
 }
