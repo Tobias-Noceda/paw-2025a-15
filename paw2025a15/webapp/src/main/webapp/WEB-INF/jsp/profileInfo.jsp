@@ -49,7 +49,7 @@
       <div class="profile-info-block">
         <p class="name"><c:out value="${user.name}"/></p>
         <p class="email"><c:out value="${user.email}"/></p>
-        <p class="role"><spring:message code="profile.role.label"/>: <c:out value="${user.role}"/></p>
+        <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user.role}"/></p>
       </div>
     </div>
 

@@ -269,7 +269,7 @@
                             <spring:message code="appointments.remove"/>
                           </c:set>
                           <c:set var="cancelRemoveText">
-                            <spring:message code="appointments.cancel"/>
+                            <spring:message code="appointments.dismiss"/>
                           </c:set>
                           <c:url var="removeUrl" value="/removeAppointment" />
                           <form:form
