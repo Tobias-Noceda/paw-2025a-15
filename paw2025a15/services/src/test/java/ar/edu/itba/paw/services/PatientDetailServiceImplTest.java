@@ -21,7 +21,7 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PatientDetailsServiceImplTest {
+public class PatientDetailServiceImplTest {
 
     private static final long PIC_ID = 1L;
     private static final byte[] PIC_CONTENT = "Image".getBytes();
@@ -55,7 +55,7 @@ public class PatientDetailsServiceImplTest {
 
 
     @InjectMocks
-    private PatientDetailsServiceImpl pds;
+    private PatientDetailServiceImpl pds;
 
     @Mock
     private PatientDetailDao patientDetailDaoMock;

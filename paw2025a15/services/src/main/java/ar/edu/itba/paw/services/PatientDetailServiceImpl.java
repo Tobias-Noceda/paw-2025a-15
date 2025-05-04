@@ -11,7 +11,7 @@ import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 @Service
-public class PatientDetailsServiceImpl implements PatientDetailService{
+public class PatientDetailServiceImpl implements PatientDetailService{
 
     @Autowired
     private PatientDetailDao patientDetailDao;
