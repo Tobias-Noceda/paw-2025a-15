@@ -58,7 +58,7 @@
       <h3 class="section-title"><spring:message code="profileInfo.basic"/></h3>
       <div class="field-grid">
         <div class="field-container">
-          <label for="phoneNumber"><spring:message code="profile.phone.label"/></label>
+          <form:label path="phoneNumber"><spring:message code="profile.phone.label"/></form:label>
           <form:input path="phoneNumber"
                       type="number"
                       cssClass="input-field"
@@ -70,20 +70,15 @@
 
         <c:if test="${patientDetails != null}">
           <div class="field-container">
-            <label for="patient-age"><spring:message code="profileInfo.age"/></label>
-            <input id="patient-age"
-                   name="age"
-                   type="number"
-                   maxlength="3"
-                   class="input-field"
-                   value="${patientDetails.age}"
-                   onkeydown="return blockInvalidPhoneKeys(event)"
-                   onpaste="return blockNegativePaste(event)"/>
+            <form:label cssClass="form-title" path="birthDate">
+              <p><spring:message code="form.birthDate"/>:</p>
+            </form:label>
+              <form:input type="date" path="birthDate"/>
             <form:errors path="age" cssClass="error-box" element="div"/>
           </div>
 
           <div class="field-container">
-            <label for="patient-blood-type"><spring:message code="profileInfo.bloodType"/></label>
+            <form:label path="bloodType"><spring:message code="profileInfo.bloodType"/></form:label>
             <select id="patient-blood-type"
                     name="bloodType"
                     class="input-field">
@@ -98,7 +93,7 @@
           </div>
 
           <div class="field-container">
-            <label for="patient-height"><spring:message code="profileInfo.height"/></label>
+            <form:label path="height"><spring:message code="profileInfo.height"/></form:label>
             <input id="patient-height"
                    name="height"
                    type="text"
@@ -112,7 +107,7 @@
           </div>
 
           <div class="field-container">
-            <label for="patient-weight"><spring:message code="profileInfo.weight"/></label>
+            <form:label path="weight"><spring:message code="profileInfo.weight"/></form:label>
             <input id="patient-weight"
                    name="weight"
                    type="text"
@@ -132,7 +127,7 @@
       <h3 class="section-title"><spring:message code="profileInfo.habits"/></h3>
       <div class="field-grid">
         <div class="field-container">
-          <label for="patient-smokes"><spring:message code="profileInfo.smokes"/></label>
+          <form:label path="smokes"><spring:message code="profileInfo.smokes"/></form:label>
           <select id="patient-smokes" name="smokes" class="input-field">
             <option value="" <c:if test="${patientDetails.smokes == null}">selected</c:if>>
               <spring:message code="profileInfo.select"/>
@@ -147,7 +142,7 @@
         </div>
 
         <div class="field-container">
-          <label for="patient-drinks"><spring:message code="profileInfo.drinks"/></label>
+          <form:label path="drinks"><spring:message code="profileInfo.drinks"/></form:label>
           <select id="patient-drinks" name="drinks" class="input-field">
             <option value="" <c:if test="${patientDetails.drinks == null}">selected</c:if>>
               <spring:message code="profileInfo.select"/>
@@ -163,7 +158,7 @@
 
 
         <div class="field-container full-width">
-          <label for="patient-diet"><spring:message code="profileInfo.diet"/></label>
+          <form:label path="diet"><spring:message code="profileInfo.diet"/></form:label>
           <textarea id="patient-diet" name="diet" class="input-field" rows="2" maxlength="100">${patientDetails.diet}</textarea>
         </div>
       </div>
@@ -174,15 +169,15 @@
       <h3 class="section-title"><spring:message code="profileInfo.medical"/></h3>
       <div class="field-grid">
         <div class="field-container full-width">
-          <label for="patient-meds"><spring:message code="profileInfo.meds"/></label>
+          <form:label path="meds"><spring:message code="profileInfo.meds"/></form:label>
           <textarea id="patient-meds" name="meds" class="input-field" rows="2" maxlength="250">${patientDetails.meds}</textarea>
         </div>
         <div class="field-container full-width">
-          <label for="patient-conditions"><spring:message code="profileInfo.conditions"/></label>
+          <form:label path="conditions"><spring:message code="profileInfo.conditions"/></form:label>
           <textarea id="patient-conditions" name="conditions" class="input-field" rows="2" maxlength="250">${patientDetails.conditions}</textarea>
         </div>
         <div class="field-container full-width">
-          <label for="patient-allergies"><spring:message code="profileInfo.allergies"/></label>
+          <form:label path="allergies"><spring:message code="profileInfo.allergies"/></form:label>
           <textarea id="patient-allergies" name="allergies" class="input-field" rows="2" maxlength="250">${patientDetails.allergies}</textarea>
         </div>
       </div>
@@ -193,11 +188,11 @@
       <h3 class="section-title"><spring:message code="profileInfo.social"/></h3>
       <div class="field-grid">
         <div class="field-container full-width">
-          <label for="patient-hobbies"><spring:message code="profileInfo.hobbies"/></label>
+          <form:label path="hobbies"><spring:message code="profileInfo.hobbies"/></form:label>
           <textarea id="patient-hobbies" name="hobbies" class="input-field" rows="2" maxlength="100">${patientDetails.hobbies}</textarea>
         </div>
         <div class="field-container full-width">
-          <label for="patient-job"><spring:message code="profileInfo.job"/></label>
+          <form:label path="job"><spring:message code="profileInfo.job"/></form:label>
           <textarea id="patient-job" name="job" class="input-field" rows="1" maxlength="50">${patientDetails.job}</textarea>
         </div>
       </div>
