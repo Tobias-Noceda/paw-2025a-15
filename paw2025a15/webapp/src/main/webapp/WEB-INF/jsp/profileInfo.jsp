@@ -134,20 +134,33 @@
         <div class="field-container">
           <label for="patient-smokes"><spring:message code="profileInfo.smokes"/></label>
           <select id="patient-smokes" name="smokes" class="input-field">
-            <option value=""><spring:message code="profileInfo.select"/></option>
-            <option value="true"><spring:message code="profileInfo.yes"/></option>
-            <option value="false"><spring:message code="profileInfo.no"/></option>
+            <option value="" <c:if test="${patientDetails.smokes == null}">selected</c:if>>
+              <spring:message code="profileInfo.select"/>
+            </option>
+            <option value="true" <c:if test="${patientDetails.smokes != null and patientDetails.smokes}">selected</c:if>>
+              <spring:message code="profileInfo.yes"/>
+            </option>
+            <option value="false" <c:if test="${patientDetails.smokes != null and !patientDetails.smokes}">selected</c:if>>
+              <spring:message code="profileInfo.no"/>
+            </option>
           </select>
         </div>
 
         <div class="field-container">
           <label for="patient-drinks"><spring:message code="profileInfo.drinks"/></label>
           <select id="patient-drinks" name="drinks" class="input-field">
-            <option value=""><spring:message code="profileInfo.select"/></option>
-            <option value="true"><spring:message code="profileInfo.yes"/></option>
-            <option value="false"><spring:message code="profileInfo.no"/></option>
+            <option value="" <c:if test="${patientDetails.drinks == null}">selected</c:if>>
+              <spring:message code="profileInfo.select"/>
+            </option>
+            <option value="true" <c:if test="${patientDetails.drinks != null and patientDetails.drinks}">selected</c:if>>
+              <spring:message code="profileInfo.yes"/>
+            </option>
+            <option value="false" <c:if test="${patientDetails.drinks != null and !patientDetails.drinks}">selected</c:if>>
+              <spring:message code="profileInfo.no"/>
+            </option>
           </select>
         </div>
+
 
         <div class="field-container full-width">
           <label for="patient-diet"><spring:message code="profileInfo.diet"/></label>
