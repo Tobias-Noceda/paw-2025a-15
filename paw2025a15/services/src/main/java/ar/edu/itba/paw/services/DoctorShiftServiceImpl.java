@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -22,13 +23,10 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 @Service
 public class DoctorShiftServiceImpl implements DoctorShiftService{
 
-    private final DoctorShiftDao doctorShiftDao;
-
     @Autowired
-    public DoctorShiftServiceImpl(final DoctorShiftDao doctorShiftDao){
-        this.doctorShiftDao = doctorShiftDao;
-    }
+    private DoctorShiftDao doctorShiftDao;
 
+    @Transactional
     @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
         long amount =  Duration.between(startTime,endTime).toMinutes()/slot;
@@ -40,11 +38,13 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<DoctorShift> getShiftById(long id) {
         return doctorShiftDao.getShiftById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId) {
         List<DoctorShift> aux = doctorShiftDao.getShiftsByDoctorId(doctorId);
@@ -100,6 +100,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
         return allTurns;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber) {
         LocalDate now = LocalDate.now();

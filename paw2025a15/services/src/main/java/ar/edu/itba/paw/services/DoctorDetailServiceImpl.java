@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
@@ -27,57 +28,67 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Autowired
     private InsuranceService is;
 
+    @Transactional
     @Override
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
         //TODO: same as in pds, check existent doctor
         return doctorDetailDao.create(doctorId, licence, specialty);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId) {
         return doctorDetailDao.getDetailByDoctorId(doctorId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getDoctorsPage(int page, int pageSize) {
         return doctorDetailDao.getDoctorsPage(page, pageSize);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int getTotalDoctors() {
         return doctorDetailDao.getTotalDoctors();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize) {
         //TODO:maybe string input check? before it goes to query or in jdbc?
         return doctorDetailDao.findDoctorsPageByName(name, page, pageSize);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int getTotalDoctorsByName(String name) {
         //TODO:maybe string input check? before it goes to query or in jdbc?
         return doctorDetailDao.getTotalDoctorsByName(name);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
         if(is.getInsuranceById(insurance.getId()).isPresent()) return doctorDetailDao.getFilteredDoctorsPage(specialty, insurance, weekday, page, pageSize);
         else return Collections.emptyList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
         if(is.getInsuranceById(insurance.getId()).isPresent()) return doctorDetailDao.getTotalFilteredDoctors(specialty, insurance, weekday);
         else return 0;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
         //TODO:check after refactor with us the existance of patientId
         return doctorDetailDao.getAuthDoctorsByPatientId(id);
     }
 
+    @Transactional
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
         //TODO:check after refactor with us the existance of patientId and docId
@@ -109,12 +120,14 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
         //TODO:check after refactor with us the existance of patientId and docId
         return doctorDetailDao.hasAuthDoctor(patientId, doctorId);
     }
 
+    @Transactional
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
         //TODO:check after refactor with us the existance of patientId and docId
@@ -132,6 +145,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         authDoctorWithLevels(patientId, doctorId, accessLevels);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
         //TODO:check after refactor with us the existance of patientId and docId

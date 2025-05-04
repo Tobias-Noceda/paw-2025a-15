@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorCoverageDao;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
@@ -12,13 +13,10 @@ import ar.edu.itba.paw.models.Insurance;
 @Service
 public class DoctorCoverageServiceImpl implements DoctorCoverageService{
 
-    private final DoctorCoverageDao doctorCoverageDao;
-
     @Autowired
-    public DoctorCoverageServiceImpl(final DoctorCoverageDao doctorCoverageDao){
-        this.doctorCoverageDao = doctorCoverageDao;
-    }
+    private DoctorCoverageDao doctorCoverageDao;
 
+    @Transactional
     @Override
     public void setCoverages(long doctorId, List<Long> insurances) {
         List<Insurance> currentInsurances = doctorCoverageDao.getInsurancesById(doctorId);
@@ -36,6 +34,7 @@ public class DoctorCoverageServiceImpl implements DoctorCoverageService{
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Insurance> getInsurancesById(long doctorId) {
         return doctorCoverageDao.getInsurancesById(doctorId);

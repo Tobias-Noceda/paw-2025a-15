@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
@@ -25,27 +26,25 @@ import ar.edu.itba.paw.models.User;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
-    private final EmailService es;
-
-    private final UserService us;
-
-    private final DoctorShiftService dss;
-
-    private final DoctorDetailService dds;
-
-    private final AppointmentDao appointmentDao;
+    @Autowired
+    private  EmailService es;
 
     @Autowired
-    public AppointmentServiceImpl(final AppointmentDao appointmentDao, final EmailService es, final UserService us, final DoctorShiftService dss, final DoctorDetailService dds){
-        this.appointmentDao = appointmentDao;
-        this.es = es;
-        this.us = us;
-        this.dss = dss;
-        this.dds = dds;
-    }
+    private UserService us;
 
+    @Autowired
+    private DoctorShiftService dss;
+
+    @Autowired
+    private DoctorDetailService dds;
+
+    @Autowired
+    private AppointmentDao appointmentDao;
+
+    @Transactional
     @Override
     public Appointment addAppointment(long shiftId, long patientId, LocalDate date) {
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("No such patient"));
@@ -71,26 +70,31 @@ public class AppointmentServiceImpl implements AppointmentService{
         return appointment;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
         return appointmentDao.getAppointmentsByShiftIdAndDate(shiftId, date);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId) {
         return appointmentDao.getFutureAppointmentDataByPatientId(patientId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AppointmentData> getOldAppointmentDataByPatientId(long patientId) {
         return appointmentDao.getOldAppointmentDataByPatientId(patientId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {
         return appointmentDao.getFutureAppointmentDataByDoctorId(doctorId);
     }
 
+    @Transactional
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, long cancelId) {
         Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(() -> new IllegalArgumentException("No such appointment"));
@@ -111,6 +115,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         } else throw new IllegalArgumentException("User not authorized to cancel this appointment");
     }
 
+    @Transactional
     @Override
     public void removeAppointment(long shiftId, LocalDate date, long doctorId) {
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
@@ -119,6 +124,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         addAppointment(shiftId, doctorId, date);
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 3 * * *", zone = "America/Argentina/Buenos_Aires")
     public void clearRemovedAppointmentBeforeDate() {
         LocalDate date = LocalDate.now().minusDays(1);
@@ -126,6 +132,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         LOGGER.info("Removed appointments before " + date + " cleared. At " + LocalDateTime.now().toLocalTime());
     }
 
+    @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 7 * * *", zone = "America/Argentina/Buenos_Aires")
     public void rememberTomorrowAppointments() {
         LocalDate date = LocalDate.now().plusDays(1);

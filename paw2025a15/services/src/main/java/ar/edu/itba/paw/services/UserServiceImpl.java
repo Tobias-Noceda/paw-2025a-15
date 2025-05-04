@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional
     @Override//TODO check porfa
     public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
         if(getUserByEmail(email).isPresent()) return null;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional
     @Override
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality, LocaleEnum locale) {
         if(getUserByEmail(email).isPresent()) return null;
@@ -54,11 +57,13 @@ public class UserServiceImpl implements UserService {
         return doc;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<User> getUserById(long id) {
         return userDao.getUserById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<File> getUserPicture(long id) {
         User user = getUserById(id).orElse(null);
@@ -66,36 +71,43 @@ public class UserServiceImpl implements UserService {
         return fs.findById(user.getPictureId());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<User> getUserByEmail(String email) {
         return userDao.getUserByEmail(email);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize) {
         return userDao.getAuthPatientsPageByDoctorId(id, page, pageSize);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int getAuthPatientsCountByDoctorId(long id) {
         return userDao.getAuthPatientsCountByDoctorId(id);
     }
     
+    @Transactional(readOnly = true)
     @Override
     public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         return userDao.searchAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
         return userDao.searchAuthPatientsCountByDoctorIdAndName(doctorId, name);
     }
 
+    @Transactional
     @Override
     public void changePasswordByID(long id, String password) {
         if(getUserById(id).isPresent()) userDao.changePasswordByID(id, passwordEncoder.encode(password));
     }
 
+    @Transactional
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
         User user = getUserById(id).orElse(null);
@@ -110,6 +122,7 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Transactional
     @Override
     public void updateLocale(long userId, LocaleEnum locale) {
         userDao.updateLocale(userId, locale);

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
@@ -27,6 +28,7 @@ public class StudyServiceImpl implements StudyService{
     @Autowired
     private UserService us;
 
+    @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
         if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
@@ -36,6 +38,7 @@ public class StudyServiceImpl implements StudyService{
         return studyDao.create(type, comment, fileId, userId, uploaderId, studyDate);   
     }
 
+    @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
         if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
@@ -44,11 +47,13 @@ public class StudyServiceImpl implements StudyService{
         return studyDao.create(type, comment, fileId, userId, uploaderId);   
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Study> getStudyById(long id) {
         return studyDao.findStudyById(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Study> getStudiesByPatientId(long id) {
         if(us.getUserById(id).isEmpty()) throw new NoSuchElementException("User not found with ID: " + id);
