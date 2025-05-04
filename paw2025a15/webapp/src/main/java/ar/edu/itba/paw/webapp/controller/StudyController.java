@@ -82,8 +82,6 @@ public class StudyController {
             return createStudyForm(patientId, createStudyForm);
         }
         User user = us.getCurrentUser();
-
-        LocalDateTime dateTime = LocalDateTime.now();
         
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), createStudyForm.getDate());
