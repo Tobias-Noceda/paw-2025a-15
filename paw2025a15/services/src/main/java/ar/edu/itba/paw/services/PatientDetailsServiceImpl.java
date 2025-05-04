@@ -20,6 +20,8 @@ public class PatientDetailsServiceImpl implements PatientDetailService{
     public PatientDetail create(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
+        //TODO:refactor so all patient functions are here and not in user (otherwise circular reference)
+        //TODO: aca va un if(us.getUserById(patientId).isPresent())
         return patientDetailDao.create(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
     }
 
@@ -32,7 +34,7 @@ public class PatientDetailsServiceImpl implements PatientDetailService{
     public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
-        patientDetailDao.updatePatientDetails(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+        if(getDetailByPatientId(patientId).isPresent()) patientDetailDao.updatePatientDetails(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
     }
     
 }
