@@ -39,7 +39,7 @@
               </c:if>
               <button 
                   type="button" 
-                  name="action" 
+                  name="action"
                   value="toggle" 
                   onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)" 
                   class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}">

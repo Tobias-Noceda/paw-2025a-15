@@ -70,23 +70,24 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .authorizeHttpRequests(requests -> requests
                 // general
                 .requestMatchers("/", "/home").permitAll()
-                .requestMatchers("/supersecret/file/icon").permitAll()
+                .requestMatchers("/supersecret/files/logo").permitAll()
                 .requestMatchers("/user-profile-picture/{userId}").permitAll()
-                .requestMatchers("/doctors/{doctorId}").hasRole("PATIENT")
+                .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")
+                .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
                 .requestMatchers("/patient/{patientId}")
                     .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
-                .requestMatchers("/login", "/register/**", "/forgot-password", "/changePassword/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
+                .requestMatchers("/login", "/register", "/forgot-password", "/changePassword/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
                 .requestMatchers("/403").permitAll()
                 // appointments
                 .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/cancelAppointment").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/takeAppointment").hasRole("PATIENT")
-                .requestMatchers("/removeAppointment/**").hasRole("DOCTOR")
+                .requestMatchers("/removeAppointment").hasRole("DOCTOR")
                 // studies
                 .requestMatchers("/studies").hasRole("PATIENT")
                 .requestMatchers("/study/{studyId}")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
-                .requestMatchers("/upload-study/{patientId}")
+                .requestMatchers("/upload-file/{patientId}")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
                 // temporary
                 .requestMatchers("/**").permitAll()

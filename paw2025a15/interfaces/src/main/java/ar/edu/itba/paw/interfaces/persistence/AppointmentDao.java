@@ -18,6 +18,8 @@ public interface AppointmentDao {
 
     public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId);
 
+    public List<Appointment> getAppointmentsForDate(LocalDate date);
+
     public boolean removeAppointment(long shiftId, LocalDate date);
 
     public void clearRemovedAppointmentBeforeDate(LocalDate date);

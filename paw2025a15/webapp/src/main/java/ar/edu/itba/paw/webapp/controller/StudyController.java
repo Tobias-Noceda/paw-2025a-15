@@ -6,14 +6,12 @@ import java.time.LocalDateTime;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
@@ -28,6 +26,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class StudyController {
@@ -47,27 +46,16 @@ public class StudyController {
     @Autowired
     private EmailService es;
 
+    // TODO: rename to upload-study
     @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm
     ){
-        User patient = us.getUserById(patientId).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
-        }
-
-        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
-
-        User user = us.getCurrentUser();
-
-        if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
-        
-        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
+            throw new NotFoundException("Patient not found");            
         }
         
         ModelAndView mav = new ModelAndView("createStudy");
@@ -84,27 +72,18 @@ public class StudyController {
         @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
         BindingResult errors
     ) throws IOException{
-        User patient = us.getUserById(patientId).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
-        }
-
-        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
-
-        User user = us.getCurrentUser();
-
-        if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
-        
-        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
+            throw new NotFoundException("Patient not found");            
         }
 
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm);
         }
+        User user = us.getCurrentUser();
+
+        LocalDateTime dateTime = LocalDateTime.now();
         
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), createStudyForm.getDate());
@@ -125,10 +104,6 @@ public class StudyController {
         ModelAndView mav = new ModelAndView("studies");
     
         User user = us.getCurrentUser();
-
-        if(user.getRole() != UserRoleEnum.PATIENT) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
 
         mav.addObject("user", user);
         mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));

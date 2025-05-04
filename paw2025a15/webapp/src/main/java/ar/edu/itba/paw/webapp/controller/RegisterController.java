@@ -52,12 +52,17 @@ public class RegisterController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    private void loginUser(String email, String password) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication auth = authenticationManager.authenticate(authReq);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+    @RequestMapping("/register")
+    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale,  @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
+        final ModelAndView mav = new ModelAndView("doctorForm");
+        mav.addObject("doctor", form);
+        mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
+        mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
+        return mav;
     }
-
+    
     @RequestMapping(value = "/createPatient", method = RequestMethod.POST)
     public ModelAndView registerForm(
             @Valid @ModelAttribute("registerPatientForm") final PatientForm form,
@@ -174,5 +179,11 @@ public class RegisterController {
         System.out.println("startTime: " + startTime + " endTime: " + endTime);
         System.out.println("y el rango es: " +start.isBefore(end));
         return start.isBefore(end);
+    }
+
+    private void loginUser(String email, String password) {
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authenticationManager.authenticate(authReq);
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

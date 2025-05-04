@@ -47,12 +47,6 @@ public class UserController {
         return new ModelAndView("login");
     }
 
-    @RequestMapping("/register/choose")
-    public ModelAndView registerChoose() {
-        ModelAndView mav = new ModelAndView("registerOne");
-        return mav;
-    }
-
     @RequestMapping(value = "/forgot-password", method = RequestMethod.GET)
     public ModelAndView forgotPassword(@ModelAttribute("recoverPass") RecoverForm form) {
         ModelAndView mav = new ModelAndView("forgotPassword");
