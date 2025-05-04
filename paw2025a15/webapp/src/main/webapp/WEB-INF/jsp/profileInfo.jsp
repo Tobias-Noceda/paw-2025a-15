@@ -124,7 +124,6 @@
                    onkeydown="return blockInvalidKeys(event)"
                    onpaste="return blockNegativePaste(event)"/>
           </div>
-        </c:if>
       </div>
     </div>
 
@@ -189,6 +188,7 @@
           <textarea id="patient-job" name="job" class="input-field" rows="1" maxlength="50">${patientDetails.job}</textarea>
         </div>
       </div>
+        </c:if>
     </div>
 
     <!-- Botón guardar -->
