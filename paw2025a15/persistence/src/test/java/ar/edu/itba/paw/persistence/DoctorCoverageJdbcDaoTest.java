@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -20,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.DoctorCoverage;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 

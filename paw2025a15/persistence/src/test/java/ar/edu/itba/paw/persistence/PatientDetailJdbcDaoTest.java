@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Optional;
 

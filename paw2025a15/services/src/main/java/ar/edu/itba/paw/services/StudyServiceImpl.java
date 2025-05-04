@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -19,18 +18,14 @@ import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 @Service
 public class StudyServiceImpl implements StudyService{
 
-    private final StudyDao studyDao;
-
-    private final FileService fs;
-
-    private final UserService us;
+    @Autowired
+    private StudyDao studyDao;
 
     @Autowired
-    public StudyServiceImpl(final StudyDao studyDao, final FileService fs, final UserService us){
-        this.studyDao = studyDao;
-        this.fs = fs;
-        this.us = us;
-    }
+    private FileService fs;
+
+    @Autowired
+    private UserService us;
 
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
@@ -56,6 +51,7 @@ public class StudyServiceImpl implements StudyService{
 
     @Override
     public List<Study> getStudiesByPatientId(long id) {
+        if(us.getUserById(id).isEmpty()) throw new NoSuchElementException("User not found with ID: " + id);
         return studyDao.getStudiesByPatientId(id);
     }
 }
