@@ -37,8 +37,7 @@ public class PatientController {
     @RequestMapping("/patient/{patientId:\\d+}")
     public ModelAndView patient(
             @PathVariable("patientId") int patientId,
-            @ModelAttribute("registerPatientForm") final PatientForm form,
-            @ModelAttribute("filterForm") final FilterForm filterForm
+            @ModelAttribute("registerPatientForm") final PatientForm form
     ) {
         User patient = us.getUserById(patientId)
             .orElseThrow(() -> new NotFoundException("Patient not found"));
