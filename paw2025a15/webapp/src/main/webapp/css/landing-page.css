@@ -145,7 +145,7 @@
 }
 
 .page-navigation-button {
-    background-color: #007bff;
+    background-color: transparent;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -162,7 +162,7 @@
 }
 
 .page-navigation-button:disabled {
-    background-color: #ccc;
+    background-color: transparent;
     color: gray;
     cursor: not-allowed;
 }

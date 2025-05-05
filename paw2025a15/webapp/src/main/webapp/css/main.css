@@ -118,25 +118,6 @@ body {
     opacity: 0.8;
 }
 
-.login-btn {
-    background-color: white;
-    color: #256395;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 15px;
-    font-weight: bold;
-    font-size: larger;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    box-sizing: border-box;
-}
-
-.login-btn:hover {
-    background-color: #ffffffe5;
-    color: #0e3b6b;
-}
-
 .user-btn {
     display: flex;
     flex-direction: row;
@@ -407,4 +388,43 @@ body {
     .search-bar-form input {
         color: white !important; /* Firefox */
     }
+}
+
+
+.login-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    padding: 0.5rem 1rem;
+
+    background: transparent; /* sin fondo */
+
+    border: none;            /* sin borde */
+
+    color: white;            /* texto en blanco */
+
+    font-style: italic;      /* cursiva */
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+}
+
+
+.login-btn:hover {
+
+    background: transparent; /* sigue sin fondo al hover */
+
+}
+
+
+.login-icon {
+
+    flex-shrink: 0; /* para que no se encoja */
+
 }

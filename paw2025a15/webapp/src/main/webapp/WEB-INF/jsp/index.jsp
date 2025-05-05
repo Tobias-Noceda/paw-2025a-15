@@ -157,7 +157,10 @@
           <button type="submit" class="page-navigation-button"
             <c:if test="${page == 1}">disabled</c:if>
           >
+            <!--
             <spring:message code="landing.pagination.first"/>
+            -->
+            <<
           </button>
         </form>
 
@@ -167,7 +170,9 @@
           <button type="submit" class="page-navigation-button"
             <c:if test="${page == 1}">disabled</c:if>
           >
-            <spring:message code="doctorDetail.previousWeek"/>
+
+            <!-- <spring:message code="doctorDetail.previousWeek"/> -->
+            <
           </button>
         </form>
 
@@ -182,17 +187,20 @@
           <button type="submit" class="page-navigation-button"
             <c:if test="${page == totalPages}">disabled</c:if>
           >
+            <!--
             <spring:message code="doctorDetail.nextWeek"/>
+
+            -->
+            >
           </button>
         </form>
 
         <form method="get" style="margin-block-end: 0px; margin-left: 3px;">
           ${queryParams}
           <input type="hidden" name="page" value="${totalPages}" />
-          <button type="submit" class="page-navigation-button"
-            <c:if test="${page == totalPages}">disabled</c:if>
-          >
-            <spring:message code="landing.pagination.last"/>
+          <button type="submit" class="page-navigation-button" <c:if test="${page == totalPages}">disabled</c:if> >
+            <!--<spring:message code="landing.pagination.last"/> -->
+            >>
           </button>
         </form>
       </div>

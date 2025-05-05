@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import javax.validation.Valid;
 
@@ -52,7 +53,7 @@ public class StudyController {
         @PathVariable("patientId") int patientId,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
         @ModelAttribute("searchForm") final SearchForm searchForm
-    ){
+        ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
@@ -63,6 +64,7 @@ public class StudyController {
         mav.addObject("patient", patient);
         mav.addObject("patientId", patientId);
         mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());
+
 
         return mav;
     }

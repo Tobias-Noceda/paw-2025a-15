@@ -1,6 +1,6 @@
 :root {
     --font-family: 'Inter', sans-serif;
-    --clr-bg: #f0f4fa;
+    --clr-bg: #d8eeff;
     --clr-card: #ffffff;
     --clr-primary: #4f83cc;
     --clr-primary-hover: #3b6fa8;
@@ -82,9 +82,9 @@ body {
 }
 
 .field-container label {
-    font-size: 0.9rem;
     margin-bottom: 6px;
     font-weight: 500;
+    color: var(--sf-clr-text);
 }
 
 .input-field {
@@ -93,12 +93,14 @@ body {
     border: 1px solid #d0d5dd;
     border-radius: var(--radius);
     transition: border-color var(--transition);
+    resize:none;
 }
 
 .input-field:focus {
     outline: none;
     border-color: var(--clr-primary);
 }
+
 
 .btn-primary {
     width: 100%;
@@ -147,3 +149,4 @@ body {
 .hidden-file-input {
     display: none;
 }
+

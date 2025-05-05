@@ -11,6 +11,7 @@
   <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<c:url value='/css/profile-info.css'/>">
+  <link rel="stylesheet" href="<c:url value='/css/study-form.css'/>">
   <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
 </head>
 <body>
@@ -69,12 +70,34 @@
         </div>
 
         <c:if test="${patientDetails != null}">
-          <div class="field-container">
-            <form:label cssClass="form-title" path="birthDate">
-              <p><spring:message code="form.birthDate"/>:</p>
-            </form:label>
-              <form:input type="date" path="birthDate"/>
-            <form:errors path="age" cssClass="error-box" element="div"/>
+          <div class="sf-field">
+
+            <!-- label -->
+
+            <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
+
+
+            <!-- input date -->
+
+            <form:input
+
+                    id="birthDate"
+
+                    path="birthDate"
+
+                    type="date" />
+
+
+            <!-- errores -->
+
+            <form:errors
+
+                    path="birthDate"
+
+                    cssClass="sf-error"
+
+                    element="div" />
+
           </div>
 
           <div class="field-container">
