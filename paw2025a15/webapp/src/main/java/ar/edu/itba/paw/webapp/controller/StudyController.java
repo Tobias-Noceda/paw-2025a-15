@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
@@ -98,9 +99,7 @@ public class StudyController {
     }
 
     @RequestMapping("/studies")
-    public ModelAndView patientProfile(
-        @ModelAttribute("searchForm") SearchForm searchForm
-    ) {
+    public ModelAndView patientProfile() {
         ModelAndView mav = new ModelAndView("studies");
     
         User user = us.getCurrentUser();
@@ -108,6 +107,7 @@ public class StudyController {
         mav.addObject("user", user);
         mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
         mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+        mav.addObject("landingForm", new LandingForm());
         
         return mav;
     }
