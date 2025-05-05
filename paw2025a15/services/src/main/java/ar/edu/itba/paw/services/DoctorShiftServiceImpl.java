@@ -43,16 +43,20 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
         if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         long amount =  Duration.between(startTime,endTime).toMinutes()/slot;
         //long slot = Duration.between(startTime, endTime).toMinutes() / amount;
+        List<DoctorShift> shifts = new ArrayList<>();
         for (WeekdayEnum weekday : weekdays) {
             for (int i = 1; i <= amount; i++) {
-                DoctorShift ds = doctorShiftDao.create(doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i));
-                if(ds == null){
-                    LOGGER.error("Failed to create doctorShift for doctorId: {} on weekday:{} with startTime:{} at slot:{} at {}", doctorId, weekday, startTime, i, LocalDateTime.now());
-                    throw new RuntimeException("Failed to create doctorShift for doctorId: " + doctorId + " on weekday:" + weekday +" with startTime:" + startTime + " at slot:" + i);
-                }
+                shifts.add(new DoctorShift(i, doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i)));
             }
         }
-        LOGGER.info("Successfully created doctorShifts for doctorId: {}", doctorId);
+        int[] results = doctorShiftDao.batchCreate(shifts);
+        for (int i = 0; i < results.length; i++) {
+            if (results[i] == 0) {
+                LOGGER.error("Failed to create doctor shift: {}", shifts.get(i));
+                throw new RuntimeException("Batch insert failed for shift: " + shifts.get(i));
+            }
+        }
+        LOGGER.info("Successfully created {} doctor shifts for doctorId: {}", shifts.size(), doctorId);
     }
 
     @Transactional(readOnly = true)

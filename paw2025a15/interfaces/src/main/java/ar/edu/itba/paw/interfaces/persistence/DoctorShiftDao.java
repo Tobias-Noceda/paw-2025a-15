@@ -11,6 +11,8 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 public interface DoctorShiftDao {
     public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime);
 
+    public int[] batchCreate(List<DoctorShift> shifts);
+
     public Optional<DoctorShift> getShiftById(long id);
 
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);

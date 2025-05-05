@@ -92,6 +92,29 @@ public class DoctorShiftJdbcDaoTest {
     }
 
     @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testBatchCreate() {
+        final long DOC_ID = TestData.DoctorShifts.doctorShift.getDoctorId();
+        final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
+        final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
+        final LocalTime START_TIME = TestData.DoctorShifts.doctorShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorShifts.doctorShift.getEndTime();
+        List<DoctorShift> shifts = List.of(
+            new DoctorShift(0, DOC_ID, WEEKDAY, ADDRESS, START_TIME, END_TIME),
+            new DoctorShift(0, DOC_ID, WEEKDAY, ADDRESS, START_TIME.plusMinutes(30), END_TIME.plusMinutes(30))
+        );
+
+        int[] results = doctorShiftDao.batchCreate(shifts);
+
+        Assert.assertEquals(shifts.size(), results.length);
+        for (int result : results) {
+            Assert.assertTrue(result > 0);
+        }
+        List<DoctorShift> retrievedShifts = doctorShiftDao.getShiftsByDoctorId(DOC_ID);
+        Assert.assertEquals(shifts.size(), retrievedShifts.size());
+    }
+
+    @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql"})
     public void getShiftById(){
         final long SHIFT_ID = TestData.DoctorShifts.doctorShift.getId();
