@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,8 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoctorDetailServiceImpl.class);
+
     @Autowired
     private DoctorDetailDao doctorDetailDao;
 
@@ -32,7 +37,14 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
         //TODO: same as in pds, check existent doctor
-        return doctorDetailDao.create(doctorId, licence, specialty);
+        if(getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor detail for userId: " + doctorId + " already exists!");
+        DoctorDetail dd = doctorDetailDao.create(doctorId, licence, specialty);
+        if(dd == null){
+            LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
+            throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
+        }
+        LOGGER.info("Successfully created doctor details for userId: {}", doctorId);
+        return dd;
     }
 
     @Transactional(readOnly = true)
@@ -78,7 +90,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
         if(is.getInsuranceById(insurance.getId()).isPresent()) return doctorDetailDao.getTotalFilteredDoctors(specialty, insurance, weekday);
-        else return 0;
+        return 0;
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +102,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Transactional
     @Override
-    public void toggleAuthDoctor(long patientId, long doctorId) {
+    public void toggleAuthDoctor(long patientId, long doctorId) {//TODO: tests of all auth related after its in its own file
         //TODO:check after refactor with us the existance of patientId and docId
         if(hasAuthDoctor(patientId, doctorId)){
             doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);

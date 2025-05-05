@@ -2,19 +2,24 @@ package ar.edu.itba.paw.services;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
@@ -23,19 +28,31 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 @Service
 public class DoctorShiftServiceImpl implements DoctorShiftService{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoctorShiftServiceImpl.class);
+
     @Autowired
     private DoctorShiftDao doctorShiftDao;
+
+    @Autowired
+    private DoctorDetailService dds;
 
     @Transactional
     @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
+        if(!startTime.isBefore(endTime)) throw new IllegalArgumentException("Start time of a shift must be before the end time");
+        if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         long amount =  Duration.between(startTime,endTime).toMinutes()/slot;
         //long slot = Duration.between(startTime, endTime).toMinutes() / amount;
         for (WeekdayEnum weekday : weekdays) {
             for (int i = 1; i <= amount; i++) {
-                doctorShiftDao.create(doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i));
+                DoctorShift ds = doctorShiftDao.create(doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i));
+                if(ds == null){
+                    LOGGER.error("Failed to create doctorShift for doctorId: {} on weekday:{} with startTime:{} at slot:{} at {}", doctorId, weekday, startTime, i, LocalDateTime.now());
+                    throw new RuntimeException("Failed to create doctorShift for doctorId: " + doctorId + " on weekday:" + weekday +" with startTime:" + startTime + " at slot:" + i);
+                }
             }
         }
+        LOGGER.info("Successfully created doctorShifts for doctorId: {}", doctorId);
     }
 
     @Transactional(readOnly = true)
@@ -49,7 +66,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId) {
         List<DoctorShift> aux = doctorShiftDao.getShiftsByDoctorId(doctorId);
         
-        if (aux == null || aux.isEmpty() || aux.size() == 1) return List.of();
+        if (aux == null || aux.isEmpty() || aux.size() == 1) return Collections.emptyList();
         
         // Ordenar por día y luego por hora de inicio
         List<DoctorShift> sorted = aux.stream()

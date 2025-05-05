@@ -91,12 +91,12 @@ public class UserServiceImplTest {
 
         Assert.assertNotNull(user);
         Assert.assertEquals(PATIENT, user);
-        Mockito.verify(pds).create(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null);
+        Mockito.verify(pds).create(Mockito.eq(PATIENT_ID), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null));
     }
 
     @Test
     public void testCreatePatientExistentEmail(){
-        Mockito.when(userDaoMock.getUserByEmail(PATIENT_EMAIL)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.of(PATIENT));
         
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
@@ -131,7 +131,7 @@ public class UserServiceImplTest {
 
     @Test
     public void testCreateDoctorExistentEmail(){
-        Mockito.when(userDaoMock.getUserByEmail(DOC_EMAIL)).thenReturn(Optional.of(DOC));
+        Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.of(DOC));
         
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
@@ -154,19 +154,19 @@ public class UserServiceImplTest {
 
     @Test
     public void testGetUserPicture(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
-        Mockito.when(fs.findById(PATIENT_PIC_ID)).thenReturn(Optional.of(PICTURE));
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(fs.findById(Mockito.eq(PATIENT_PIC_ID))).thenReturn(Optional.of(PICTURE));
 
         Optional<File> file = us.getUserPicture(PATIENT_ID);
 
         Assert.assertTrue(file.isPresent());
         Assert.assertEquals(PICTURE, file.get());
-        Mockito.verify(fs).findById(PATIENT_PIC_ID);
+        Mockito.verify(fs).findById(Mockito.eq(PATIENT_PIC_ID));
     }
 
     @Test
     public void testGetUserPictureNonexistentUser(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Optional<File> file = us.getUserPicture(PATIENT_ID);
 
@@ -176,16 +176,16 @@ public class UserServiceImplTest {
     @Test
     public void testChangePasswordByID(){
         Mockito.when(passwordEncoder.encode(Mockito.eq(DOC_PASSWORD))).thenReturn("userPassEnc");
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
 
         us.changePasswordByID(PATIENT_ID, DOC_PASSWORD);
 
-        Mockito.verify(userDaoMock).changePasswordByID(PATIENT_ID, "userPassEnc");
+        Mockito.verify(userDaoMock).changePasswordByID(Mockito.eq(PATIENT_ID), Mockito.eq("userPassEnc"));
     }
 
     @Test
     public void testChangePasswordByIDNonexistentUser(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             us.changePasswordByID(PATIENT_ID, DOC_PASSWORD)
@@ -196,18 +196,18 @@ public class UserServiceImplTest {
 
     @Test
     public void testEditUser(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
-        Mockito.when(fs.findById(PATIENT_PIC2_ID)).thenReturn(Optional.of(PICTURE2));
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(fs.findById(Mockito.eq(PATIENT_PIC2_ID))).thenReturn(Optional.of(PICTURE2));
 
         us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID);
 
         Mockito.verify(userDaoMock).editUser(Mockito.eq(PATIENT_ID), Mockito.eq(PATIENT_NAME2), Mockito.eq(PATIENT_TELEPHONE2), Mockito.eq(PATIENT_PIC2_ID));
-        Mockito.verify(fs).findById(PATIENT_PIC2_ID);
+        Mockito.verify(fs).findById(Mockito.eq(PATIENT_PIC2_ID));
     }
 
     @Test
     public void testEditUserNonexistent(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID)
@@ -218,8 +218,8 @@ public class UserServiceImplTest {
 
     @Test
     public void testEditUserNonexistentPicture(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
-        Mockito.when(fs.findById(PATIENT_PIC2_ID)).thenReturn(Optional.empty());
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(fs.findById(Mockito.eq(PATIENT_PIC2_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID)
@@ -230,16 +230,16 @@ public class UserServiceImplTest {
 
     @Test
     public void testUpdateLocale(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
 
         us.updateLocale(PATIENT_ID, PATIENT_LOCALE);
 
-        Mockito.verify(userDaoMock).updateLocale(PATIENT_ID, PATIENT_LOCALE);
+        Mockito.verify(userDaoMock).updateLocale(Mockito.eq(PATIENT_ID), Mockito.eq(PATIENT_LOCALE));
     }
 
     @Test
     public void testUpdateLocaleNonexistentUser(){
-        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             us.updateLocale(PATIENT_ID, PATIENT_LOCALE)
