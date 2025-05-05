@@ -119,7 +119,7 @@
           <c:choose>
             <c:when test="${not empty patients}">
               <!-- 3) grid de tarjetas idéntico al de doctores -->
-              <div class="card-grid">
+              <div class="card-grid" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
                 <c:forEach var="patient" items="${patients}">
                   <jsp:include page="components/patientCard.jsp">
                     <jsp:param name="id"          value="${patient.id}" />
@@ -141,16 +141,8 @@
           </c:choose>
         </div>
       </c:if>
-      <c:set var="queryString">
-        <c:forEach var="param" items="${paramValues}">
-          <c:if test="${param.key != 'page'}">
-            <c:forEach var="value" items="${param.value}">
-              <c:out value="${fn:escapeXml(param.key)}=${fn:escapeXml(value[0])}&"/>
-            </c:forEach>
-          </c:if>
-        </c:forEach>
-      </c:set>
-      <c:if test="${totalPages != 0}">
+
+      <c:if test="${totalPages > 0}">
         <c:url value='/' var="pageUrl"/>
         <form:form
           modelAttribute="landingForm" 

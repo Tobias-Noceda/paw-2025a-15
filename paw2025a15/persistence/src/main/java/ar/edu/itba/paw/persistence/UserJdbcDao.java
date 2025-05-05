@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -68,18 +69,25 @@ public class UserJdbcDao implements UserDao{
         int offset = (page - 1) * pageSize;
         StringBuilder query = new StringBuilder(
             """
-                SELECT COUNT(*)
+                SELECT DISTINCT u.*
                 FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
                 WHERE ad.doctor_id = ?
             """
         );
-        List<Object> params = List.of(doctorId);
-        List<Integer> types = List.of(java.sql.Types.BIGINT);
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        params.add(doctorId);
+        types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
             query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
+        query.append(" LIMIT ? OFFSET ? ");
+        params.add(pageSize);
+        params.add(offset);
+        types.add(java.sql.Types.INTEGER);
+        types.add(java.sql.Types.INTEGER);
 
         return (List<User>) jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), ROW_MAPPER);
     }
@@ -88,18 +96,21 @@ public class UserJdbcDao implements UserDao{
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
         StringBuilder query = new StringBuilder(
             """
-                SELECT COUNT(*)
+                SELECT COUNT(DISTINCT u.*)
                 FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
                 WHERE ad.doctor_id = ?
             """
         );
-        List<Object> params = List.of(doctorId);
-        List<Integer> types = List.of(java.sql.Types.BIGINT);
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        params.add(doctorId);
+        types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
             query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
+
         return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
     }
 
