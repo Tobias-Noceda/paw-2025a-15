@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <html>
   <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
@@ -23,6 +25,31 @@
             <spring:message code="patient.details.upload.label"/>
           </a>
         </div>
+      <c:url value="/studies" var="studiesUrl"/>
+      <form:form modelAttribute="filterForm"
+                 action="${studiesUrl}"
+                 method="get"
+                 class="landing-form">
+        <div class="field-container">
+          <form:label path="type" class="field-label">
+            <spring:message code="studies.filter.label"/>
+          </form:label>
+          <form:select path="type" class="filter-select">
+            <form:option value="">
+              <spring:message code="studies.all"/>
+            </form:option>
+            <form:options items="${studyTypeSelectItems}"
+                          itemLabel="label"
+                          itemValue="value"/>
+          </form:select>
+          <button type="submit" class="filter-button">
+            <spring:message code="landing.filter"/>
+          </button>
+        </div>
+      </form:form>
+
+
+
         <div class="study-table-container">
           <div class="studies-table-header">
             <table class="studies-table">

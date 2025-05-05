@@ -6,7 +6,11 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.FileFilterForm;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,6 +51,9 @@ public class StudyController {
     @Autowired
     private EmailService es;
 
+    @Autowired
+    private MessageSource messageSource;
+
     // TODO: rename to upload-study
     @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
@@ -57,9 +64,9 @@ public class StudyController {
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new NotFoundException("Patient not found");            
+            throw new NotFoundException("Patient not found");
         }
-        
+
         ModelAndView mav = new ModelAndView("createStudy");
         mav.addObject("patient", patient);
         mav.addObject("patientId", patientId);
@@ -79,7 +86,7 @@ public class StudyController {
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new NotFoundException("Patient not found");            
+            throw new NotFoundException("Patient not found");
         }
 
         if (errors.hasErrors()) {
@@ -88,7 +95,7 @@ public class StudyController {
         User user = us.getCurrentUser();
 
         LocalDateTime dateTime = LocalDateTime.now();
-        
+
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());
 
@@ -103,16 +110,27 @@ public class StudyController {
 
     @RequestMapping("/studies")
     public ModelAndView patientProfile(
-        @ModelAttribute("searchForm") SearchForm searchForm
+        @ModelAttribute("searchForm") SearchForm searchForm,
+        @ModelAttribute("filterForm") final FileFilterForm filterForm,
+        Locale locale
+
     ) {
         ModelAndView mav = new ModelAndView("studies");
-    
+
         User user = us.getCurrentUser();
+        System.out.println("Study types: " + SelectItem.getStudyTypeSelectItems(messageSource, locale).stream().map(SelectItem::getValue).toList());
+        System.out.println("Study types: " + SelectItem.getStudyTypeSelectItems(messageSource, locale).stream().map(SelectItem::getLabel).toList());
 
         mav.addObject("user", user);
-        mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
+        mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
-        
+        StudyTypeEnum filterType = filterForm.getType();
+        if (filterType != null) {
+            mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterType));
+        } else {
+            mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
+        }
+
         return mav;
     }
 }

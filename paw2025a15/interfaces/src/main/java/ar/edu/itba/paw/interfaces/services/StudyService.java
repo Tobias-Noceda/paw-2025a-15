@@ -14,4 +14,6 @@ public interface StudyService {
     public Optional<Study> getStudyById(long id);
 
     public List<Study> getStudiesByPatientId(long id);
+
+    public List<Study> getFilteredStudies(long id, StudyTypeEnum type);
 }
