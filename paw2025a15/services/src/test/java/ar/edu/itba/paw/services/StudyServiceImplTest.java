@@ -103,6 +103,26 @@ public class StudyServiceImplTest {
         Assert.assertEquals(STUDY_WITHOUT_DATE, study);
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testCreateWithStudyDateFailure(){
+        Mockito.when(us.getUserById(STUDY_USER_ID)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(us.getUserById(STUDY_UPLOADER_ID)).thenReturn(Optional.of(DOC));
+        Mockito.when(fs.findById(STUDY_FILE_ID)).thenReturn(Optional.of(FILE));
+        Mockito.when(studyDaoMock.create(STUDYTYPE, COMMENT, FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)).thenReturn(null);
+
+        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testCreateWithoutStudyDateFailure(){
+        Mockito.when(us.getUserById(STUDY_USER_ID)).thenReturn(Optional.of(PATIENT));
+        Mockito.when(us.getUserById(STUDY_UPLOADER_ID)).thenReturn(Optional.of(DOC));
+        Mockito.when(fs.findById(STUDY_FILE_ID)).thenReturn(Optional.of(FILE));
+        Mockito.when(studyDaoMock.create(STUDYTYPE, COMMENT, FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)).thenReturn(null);
+
+        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID);
+    }
+
     @Test(expected = NoSuchElementException.class)
     public void testCreateWithStudyDateNonexistentUser(){
         Mockito.when(us.getUserById(STUDY_USER_ID)).thenReturn(Optional.empty());
