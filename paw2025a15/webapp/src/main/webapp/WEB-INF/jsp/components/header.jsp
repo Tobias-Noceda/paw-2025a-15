@@ -57,9 +57,11 @@
           <form:form modelAttribute="landingForm" action="${searchLink}" method="get" class="search-bar-form">
             <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
             <button type="submit" style="display: none;"></button>
-            <form:hidden path="insurances"/>
-            <form:hidden path="weekday"/>
-            <form:hidden path="specialty"/>
+            <c:if test="${role == 'PATIENT' || pageContext.request.userPrincipal==null}">
+              <form:input type="hidden" path="insurances"/>
+              <form:input type="hidden" path="weekday"/>
+              <form:input type="hidden" path="specialty"/>
+            </c:if>
           </form:form>
         </div>
       </div>

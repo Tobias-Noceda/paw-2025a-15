@@ -3,15 +3,6 @@
     margin: 0 0 -5px 0;
 }
 
-.doctor-landing-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 20px;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .doctor-landing-card {
     background-color: white;
     border-radius: 10px;
@@ -149,7 +140,7 @@
     color: white;
     border: none;
     padding: 8px 12px;
-    margin-left: 3px;
+    margin: 0 3px;
     font-size: 14px;
     font-weight: 700;
     border-radius: 5px;

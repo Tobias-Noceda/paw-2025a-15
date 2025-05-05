@@ -14,6 +14,10 @@ public class LandingForm {
         return query;
     }
 
+    public String getEscapedQuery() {
+        return escapeLikeSpecialChars(query);
+    }
+
     public SpecialtyEnum getSpecialty() {
         return specialty;
     }
@@ -28,7 +32,7 @@ public class LandingForm {
 
     // Setter
     public void setQuery(String query) {
-        this.query = escapeLikeSpecialChars(query);
+        this.query = query;
     }
 
     public void setSpecialty(SpecialtyEnum specialty) {

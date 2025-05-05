@@ -85,7 +85,7 @@
         <h2 class="section-title"><spring:message code="landing.title"/></h2>
         <c:choose>
           <c:when test="${not empty docList}">
-            <div class="doctor-landing-container" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+            <div class="card-grid">
               <c:forEach var="doctor" items="${docList}">
                 <jsp:include page="components/doctorCard.jsp">
                   <jsp:param name="id" value="${doctor.id}" />
@@ -119,7 +119,7 @@
           <c:choose>
             <c:when test="${not empty patients}">
               <!-- 3) grid de tarjetas idéntico al de doctores -->
-              <div class="card-grid" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+              <div class="card-grid">
                 <c:forEach var="patient" items="${patients}">
                   <jsp:include page="components/patientCard.jsp">
                     <jsp:param name="id"          value="${patient.id}" />
@@ -163,7 +163,6 @@
           <button
             type="submit"
             class="page-navigation-button"
-            style="margin-right: 3px;"
             onclick="document.getElementById('pageInput').value = ${page - 1}"
             <c:if test="${page <= 1}">disabled</c:if>
           >
@@ -186,16 +185,17 @@
           <button
             type="submit"
             class="page-navigation-button"
-            style="margin-right: 3px;"
             onclick="document.getElementById('pageInput').value = ${totalPages}"
             <c:if test="${page == totalPages}">disabled</c:if>
           >
             <spring:message code="landing.pagination.last"/>
           </button>
           <form:input type="hidden" path="query"/>
-          <form:input type="hidden" path="insurances"/>
-          <form:input type="hidden" path="weekday"/>
-          <form:input type="hidden" path="specialty"/>
+          <c:if test="${user.role == 'PATIENT' || pageContext.request.userPrincipal==null}">
+            <form:input type="hidden" path="insurances"/>
+            <form:input type="hidden" path="weekday"/>
+            <form:input type="hidden" path="specialty"/>
+          </c:if>
         </form:form>
       </c:if>
     </div>

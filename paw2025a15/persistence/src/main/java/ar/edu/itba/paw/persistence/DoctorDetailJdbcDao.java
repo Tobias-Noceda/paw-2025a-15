@@ -82,7 +82,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         List<Integer> types = new ArrayList<>();
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -109,7 +109,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         List<Integer> types = new ArrayList<>();
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }

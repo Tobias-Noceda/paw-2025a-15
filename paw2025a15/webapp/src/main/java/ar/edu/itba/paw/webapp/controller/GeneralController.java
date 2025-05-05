@@ -29,7 +29,7 @@ import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 @Controller
 public class GeneralController {
 
-    private final static int PAGE_SIZE = 2;
+    private final static int PAGE_SIZE = 10;
 
     @Autowired
     private UserService us;
@@ -70,11 +70,11 @@ public class GeneralController {
                 insurance = null;
             }
             List<DoctorView> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday(), page, PAGE_SIZE);
-            totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday());
+            totalLength = dds.getTotalDoctorsByParams(landingForm.getEscapedQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday());
             mav.addObject("docList", doctors);
         } else {
             List<User> patients = us.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);
-            totalLength = us.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getQuery());
+            totalLength = us.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getEscapedQuery());
             mav.addObject("patients", patients);
         }
 

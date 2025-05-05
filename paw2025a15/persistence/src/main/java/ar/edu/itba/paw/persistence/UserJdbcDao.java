@@ -64,7 +64,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
+    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         if(page < 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
         StringBuilder query = new StringBuilder(
@@ -79,7 +79,7 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -106,7 +106,7 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
