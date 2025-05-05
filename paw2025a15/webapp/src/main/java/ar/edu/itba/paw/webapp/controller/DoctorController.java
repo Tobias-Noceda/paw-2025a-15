@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
-import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -33,9 +32,6 @@ public class DoctorController {
 
     @Autowired
     private DoctorDetailService dds;
-
-    @Autowired
-    private DoctorCoverageService dcs;
 
     @Autowired
     private DoctorShiftService dss;
@@ -70,7 +66,7 @@ public class DoctorController {
         mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), id));
         mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
-        mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
+        mav.addObject("doctorInsurances", dds.getDoctorInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
         mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(id, shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
         mav.addObject("searchForm", new SearchForm());

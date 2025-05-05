@@ -53,6 +53,25 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         return doctorDetailDao.getDetailByDoctorId(doctorId);
     }
 
+    @Transactional
+    @Override
+    public void createDoctorCoverages(long doctorId, List<Long> insurances) {
+        if(!getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with userId: " + doctorId + " does not exist!");
+        List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
+        if(currentInsurances != null && !currentInsurances.isEmpty()) throw new IllegalArgumentException("Doctor with userId: " + doctorId + " already has insurances created!");
+        for (Long insuranceId : insurances) {
+            if(!is.getInsuranceById(insuranceId).isPresent()) throw new IllegalArgumentException("Insurance with insuranceId: " + insuranceId + " does not exist!");
+            doctorDetailDao.addDoctorCoverage(doctorId, insuranceId);
+            LOGGER.info("Adding insurance with insuranceId:{} for doctor with userId: {}", insuranceId, doctorId);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Insurance> getDoctorInsurancesById(long doctorId) {
+        return doctorDetailDao.getDoctorInsurancesById(doctorId);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getDoctorsPage(int page, int pageSize) {

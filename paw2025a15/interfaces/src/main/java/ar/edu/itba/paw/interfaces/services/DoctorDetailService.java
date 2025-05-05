@@ -15,6 +15,10 @@ public interface DoctorDetailService {
 
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId);
 
+    public void createDoctorCoverages(long doctorId, List<Long> insurances);
+
+    public List<Insurance> getDoctorInsurancesById(long doctorId);
+
     public List<DoctorView> getDoctorsPage(int page, int pageSize);
 
     public int getTotalDoctors();

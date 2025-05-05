@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.form.PatientForm;
-import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -41,7 +41,7 @@ public class RegisterController {
     private InsuranceService is;
 
     @Autowired
-    private DoctorCoverageService dcs;
+    private DoctorDetailService dds;
     
     @Autowired
     private DoctorShiftService dss;
@@ -142,7 +142,7 @@ public class RegisterController {
                         form.getSpeciality(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                dcs.setCoverages(doc.getId(), form.getObrasSociales());
+                dds.createDoctorCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),

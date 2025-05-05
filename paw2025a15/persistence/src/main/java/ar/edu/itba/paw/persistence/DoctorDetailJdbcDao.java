@@ -67,6 +67,25 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
+    public void addDoctorCoverage(long doctorId, long insuranceId) {
+        String sql = "INSERT INTO doctor_coverages (doctor_id, insurance_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, doctorId, insuranceId);
+    }
+
+    @Override
+    public boolean removeDoctorCoverage(long doctorId, long insuranceId) {
+        String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ? AND insurance_id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, doctorId, insuranceId);
+        return rowsAffected > 0;
+    }
+
+    @Override
+    public List<Insurance> getDoctorInsurancesById(long doctorId) {
+        String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id")));
+    }
+
+    @Override
     public List<DoctorView> getDoctorsPage(int page, int pageSize) {
         if(page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
