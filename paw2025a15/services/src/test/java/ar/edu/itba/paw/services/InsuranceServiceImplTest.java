@@ -65,10 +65,10 @@ public class InsuranceServiceImplTest {
     public void testCreateExistentName(){
         Mockito.when(insuranceDaoMock.getInsuranceByName(INSURANCE_NAME)).thenReturn(Optional.of(INSURANCE));
 
-        Insurance insurance = is.create(INSURANCE_NAME, INSURANCE_PIC_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            is.create(INSURANCE_NAME, INSURANCE_PIC_ID)
+        );
 
-        Assert.assertNull(insurance);
-        Mockito.verify(fs, Mockito.never()).findById(Mockito.anyLong());
         Mockito.verify(insuranceDaoMock, Mockito.never()).create(Mockito.anyString(), Mockito.anyLong());
     }
 
@@ -77,10 +77,22 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceByName(INSURANCE_NAME)).thenReturn(Optional.empty());
         Mockito.when(fs.findById(INSURANCE_PIC_ID)).thenReturn(Optional.empty());
 
-        Insurance insurance = is.create(INSURANCE_NAME, INSURANCE_PIC_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            is.create(INSURANCE_NAME, INSURANCE_PIC_ID)
+        );
 
-        Assert.assertNull(insurance);
         Mockito.verify(insuranceDaoMock, Mockito.never()).create(Mockito.anyString(), Mockito.anyLong());
+    }
+
+    @Test
+    public void testCreateFailure(){
+        Mockito.when(insuranceDaoMock.getInsuranceByName(INSURANCE_NAME)).thenReturn(Optional.empty());
+        Mockito.when(fs.findById(INSURANCE_PIC_ID)).thenReturn(Optional.of(PICTURE));
+        Mockito.when(insuranceDaoMock.create(Mockito.eq(INSURANCE_NAME), Mockito.eq(INSURANCE_PIC_ID))).thenReturn(null);
+
+        Assert.assertThrows(RuntimeException.class, () -> 
+            is.create(INSURANCE_NAME, INSURANCE_PIC_ID)
+        );
     }
 
     @Test
@@ -98,7 +110,9 @@ public class InsuranceServiceImplTest {
     public void testEditNonexistentInsurance(){
         Mockito.when(insuranceDaoMock.getInsuranceById(INSURANCE_ID)).thenReturn(Optional.empty());
 
-        is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
+        );
 
         Mockito.verify(insuranceDaoMock, Mockito.never()).edit(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
     }
@@ -108,7 +122,9 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceById(INSURANCE_ID)).thenReturn(Optional.of(INSURANCE));
         Mockito.when(insuranceDaoMock.getInsuranceByName(INSURANCE_NAME2)).thenReturn(Optional.of(INSURANCE2));
 
-        is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
+        );
 
         Mockito.verify(insuranceDaoMock, Mockito.never()).edit(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
     }
@@ -119,7 +135,9 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceByName(INSURANCE_NAME2)).thenReturn(Optional.empty());
         Mockito.when(fs.findById(INSURANCE_PIC2_ID)).thenReturn(Optional.empty());
 
-        is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
+        );
 
         Mockito.verify(insuranceDaoMock, Mockito.never()).edit(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
     }
