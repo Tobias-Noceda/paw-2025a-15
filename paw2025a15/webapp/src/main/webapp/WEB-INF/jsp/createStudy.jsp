@@ -10,7 +10,13 @@
     <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
   </head>
   <body>
-    <div class="page-container">
+    <jsp:include page="components/header.jsp">
+      <jsp:param name="username"  value="${patient.name}"/>
+      <jsp:param name="pictureId" value="${patient.pictureId}"/>
+      <jsp:param name="role"      value="${patient.role}"/>
+    </jsp:include>
+
+  <div class="page-container">
       <h1 style="margin: 0;"><spring:message code="uploadStudies.title" arguments="${patient.name}" htmlEscape="true"></spring:message></h1>
       <div class="upload-card">
         <c:url value='/upload-file/${patient.id}' var="uploadUrl" />

@@ -157,21 +157,41 @@ body {
     background-color: #0e3b6b;
 }
 
+/* Contenedor del avatar */
+
 .user-btn .user-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5px;
+
+    width: 35px;         /* ancho fijo */
+
+    height: 35px;        /* alto fijo */
+
+    margin-right: 10px;
+
+    border-radius: 50%;  /* lo convierte en círculo */
+
+    overflow: hidden;    /* recorta la imagen sobrante */
+
+    flex-shrink: 0;      /* para que no encoja en flexbox */
+
+    display: inline-block;
+
     box-sizing: border-box;
+
 }
 
+
+/* La imagen dentro */
+
 .user-btn .user-image img {
-    height: auto;
-    border-radius: 50%;
-    object-fit: cover;
-    max-width: 35px;
-    max-height: 35px;
-    margin-right: 5px;
+
+    width: 100%;         /* ocupa todo el contenedor */
+
+    height: 100%;        /* ocupa todo el contenedor */
+
+    object-fit: cover;   /* recorta manteniendo proporción */
+
+    display: block;      /* elimina posibles gaps */
+
 }
 
 .user-btn .user-info {

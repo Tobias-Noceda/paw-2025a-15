@@ -50,7 +50,8 @@ public class StudyController {
     @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
-        @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm
+        @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
+        @ModelAttribute("searchForm") final SearchForm searchForm
     ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
@@ -70,6 +71,7 @@ public class StudyController {
     public ModelAndView createStudy(
         @PathVariable("patientId") int patientId,
         @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
+        @ModelAttribute("searchForm") final SearchForm searchForm,
         BindingResult errors
     ) throws IOException{
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
@@ -79,7 +81,7 @@ public class StudyController {
         }
 
         if (errors.hasErrors()) {
-            return createStudyForm(patientId, createStudyForm);
+            return createStudyForm(patientId, createStudyForm,  searchForm);
         }
         User user = us.getCurrentUser();
 
