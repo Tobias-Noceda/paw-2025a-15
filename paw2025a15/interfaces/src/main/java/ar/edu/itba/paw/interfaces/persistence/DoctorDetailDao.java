@@ -21,17 +21,9 @@ public interface DoctorDetailDao {
 
     public List<Insurance> getDoctorInsurancesById(long doctorId);
 
-    public List<DoctorView> getDoctorsPage(int page, int pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, int page, int pageSize);
 
-    public int getTotalDoctors();
-
-    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize);
-
-    public int getTotalDoctorsByName(String name);
-
-    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize);
-
-    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday);
 
     public List<DoctorView> getAuthDoctorsByPatientId(long id);
 

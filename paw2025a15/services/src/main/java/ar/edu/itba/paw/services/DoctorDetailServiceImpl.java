@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,42 +73,14 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<DoctorView> getDoctorsPage(int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPage(page, pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, page, pageSize);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public int getTotalDoctors() {
-        return doctorDetailDao.getTotalDoctors();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize) {
-        //TODO:maybe string input check? before it goes to query or in jdbc?
-        return doctorDetailDao.findDoctorsPageByName(name, page, pageSize);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public int getTotalDoctorsByName(String name) {
-        //TODO:maybe string input check? before it goes to query or in jdbc?
-        return doctorDetailDao.getTotalDoctorsByName(name);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
-        if(is.getInsuranceById(insurance.getId()).isPresent()) return doctorDetailDao.getFilteredDoctorsPage(specialty, insurance, weekday, page, pageSize);
-        else return Collections.emptyList();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
-        if(is.getInsuranceById(insurance.getId()).isPresent()) return doctorDetailDao.getTotalFilteredDoctors(specialty, insurance, weekday);
-        return 0;
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
+        return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
 
     @Transactional(readOnly = true)

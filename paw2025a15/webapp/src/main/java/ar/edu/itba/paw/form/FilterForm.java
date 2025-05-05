@@ -3,6 +3,7 @@ package ar.edu.itba.paw.form;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
+@Deprecated
 public class FilterForm {
     private SpecialtyEnum specialty;
     private Long insurances; // <-- ID en lugar del objeto

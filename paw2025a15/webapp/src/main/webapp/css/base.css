@@ -381,9 +381,9 @@ body {
 
 .card-grid {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: flex-start;
 }
 
 /* mensaje de “sin datos” */
@@ -458,36 +458,15 @@ body {
 /* convierte el form en un grid de 3 columnas */
 
 .landing-form {
-
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 20px;             /* espacio entre columnas y filas */
-
     align-items: end;      /* alinea los labels/selects y el botón abajo */
-
 }
 
 
 /* hace que el botón ocupe las 3 columnas completas */
 
 .landing-form .filter-button {
-
     grid-column: 1 / -1;
-
-}
-
-.doctor-landing-container {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 20px;
-
-    justify-content: center;   /* ahora centra */
-
-    margin: 0 auto;            /* opcional para asegurar centrado */
-
 }
