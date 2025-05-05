@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.FilterForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.PatientForm;
-import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -55,7 +55,7 @@ public class PatientController {
         mav.addObject("patient", patient);
         mav.addObject("isAuthDoctor", dds.hasAuthDoctor(patientId, user.getId()));
         mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
-        mav.addObject("searchForm", new SearchForm());
+        mav.addObject("landingForm", new LandingForm());
         mav.addObject("patientStudies", ss.getStudiesByPatientId(patientId));
         mav.addObject("patientDetails", pds.getDetailByPatientId(patientId).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
 

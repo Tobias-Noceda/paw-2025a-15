@@ -67,24 +67,54 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPage(int page, int pageSize) {
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
         if(page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
-        return (List<DoctorView>) jdbcTemplate.query(
-                """
+
+        StringBuilder query = new StringBuilder(
+            """
                 SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
                 FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                LIMIT ? OFFSET ?
-                """,
-                new Object[] { pageSize, offset },
-                new int[] { java.sql.Types.INTEGER, java.sql.Types.INTEGER },
-                DV_ROW_MAPPER
+                
+            """
         );
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        addFiltersToQuery(query, params, types, specialty, insurance, weekday);
+        if(name != null && !name.trim().isEmpty()) {
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
+            params.add("%" + name.trim() + "%");
+            types.add(java.sql.Types.VARCHAR);
+        }
+
+        query.append(" LIMIT ? OFFSET ? ");
+        params.add(pageSize);
+        types.add(java.sql.Types.INTEGER);
+        params.add(offset);
+        types.add(java.sql.Types.INTEGER);
+
+        return (List<DoctorView>) jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), DV_ROW_MAPPER);
     }
 
     @Override
-    public int getTotalDoctors() {
-        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM doctor_details", Integer.class);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
+        StringBuilder query = new StringBuilder(
+            """
+                SELECT COUNT(*)
+                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
+                
+            """
+        );
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        addFiltersToQuery(query, params, types, specialty, insurance, weekday);
+        if(name != null && !name.trim().isEmpty()) {
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
+            params.add("%" + name.trim() + "%");
+            types.add(java.sql.Types.VARCHAR);
+        }
+
+        return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
     }
 
     //TODO estas capaz estan mal que esten aca fusion de todo lo de "doctor" aca seguro termina siendo
@@ -96,82 +126,6 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     private List<WeekdayEnum> getWeekdaysById(long doctorId) {
         String sql = "SELECT DISTINCT shift_weekday FROM doctor_shifts WHERE doctor_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> WeekdayEnum.fromInt(rs.getInt("shift_weekday")));
-    }
-
-    @Override
-    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
-        if(name == null || name.trim().isEmpty()) return Collections.emptyList();
-        if(page < 1 || pageSize <= 0) return Collections.emptyList();
-        if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
-        int offset = (page - 1) * pageSize;
-        return (List<DoctorView>) jdbcTemplate.query(
-                """
-                    SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
-                    FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                    WHERE u.user_name LIKE ?
-                    LIMIT ? OFFSET ?   
-                """,
-                new Object[]{ "%" + name.trim() + "%", pageSize, offset },
-                new int[]{ java.sql.Types.VARCHAR, java.sql.Types.INTEGER, java.sql.Types.INTEGER },
-                DV_ROW_MAPPER
-        );
-    }
-
-    @Override
-    public int getTotalDoctorsByName(String name) {
-        if(name == null || name.trim().isEmpty()) return 0;
-        if(name.contains(";") || name.contains("--") || name.contains("'")) return 0;//TODO hotfix prevention, should be changed
-        return jdbcTemplate.queryForObject(
-            """
-                SELECT COUNT(*)
-                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                WHERE u.user_name
-                LIKE ?
-            """,
-            new Object[]{ "%" + name.trim() + "%" },
-            new int[]{ java.sql.Types.VARCHAR },
-            Integer.class
-        );
-    }
-    
-    @Override
-    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
-        if(page < 1 || pageSize <= 0) return Collections.emptyList();
-        int offset = (page - 1) * pageSize;
-        StringBuilder query = new StringBuilder(
-            """
-                SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
-                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                WHERE 1=1 
-            """
-        );
-        List<Object> params = new ArrayList<>();
-        List<Integer> types = new ArrayList<>();
-        addFiltersToQuery(query, params, types, specialty, insurance, weekday);
-        
-        query.append(" LIMIT ? OFFSET ? ");
-        params.add(pageSize);
-        types.add(java.sql.Types.INTEGER);
-        params.add(offset);
-        types.add(java.sql.Types.INTEGER);
-
-        return (List<DoctorView>) jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), DV_ROW_MAPPER);
-    }
-
-    @Override
-    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
-        StringBuilder query = new StringBuilder(
-            """
-                SELECT COUNT(*)
-                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                WHERE 1=1 
-            """
-        );
-        List<Object> params = new ArrayList<>();
-        List<Integer> types = new ArrayList<>();
-        addFiltersToQuery(query, params, types, specialty, insurance, weekday);
-        
-        return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
     }
 
     @Override

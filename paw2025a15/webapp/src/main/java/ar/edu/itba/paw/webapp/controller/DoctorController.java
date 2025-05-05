@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
@@ -73,7 +73,7 @@ public class DoctorController {
         mav.addObject("doctorInsurances", dcs.getInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
         mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(id, shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
-        mav.addObject("searchForm", new SearchForm());
+        mav.addObject("landingForm", new LandingForm());
 
         mav.addObject("shiftsWeekForm", shiftsWeekForm);
 

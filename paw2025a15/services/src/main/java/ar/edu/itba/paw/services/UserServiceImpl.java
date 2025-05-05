@@ -65,24 +65,14 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserByEmail(String email) {
         return userDao.getUserByEmail(email);
     }
-
-    @Override
-    public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize) {
-        return userDao.getAuthPatientsPageByDoctorId(id, page, pageSize);
-    }
-
-    @Override
-    public int getAuthPatientsCountByDoctorId(long id) {
-        return userDao.getAuthPatientsCountByDoctorId(id);
-    }
     
     @Override
-    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
+    public List<User> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         return userDao.searchAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize);
     }
 
     @Override
-    public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
+    public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
         return userDao.searchAuthPatientsCountByDoctorIdAndName(doctorId, name);
     }
 
