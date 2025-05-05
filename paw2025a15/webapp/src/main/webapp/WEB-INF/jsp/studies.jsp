@@ -30,35 +30,44 @@
                  action="${studiesUrl}"
                  method="get"
                  >
-        <div class="field-container">
-          <form:label path="type" class="field-label">
-            <spring:message code="studies.filter.label"/>
-          </form:label>
-          <form:select path="type" class="input-field">
-            <form:option value="">
-              <spring:message code="studies.all"/>
-            </form:option>
-            <form:options items="${studyTypeSelectItems}"
-                          itemLabel="label"
-                          itemValue="value"/>
-          </form:select>
+        <div class="field-container" style="display: flex; flex-direction: column; gap: 12px;">
 
-          <form:label path="mostRecent" class="field-label" style="margin-top: 8px;">
-            <spring:message code="studies.order.label" text="Ordenar por:"/>
-          </form:label>
-          <form:select path="mostRecent" class="input-field">
-            <form:option value="true">
-              <spring:message code="studies.order.mostRecent" text="Más reciente"/>
-            </form:option>
-            <form:option value="false">
-              <spring:message code="studies.order.leastRecent" text="Menos reciente"/>
-            </form:option>
-          </form:select>
+          <!-- Tipo de estudio -->
+          <div>
+            <form:label path="type" class="field-label">
+              <spring:message code="studies.filter.label"/>
+            </form:label>
+            <form:select path="type" class="input-field">
+              <form:option value="">
+                <spring:message code="studies.all"/>
+              </form:option>
+              <form:options items="${studyTypeSelectItems}"
+                            itemLabel="label"
+                            itemValue="value"/>
+            </form:select>
+          </div>
 
-          <button type="submit" class="upload-button">
-            <spring:message code="landing.filter"/>
+          <!-- Orden -->
+          <div>
+            <form:label path="mostRecent" class="field-label">
+              <spring:message code="studies.order.label" text="Ordenar por:"/>
+            </form:label>
+            <form:select path="mostRecent" class="input-field">
+              <form:option value="true">
+                <spring:message code="studies.order.mostRecent" text="Más reciente"/>
+              </form:option>
+              <form:option value="false">
+                <spring:message code="studies.order.leastRecent" text="Menos reciente"/>
+              </form:option>
+            </form:select>
+          </div>
+          <div class="filter-button-div">
+          <button type="submit" class="filter-button">
+            <spring:message code="studies.apply"/>
           </button>
+          </div>
         </div>
+
       </form:form>
 
 
