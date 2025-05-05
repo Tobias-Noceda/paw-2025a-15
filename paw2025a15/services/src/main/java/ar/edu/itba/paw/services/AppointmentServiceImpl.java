@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -126,16 +127,24 @@ public class AppointmentServiceImpl implements AppointmentService{
         appointmentDao.clearRemovedAppointmentBeforeDate(date);
         LOGGER.info("Removed appointments before " + date + " cleared. At " + LocalDateTime.now().toLocalTime());
     }
-
-    @Scheduled(cron = "0 0 7 * * *", zone = "America/Argentina/Buenos_Aires")
+//DEFAULT: 0 0 7 * * *
+    //cada 10s : */10 * * * * *
+    @Scheduled(cron = "*/10 * * * * *", zone = "America/Argentina/Buenos_Aires")
     public void rememberTomorrowAppointments() {
         LocalDate date = LocalDate.now().plusDays(1);
         List<Appointment> appointments = appointmentDao.getAppointmentsForDate(date);
-        for(Appointment appointment : appointments) {
+        for (Appointment appointment : appointments) {
             us.getUserById(appointment.getPatientId()).ifPresent(patient -> {
-                LOGGER.info("Sending appointment reminder email to patient " + patient.getId() + " for appointment " + LocalDate.now());
-                // TODO: Email
-                // es.sendAppointmentRemainderEmail(appointment);
+                DoctorShift shift = dss.getShiftById(appointment.getShiftId()).orElse(null);
+                if (shift != null) {
+                    us.getUserById(shift.getDoctorId()).ifPresent(doctor -> {
+                        Locale patientLocale = patient.getLocale().toLocale();
+                        Locale doctorLocale = doctor.getLocale().toLocale();
+                        es.sendPatientAppointmentReminderEmail(patient, doctor, appointment, shift, patientLocale);
+                        es.sendDoctorAppointmentReminderEmail(patient, doctor, appointment, shift, doctorLocale);
+                        LOGGER.info("Sending appointment reminder email to patient {} and doctor {} for appointment on {}", patient.getId(), doctor.getId(), date);
+                    });
+                }
             });
         }
         LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
