@@ -70,7 +70,6 @@ public class DoctorShiftServiceImplTest {
 
     @Test
     public void testCreateShiftsWrongTimes(){
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, END_TIME, START_TIME, slot)

@@ -87,8 +87,7 @@ public class DoctorDetailServiceImplTest {
     public void testCreateDoctorCoverages(){
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
-        Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.of(INSURANCE));
-        Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE2_ID))).thenReturn(Optional.of(INSURANCE2));
+        Mockito.when(is.getInsuranceById(Mockito.anyLong())).thenReturn(Optional.of(INSURANCE));
 
         dds.createDoctorCoverages(DOC_ID, INSURANCES);
 
@@ -122,8 +121,7 @@ public class DoctorDetailServiceImplTest {
     public void testCreateDoctorCoveragesNonexistentInsurance(){
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
-        Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
-        Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE2_ID))).thenReturn(Optional.empty());
+        Mockito.when(is.getInsuranceById(Mockito.anyLong())).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
