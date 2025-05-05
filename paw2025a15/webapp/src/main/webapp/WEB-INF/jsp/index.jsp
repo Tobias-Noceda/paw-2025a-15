@@ -173,7 +173,7 @@
             class="page-navigation-button"
             style="margin-right: 3px;"
             onclick="document.getElementById('pageInput').value = ${page - 1}"
-            <c:if test="${page == 1}">disabled</c:if>
+            <c:if test="${page <= 1}">disabled</c:if>
           >
             <spring:message code="doctorDetail.previousWeek"/>
           </button>
@@ -186,7 +186,7 @@
             type="submit"
             class="page-navigation-button"
             onclick="document.getElementById('pageInput').value = ${page + 1}"
-            <c:if test="${page == totalPages}">disabled</c:if>
+            <c:if test="${page >= totalPages}">disabled</c:if>
           >
             <spring:message code="doctorDetail.nextWeek"/>
           </button>

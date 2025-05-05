@@ -29,7 +29,7 @@ import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 @Controller
 public class GeneralController {
 
-    private final static int PAGE_SIZE = 10;
+    private final static int PAGE_SIZE = 2;
 
     @Autowired
     private UserService us;
@@ -79,9 +79,6 @@ public class GeneralController {
         }
 
         int totalPages = (int) Math.ceil((double) totalLength / PAGE_SIZE);
-        if(page > totalPages) {
-            page = 1;
-        }
         mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);
         mav.addObject("insurances", is.getAllInsurances());
