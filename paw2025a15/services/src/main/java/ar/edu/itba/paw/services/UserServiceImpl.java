@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +27,8 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserDao userDao;
 
@@ -40,20 +45,30 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Transactional
-    @Override//TODO check porfa
+    @Override
     public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
-        if(getUserByEmail(email).isPresent()) return null;
+        if(getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
         User user = userDao.create(email, passwordEncoder.encode(password), name, telephone, role, 1, locale); // PictureId por defecto
+        if(user == null){
+            LOGGER.error("Failed to create patient user for email: {} at {}", email, LocalDateTime.now());
+            throw new RuntimeException("Failed to create patient user for email: " + email);
+        }
         pds.create(user.getId(), null, null, null, null, null, null, null, null, null, null, null, null);
+        LOGGER.info("Successfully created patient user with email: {}", email);
         return user;
     }
 
     @Transactional
     @Override
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum speciality, LocaleEnum locale) {
-        if(getUserByEmail(email).isPresent()) return null;
+        if(getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
         User doc = userDao.create(email, passwordEncoder.encode(password), name, telephone, UserRoleEnum.DOCTOR, 1, locale); // PictureId por defecto
+        if(doc == null){
+            LOGGER.error("Failed to create doctor user for email: {} at {}", email, LocalDateTime.now());
+            throw new RuntimeException("Failed to create doctor user for email: " + email);
+        }
         dds.create(doc.getId(), licence, speciality);
+        LOGGER.info("Successfully created doctor user with email: {}", email);
         return doc;
     }
 
@@ -104,15 +119,26 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void changePasswordByID(long id, String password) {
-        if(getUserById(id).isPresent()) userDao.changePasswordByID(id, passwordEncoder.encode(password));
+        if(!getUserById(id).isPresent()) throw new IllegalArgumentException("User with id: " + id + " does not exist!");
+        userDao.changePasswordByID(id, passwordEncoder.encode(password));
+        LOGGER.info("Changed password for user with id: {}", id);
     }
 
     @Transactional
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
-        User user = getUserById(id).orElse(null);
-        if(user == null) return;
-        if(fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
+        if(!getUserById(id).isPresent()) throw new IllegalArgumentException("User with id: " + id + " does not exist!");
+        if(!fs.findById(pictureId).isPresent()) throw new IllegalArgumentException("Picture with id: " + pictureId + " does not exist!");
+        userDao.editUser(id, name, telephone, pictureId);
+        LOGGER.info("Edited user information for user with id: {}", id);
+    }
+
+    @Transactional
+    @Override
+    public void updateLocale(long userId, LocaleEnum locale) {
+        if(!getUserById(userId).isPresent()) throw new IllegalArgumentException("User with id: " + userId + " does not exist!");
+        userDao.updateLocale(userId, locale);
+        LOGGER.info("Updating locale information for user with id: {}", userId);
     }
 
     @Override
@@ -120,11 +146,5 @@ public class UserServiceImpl implements UserService {
         Authentication session = SecurityContextHolder.getContext().getAuthentication();
         if (session != null) return userDao.getUserByEmail(session.getName()).orElse(null);
         return null;
-    }
-
-    @Transactional
-    @Override
-    public void updateLocale(long userId, LocaleEnum locale) {
-        userDao.updateLocale(userId, locale);
     }
 }

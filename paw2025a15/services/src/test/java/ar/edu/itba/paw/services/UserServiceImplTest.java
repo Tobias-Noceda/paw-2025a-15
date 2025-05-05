@@ -98,9 +98,22 @@ public class UserServiceImplTest {
     public void testCreatePatientExistentEmail(){
         Mockito.when(userDaoMock.getUserByEmail(PATIENT_EMAIL)).thenReturn(Optional.of(PATIENT));
         
-        User user = us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
+        );
 
-        Assert.assertNull(user);
+        Mockito.verify(pds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void testCreatePatientFailure(){
+        Mockito.when(passwordEncoder.encode(Mockito.eq(PATIENT_PASSWORD))).thenReturn("userPassEnc");
+        Mockito.when(userDaoMock.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.anyLong(), Mockito.any())).thenReturn(null);
+
+        Assert.assertThrows(RuntimeException.class, () -> 
+            us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
+        );
+
         Mockito.verify(pds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
@@ -120,9 +133,22 @@ public class UserServiceImplTest {
     public void testCreateDoctorExistentEmail(){
         Mockito.when(userDaoMock.getUserByEmail(DOC_EMAIL)).thenReturn(Optional.of(DOC));
         
-        User user = us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
+        );
 
-        Assert.assertNull(user);
+        Mockito.verify(dds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyString(), Mockito.any());
+    }
+
+    @Test
+    public void testCreateDoctorFailure(){
+        Mockito.when(passwordEncoder.encode(Mockito.eq(DOC_PASSWORD))).thenReturn("userPassEnc");
+        Mockito.when(userDaoMock.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.anyLong(), Mockito.any())).thenReturn(null);
+
+        Assert.assertThrows(RuntimeException.class, () -> 
+            us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
+        );
+
         Mockito.verify(dds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyString(), Mockito.any());
     }
 
@@ -161,7 +187,9 @@ public class UserServiceImplTest {
     public void testChangePasswordByIDNonexistentUser(){
         Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
 
-        us.changePasswordByID(PATIENT_ID, DOC_PASSWORD);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            us.changePasswordByID(PATIENT_ID, DOC_PASSWORD)
+        );
 
         Mockito.verify(userDaoMock, Mockito.never()).changePasswordByID(Mockito.anyLong(), Mockito.anyString());
     }
@@ -181,7 +209,9 @@ public class UserServiceImplTest {
     public void testEditUserNonexistent(){
         Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
 
-        us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID)
+        );
 
         Mockito.verify(userDaoMock, Mockito.never()).editUser(Mockito.anyLong(), Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
     }
@@ -191,9 +221,31 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
         Mockito.when(fs.findById(PATIENT_PIC2_ID)).thenReturn(Optional.empty());
 
-        us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID)
+        );
 
         Mockito.verify(userDaoMock, Mockito.never()).editUser(Mockito.anyLong(), Mockito.anyString(), Mockito.anyString(), Mockito.anyLong());
+    }
+
+    @Test
+    public void testUpdateLocale(){
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.of(PATIENT));
+
+        us.updateLocale(PATIENT_ID, PATIENT_LOCALE);
+
+        Mockito.verify(userDaoMock).updateLocale(PATIENT_ID, PATIENT_LOCALE);
+    }
+
+    @Test
+    public void testUpdateLocaleNonexistentUser(){
+        Mockito.when(userDaoMock.getUserById(PATIENT_ID)).thenReturn(Optional.empty());
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            us.updateLocale(PATIENT_ID, PATIENT_LOCALE)
+        );
+
+        Mockito.verify(userDaoMock, Mockito.never()).updateLocale(Mockito.anyLong(), Mockito.any());
     }
 
 }
