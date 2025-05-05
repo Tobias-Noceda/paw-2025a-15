@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -53,10 +54,21 @@ public class StudyServiceImpl implements StudyService{
     }
 
     @Override
-    public List<Study> getFilteredStudies(long id, StudyTypeEnum type) {
-        return getStudiesByPatientId(id).stream()
-                .filter(study -> study.getType() == type)
-                .collect(Collectors.toList());
+    public List<Study> getFilteredStudies(long id, StudyTypeEnum type, boolean mostRecent) {
+        List<Study> filtered;
+        if(type == null) {
+           filtered = getStudiesByPatientId(id);
+        }else {
+           filtered = getStudiesByPatientId(id).stream()
+                    .filter(study -> study.getType() == type)
+                    .collect(Collectors.toList());
+        }
+        if (!mostRecent) {
+            Collections.reverse(filtered);
+        }
+
+        return filtered;
     }
+
 
 }

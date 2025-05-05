@@ -29,12 +29,12 @@
       <form:form modelAttribute="filterForm"
                  action="${studiesUrl}"
                  method="get"
-                 class="landing-form">
+                 >
         <div class="field-container">
           <form:label path="type" class="field-label">
             <spring:message code="studies.filter.label"/>
           </form:label>
-          <form:select path="type" class="filter-select">
+          <form:select path="type" class="input-field">
             <form:option value="">
               <spring:message code="studies.all"/>
             </form:option>
@@ -42,7 +42,20 @@
                           itemLabel="label"
                           itemValue="value"/>
           </form:select>
-          <button type="submit" class="filter-button">
+
+          <form:label path="mostRecent" class="field-label" style="margin-top: 8px;">
+            <spring:message code="studies.order.label" text="Ordenar por:"/>
+          </form:label>
+          <form:select path="mostRecent" class="input-field">
+            <form:option value="true">
+              <spring:message code="studies.order.mostRecent" text="Más reciente"/>
+            </form:option>
+            <form:option value="false">
+              <spring:message code="studies.order.leastRecent" text="Menos reciente"/>
+            </form:option>
+          </form:select>
+
+          <button type="submit" class="upload-button">
             <spring:message code="landing.filter"/>
           </button>
         </div>

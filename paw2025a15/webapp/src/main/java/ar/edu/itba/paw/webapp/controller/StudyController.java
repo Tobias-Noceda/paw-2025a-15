@@ -124,12 +124,9 @@ public class StudyController {
         mav.addObject("user", user);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
-        StudyTypeEnum filterType = filterForm.getType();
-        if (filterType != null) {
-            mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterType));
-        } else {
-            mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
-        }
+        mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
+
+
 
         return mav;
     }
