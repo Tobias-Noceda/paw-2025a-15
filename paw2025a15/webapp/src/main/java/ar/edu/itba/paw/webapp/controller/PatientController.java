@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
