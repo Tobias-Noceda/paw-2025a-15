@@ -32,7 +32,6 @@ public class AppointmentForm {
     }
 
     public void setDate(String date) {
-        System.out.println("Date string: " + date);
         this.date = LocalDate.parse(date);
     }
 }
