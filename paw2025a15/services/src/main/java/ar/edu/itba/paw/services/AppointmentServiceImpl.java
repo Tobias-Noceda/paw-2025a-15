@@ -127,9 +127,10 @@ public class AppointmentServiceImpl implements AppointmentService{
         appointmentDao.clearRemovedAppointmentBeforeDate(date);
         LOGGER.info("Removed appointments before " + date + " cleared. At " + LocalDateTime.now().toLocalTime());
     }
-//DEFAULT: 0 0 7 * * *
+
+    //DEFAULT (8AM todos los dias) 0 0 8 * * ?
     //cada 10s : */10 * * * * *
-    @Scheduled(cron = "*/10 * * * * *", zone = "America/Argentina/Buenos_Aires")
+    @Scheduled(cron = "0 0 8 * * ?", zone = "America/Argentina/Buenos_Aires")
     public void rememberTomorrowAppointments() {
         LocalDate date = LocalDate.now().plusDays(1);
         List<Appointment> appointments = appointmentDao.getAppointmentsForDate(date);
