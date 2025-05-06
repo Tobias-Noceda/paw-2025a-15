@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.AppointmentForm;
-import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
@@ -64,12 +64,11 @@ public class AppointmentController {
             case PATIENT -> {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
                 mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
-                mav.addObject("takeTurnForm", new TakeTurnForm());
             }
             default -> { return new ModelAndView("redirect:/login"); }
         }
         
-        mav.addObject("searchForm", new SearchForm());
+        mav.addObject("landingForm", new LandingForm());
         mav.addObject("appointmentForm", new AppointmentForm());
         mav.addObject("takeTurnForm", new TakeTurnForm());
 

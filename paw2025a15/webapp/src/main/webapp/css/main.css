@@ -348,8 +348,7 @@ body {
 }
 
 .navigation-button {
-    max-width: -moz-fit-content; /* Firefox */
-    max-width: fit-content;       /* Chrome y demás */
+    width: 100px;
     background-color: #007bff;
     color: white;
     border: none;
@@ -374,7 +373,7 @@ body {
 
 .selected-month {
     margin: 0 10px;
-    font-size: 18px;
+    font-size: 20px !important;
     font-weight: 700;
     color: #0d4a85;
     padding: 10px;

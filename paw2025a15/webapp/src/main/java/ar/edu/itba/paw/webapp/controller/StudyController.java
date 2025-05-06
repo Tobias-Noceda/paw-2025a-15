@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
-import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
@@ -128,6 +128,8 @@ public class StudyController {
 
 
 
+        mav.addObject("landingForm", new LandingForm());
+        
         return mav;
     }
 }

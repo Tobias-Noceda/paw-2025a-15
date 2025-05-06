@@ -9,8 +9,8 @@ import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
-import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
@@ -57,9 +57,8 @@ public class FileController {
 
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
     public ModelAndView saveProfileInfo(@AuthenticationPrincipal UserDetails userDetails,
-                                  @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
-                                  BindingResult result,
-                                  @ModelAttribute("searchForm") final SearchForm searchForm
+                    @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
+                    BindingResult result
     ) throws IOException {
         User user = us.getCurrentUser();
         if (user == null) {
@@ -71,6 +70,7 @@ public class FileController {
             mav.addObject("profileForm", profileForm);
             mav.addObject("bloodTypes", BloodTypeEnum.values());
             mav.addObject("user", user);
+            mav.addObject("landingForm", new LandingForm());
             
             if(user.getRole().equals(UserRoleEnum.PATIENT)) {
                 mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElse(null));
@@ -129,7 +129,7 @@ public class FileController {
         return new ModelAndView("createFile");
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
+    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y accesos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
         Optional<File> f = fs.findById(id);
         if (!f.isPresent()) {

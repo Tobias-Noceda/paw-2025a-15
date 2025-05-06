@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -63,66 +64,54 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize) {
+    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         if(page < 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
-
-        return (List<User>) jdbcTemplate.query(
-                """
-                    SELECT u.*
-                    FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
-                    WHERE ad.doctor_id = ? GROUP BY u.user_id
-                    LIMIT ? OFFSET ?
-                """,
-                new Object[]{id, pageSize, offset},
-                new int[]{ java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.INTEGER },
-                ROW_MAPPER
+        StringBuilder query = new StringBuilder(
+            """
+                SELECT DISTINCT u.*
+                FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
+                WHERE ad.doctor_id = ?
+            """
         );
-    }
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        params.add(doctorId);
+        types.add(java.sql.Types.BIGINT);
+        if(name != null && !name.trim().isEmpty()) {
+            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            params.add("%" + name.trim() + "%");
+            types.add(java.sql.Types.VARCHAR);
+        }
+        query.append(" LIMIT ? OFFSET ? ");
+        params.add(pageSize);
+        params.add(offset);
+        types.add(java.sql.Types.INTEGER);
+        types.add(java.sql.Types.INTEGER);
 
-    @Override
-    public int getAuthPatientsCountByDoctorId(long id) {
-        return jdbcTemplate.queryForObject(
-            "SELECT COUNT(*) FROM auth_doctors WHERE doctor_id = ?",
-            new Object[]{id},
-            new int[]{java.sql.Types.INTEGER},
-            Integer.class
-        );
-    }
-
-    @Override
-    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {//TODO añadir validación input,no se si aca o en el service, de que solo sean chars alfanumericos por sqlinjection
-        if(page < 0 || pageSize <= 0) return Collections.emptyList();
-        if(name == null || name.trim().isEmpty()) return Collections.emptyList();
-        if(name.contains(";") || name.contains("--") || name.contains("'")) return Collections.emptyList();//TODO hotfix prevention, should be changed
-        int offset = (page - 1) * pageSize;
-        return (List<User>) jdbcTemplate.query(
-                """
-                    SELECT u.*
-                    FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
-                    WHERE ad.doctor_id = ? AND u.user_name LIKE ?
-                    LIMIT ? OFFSET ?
-                """,
-                new Object[]{doctorId, "%" + name.trim() + "%", pageSize, offset},
-                new int[]{ java.sql.Types.BIGINT, java.sql.Types.VARCHAR, java.sql.Types.INTEGER, java.sql.Types.INTEGER },
-                ROW_MAPPER
-        );
+        return (List<User>) jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), ROW_MAPPER);
     }
 
     @Override
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
-        if(name == null || name.trim().isEmpty()) return 0;
-        if(name.contains(";") || name.contains("--") || name.contains("'")) return 0;//TODO hotfix prevention, should be changed
-        return jdbcTemplate.queryForObject(
+        StringBuilder query = new StringBuilder(
             """
-                SELECT COUNT(*)
+                SELECT COUNT(DISTINCT u.*)
                 FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
-                WHERE ad.doctor_id = ? AND u.user_name LIKE ?
-            """,
-            new Object[]{doctorId, "%" + name.trim() + "%"},
-            new int[]{java.sql.Types.BIGINT, java.sql.Types.VARCHAR},
-            Integer.class
+                WHERE ad.doctor_id = ?
+            """
         );
+        List<Object> params = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
+        params.add(doctorId);
+        types.add(java.sql.Types.BIGINT);
+        if(name != null && !name.trim().isEmpty()) {
+            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            params.add("%" + name.trim() + "%");
+            types.add(java.sql.Types.VARCHAR);
+        }
+
+        return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
     }
 
     @Override
