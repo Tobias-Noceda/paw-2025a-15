@@ -23,7 +23,7 @@ public class DoctorForm {
     private String confirmPassword;
 
     @NotNull(message = "{form.specialty.notNull}")
-    private SpecialtyEnum speciality;
+    private SpecialtyEnum specialty;
 
     @NotNull(message = "{form.insurances.notNull}")
     private List<Long> ObrasSociales;
@@ -84,12 +84,12 @@ public class DoctorForm {
         this.schedules = schedules;
     }
 
-    public SpecialtyEnum getSpeciality() {
-        return speciality;
+    public SpecialtyEnum getSpecialty() {
+        return specialty;
     }
 
-    public void setSpeciality(SpecialtyEnum speciality) {
-        this.speciality = speciality;
+    public void setSpecialty(SpecialtyEnum specialty) {
+        this.specialty = specialty;
     }
 
     public List<Long> getObrasSociales() {
@@ -122,10 +122,6 @@ public class DoctorForm {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public SpecialtyEnum getSpecialty() {
-        return speciality;
     }
 
     public int getAmount(){

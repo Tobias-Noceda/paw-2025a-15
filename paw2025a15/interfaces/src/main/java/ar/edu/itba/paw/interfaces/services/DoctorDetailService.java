@@ -6,12 +6,15 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorDetailService {
-    public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty);
+
+    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, LocaleEnum locale);
 
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId);
 

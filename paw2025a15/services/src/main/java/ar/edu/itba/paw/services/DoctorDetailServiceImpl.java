@@ -14,11 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Service
@@ -32,18 +36,23 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Autowired
     private InsuranceService is;
 
+    @Autowired
+    private UserService us;
+
     @Transactional
     @Override
-    public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
-        //TODO: same as in pds, check existent doctor
-        if(getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor detail for userId: " + doctorId + " already exists!");
+    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, LocaleEnum locale) {
+        if(us.getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
+        User doc = us.create(email, password, name, telephone, UserRoleEnum.DOCTOR, locale);
+        long doctorId = doc.getId();
         DoctorDetail dd = doctorDetailDao.create(doctorId, licence, specialty);
         if(dd == null){
             LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
             throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
         }
         LOGGER.info("Successfully created doctor details for userId: {}", doctorId);
-        return dd;
+        LOGGER.info("Successfully created doctor user with email: {}", email);
+        return doc;
     }
 
     @Transactional(readOnly = true)
@@ -86,7 +95,6 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
-        //TODO:check after refactor with us the existance of patientId
         return doctorDetailDao.getAuthDoctorsByPatientId(id);
     }
 
@@ -125,7 +133,6 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional(readOnly = true)
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
-        //TODO:check after refactor with us the existance of patientId and docId
         return doctorDetailDao.hasAuthDoctor(patientId, doctorId);
     }
 
@@ -150,7 +157,6 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional(readOnly = true)
     @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
-        //TODO:check after refactor with us the existance of patientId and docId
         return doctorDetailDao.getAuthAccessLevelEnums(patientId, doctorId);
     }
     

@@ -25,6 +25,7 @@ import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -39,6 +40,9 @@ public class RegisterController {
 
     @Autowired
     private InsuranceService is;
+
+    @Autowired
+    private PatientDetailService pds;
 
     @Autowired
     private DoctorDetailService dds;
@@ -80,12 +84,11 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                us.createPatient(
+                pds.createPatient(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
-                        UserRoleEnum.PATIENT,
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
                 loginUser(form.getEmail(), form.getPassword());
@@ -133,13 +136,13 @@ public class RegisterController {
         } else {
             try {
                 // Crear el médico
-                User doc = us.createDoctor(
+                User doc = dds.createDoctor(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         "med-licence",
-                        form.getSpeciality(),
+                        form.getSpecialty(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
                 dds.createDoctorCoverages(doc.getId(), form.getObrasSociales());

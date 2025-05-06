@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.Assert;
@@ -11,13 +12,26 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.PatientDetail;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PatientDetailServiceImplTest {
 
     private static final long PATIENT_ID = 1L;
+    private static final String PATIENT_EMAIL = "grace@example.com";
+    private static final String PATIENT_NAME = "grace";
+    private static final String PATIENT_PASSWORD = "goodgraces";
+    private static final String PATIENT_TELEPHONE = "1144445555";
+    private static final UserRoleEnum PATIENT_ROLE = UserRoleEnum.PATIENT;
+    private static final LocaleEnum PATIENT_LOCALE = LocaleEnum.ES_AR;
+    private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
+    private static final User PATIENT = new User(PATIENT_ID, PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_CREATE_DATE, PATIENT_LOCALE);
+
 
     private static final Integer AGE = 26;
     private static final BloodTypeEnum BLOODTYPE = BloodTypeEnum.AB_POSITIVE;
@@ -32,6 +46,7 @@ public class PatientDetailServiceImplTest {
     private static final String HOBBIES = "sing";
     private static final String JOB = "carpenter";
     private static final PatientDetail PATIENT_DETAIL = new PatientDetail(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+    private static final PatientDetail PATIENT_DETAIL_EMPTY = new PatientDetail(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null);
 
 
     @InjectMocks
@@ -40,39 +55,44 @@ public class PatientDetailServiceImplTest {
     @Mock
     private PatientDetailDao patientDetailDaoMock;
 
+    @Mock
+    private UserService us;
+
     @Test
-    public void testCreate(){
-        Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT_ID), Mockito.eq(AGE), Mockito.eq(BLOODTYPE), Mockito.eq(HEIGHT), Mockito.eq(WEIGHT), Mockito.eq(SMOKES), Mockito.eq(DRINKS), Mockito.eq(MEDS), Mockito.eq(CONDITIONS), Mockito.eq(ALLERGIES), Mockito.eq(DIET), Mockito.eq(HOBBIES), Mockito.eq(JOB))).thenReturn(PATIENT_DETAIL);
+    public void testCreatePatient(){
+        Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
+        Mockito.when(us.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE))).thenReturn(PATIENT);
+        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT_ID), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(PATIENT_DETAIL_EMPTY);
 
-        PatientDetail pd = pds.create(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        User user = pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE);
 
-        Assert.assertNotNull(pd);
-        Assert.assertEquals(PATIENT_DETAIL, pd);
-        Mockito.verify(patientDetailDaoMock).create(Mockito.eq(PATIENT_ID), Mockito.eq(AGE), Mockito.eq(BLOODTYPE), Mockito.eq(HEIGHT), Mockito.eq(WEIGHT), Mockito.eq(SMOKES), Mockito.eq(DRINKS), Mockito.eq(MEDS), Mockito.eq(CONDITIONS), Mockito.eq(ALLERGIES), Mockito.eq(DIET), Mockito.eq(HOBBIES), Mockito.eq(JOB));
+        Assert.assertNotNull(user);
+        Assert.assertEquals(PATIENT, user);
+        Mockito.verify(us).create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE));
+        Mockito.verify(patientDetailDaoMock).create(Mockito.eq(PATIENT_ID), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
     }
 
     @Test
-    public void testCreateExistentPatientDetail(){
-        Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL));
-
+    public void testCreatePatientExistentUser(){
+        Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.of(PATIENT));
+        
         Assert.assertThrows(IllegalArgumentException.class, () -> 
-            pds.create(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
+            pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE)
         );
 
+        Mockito.verify(us, Mockito.never()).create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any());
         Mockito.verify(patientDetailDaoMock, Mockito.never()).create(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
-    public void testCreateFailure(){
-        Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT_ID), Mockito.eq(AGE), Mockito.eq(BLOODTYPE), Mockito.eq(HEIGHT), Mockito.eq(WEIGHT), Mockito.eq(SMOKES), Mockito.eq(DRINKS), Mockito.eq(MEDS), Mockito.eq(CONDITIONS), Mockito.eq(ALLERGIES), Mockito.eq(DIET), Mockito.eq(HOBBIES), Mockito.eq(JOB))).thenReturn(null);
+    public void testCreatePatientPDFailure(){
+        Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
+        Mockito.when(us.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE))).thenReturn(PATIENT);
+        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT_ID), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
-            pds.create(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
-        );
-        
-        Mockito.verify(patientDetailDaoMock).create(Mockito.eq(PATIENT_ID), Mockito.eq(AGE), Mockito.eq(BLOODTYPE), Mockito.eq(HEIGHT), Mockito.eq(WEIGHT), Mockito.eq(SMOKES), Mockito.eq(DRINKS), Mockito.eq(MEDS), Mockito.eq(CONDITIONS), Mockito.eq(ALLERGIES), Mockito.eq(DIET), Mockito.eq(HOBBIES), Mockito.eq(JOB));
+            pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE)
+        ).getMessage().contains("Failed to create patient details for userId");
     }
 
     @Test

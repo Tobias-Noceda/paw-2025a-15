@@ -74,82 +74,41 @@ public class UserServiceImplTest {
     private FileService fs;
 
     @Mock
-    private PatientDetailService pds;
-
-    @Mock
-    private DoctorDetailService dds;
-
-    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Test
-    public void testCreatePatient(){
+    public void testCreate(){
+        Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(passwordEncoder.encode(Mockito.eq(PATIENT_PASSWORD))).thenReturn("userPassEnc");
         Mockito.when(userDaoMock.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_PIC_ID), Mockito.eq(PATIENT_LOCALE))).thenReturn(PATIENT);
 
-        User user = us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE);
+        User user = us.create(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(PATIENT, user);
-        Mockito.verify(pds).create(Mockito.eq(PATIENT_ID), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null), Mockito.eq(null));
+        Mockito.verify(userDaoMock).create(Mockito.eq(PATIENT_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_PIC_ID), Mockito.eq(PATIENT_LOCALE));
     }
 
     @Test
-    public void testCreatePatientExistentEmail(){
+    public void testCreateExistentEmail(){
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.of(PATIENT));
-        
+
         Assert.assertThrows(IllegalArgumentException.class, () -> 
-            us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
+            us.create(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
         );
 
-        Mockito.verify(pds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(userDaoMock, Mockito.never()).create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.anyLong(), Mockito.any());
     }
 
     @Test
-    public void testCreatePatientFailure(){
+    public void testCreateFailure(){
+        Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(passwordEncoder.encode(Mockito.eq(PATIENT_PASSWORD))).thenReturn("userPassEnc");
-        Mockito.when(userDaoMock.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.anyLong(), Mockito.any())).thenReturn(null);
+        Mockito.when(userDaoMock.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_PIC_ID), Mockito.eq(PATIENT_LOCALE))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
-            us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
-        );
-
-        Mockito.verify(pds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-    }
-
-    @Test
-    public void testCreateDoctor(){
-        Mockito.when(passwordEncoder.encode(Mockito.eq(DOC_PASSWORD))).thenReturn("userPassEnc");
-        Mockito.when(userDaoMock.create(Mockito.eq(DOC_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(DOC_ROLE), Mockito.eq(DOC_PIC_ID), Mockito.eq(DOC_LOCALE))).thenReturn(DOC);
-
-        User user = us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE);
-
-        Assert.assertNotNull(user);
-        Assert.assertEquals(DOC, user);
-        Mockito.verify(dds).create(DOC_ID, DOC_LICENCE, DOC_SPECIALTY);
-    }
-
-    @Test
-    public void testCreateDoctorExistentEmail(){
-        Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.of(DOC));
-        
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
-            us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
-        );
-
-        Mockito.verify(dds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyString(), Mockito.any());
-    }
-
-    @Test
-    public void testCreateDoctorFailure(){
-        Mockito.when(passwordEncoder.encode(Mockito.eq(DOC_PASSWORD))).thenReturn("userPassEnc");
-        Mockito.when(userDaoMock.create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.anyLong(), Mockito.any())).thenReturn(null);
-
-        Assert.assertThrows(RuntimeException.class, () -> 
-            us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
-        );
-
-        Mockito.verify(dds, Mockito.never()).create(Mockito.anyLong(), Mockito.anyString(), Mockito.any());
+        us.create(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
+        ).getMessage().contains("Failed to create user for email");
     }
 
     @Test

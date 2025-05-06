@@ -11,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.PatientDetail;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @Service
 public class PatientDetailServiceImpl implements PatientDetailService{
@@ -22,21 +26,23 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     @Autowired
     private PatientDetailDao patientDetailDao;
 
+    @Autowired
+    private UserService us;
+
     @Transactional
     @Override
-    public PatientDetail create(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
-            Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
-            String hobbies, String job) {
-        //TODO:refactor so all patient functions are here and not in user (otherwise circular reference)
-        //TODO: aca va un if(us.getUserById(patientId).isPresent())
-        if(getDetailByPatientId(patientId).isPresent()) throw new IllegalArgumentException("Patient detail for userId: " + patientId + " already exists!");
-        PatientDetail pd = patientDetailDao.create(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+    public User createPatient(String email, String password, String name, String telephone, LocaleEnum locale) {
+        if(us.getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
+        User patient = us.create(email, password, name, telephone, UserRoleEnum.PATIENT, locale);
+        long patientId = patient.getId();
+        PatientDetail pd = patientDetailDao.create(patient.getId(), null, null, null, null, null, null, null, null, null, null, null, null);
         if(pd == null){
             LOGGER.error("Failed to create patient details for userId: {} at {}", patientId, LocalDateTime.now());
             throw new RuntimeException("Failed to create patient details for userId: " + patientId);
         }
         LOGGER.info("Successfully created patient details for userId: {}", patientId);
-        return pd;
+        LOGGER.info("Successfully created patient user with email: {}", email);
+        return patient;
     }
 
     @Transactional(readOnly = true)

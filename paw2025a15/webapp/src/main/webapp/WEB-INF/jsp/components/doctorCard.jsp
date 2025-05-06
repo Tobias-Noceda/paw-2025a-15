@@ -20,7 +20,7 @@
         <c:out value="${param.doctorName}"/>
       </h3>
       <p class="doctor-card__specialty">
-        <spring:message code="specialty.${param.speciality}"/>
+        <spring:message code="specialty.${param.specialty}"/>
       </p>
       <p class="doctor-card__insurances">
         ${fn:replace(fn:replace(param.insurances,'[',''),']','')}
