@@ -74,30 +74,19 @@
                               itemValue="value"/>
               </form:select>
             </div>
+
+
             <div class="field-container">
-              <form:label path="mostRecent" class="field-label">
-                <spring:message code="landing.order.recent" text="Ordenar por:"/>
+              <form:label path="orderBy" class="field-label">
+                <spring:message code="landing.order.label"/>
               </form:label>
-              <form:select path="mostRecent" class="filter-select">
-                <form:option value="false">
-                  <spring:message code="landing.order.mostRecent" text="Más reciente"/>
+              <form:select path="orderBy" class="filter-select">
+                <form:option value="">
+                  -
                 </form:option>
-                <form:option value="true">
-                  <spring:message code="landing.order.leastRecent" text="Menos reciente"/>
-                </form:option>
-              </form:select>
-            </div>
-            <div class="field-container">
-              <form:label path="mostPopular" class="field-label">
-                <spring:message code="landing.order.popular" text="Ordenar por:"/>
-              </form:label>
-              <form:select path="mostPopular" class="filter-select">
-                <form:option value="true">
-                  <spring:message code="landing.order.mostPopular" text="Más reciente"/>
-                </form:option>
-                <form:option value="false">
-                  <spring:message code="landing.order.leastPopular" text="Menos reciente"/>
-                </form:option>
+                <form:options items="${orderSelectItems}"
+                              itemLabel="label"
+                              itemValue="value"/>
               </form:select>
             </div>
 

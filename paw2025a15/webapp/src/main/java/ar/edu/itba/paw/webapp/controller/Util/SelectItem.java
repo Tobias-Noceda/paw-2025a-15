@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import org.springframework.context.MessageSource;
 
@@ -76,6 +77,14 @@ public class SelectItem {
         final List<SelectItem> studyTypes = new ArrayList<>();
         for(StudyTypeEnum studyType : StudyTypeEnum.values()) {
             studyTypes.add(new SelectItem(studyType.name(), ms.getMessage("studyType." + studyType.name(), null, locale)));
+        }
+        return studyTypes;
+    }
+
+    public static List<SelectItem> getDoctorOrderSelectItems(MessageSource ms, Locale locale) {
+        final List<SelectItem> studyTypes = new ArrayList<>();
+        for(DoctorOrderEnum order : DoctorOrderEnum.values()) {
+            studyTypes.add(new SelectItem(order.name(), ms.getMessage("landing.order." + order.name(), null, locale)));
         }
         return studyTypes;
     }

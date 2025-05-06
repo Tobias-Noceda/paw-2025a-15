@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -67,7 +68,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, boolean mostRecent,boolean mostPopular,int page, int pageSize) {
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
         if (page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
 
@@ -88,11 +89,12 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
-
-        if (mostRecent) {
-            query.append(" ORDER BY u.create_date DESC ");
-        } else {
-            query.append(" ORDER BY u.create_date ASC ");
+        if(orderBy!=null) {
+            if (orderBy.equals(DoctorOrderEnum.M_RECENT)) {
+                query.append(" ORDER BY u.create_date DESC ");
+            } else if (orderBy.equals(DoctorOrderEnum.L_RECENT)) {
+                query.append(" ORDER BY u.create_date ASC ");
+            }
         }
 
         query.append(" LIMIT ? OFFSET ? ");
