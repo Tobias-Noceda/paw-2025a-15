@@ -13,14 +13,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,18 +47,7 @@ public class UserServiceImplTest {
     private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
     private static final User PATIENT = new User(PATIENT_ID, PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_CREATE_DATE, PATIENT_LOCALE);
 
-    private static final long DOC_ID = 2L;
-    private static final long DOC_PIC_ID = PIC_ID;
-    private static final String DOC_EMAIL = "sabrina@example.com";
-    private static final String DOC_NAME = "sabrina";
     private static final String DOC_PASSWORD = "shortandsweet";
-    private static final String DOC_TELEPHONE = "1144445555";
-    private static final UserRoleEnum DOC_ROLE = UserRoleEnum.DOCTOR;
-    private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
-    private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
-    private static final User DOC = new User(DOC_ID, DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, DOC_CREATE_DATE, DOC_LOCALE);
-    private static final String DOC_LICENCE = "med-licence";
-    private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
 
 
     @InjectMocks
