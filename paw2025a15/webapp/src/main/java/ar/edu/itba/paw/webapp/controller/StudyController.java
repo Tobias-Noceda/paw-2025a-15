@@ -60,7 +60,8 @@ public class StudyController {
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
-        @ModelAttribute("searchForm") final SearchForm searchForm
+        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("landingForm") final LandingForm landingForm
         ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
@@ -82,6 +83,7 @@ public class StudyController {
         @PathVariable("patientId") int patientId,
         @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
         @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("landingForm") final LandingForm landingForm,
         BindingResult errors
     ) throws IOException{
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
@@ -91,7 +93,7 @@ public class StudyController {
         }
 
         if (errors.hasErrors()) {
-            return createStudyForm(patientId, createStudyForm,  searchForm);
+            return createStudyForm(patientId, createStudyForm,  searchForm, landingForm);
         }
         User user = us.getCurrentUser();
 
