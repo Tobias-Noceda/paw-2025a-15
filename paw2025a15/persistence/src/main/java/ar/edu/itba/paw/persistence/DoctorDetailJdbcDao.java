@@ -67,7 +67,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, boolean mostRecent,int page, int pageSize) {
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, boolean mostRecent,boolean mostPopular,int page, int pageSize) {
         if (page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
 

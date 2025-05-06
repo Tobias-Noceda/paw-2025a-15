@@ -79,10 +79,10 @@
                 <spring:message code="landing.order.recent" text="Ordenar por:"/>
               </form:label>
               <form:select path="mostRecent" class="filter-select">
-                <form:option value="true">
+                <form:option value="false">
                   <spring:message code="landing.order.mostRecent" text="Más reciente"/>
                 </form:option>
-                <form:option value="false">
+                <form:option value="true">
                   <spring:message code="landing.order.leastRecent" text="Menos reciente"/>
                 </form:option>
               </form:select>
