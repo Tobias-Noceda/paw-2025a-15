@@ -218,6 +218,7 @@
             <form:input type="hidden" path="insurances"/>
             <form:input type="hidden" path="weekday"/>
             <form:input type="hidden" path="specialty"/>
+            <form:input type="hidden" path="orderBy"/>
           </c:if>
         </form:form>
       </c:if>
