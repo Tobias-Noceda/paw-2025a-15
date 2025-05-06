@@ -343,7 +343,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 0 5px 0;
     box-sizing: border-box;
 }
 
@@ -376,7 +375,7 @@ body {
     font-size: 20px !important;
     font-weight: 700;
     color: #0d4a85;
-    padding: 10px;
+    padding: 8px;
     font-size: 14px;
     font-weight: 400;
     box-sizing: border-box;
