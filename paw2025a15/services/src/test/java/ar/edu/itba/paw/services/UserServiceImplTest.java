@@ -29,9 +29,6 @@ public class UserServiceImplTest {
     private static final File PICTURE = new File(PIC_ID, PIC_CONTENT, PIC_FILE_TYPE);
 
     private static final long PIC2_ID = 1L;
-    private static final byte[] PIC2_CONTENT = "Image2".getBytes();
-    private static final FileTypeEnum PIC2_FILE_TYPE = FileTypeEnum.JPEG;
-    private static final File PICTURE2 = new File(PIC2_ID, PIC2_CONTENT, PIC2_FILE_TYPE);
 
     private static final long PATIENT_ID = 1L;
     private static final long PATIENT_PIC_ID = PIC_ID;

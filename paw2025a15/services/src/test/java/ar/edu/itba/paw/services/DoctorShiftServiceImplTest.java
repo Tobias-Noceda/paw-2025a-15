@@ -36,7 +36,6 @@ public class DoctorShiftServiceImplTest {
         new DoctorShift(1, DOC_ID, WeekdayEnum.THURSDAY, ADDRESS, START_TIME, START_TIME.plusMinutes(slot)),
         new DoctorShift(2, DOC_ID, WeekdayEnum.THURSDAY, ADDRESS, START_TIME.plusMinutes(slot), END_TIME)
     );
-    private static final int[] BATCHRESULTS = new int[]{1, 1};
 
     @InjectMocks
     private DoctorShiftServiceImpl dss;

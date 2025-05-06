@@ -45,7 +45,6 @@ public class PatientDetailServiceImplTest {
     private static final String DIET = "food";
     private static final String HOBBIES = "sing";
     private static final String JOB = "carpenter";
-    private static final PatientDetail PATIENT_DETAIL = new PatientDetail(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
     private static final PatientDetail PATIENT_DETAIL_EMPTY = new PatientDetail(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null);
 
 
