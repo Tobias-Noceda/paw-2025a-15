@@ -122,6 +122,11 @@
     box-sizing: border-box;
 }
 
+.doctor-row:hover {
+    background: #eef;
+
+}
+
 .studies-table .deauthorize-cell {
     padding: 5px 7.5px;
     text-align: left;
