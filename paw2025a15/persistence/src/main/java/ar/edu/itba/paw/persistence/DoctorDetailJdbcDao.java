@@ -94,7 +94,28 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
                 query.append(" ORDER BY u.create_date DESC ");
             } else if (orderBy.equals(DoctorOrderEnum.L_RECENT)) {
                 query.append(" ORDER BY u.create_date ASC ");
+            }else if(orderBy.equals(DoctorOrderEnum.M_POPULAR)){
+                query.append("""
+                                LEFT JOIN (
+                                    SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
+                                    FROM appointments a
+                                    JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
+                                    GROUP BY ds.doctor_id
+                                ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
+                                ORDER BY COALESCE(app_counts.reserved_appointments, 0) DESC
+                            """);
+            }else{
+                query.append("""
+                                LEFT JOIN (
+                                    SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
+                                    FROM appointments a
+                                    JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
+                                    GROUP BY ds.doctor_id
+                                ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
+                                ORDER BY COALESCE(app_counts.reserved_appointments, 0) ASC
+                            """);
             }
+
         }
 
         query.append(" LIMIT ? OFFSET ? ");
