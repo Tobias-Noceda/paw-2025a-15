@@ -8,6 +8,7 @@
   <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
     <link rel="stylesheet" href="<c:url value="/css/studies.css"/>">
+
   </head>
   <body>
     <c:set var="title">studies</c:set>
@@ -62,9 +63,9 @@
             </form:select>
           </div>
           <div class="filter-button-div">
-          <button type="submit" class="filter-button">
-            <spring:message code="studies.apply"/>
-          </button>
+            <button type="submit" class="filter-button">
+              <spring:message code="studies.apply"/>
+            </button>
           </div>
         </div>
 
