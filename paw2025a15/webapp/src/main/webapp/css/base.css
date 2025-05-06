@@ -23,10 +23,12 @@
 }
 
 body {
+    flex-grow: 1;
     font-family: var(--font-family);
     background-color: var(--clr-bg);
     color: var(--clr-text);
-    min-height: 100vh;
+    margin: 0;
+    box-sizing: border-box; /* Normaliza el modelo de caja */
 }
 
 .page-container {

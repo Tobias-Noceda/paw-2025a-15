@@ -1,11 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
   <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="stylesheet" href="<c:url value="/css/base.css"/>">
     <link rel="stylesheet" href="<c:url value="/css/doctor-detail.css"/>">
   </head>
   <body>
@@ -15,82 +17,98 @@
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container" style="flex-direction: row;">
-      <div class="doctor-card">
+      <div class="doctor-detail-card">
         <div class="doctor-info">
           <c:url value="/patientAuthDoctor/${doctor.id}" var="authDoctorPath"/>
-          <div class="doctor-name-div">
-            <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
-            <c:set var="confirmationText">
-              <spring:message code='doctorDetail.authorize.confirm'/>
-            </c:set>
-            <c:set var="authCancelText">
-              <spring:message code='doctorDetail.authorize.cancelButton'/>
-            </c:set>
-            <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
-              <c:if test="${!isAuthDoctor}">
+          <c:set var="confirmationText">
+            <spring:message code='doctorDetail.authorize.confirm'/>
+          </c:set>
+          <c:set var="authCancelText">
+            <spring:message code='doctorDetail.authorize.cancelButton'/>
+          </c:set>
+          <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
+            <c:if test="${!isAuthDoctor}">
+              <div class="doctor-name-div">
+                <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
                 <c:set var="buttonText">
                   <spring:message code='doctorDetail.toggleButton.authorize'/>
                 </c:set>
-              </c:if>
-              <c:if test="${isAuthDoctor}">
-                <c:set var="buttonText">
-                  <spring:message code='doctorDetail.toggleButton.deauthorize'/>
-                </c:set>
-              </c:if>
-              <button 
+                <button 
                   type="button" 
                   name="action"
                   value="toggle" 
                   onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)" 
-                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}">
+                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
+                >
                   <c:out value="${buttonText}"/>
-              </button>
-
-          </div>
-          <div class="doctor-info"><!--TODO:front here, this is placeholder with no style-->
+                </button>
+              </div>
+            </c:if>
             <c:if test="${isAuthDoctor}">
-              <spring:message code='doctorDetail.update.currentPermits'/>
               <div class="doctor-name-div">
-                <label>
-                  <input type="checkbox" name="accessLevels" value="VIEW_MEDICAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">checked</c:if>/>
-                  <spring:message code='doctorDetail.update.medicalAccess'/>
-                </label>
-                <label>
-                  <input type="checkbox" name="accessLevels" value="VIEW_HABITS" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">checked</c:if>/>
-                  <spring:message code='doctorDetail.update.habitsAccess'/>
-                </label>
-                <label>
-                  <input type="checkbox" name="accessLevels" value="VIEW_SOCIAL" <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">checked</c:if>/>
-                  <spring:message code='doctorDetail.update.socialAccess'/>
-                </label>
-                <c:set var="buttonTextUpdate">
-                  <spring:message code='doctorDetail.update.confirmButton'/>
+                <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+                <c:set var="buttonText">
+                  <spring:message code='doctorDetail.toggleButton.deauthorize'/>
                 </c:set>
-                <c:set var="authCancelTextUpdate">
-                  <spring:message code='doctorDetail.update.cancelButton'/>
-                </c:set>
-                <c:set var="confirmationTextUpdate">
-                  <spring:message code='doctorDetail.update.confirm'/>
-                </c:set>
-                <spring:message code="doctorDetail.update.confirm.habits" var="msgHabits"/>
-                <spring:message code="doctorDetail.update.confirm.medical" var="msgMedical"/>
-                <spring:message code="doctorDetail.update.confirm.social" var="msgSocial"/>
-                <spring:message code="doctorDetail.update.confirm.extra" var="msgExtra"/>
-                <c:set var="confirmationSecondaryTextUpdate">
-                  <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}    
-                </c:set>
+                <button 
+                  type="button" 
+                  name="action"
+                  value="toggle" 
+                  onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)" 
+                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
+                >
+                  <c:out value="${buttonText}"/>
+                </button>
+              </div>
+              <hr style="border: 1px solid #ccc; margin: 10px 0;" />
+              <h2 class="doctor-name"><spring:message code='doctorDetail.update.currentPermits'/></h2>
+              <div class="doctor-name-div">
+                <c:forEach var="access" items="${['VIEW_MEDICAL','VIEW_SOCIAL','VIEW_HABITS']}">
+                  <c:set var="idSafe" value="${fn:toLowerCase(fn:replace(access, '_', '-'))}" />
+                  <div class="access-btn">
+                    <input
+                      class="access-checkbox"
+                      type="checkbox"
+                      id="access-${idSafe}"
+                      name="accessLevels"
+                      value="${access}"
+                      <c:if test="${isAuthDoctor && allowedAccessLevels.contains(access)}">checked</c:if>
+                    />
+                    <label for="access-${idSafe}" class="access-label">
+                      <spring:message code="doctorDetail.update.${fn:toLowerCase(fn:substringAfter(access, 'VIEW_'))}Access"/>
+                    </label>
+                  </div>
+                </c:forEach>
+              </div>
+              <c:set var="buttonTextUpdate">
+                <spring:message code='doctorDetail.update.confirmButton'/>
+              </c:set>
+              <c:set var="authCancelTextUpdate">
+                <spring:message code='doctorDetail.update.cancelButton'/>
+              </c:set>
+              <c:set var="confirmationTextUpdate">
+                <spring:message code='doctorDetail.update.confirm'/>
+              </c:set>
+              <spring:message code="doctorDetail.update.confirm.habits" var="msgHabits"/>
+              <spring:message code="doctorDetail.update.confirm.medical" var="msgMedical"/>
+              <spring:message code="doctorDetail.update.confirm.social" var="msgSocial"/>
+              <spring:message code="doctorDetail.update.confirm.extra" var="msgExtra"/>
+              <c:set var="confirmationSecondaryTextUpdate">
+                <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}    
+              </c:set>
+              <div style="display: flex; justify-content: right; flex: 1;">
                 <button 
                   type="button" 
                   name="action" 
                   value="update" 
                   onclick="confirmAuthDoctor('${confirmationTextUpdate}', '${confirmationSecondaryTextUpdate}', '${buttonTextUpdate}', '${authCancelTextUpdate}', this.name, this.value)" 
-                  class="doctor-auth-button">
+                  class="doctor-update-button"
+                >
                   <spring:message code='doctorDetail.update.updateButton'/>
                 </button>
-              </form>
               </div>
             </c:if>
-          </div>
+          </form>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="doctor-image">
             <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
