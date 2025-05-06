@@ -64,7 +64,6 @@ public class AppointmentController {
             case PATIENT -> {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
                 mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
-                mav.addObject("takeTurnForm", new TakeTurnForm());
             }
             default -> { return new ModelAndView("redirect:/login"); }
         }

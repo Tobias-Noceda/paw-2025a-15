@@ -178,8 +178,7 @@ public class RegisterController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime start = LocalTime.parse(startTime, formatter);
         LocalTime end = LocalTime.parse(endTime, formatter);
-        System.out.println("startTime: " + startTime + " endTime: " + endTime);
-        System.out.println("y el rango es: " +start.isBefore(end));
+        
         return start.isBefore(end);
     }
 
