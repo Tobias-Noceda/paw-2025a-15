@@ -136,6 +136,7 @@
 }
 
 .page-navigation-button {
+    width: 90px;
     background-color: #007bff;
     color: white;
     border: none;
