@@ -67,24 +67,32 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
-        if(page < 1 || pageSize <= 0) return Collections.emptyList();
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, boolean mostRecent,int page, int pageSize) {
+        if (page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
 
         StringBuilder query = new StringBuilder(
-            """
-                SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
-                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                
-            """
+                """
+                    SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
+                    FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
+                """
         );
+
         List<Object> params = new ArrayList<>();
         List<Integer> types = new ArrayList<>();
+
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
-        if(name != null && !name.trim().isEmpty()) {
+
+        if (name != null && !name.trim().isEmpty()) {
             query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
+        }
+
+        if (mostRecent) {
+            query.append(" ORDER BY u.create_date DESC ");
+        } else {
+            query.append(" ORDER BY u.create_date ASC ");
         }
 
         query.append(" LIMIT ? OFFSET ? ");
@@ -93,8 +101,14 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         params.add(offset);
         types.add(java.sql.Types.INTEGER);
 
-        return (List<DoctorView>) jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), DV_ROW_MAPPER);
+        return (List<DoctorView>) jdbcTemplate.query(
+                query.toString(),
+                params.toArray(),
+                types.stream().mapToInt(i -> i).toArray(),
+                DV_ROW_MAPPER
+        );
     }
+
 
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {

@@ -8,6 +8,8 @@ public class LandingForm {
     private SpecialtyEnum specialty;
     private Long insurances; // <-- ID en lugar del objeto
     private WeekdayEnum weekday;
+    private boolean mostRecent=true;
+    private boolean mostPopular=false;
 
     // Getters
     public String getQuery() {
@@ -30,22 +32,22 @@ public class LandingForm {
         return weekday;
     }
 
+    public boolean getMostRecent() { return mostRecent; }
+
+    public boolean getMostPopular() { return mostPopular; }
+
     // Setter
-    public void setQuery(String query) {
-        this.query = query;
-    }
+    public void setQuery(String query) { this.query = query; }
 
-    public void setSpecialty(SpecialtyEnum specialty) {
-        this.specialty = specialty;
-    }
+    public void setSpecialty(SpecialtyEnum specialty) { this.specialty = specialty; }
 
-    public void setInsurances(Long insurances) {
-        this.insurances = insurances;
-    }
+    public void setInsurances(Long insurances) { this.insurances = insurances; }
 
-    public void setWeekday(WeekdayEnum weekday) {
-        this.weekday = weekday;
-    }
+    public void setWeekday(WeekdayEnum weekday) { this.weekday = weekday; }
+
+    public void setMostRecent(boolean mostRecent) { this.mostRecent = mostRecent; }
+
+    public void setMostPopular(boolean mostPopular) { this.mostPopular = mostPopular; }
 
     @Override
     public String toString() {

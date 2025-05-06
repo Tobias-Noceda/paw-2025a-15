@@ -15,7 +15,7 @@ public interface DoctorDetailService {
 
     public Optional<DoctorDetail> getDetailByDoctorId(long doctorId);
 
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, int page, int pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, boolean mostRecent, boolean mostPopular,int page, int pageSize);
 
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday);
 

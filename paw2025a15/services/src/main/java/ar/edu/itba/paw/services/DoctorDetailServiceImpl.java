@@ -33,8 +33,8 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, page, pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, boolean mostRecent, boolean mostPopular,int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, mostRecent,page, pageSize);
     }
 
     @Override

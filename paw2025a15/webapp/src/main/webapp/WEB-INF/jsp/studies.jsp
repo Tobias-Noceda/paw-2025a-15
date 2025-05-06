@@ -50,14 +50,14 @@
           <!-- Orden -->
           <div>
             <form:label path="mostRecent" class="field-label">
-              <spring:message code="studies.order.label" text="Ordenar por:"/>
+              <spring:message code="studies.order.label"/>
             </form:label>
             <form:select path="mostRecent" class="input-field">
               <form:option value="true">
-                <spring:message code="studies.order.mostRecent" text="Más reciente"/>
+                <spring:message code="studies.order.mostRecent" />
               </form:option>
               <form:option value="false">
-                <spring:message code="studies.order.leastRecent" text="Menos reciente"/>
+                <spring:message code="studies.order.leastRecent" />
               </form:option>
             </form:select>
           </div>
