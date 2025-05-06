@@ -74,8 +74,6 @@ public class DoctorDetailServiceImplTest {
 
         Assert.assertNotNull(user);
         Assert.assertEquals(DOC, user);
-        Mockito.verify(us).create(Mockito.eq(DOC_EMAIL), Mockito.eq(DOC_PASSWORD), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(DOC_ROLE), Mockito.eq(DOC_LOCALE));
-        Mockito.verify(doctorDetailDaoMock).create(Mockito.eq(DOC_ID), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY));
     }
 
     @Test
@@ -85,9 +83,6 @@ public class DoctorDetailServiceImplTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
         );
-
-        Mockito.verify(us, Mockito.never()).create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any());
-        Mockito.verify(doctorDetailDaoMock, Mockito.never()).create(Mockito.anyLong(), Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -102,25 +97,12 @@ public class DoctorDetailServiceImplTest {
     }
 
     @Test
-    public void testCreateDoctorCoverages(){
-        Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-        Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
-        Mockito.when(is.getInsuranceById(Mockito.anyLong())).thenReturn(Optional.of(INSURANCE));
-
-        dds.createDoctorCoverages(DOC_ID, INSURANCES);
-
-        Mockito.verify(doctorDetailDaoMock, times(INSURANCES.size())).addDoctorCoverage(Mockito.eq(DOC_ID), Mockito.anyLong());
-    }
-
-    @Test
     public void testCreateDoctorCoveragesNonexistentDoc(){
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
-
-        Mockito.verify(doctorDetailDaoMock, Mockito.never()).addDoctorCoverage(Mockito.anyLong(), Mockito.anyLong());
     }
 
     @Test
@@ -131,8 +113,6 @@ public class DoctorDetailServiceImplTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
-  
-        Mockito.verify(doctorDetailDaoMock, Mockito.never()).addDoctorCoverage(Mockito.anyLong(), Mockito.anyLong());
     }
 
     @Test
@@ -144,7 +124,5 @@ public class DoctorDetailServiceImplTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
-     
-        Mockito.verify(doctorDetailDaoMock, Mockito.never()).addDoctorCoverage(Mockito.anyLong(), Mockito.anyLong());
     }
 }

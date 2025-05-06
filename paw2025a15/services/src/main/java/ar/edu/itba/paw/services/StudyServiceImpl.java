@@ -3,7 +3,6 @@ package ar.edu.itba.paw.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -13,9 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
@@ -31,14 +31,17 @@ public class StudyServiceImpl implements StudyService{
     private FileService fs;
 
     @Autowired
-    private UserService us;
+    private PatientDetailService pds;
+
+    @Autowired
+    private DoctorDetailService dds;
 
     @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
-        if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
-        if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("Uploader not found with ID: " + uploaderId);
-        if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
+        if(pds.getDetailByPatientId(userId).isEmpty()) throw new IllegalArgumentException("Patient with id: " + userId + " does not exist!");
+        if(userId!=uploaderId && dds.getDetailByDoctorId(uploaderId).isEmpty()) throw new IllegalArgumentException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
+        if(fs.findById(fileId).isEmpty()) throw new IllegalArgumentException("File not found with ID: " + fileId);
         Study study;
         if(studyDate == null) study = studyDao.create(type, comment, fileId, userId, uploaderId);
         else study = studyDao.create(type, comment, fileId, userId, uploaderId, studyDate);   
@@ -53,9 +56,9 @@ public class StudyServiceImpl implements StudyService{
     @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
-        if(us.getUserById(userId).isEmpty()) throw new NoSuchElementException("User not found with ID: " + userId);
-        if(us.getUserById(uploaderId).isEmpty()) throw new NoSuchElementException("Uploader not found with ID: " + uploaderId);
-        if(fs.findById(fileId).isEmpty()) throw new NoSuchElementException("File not found with ID: " + fileId);
+        if(pds.getDetailByPatientId(userId).isEmpty()) throw new IllegalArgumentException("Patient with id: " + userId + " does not exist!");
+        if(userId!=uploaderId && dds.getDetailByDoctorId(uploaderId).isEmpty()) throw new IllegalArgumentException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
+        if(fs.findById(fileId).isEmpty()) throw new IllegalArgumentException("File not found with ID: " + fileId);
         Study study = studyDao.create(type, comment, fileId, userId, uploaderId);   
         if(study == null){
             LOGGER.error("Failed to create study for userId: {} with uploaderId: {} and fileId: {} at {}", userId, uploaderId, fileId, LocalDateTime.now());
@@ -74,7 +77,36 @@ public class StudyServiceImpl implements StudyService{
     @Transactional(readOnly = true)
     @Override
     public List<Study> getStudiesByPatientId(long id) {
-        if(us.getUserById(id).isEmpty()) throw new NoSuchElementException("User not found with ID: " + id);
         return studyDao.getStudiesByPatientId(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
+        return studyDao.getStudiesByPatientIdAndDoctorId(patientId, doctorId);
+    }
+
+    @Transactional
+    @Override
+    public boolean authStudyForDoctorId(long studyId, long doctorId) {
+        if(getStudyById(studyId).isEmpty()) throw new IllegalArgumentException("Study with id: " + studyId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
+        if(hasAuthStudy(studyId, doctorId)) return true;
+        return studyDao.authStudyForDoctorId(studyId, doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean hasAuthStudy(long studyId, long doctorId) {
+        return studyDao.hasAuthStudy(studyId, doctorId);
+    }
+
+    @Transactional
+    @Override
+    public void unauthStudyForDoctorId(long studyId, long doctorId) {
+        if(getStudyById(studyId).isEmpty()) throw new IllegalArgumentException("Study with id: " + studyId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
+        if(!hasAuthStudy(studyId, doctorId)) return;
+        studyDao.unauthStudyForDoctorId(studyId, doctorId);
     }
 }

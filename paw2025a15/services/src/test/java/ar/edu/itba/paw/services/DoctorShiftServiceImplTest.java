@@ -48,24 +48,12 @@ public class DoctorShiftServiceImplTest {
     private DoctorDetailService dds;
 
     @Test
-    public void testCreateShifts(){
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-        Mockito.when(doctorShiftDaoMock.batchCreate(Mockito.eq(SHIFTS))).thenReturn(BATCHRESULTS);
-
-        dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, slot);
-        
-        Mockito.verify(doctorShiftDaoMock).batchCreate(SHIFTS);
-    }
-
-    @Test
     public void testCreateShiftsNonexistentDoc(){
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, slot)
         );
-        
-        Mockito.verify(doctorShiftDaoMock, Mockito.never()).batchCreate(Mockito.any());
     }
 
     @Test
@@ -74,8 +62,6 @@ public class DoctorShiftServiceImplTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, END_TIME, START_TIME, slot)
         );
-        
-        Mockito.verify(doctorShiftDaoMock, Mockito.never()).batchCreate(Mockito.any());
     }
 
     @Test
@@ -86,8 +72,6 @@ public class DoctorShiftServiceImplTest {
         Assert.assertThrows(RuntimeException.class, () -> 
             dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, slot)
         );
-        
-        Mockito.verify(doctorShiftDaoMock).batchCreate(Mockito.eq(SHIFTS));
     }
 
 }

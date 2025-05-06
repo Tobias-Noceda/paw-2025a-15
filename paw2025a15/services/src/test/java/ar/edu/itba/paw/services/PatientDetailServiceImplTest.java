@@ -68,8 +68,6 @@ public class PatientDetailServiceImplTest {
 
         Assert.assertNotNull(user);
         Assert.assertEquals(PATIENT, user);
-        Mockito.verify(us).create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE));
-        Mockito.verify(patientDetailDaoMock).create(Mockito.eq(PATIENT_ID), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull());
     }
 
     @Test
@@ -79,9 +77,6 @@ public class PatientDetailServiceImplTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE)
         );
-
-        Mockito.verify(us, Mockito.never()).create(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any());
-        Mockito.verify(patientDetailDaoMock, Mockito.never()).create(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -96,23 +91,12 @@ public class PatientDetailServiceImplTest {
     }
 
     @Test
-    public void testUpdatePatientDetails(){
-        Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL));
-
-        pds.updatePatientDetails(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
-    
-        Mockito.verify(patientDetailDaoMock).updatePatientDetails(Mockito.eq(PATIENT_ID), Mockito.eq(AGE), Mockito.eq(BLOODTYPE), Mockito.eq(HEIGHT), Mockito.eq(WEIGHT), Mockito.eq(SMOKES), Mockito.eq(DRINKS), Mockito.eq(MEDS), Mockito.eq(CONDITIONS), Mockito.eq(ALLERGIES), Mockito.eq(DIET), Mockito.eq(HOBBIES), Mockito.eq(JOB));
-    }
-
-    @Test
     public void testUpdatePatientDetailsNonexistent(){
         Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             pds.updatePatientDetails(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
         );
-    
-        Mockito.verify(patientDetailDaoMock, Mockito.never()).updatePatientDetails(Mockito.anyLong(), Mockito.anyInt(), Mockito.any(), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
 }

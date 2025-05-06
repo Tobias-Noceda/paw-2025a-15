@@ -2,9 +2,6 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.Assert;
@@ -16,13 +13,17 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
@@ -44,6 +45,8 @@ public class StudyServiceImplTest {
     private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
     private static final User PATIENT = new User(PATIENT_ID, PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_CREATE_DATE, PATIENT_LOCALE);
 
+    private static final PatientDetail PATIENT_DETAIL_EMPTY = new PatientDetail(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null);
+
     private static final long DOC_ID = 2L;
     private static final String DOC_EMAIL = "sabrina@example.com";
     private static final String DOC_NAME = "sabrina";
@@ -53,6 +56,9 @@ public class StudyServiceImplTest {
     private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
     private static final User DOC = new User(DOC_ID, DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, DOC_CREATE_DATE, DOC_LOCALE);
+    private static final String DOC_LICENCE = "med-licence";
+    private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
+    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC_ID, DOC_LICENCE, DOC_SPECIALTY);
 
     private static final long STUDY_ID = 1L;
     private static final StudyTypeEnum STUDYTYPE = StudyTypeEnum.OTHER;
@@ -72,15 +78,18 @@ public class StudyServiceImplTest {
     private StudyDao studyDaoMock;
 
     @Mock
-    private UserService us;
+    private PatientDetailService pds;
+
+    @Mock
+    private DoctorDetailService dds;
     
     @Mock
     private FileService fs;
 
     @Test
     public void testCreateWithStudyDate(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID), Mockito.eq(STUDY_DATE))).thenReturn(STUDY_WITH_DATE);
 
@@ -92,8 +101,8 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDate(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(STUDY_WITHOUT_DATE);
 
@@ -103,78 +112,117 @@ public class StudyServiceImplTest {
         Assert.assertEquals(STUDY_WITHOUT_DATE, study);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
+    public void testCreateWithStudyDateUploaderNotADoctorButThemselves(){
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
+        Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_DATE))).thenReturn(STUDY_WITH_DATE);
+
+        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_USER_ID, STUDY_DATE);
+
+        Assert.assertNotNull(study);
+        Assert.assertEquals(STUDY_WITH_DATE, study);
+    }
+
+    @Test
+    public void testCreateWithoutStudyDateUploaderNotADoctorButThemselves(){
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
+        Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_USER_ID))).thenReturn(STUDY_WITHOUT_DATE);
+
+        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_USER_ID);
+
+        Assert.assertNotNull(study);
+        Assert.assertEquals(STUDY_WITHOUT_DATE, study);
+    }
+
+    @Test
     public void testCreateWithStudyDateFailure(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID), Mockito.eq(STUDY_DATE))).thenReturn(null);
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
+        Assert.assertThrows(RuntimeException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+        );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testCreateWithoutStudyDateFailure(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(null);
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID);
+        Assert.assertThrows(RuntimeException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+        );
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testCreateWithStudyDateNonexistentUser(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.empty());
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+        );
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testCreateWithStudyDateNonexistentUploader(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.empty());
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+        );
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testCreateWithStudyDateNonexistentFile(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.empty());
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+        );
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testCreateWithoutStudyDateNonexistentUser(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.empty());
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+        );
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testCreateWithoutStudyDateNonexistentUploader(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.empty());
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+        );
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testCreateWithoutStudyDateNonexistentFile(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.empty());
 
-        ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+        );
     }
 
     @Test
     public void testCreateWithStudyDateNullDate(){
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getUserById(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC));
+        Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(STUDY_WITHOUT_DATE);
 
@@ -185,33 +233,63 @@ public class StudyServiceImplTest {
     }
 
     @Test
-    public void testGetStudiesByPatientId(){
-        List<Study> expectedStudies = Collections.singletonList(STUDY_WITH_DATE);
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(studyDaoMock.getStudiesByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(expectedStudies);
+    public void testAuthStudyForDoctorId() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
+        Mockito.when(studyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
+        Mockito.when(studyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
-        List<Study> studies = ss.getStudiesByPatientId(PATIENT_ID);
+        boolean result = ss.authStudyForDoctorId(STUDY_ID, DOC_ID);
 
-        Assert.assertFalse(studies.isEmpty());
-        Assert.assertEquals(1, studies.size());
-        Assert.assertEquals(STUDY_WITH_DATE, studies.get(0));
-        Mockito.verify(studyDaoMock).getStudiesByPatientId(Mockito.eq(PATIENT_ID));
+        Assert.assertTrue(result);
     }
 
     @Test
-    public void testGetStudiesByPatientIdEmpty(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(studyDaoMock.getStudiesByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Collections.emptyList());
+    public void testAuthStudyForDoctorIdAlreadyAuth() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
+        Mockito.when(studyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
-        List<Study> studies = ss.getStudiesByPatientId(PATIENT_ID);
+        boolean result = ss.authStudyForDoctorId(STUDY_ID, DOC_ID);
 
-        Assert.assertTrue(studies.isEmpty());
+        Assert.assertTrue(result);
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void testGetStudiesByPatientIdNonexistentUser(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+    @Test
+    public void testAuthStudyForDoctorIdNonexistentStudy() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
 
-        ss.getStudiesByPatientId(PATIENT_ID);
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.authStudyForDoctorId(STUDY_ID, DOC_ID)
+        );
+    }
+
+    @Test
+    public void testAuthStudyForDoctorIdNonexistentDoc() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.authStudyForDoctorId(STUDY_ID, DOC_ID)
+        );
+    }
+
+    @Test
+    public void testUnauthStudyForDoctorIdNonexistentStudy() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.unauthStudyForDoctorId(STUDY_ID, DOC_ID)
+        );
+    }
+
+    @Test
+    public void testUnauthStudyForDoctorIdNonexistentDoc() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.unauthStudyForDoctorId(STUDY_ID, DOC_ID)
+        );
     }
 }

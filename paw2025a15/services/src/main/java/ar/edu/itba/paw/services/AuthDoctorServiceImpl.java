@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
@@ -22,6 +24,12 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Autowired
     private AuthDoctorDao authDoctorDao;
 
+    @Autowired
+    private PatientDetailService pds;
+
+    @Autowired
+    private DoctorDetailService dds;
+
     @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
@@ -31,11 +39,15 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
+        if(pds.getDetailByPatientId(patientId).isEmpty()) throw new IllegalArgumentException("Patient with id: " + patientId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthDoctor(patientId, doctorId)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
+            LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
         }
         else{
             authDoctorDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
+            LOGGER.info("Giving basic authorization for doctor with id: {} of patient with id: {}", doctorId, patientId);
         }
     }
 
@@ -43,18 +55,20 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         if(accessLevels==null || accessLevels.isEmpty()) return;
         for (AccessLevelEnum accessLevel: accessLevels) {
             authDoctorDao.authDoctor(patientId, doctorId, accessLevel);
+            LOGGER.info("Giving authorization for doctor with id: {} of patient with id: {} with level:", doctorId, patientId, accessLevel);
         }
     }
 
     private void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
-        //TODO:check after refactor with us the existance of patientId and docId
         if(accessLevels==null || accessLevels.isEmpty()) return;
         if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
+            LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
             return;
         }
         for (AccessLevelEnum accessLevel: accessLevels) {
             authDoctorDao.unauthDoctorByAccessLevel(patientId, doctorId, accessLevel);
+            LOGGER.info("Removing authorization for doctor with id: {} of patient with id: {} of level:", doctorId, patientId, accessLevel);
         }
     }
 
@@ -67,7 +81,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        //TODO:check after refactor with us the existance of patientId and docId
+        if(pds.getDetailByPatientId(patientId).isEmpty()) throw new IllegalArgumentException("Patient with id: " + patientId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         List<AccessLevelEnum> toRemove;
         if(accessLevels==null || accessLevels.isEmpty()){
             toRemove = getAuthAccessLevelEnums(patientId, doctorId);
@@ -80,6 +95,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         }
         unauthDoctorWithLevels(patientId, doctorId, toRemove);
         authDoctorWithLevels(patientId, doctorId, accessLevels);
+        LOGGER.info("Updated authorizations of doctor with id: {} for patient with id: {}", doctorId, patientId);
     }
 
     @Transactional(readOnly = true)
