@@ -16,8 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
 import ar.edu.itba.paw.form.LandingForm;
-import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -36,10 +35,10 @@ public class StudyController {
     private StudyService ss;
 
     @Autowired
-    private DoctorDetailService dds;
+    private UserService us;
 
     @Autowired
-    private UserService us;
+    private AuthDoctorService ads;
 
     @Autowired
     private FileService fs;
@@ -104,7 +103,7 @@ public class StudyController {
 
         mav.addObject("user", user);
         mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
-        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+        mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
         mav.addObject("landingForm", new LandingForm());
         
         return mav;

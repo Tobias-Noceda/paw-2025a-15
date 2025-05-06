@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -35,6 +36,9 @@ public class DoctorController {
 
     @Autowired
     private DoctorShiftService dss;
+
+    @Autowired
+    private AuthDoctorService ads;
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
@@ -63,8 +67,8 @@ public class DoctorController {
         
         mav.addObject("doctorDetail", detail);
         mav.addObject("user", user);
-        mav.addObject("isAuthDoctor", dds.hasAuthDoctor(user.getId(), id));
-        mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());
+        mav.addObject("isAuthDoctor", ads.hasAuthDoctor(user.getId(), id));
+        mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances", dds.getDoctorInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
@@ -94,10 +98,10 @@ public class DoctorController {
 
         User user = us.getCurrentUser();
         if ("update".equals(action)) {
-            dds.updateAuthDoctor(user.getId(), doctorId, (accessLevels == null ? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
+            ads.updateAuthDoctor(user.getId(), doctorId, (accessLevels == null ? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
         }
         else if ("toggle".equals(action)) {
-            dds.toggleAuthDoctor(user.getId(), doctorId);
+            ads.toggleAuthDoctor(user.getId(), doctorId);
         }
 
         if (referer != null) {

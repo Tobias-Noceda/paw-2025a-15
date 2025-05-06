@@ -5,7 +5,7 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
@@ -14,12 +14,12 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class WebUserAuthDecision {
-    
-    @Autowired
-    private DoctorDetailService dds;
 
     @Autowired
     private StudyService ss;
+
+    @Autowired
+    private AuthDoctorService ads;
 
     public AuthorizationDecision isAuthDoctor(Authentication auth, long patientId) {
         User user = getAuthenticatedUser(auth);
@@ -57,7 +57,7 @@ public class WebUserAuthDecision {
 
         if(user.getId() == study.getUserId()) {
             return new AuthorizationDecision(true);
-        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && dds.hasAuthDoctor(study.getUserId(), user.getId())) { // TODO: Actualizar a autorización por estudio
+        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(study.getUserId(), user.getId())) { // TODO: Actualizar a autorización por estudio
             return new AuthorizationDecision(true);
         }
 
@@ -65,7 +65,7 @@ public class WebUserAuthDecision {
     }
 
     private boolean isAuthDoctor(User user, long patientId) {
-        return user.getRole().equals(UserRoleEnum.DOCTOR) && dds.hasAuthDoctor(patientId, user.getId());
+        return user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(patientId, user.getId());
     }
 
     private User getAuthenticatedUser(Authentication auth) {

@@ -2,7 +2,7 @@ package ar.edu.itba.paw.models;
 
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
-public class PatientView {
+public class PatientView {//TODO: if not used, remove
     private final long id;
     private final String email;
     private final String name;

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -39,10 +39,10 @@ public class AppointmentServiceImpl implements AppointmentService{
     private DoctorShiftService dss;
 
     @Autowired
-    private DoctorDetailService dds;
+    private AppointmentDao appointmentDao;
 
     @Autowired
-    private AppointmentDao appointmentDao;
+    private AuthDoctorService ads;
 
     @Transactional
     @Override
@@ -62,8 +62,8 @@ public class AppointmentServiceImpl implements AppointmentService{
             es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
             es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
             
-            if(!dds.hasAuthDoctor(patientId, doctor.getId())) {
-                dds.toggleAuthDoctor(patientId, doctor.getId());//grant doctors access to the patient profile
+            if(!ads.hasAuthDoctor(patientId, doctor.getId())) {
+                ads.toggleAuthDoctor(patientId, doctor.getId());//grant doctors access to the patient profile
             }
         }
         

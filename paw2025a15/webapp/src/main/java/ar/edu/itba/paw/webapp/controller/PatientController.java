@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.FilterForm;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.PatientForm;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -29,10 +28,10 @@ public class PatientController {
     private StudyService ss;
 
     @Autowired
-    private DoctorDetailService dds;
+    private PatientDetailService pds;
 
     @Autowired
-    private PatientDetailService pds;
+    private AuthDoctorService ads;
 
     @RequestMapping("/patient/{patientId:\\d+}")
     public ModelAndView patient(
@@ -52,8 +51,8 @@ public class PatientController {
         
         mav.addObject("user", user);
         mav.addObject("patient", patient);
-        mav.addObject("isAuthDoctor", dds.hasAuthDoctor(patientId, user.getId()));
-        mav.addObject("allowedAccessLevels", dds.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
+        mav.addObject("isAuthDoctor", ads.hasAuthDoctor(patientId, user.getId()));
+        mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
         mav.addObject("patientStudies", ss.getStudiesByPatientId(patientId));
         mav.addObject("patientDetails", pds.getDetailByPatientId(patientId).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo

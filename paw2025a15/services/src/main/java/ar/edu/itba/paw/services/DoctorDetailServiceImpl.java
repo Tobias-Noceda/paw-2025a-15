@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,6 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -90,74 +88,6 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
         return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorView> getAuthDoctorsByPatientId(long id) {
-        return doctorDetailDao.getAuthDoctorsByPatientId(id);
-    }
-
-    @Transactional
-    @Override
-    public void toggleAuthDoctor(long patientId, long doctorId) {//TODO: tests of all auth related after its in its own file
-        //TODO:check after refactor with us the existance of patientId and docId
-        if(hasAuthDoctor(patientId, doctorId)){
-            doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
-        }
-        else{
-            doctorDetailDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
-        }
-    }
-
-    private void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
-        //TODO:check after refactor with us the existance of patientId and docId
-        if(accessLevels==null || accessLevels.isEmpty()) return;
-        for (AccessLevelEnum accessLevel: accessLevels) {
-            doctorDetailDao.authDoctor(patientId, doctorId, accessLevel);
-        }
-    }
-
-    private void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
-        //TODO:check after refactor with us the existance of patientId and docId
-        if(accessLevels==null || accessLevels.isEmpty()) return;
-        if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
-            doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
-            return;
-        }
-        for (AccessLevelEnum accessLevel: accessLevels) {
-            doctorDetailDao.unauthDoctorByAccessLevel(patientId, doctorId, accessLevel);
-        }
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean hasAuthDoctor(long patientId, long doctorId) {
-        return doctorDetailDao.hasAuthDoctor(patientId, doctorId);
-    }
-
-    @Transactional
-    @Override
-    public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        //TODO:check after refactor with us the existance of patientId and docId
-        List<AccessLevelEnum> toRemove;
-        if(accessLevels==null || accessLevels.isEmpty()){
-            toRemove = getAuthAccessLevelEnums(patientId, doctorId);
-            toRemove.remove(AccessLevelEnum.VIEW_BASIC);
-        } else {
-            toRemove = new ArrayList<>();
-            for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
-                if(currentAccessLevel!=AccessLevelEnum.VIEW_BASIC && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
-            }
-        }
-        unauthDoctorWithLevels(patientId, doctorId, toRemove);
-        authDoctorWithLevels(patientId, doctorId, accessLevels);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
-        return doctorDetailDao.getAuthAccessLevelEnums(patientId, doctorId);
     }
     
 }

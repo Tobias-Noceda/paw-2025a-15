@@ -6,7 +6,6 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -25,17 +24,4 @@ public interface DoctorDetailDao {
 
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday);
 
-    public List<DoctorView> getAuthDoctorsByPatientId(long id);
-
-    public boolean hasAuthDoctor(long patientId, long doctorId);
-
-    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
-
-    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel);
-
-    public void unauthDoctorAllAccessLevels(long patientId, long doctorId);
-
-    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
-
-    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId);
 }
