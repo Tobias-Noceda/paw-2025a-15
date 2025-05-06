@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import ar.edu.itba.paw.form.FileFilterForm;
+import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

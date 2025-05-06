@@ -427,3 +427,14 @@ body {
     flex-shrink: 0; /* para que no se encoja */
 
 }
+
+/* Cuando abramos el dialogo, añadiremos la clase .dialog-opened al <body> */
+/* Así bloqueamos todos los eventos pointer en el fondo */
+body.dialog-opened > *:not(dialog) {
+    pointer-events: none;
+}
+
+/* Asegurarnos de que el propio dialog sí reciba pointer-events */
+dialog {
+    pointer-events: auto;
+}

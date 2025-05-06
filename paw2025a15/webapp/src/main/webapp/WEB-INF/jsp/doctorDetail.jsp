@@ -26,10 +26,50 @@
           <c:set var="authCancelText">
             <spring:message code='doctorDetail.authorize.cancelButton'/>
           </c:set>
+          <div class="doctor-infopack">
+            <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+            <div class="doctor-image">
+              <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
+            </div>
+            <p class="doctor-email"><c:out value="${doctor.email}"/>, <c:out value="${doctor.telephone}"/></p>
+            <div class="doctor-insurances-div">
+              <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
+              <p class="doctor-insurances">
+                <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
+                  <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
+                </c:forEach>
+              </p>
+            </div>
+            <div class="doctor-specialty-div">
+              <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
+              <p class="doctor-specialty"><spring:message code="specialty.${doctorDetail.specialty}"/></p>
+            </div>
+            <div class="doctor-address-div">
+              <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
+              <p class="doctor-address"><c:out value="${doctorShifts[0].address}"/></p>
+            </div>
+            <div class="doctor-license-div">
+              <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
+              <p class="doctor-license"><c:out value="${doctorDetail.licence}"/></p>
+            </div>
+            <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
+            <div class="doctor-schedule">
+              <ul>
+                <c:forEach var="schedule" items="${doctorShifts}">
+                  <c:set var="myWeekday">
+                    <spring:message code="weekday.${schedule.weekday.name}"/>
+                  </c:set>
+                  <li>
+                    <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}" htmlEscape="true"/>
+                  </li>
+                </c:forEach>
+              </ul>
+            </div>
+          </div>
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
             <c:if test="${!isAuthDoctor}">
               <div class="doctor-name-div">
-                <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
                 <c:set var="buttonText">
                   <spring:message code='doctorDetail.toggleButton.authorize'/>
                 </c:set>
@@ -46,7 +86,6 @@
             </c:if>
             <c:if test="${isAuthDoctor}">
               <div class="doctor-name-div">
-                <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
                 <c:set var="buttonText">
                   <spring:message code='doctorDetail.toggleButton.deauthorize'/>
                 </c:set>
@@ -109,44 +148,7 @@
               </div>
             </c:if>
           </form>
-          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
-          <div class="doctor-image">
-            <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
-          </div>
-          <p class="doctor-email"><c:out value="${doctor.email}"/>, <c:out value="${doctor.telephone}"/></p>
-          <div class="doctor-insurances-div">
-            <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
-            <p class="doctor-insurances">
-              <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
-                <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
-              </c:forEach>
-            </p>
-          </div>
-          <div class="doctor-specialty-div">
-            <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
-            <p class="doctor-specialty"><spring:message code="specialty.${doctorDetail.specialty}"/></p>
-          </div>
-          <div class="doctor-address-div">
-            <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
-            <p class="doctor-address"><c:out value="${doctorShifts[0].address}"/></p>
-          </div>
-          <div class="doctor-license-div">
-            <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
-            <p class="doctor-license"><c:out value="${doctorDetail.licence}"/></p>
-          </div>
-          <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
-          <div class="doctor-schedule">
-            <ul>
-              <c:forEach var="schedule" items="${doctorShifts}">
-                <c:set var="myWeekday">
-                  <spring:message code="weekday.${schedule.weekday.name}"/>
-                </c:set>
-                <li>
-                  <spring:message code="doctor.details.schedule" arguments="${myWeekday}, ${schedule.startTime}, ${schedule.endTime}" htmlEscape="true"/>
-                </li>
-              </c:forEach>
-            </ul>
-          </div>
+
         </div>
       </div>
       <div class="shifts-list-container">

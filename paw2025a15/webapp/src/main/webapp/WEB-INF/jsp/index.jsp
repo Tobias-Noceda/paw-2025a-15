@@ -157,10 +157,9 @@
             onclick="document.getElementById('pageInput').value = ${1}"
             <c:if test="${page == 1}">disabled</c:if>
           >
-            <!--
+
             <spring:message code="landing.pagination.first"/>
-            -->
-            <<
+
           </button>
 
           <button
@@ -170,8 +169,8 @@
             <c:if test="${page <= 1}">disabled</c:if>
           >
 
-            <!-- <spring:message code="doctorDetail.previousWeek"/> -->
-            <
+           <spring:message code="doctorDetail.previousWeek"/>
+
           </button>
 
           <div class="page-button">
@@ -184,11 +183,10 @@
             onclick="document.getElementById('pageInput').value = ${page + 1}"
             <c:if test="${page >= totalPages}">disabled</c:if>
           >
-            <!--
+
             <spring:message code="doctorDetail.nextWeek"/>
 
-            -->
-            >
+
           </button>
 
           <button
@@ -197,6 +195,7 @@
             onclick="document.getElementById('pageInput').value = ${totalPages}"
             <c:if test="${page == totalPages}">disabled</c:if>
           >
+
             <spring:message code="landing.pagination.last"/>
           </button>
           <form:input type="hidden" path="query"/>
