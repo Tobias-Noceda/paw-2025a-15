@@ -256,3 +256,121 @@ body {
 
 }
 
+
+
+/* ─── WEEKDAY PILLS ───────────────────────────────────── */
+.weekday-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.weekday-btn {
+    position: relative;
+    /* inline-block para auto-ajustar al tamaño de la “píldora” */
+    display: inline-block;
+}
+
+/* El checkbox real: invisible pero operativo y encima de todo */
+.weekday-btn > .weekday-checkbox {
+    position: absolute;
+    top:    0;
+    left:   0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding:0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* La “píldora” que ve el usuario */
+.weekday-btn > .weekday-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: var(--clr-card);
+    border: 1px solid var(--clr-text-muted);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    transition:
+            background var(--transition),
+            border-color var(--transition),
+            color var(--transition);
+}
+
+/* Estado “checked” */
+.weekday-btn > .weekday-checkbox:checked + .weekday-label {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+/* Hover visual extra */
+.weekday-btn:hover > .weekday-label {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-card);
+}
+
+.insurance-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.insurance-btn {
+    position: relative;
+    display: inline-block;
+}
+
+.insurance-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.insurance-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: var(--clr-card);
+    border: 1px solid var(--clr-text-muted);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    transition: background var(--transition),
+    border-color var(--transition),
+    color var(--transition);
+}
+
+/* usa esto: */
+
+.insurance-checkbox:checked ~ .insurance-label {
+
+    background-color: var(--clr-primary);
+
+    border-color: var(--clr-primary);
+
+    color: var(--clr-card);
+
+}
+
+.insurance-btn:hover > .insurance-label {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-card);
+}

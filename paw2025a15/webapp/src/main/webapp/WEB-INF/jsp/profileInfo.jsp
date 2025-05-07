@@ -11,7 +11,6 @@
   <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<c:url value='/css/profile-info.css'/>">
-  <link rel="stylesheet" href="<c:url value='/css/study-form.css'/>">
   <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
 </head>
 <body>
@@ -75,7 +74,7 @@
     <div class="card">
       <h3 class="section-title"><spring:message code="profileInfo.basic"/></h3>
       <div class="field-grid">
-        <div class="field-container">
+        <div class="field-container full-width">
           <form:label path="phoneNumber"><spring:message code="profile.phone.label"/></form:label>
           <form:input path="phoneNumber"
                       type="number"
@@ -85,6 +84,36 @@
                       onpaste="return blockNegativePaste(event)"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
+
+
+        <c:if test="${patientDetails == null}">
+
+          <div class="field-container full-width">
+            <div class="insurance-toggle-group">
+              <form:label path="insurances">
+                <spring:message code="doctor.details.insurances.label"/>
+              </form:label>
+              <c:forEach var="insurance" items="${obrasSocialesItems}">
+                <div class="insurance-btn">
+                  <form:checkbox
+                          path="insurances"
+                          id="insurance-${insurance.id}"
+                          value="${insurance.id}"
+                          cssClass="insurance-checkbox"/>
+                  <label
+                          for="insurance-${insurance.id}"
+                          class="insurance-label">
+                      ${insurance.name}
+                  </label>
+                </div>
+              </c:forEach>
+              <form:errors path="insurances" cssClass="error-box" element="div"/>
+            </div>
+          </div>
+
+      </c:if>
+
+
         <c:if test="${patientDetails != null}">
           <div class="sf-field">
             <!-- label -->
@@ -219,24 +248,12 @@
           <form:label path="job"><spring:message code="profileInfo.job"/></form:label>
           <textarea id="patient-job" name="job" class="input-field" rows="1" maxlength="50">${patientDetails.job}</textarea>
         </div>
-      </div>
         </c:if>
-
-    <c:if test="${patientDetails == null}">
-      <div class="insurance-toggle-group">
-        <form:checkboxes
-                path="insurances"
-                items="${obrasSocialesItems}"
-                itemValue="id"
-                itemLabel="name"
-                cssClass="insurance-checkbox"
-                delimiter=""
-        />
-        <form:errors path="insurances" cssClass="error-box" element="div"/>
       </div>
-
-    </c:if>
     </div>
+
+
+
 
     <!-- Botón guardar -->
     <div class="save-container" style="margin-top: 15px;">
