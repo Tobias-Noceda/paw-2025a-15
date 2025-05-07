@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import javax.validation.Valid;
 
 import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -158,10 +162,18 @@ public class UserController {
             mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
         } else {
             mav.addObject("patientDetails", null);
-            //profileForm.setInsurances(dcs.getInsurancesById(user.getId()));
+            profileForm.setInsurances(InsuranceToLong(dcs.getInsurancesById(user.getId())));
         }
 
         return mav;
+    }
+
+    static List<Long> InsuranceToLong(List<Insurance> insurances) {
+        List<Long> insurancesLong = new ArrayList<>();
+        for(Insurance insurance : insurances) {
+            insurancesLong.add(insurance.getId());
+        }
+        return insurancesLong;
     }
 
 }
