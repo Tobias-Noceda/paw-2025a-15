@@ -71,7 +71,7 @@ public class DoctorShift {
 
     @Override
     public String toString(){
-        return "File{" +
+        return "DoctorShift{" +
             "id=" + id +
             "," + "doctorId=" + doctorId +
             "," + "weekday=" + weekday +

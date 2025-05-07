@@ -79,7 +79,7 @@ public class UserJdbcDaoTest {
         final UserRoleEnum USER_ROLE = TestData.Users.newPatient.getRole();
         final long PICTURE_ID = TestData.Users.newPatient.getPictureId();
         final LocaleEnum USER_LOCALE = TestData.Users.newPatient.getLocale();
-//TODO preguntar si el service o el dao es el que tienen que tener la programacion defensiva de esto
+        
         Assert.assertThrows(DuplicateKeyException.class,()->{
                                 userDao.create(USEREMAIL, PASSWORD, USERNAME, USER_TELEPHONE, USER_ROLE, PICTURE_ID, USER_LOCALE);});
     }

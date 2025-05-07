@@ -71,6 +71,11 @@ public class TestData {
 
     public class Appointments{
         public static final Appointment appointment = new Appointment(1, 1, LocalDate.parse("2025-10-09"));
+        public static final Appointment appointment2 = new Appointment(2, 1, LocalDate.parse("2025-10-09"));
+        public static final Appointment oldAppointment = new Appointment(1, 1, LocalDate.parse("2025-04-09"));
+        public static final Appointment oldAppointment2 = new Appointment(1, 1, LocalDate.parse("2025-04-09"));
+        public static final Appointment removedAppointment = new Appointment(2, 1, LocalDate.parse("2025-04-19"));
+        public static final Appointment removedAppointment2 = new Appointment(1, 2, LocalDate.parse("2025-04-19"));
     }
 
     public class PatientDetails{

@@ -36,4 +36,33 @@ public class Appointment {
     public String getDateYearNumber() {
         return String.format("%d", date.getYear());
     }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof Appointment)) return false;
+
+        Appointment o = (Appointment) other;
+
+        return (this.shiftId==o.shiftId) && (this.patientId==o.patientId)
+        && (this.date.equals(o.date));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(shiftId);
+        result = 31 * result + Long.hashCode(patientId);
+        result = 31 * result + date.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "Appointment{" +
+            "shiftId=" + shiftId +
+            "," + "patientId=" + patientId +
+            "," + "date=" + date +
+            '}';
+    }
 }
