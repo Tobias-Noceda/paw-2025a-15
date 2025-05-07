@@ -67,9 +67,11 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Transactional(readOnly = true)
     @Override
     public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId) {
+        if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         List<DoctorShift> aux = doctorShiftDao.getShiftsByDoctorId(doctorId);
         
-        if (aux == null || aux.isEmpty() || aux.size() == 1) return Collections.emptyList();
+        if (aux == null || aux.isEmpty()) return Collections.emptyList();
+        if(aux.size() == 1) return aux;
         
         // Ordenar por día y luego por hora de inicio
         List<DoctorShift> sorted = aux.stream()
@@ -123,6 +125,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Transactional(readOnly = true)
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber) {
+        if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         LocalDate now = LocalDate.now();
         int year = (now.getMonthValue() <= month.getValue()) ? now.getYear() : (now.getYear() + 1);
         LocalDate startOfWeek;

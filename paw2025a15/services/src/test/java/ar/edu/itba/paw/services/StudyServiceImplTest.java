@@ -33,7 +33,6 @@ public class StudyServiceImplTest {
     private static final File FILE = new File(FILE_ID, FILE_CONTENT, FILETYPE);
 
     private static final long PATIENT_ID = 1L;
-    
     private static final PatientDetail PATIENT_DETAIL_EMPTY = new PatientDetail(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null);
 
     private static final long DOC_ID = 2L;

@@ -65,7 +65,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         if(!getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with userId: " + doctorId + " does not exist!");
         List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
         if(currentInsurances != null && !currentInsurances.isEmpty()) throw new IllegalArgumentException("Doctor with userId: " + doctorId + " already has insurances created!");
-        for (Long insuranceId : insurances) {
+        for (Long insuranceId : insurances) {//TODO capaz un batch insert tmb directo sql
             if(!is.getInsuranceById(insuranceId).isPresent()) throw new IllegalArgumentException("Insurance with insuranceId: " + insuranceId + " does not exist!");
             doctorDetailDao.addDoctorCoverage(doctorId, insuranceId);
             LOGGER.info("Adding insurance with insuranceId:{} for doctor with userId: {}", insuranceId, doctorId);

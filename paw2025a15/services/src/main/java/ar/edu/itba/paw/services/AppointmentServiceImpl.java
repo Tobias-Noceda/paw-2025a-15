@@ -50,7 +50,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Patient with id: " + patientId + " does not exist!"));
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("Doctor with id: " + shift.getDoctorId() + " does not exist!"));
-        if(date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
+        if(date==null || date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         
         // TODO: cambiar a usar el enum de java.time en vez del nuestro para poder comparar
         if(date.getDayOfWeek().ordinal() != shift.getWeekday().ordinal()) throw new IllegalArgumentException("Shift must be on the same day of the week as the appointment date");

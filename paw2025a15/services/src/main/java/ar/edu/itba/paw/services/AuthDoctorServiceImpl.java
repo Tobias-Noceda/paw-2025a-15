@@ -53,7 +53,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
 
     private void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
         if(accessLevels==null || accessLevels.isEmpty()) return;
-        for (AccessLevelEnum accessLevel: accessLevels) {
+        for (AccessLevelEnum accessLevel: accessLevels) {//TODO: batch insert
             authDoctorDao.authDoctor(patientId, doctorId, accessLevel);
             LOGGER.info("Giving authorization for doctor with id: {} of patient with id: {} with level:", doctorId, patientId, accessLevel);
         }
@@ -66,7 +66,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
             return;
         }
-        for (AccessLevelEnum accessLevel: accessLevels) {
+        for (AccessLevelEnum accessLevel: accessLevels) {//TODO:batch en sql
             authDoctorDao.unauthDoctorByAccessLevel(patientId, doctorId, accessLevel);
             LOGGER.info("Removing authorization for doctor with id: {} of patient with id: {} of level:", doctorId, patientId, accessLevel);
         }
