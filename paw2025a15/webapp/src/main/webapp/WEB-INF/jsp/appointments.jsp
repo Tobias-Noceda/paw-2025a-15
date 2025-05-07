@@ -13,7 +13,7 @@
     <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
       <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="id" value="${user.id}"/>
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container appointments-div" style="display: flex; flex-direction: row;">

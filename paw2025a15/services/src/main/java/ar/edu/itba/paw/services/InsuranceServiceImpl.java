@@ -11,7 +11,6 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.User;
 
 @Service
 public class InsuranceServiceImpl implements InsuranceService{

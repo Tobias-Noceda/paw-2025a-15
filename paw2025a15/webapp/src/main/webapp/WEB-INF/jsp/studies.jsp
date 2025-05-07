@@ -14,14 +14,14 @@
     <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
       <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="id" value="${user.id}"/>
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container studies-div" style="display: flex; flex-direction: row;">
       <div class="study-list-container">
         <div class="title-container">
           <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
-          <a href="<c:url value='/upload-file/${user.id}'/>" class="upload-button">
+          <a href="<c:url value='/upload-study/${user.id}'/>" class="upload-button">
             <spring:message code="patient.details.upload.label"/>
           </a>
         </div>
@@ -91,7 +91,7 @@
               <table class="studies-table">
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
-                    <c:url value="/supersecret/files/${study.fileId}" var="studyLink" />
+                    <c:url value="/view-study/${study.id}" var="studyLink" />
                     <c:set var="studyName">
                       <spring:message code="studyType.${study.type}"/>_${study.studyDate}
                     </c:set>
