@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.form;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 import ar.edu.itba.paw.form.constraints.PastDate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ProfileForm {//TODO constraints en Strings por el largo del input, prob tmb una que prevenga sql injection
     
@@ -57,6 +55,8 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
 
     @Size(max = 50)
     private String job;
+
+    private List<Long> insurances;
 
     public LocalDate getBirthDate() {
         return birthDate;
@@ -178,4 +178,7 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
         return job;
     }
 
+    public List<Long> getInsurances() { return insurances; }
+
+    public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
 }

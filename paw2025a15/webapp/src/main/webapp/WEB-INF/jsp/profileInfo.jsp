@@ -85,36 +85,20 @@
                       onpaste="return blockNegativePaste(event)"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
-
         <c:if test="${patientDetails != null}">
           <div class="sf-field">
-
             <!-- label -->
-
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
-
-
             <!-- input date -->
-
             <form:input
-
                     id="birthDate"
-
                     path="birthDate"
-
                     type="date" />
-
-
             <!-- errores -->
-
             <form:errors
-
                     path="birthDate"
-
                     cssClass="sf-error"
-
                     element="div" />
-
           </div>
 
           <div class="field-container">
@@ -237,6 +221,21 @@
         </div>
       </div>
         </c:if>
+
+    <c:if test="${patientDetails == null}">
+      <div class="insurance-toggle-group">
+        <form:checkboxes
+                path="insurances"
+                items="${obrasSocialesItems}"
+                itemValue="id"
+                itemLabel="name"
+                cssClass="insurance-checkbox"
+                delimiter=""
+        />
+        <form:errors path="insurances" cssClass="error-box" element="div"/>
+      </div>
+
+    </c:if>
     </div>
 
     <!-- Botón guardar -->

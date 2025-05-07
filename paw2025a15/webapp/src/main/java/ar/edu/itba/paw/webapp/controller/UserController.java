@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,6 @@ import ar.edu.itba.paw.form.ChangePasswordForm;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.RecoverForm;
-import ar.edu.itba.paw.interfaces.services.EmailService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -45,6 +44,12 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private InsuranceService is;
+
+    @Autowired
+    private DoctorCoverageService dcs;
 
     @RequestMapping("/login")
     public ModelAndView login() {
@@ -146,12 +151,14 @@ public class UserController {
             // podés completar otros campos acá también
         }
 
+        mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("landingForm", new LandingForm());
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
         } else {
             mav.addObject("patientDetails", null);
+            //profileForm.setInsurances(dcs.getInsurancesById(user.getId()));
         }
 
         return mav;

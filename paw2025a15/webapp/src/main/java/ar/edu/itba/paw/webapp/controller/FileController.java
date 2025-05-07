@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.interfaces.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,11 +29,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
-import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
@@ -61,6 +57,9 @@ public class FileController {
 
     @Autowired
     private PatientDetailService pds;
+
+    @Autowired
+    private DoctorCoverageService dcs;
 
     @GetMapping("/favicon.ico")
     public ResponseEntity<byte[]> getFavicon() throws IOException {
@@ -196,6 +195,8 @@ public class FileController {
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             //pds.updatePatientDetails(user.getId(), LocalDate.of(LocalDate.now().getYear() - profileForm.getAge(), 1, 1), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
             pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
+        } else {
+            dcs.setCoverages(user.getId(), profileForm.getInsurances());
         }
         redirectAttrs.addFlashAttribute("updateSuccessMessage",
 
