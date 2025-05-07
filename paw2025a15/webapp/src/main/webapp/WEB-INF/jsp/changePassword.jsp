@@ -7,9 +7,6 @@
     <title><spring:message code="changePassword.title"/></title>
     <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
     <link rel="stylesheet" href="<c:url value='/css/doctor-form.css'/>">
-    <style>
-        .error-message { color: red; }
-    </style>
 </head>
 <body>
 <c:url value="/changePassword/${token}/${id}" var="postPath"/>
