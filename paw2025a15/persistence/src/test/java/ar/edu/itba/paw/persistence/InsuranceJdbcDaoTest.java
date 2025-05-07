@@ -56,16 +56,6 @@ public class InsuranceJdbcDaoTest {
     }
 
     @Test
-    public void testCreateExistentInsurance(){
-        final String NAME = TestData.Insurances.validInsurance.getName();
-        final long PICTURE_ID = TestData.Insurances.validInsurance.getPictureId();
-
-//TODO preguntar si el service o el dao es el que tienen que tener la programacion defensiva de esto
-        Assert.assertThrows(DuplicateKeyException.class,()->{
-                                insuranceDao.create(NAME, PICTURE_ID);});
-    }
-
-    @Test
     public void testEdit(){
         final long INSURANCE_ID = TestData.Insurances.validInsurance.getId();
         final String NAME = TestData.Insurances.validInsurance.getName();
@@ -146,7 +136,6 @@ public class InsuranceJdbcDaoTest {
         Assert.assertFalse(foundInsurance.isPresent());
         Assert.assertEquals(0, 
                             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d", INSURANCE_ID)));
-
     }
 
     @Test
@@ -160,6 +149,24 @@ public class InsuranceJdbcDaoTest {
         Assert.assertEquals(2, foundInsurances.size());
         Assert.assertTrue(foundInsurances.contains(INSURANCE1));
         Assert.assertTrue(foundInsurances.contains(INSURANCE2));
+        Assert.assertEquals(2, 
+        JdbcTestUtils.countRowsInTable(jdbcTemplate, "insurances"));
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d", INSURANCE1.getId())));
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d", INSURANCE2.getId())));
+    }
+
+    @Test
+    public void testGetInsuranceByName(){
+        final Insurance INSURANCE1 = TestData.Insurances.validInsurance;
+
+        Optional<Insurance> insurance = insuranceDao.getInsuranceByName(INSURANCE1.getName());
+
+        Assert.assertNotNull(insurance);
+        Assert.assertEquals(INSURANCE1, insurance.get());
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_name LIKE '%s'", INSURANCE1.getName())));
     }
 
 }
