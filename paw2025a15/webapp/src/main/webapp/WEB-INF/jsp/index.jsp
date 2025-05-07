@@ -14,8 +14,10 @@
     <link rel="stylesheet" href="<c:url value='/css/landing-page.css'/>">
   </head>
   <body class="landing-page">
-    <jsp:include page="components/header.jsp"> <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="id" value="${user.id}"/> <jsp:param name="role" value="${user.role}"/>
+    <jsp:include page="components/header.jsp">
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="id" value="${user.id}"/>
+      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container">
 
