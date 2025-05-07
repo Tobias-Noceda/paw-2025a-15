@@ -115,11 +115,12 @@
 
 
         <c:if test="${patientDetails != null}">
-          <div class="sf-field">
+          <div class="field-container">
             <!-- label -->
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
             <!-- input date -->
             <form:input
+                    cssClass="input-field"
                     id="birthDate"
                     path="birthDate"
                     type="date" />
