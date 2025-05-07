@@ -91,8 +91,8 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         }
         if(orderBy!=null) {
             switch (orderBy) {
-                case M_RECENT -> query.append(" ORDER BY u.create_date DESC ");
-                case L_RECENT -> query.append(" ORDER BY u.create_date ASC ");
+                case M_RECENT -> query.append(" ORDER BY u.create_date ASC ");
+                case L_RECENT -> query.append(" ORDER BY u.create_date DESC ");
                 case M_POPULAR -> query.append(
                     """
                         LEFT JOIN (
