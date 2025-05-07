@@ -150,3 +150,109 @@ body {
     display: none;
 }
 
+.toast {
+
+    position: fixed;
+
+    top: 1rem;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    background-color: #e6f9ec;    /* pastel green claro */
+
+    border-left: 4px solid #66c17e; /* verde un poco más oscuro */
+
+    padding: 0.75rem 1rem;
+
+    border-radius: 6px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+    font-family: Inter, sans-serif;
+
+    color: #2a6f3a;
+
+    min-width: 260px;
+
+    animation: slideDown 0.3s ease-out;
+
+    z-index: 1000;
+
+}
+
+
+/* Icono ✔️ */
+
+.toast-icon {
+
+    margin-right: 0.5rem;
+
+    font-size: 1.1rem;
+
+}
+
+
+/* Texto */
+
+.toast-text {
+
+    flex: 1;
+
+    font-size: 0.95rem;
+
+}
+
+
+/* Botón de cerrar */
+
+.toast-close {
+
+    background: none;
+
+    border: none;
+
+    font-size: 1.2rem;
+
+    line-height: 1;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    padding: 0 0.25rem;
+
+}
+
+
+/* Animación de entrada */
+
+@keyframes slideDown {
+
+    from { opacity: 0; transform: translate(-50%, -20px); }
+
+    to   { opacity: 1; transform: translate(-50%, 0); }
+
+}
+
+
+/* Clase para desvanecer antes de borrar */
+
+.toast.hide {
+
+    animation: fadeOut 0.5s forwards;
+
+}
+
+
+@keyframes fadeOut {
+
+    to { opacity: 0; transform: translate(-50%, -20px); }
+
+}
+

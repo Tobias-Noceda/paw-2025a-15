@@ -15,6 +15,25 @@
   <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
 </head>
 <body>
+
+<c:if test="${not empty updateSuccessMessage}">
+
+  <div class="toast" id="update-toast">
+
+    <span class="toast-icon">✔️</span>
+
+    <span class="toast-text">
+
+        <c:out value="${updateSuccessMessage}"/>
+
+      </span>
+
+    <button class="toast-close" onclick="closeToast()">×</button>
+
+  </div>
+
+</c:if>
+
 <jsp:include page="components/header.jsp">
   <jsp:param name="username"  value="${user.name}"/>
   <jsp:param name="id" value="${user.id}"/>
@@ -33,9 +52,7 @@
     <div class="card profile-header">
       <div class="profile-image">
         <div class="edit-image-wrapper">
-          <img id="prof-image"
-               src="<c:url value='/supersecret/user-profile-pic/${user.pictureId}'/>"
-               alt="Avatar" />
+          <img id="prof-image" src="<c:url value='/supersecret/user-profile-pic/${user.id}'/>" alt="User Image" />
           <button class="edit-button" type="button" onclick="handleImageChange()">
             ✏️
           </button>
@@ -233,6 +250,8 @@
 </div>
 
 <script>
+
+
   function handleImageChange(event) {
     if (event && event.target.files[0]) {
       document.getElementById("prof-image").src = URL.createObjectURL(event.target.files[0]);
@@ -278,5 +297,41 @@
       input.value = value; // actualiza con punto si venía con coma
     }
   }
+
+
+  function closeToast() {
+
+    const toast = document.getElementById("update-toast");
+
+    if (!toast) return;
+
+    // Si ya no tiene .hide, aplicarlo y luego remover
+
+    if (!toast.classList.contains("hide")) {
+
+      toast.classList.add("hide");
+
+      setTimeout(() => toast.remove(), 500);
+
+    }
+
+  }
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const toast = document.getElementById("update-toast");
+
+    if (toast) {
+
+      // auto-dismiss a los 3 segundos
+
+      setTimeout(closeToast, 3000);
+
+    }
+
+  });
+
+
 </script>
 </body>

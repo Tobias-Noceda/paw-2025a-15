@@ -23,23 +23,57 @@
     padding: 20px;
     overflow: hidden;
 }
+/* 1) El contenedor del avatar */
 
 .doctor-image {
+
+    width: 200px;         /* ancho fijo */
+
+    height: 200px;        /* alto fijo */
+
+    border-radius: 50%;  /* círculo perfecto */
+
+    overflow: hidden;    /* recorta lo que sobresalga */
+
+    margin-bottom: 20px;
+
+    margin-top: 20px;
+
+    /* Opcional: si quieres centrar el avatar en un bloque más grande */
+
     display: flex;
+
     justify-content: center;
+
     align-items: center;
-    flex: 0 0 200px;
-    width: 100%;
-    margin: 20px 0;
+
 }
 
+
+/* 2) La propia imagen */
+
 .doctor-image img {
-    height: auto;
-    border-radius: 50%;
-    object-fit: cover;
-    -o-object-fit: cover; /* Opera/Firefox fallback */
-    max-width: 200px;
-    max-height: 200px;
+
+    width: 100%;         /* llena todo el contenedor */
+
+    height: 100%;        /* llena todo el contenedor */
+
+    object-fit: cover;   /* recorta/ajusta sin deformar */
+
+}
+
+
+
+/* 3) Para centrar el .doctor-image dentro de su contenedor padre */
+
+.doctor-infopack {
+
+    display: flex;             /* o grid, según tu layout */
+
+    justify-content: center;   /* centrar horizontal */
+
+    align-items: center;       /* centrar vertical si hay altura fija */
+
 }
 
 .doctor-info {
@@ -293,4 +327,11 @@
     background-color: var(--clr-primary-hover);
     border-color: var(--clr-primary-hover);
     color: var(--clr-card);
+}
+
+.profile-image img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
 }

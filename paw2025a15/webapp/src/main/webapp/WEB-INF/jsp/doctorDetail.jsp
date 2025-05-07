@@ -27,10 +27,12 @@
           <c:set var="authCancelText">
             <spring:message code='doctorDetail.authorize.cancelButton'/>
           </c:set>
-          <div class="doctor-infopack">
+          <div class="">
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
-            <div class="doctor-image">
-              <img src="<c:url value='/supersecret/user-profile-pic/${doctor.pictureId}'/>" alt="Doctor Image" />
+            <div class="doctor-infopack">
+              <div class="doctor-image">
+                <img  src="<c:url value='/supersecret/user-profile-pic/${doctor.pictureId}'/>" alt="Doctor Image" />
+              </div>
             </div>
             <p class="doctor-email"><c:out value="${doctor.email}"/>, <c:out value="${doctor.telephone}"/></p>
             <div class="doctor-insurances-div">

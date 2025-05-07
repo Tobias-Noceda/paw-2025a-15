@@ -39,6 +39,7 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FileController {
@@ -158,10 +159,12 @@ public class FileController {
                 .body(content);
     }
 
+
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
     public ModelAndView saveProfileInfo(@AuthenticationPrincipal UserDetails userDetails,
                     @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
-                    BindingResult result
+                    BindingResult result,
+                                        RedirectAttributes redirectAttrs
     ) throws IOException {
         User user = us.getCurrentUser();
         if (user == null) {
@@ -194,6 +197,10 @@ public class FileController {
             //pds.updatePatientDetails(user.getId(), LocalDate.of(LocalDate.now().getYear() - profileForm.getAge(), 1, 1), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
             pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
         }
+        redirectAttrs.addFlashAttribute("updateSuccessMessage",
+
+                "✅ Your profile has been updated!");
+
         return new ModelAndView("redirect:/profile");
     }
 
