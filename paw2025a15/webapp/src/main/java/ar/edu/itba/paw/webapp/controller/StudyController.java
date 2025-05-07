@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
@@ -68,6 +69,7 @@ public class StudyController {
         }
 
         ModelAndView mav = new ModelAndView("createStudy");
+        mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
         mav.addObject("user", us.getCurrentUser());
         mav.addObject("patientId", patientId);

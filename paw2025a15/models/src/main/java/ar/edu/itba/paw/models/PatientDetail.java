@@ -65,7 +65,7 @@ public class PatientDetail {
         return drinks;
     }
 
-    public String getMeds() {
+    public String   getMeds() {
         return meds;
     }
 

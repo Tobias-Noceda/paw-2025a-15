@@ -65,7 +65,7 @@
         <label for="date">
           <spring:message code="createStudy.date"/>:
         </label>
-        <form:input id="date" type="date" path="date"/>
+        <form:input id="date" value="${today}" type="date" path="date"/>
         <form:errors path="date" cssClass="sf-error"/>
       </div>
 
