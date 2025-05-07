@@ -282,6 +282,7 @@
     box-sizing: border-box;
 }
 
+
 .upload-button {
     background-color: #007bff;
     color: white;
@@ -343,7 +344,6 @@
     cursor: pointer;
     display: inline-block;
     text-align: center;
-    margin-left: 0;
     transition: background-color 0.2s ease;
     line-height: 1;
 }
