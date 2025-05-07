@@ -20,6 +20,7 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -67,24 +68,55 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
-        if(page < 1 || pageSize <= 0) return Collections.emptyList();
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        if (page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
 
         StringBuilder query = new StringBuilder(
-            """
-                SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
-                FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
-                
-            """
+                """
+                    SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id
+                    FROM doctor_details AS dd JOIN users AS u ON dd.doctor_id = u.user_id
+                """
         );
+
         List<Object> params = new ArrayList<>();
         List<Integer> types = new ArrayList<>();
+
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
-        if(name != null && !name.trim().isEmpty()) {
+
+        if (name != null && !name.trim().isEmpty()) {
             query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
+        }
+        if(orderBy!=null) {
+            switch (orderBy) {
+                case M_RECENT -> query.append(" ORDER BY u.create_date ASC ");
+                case L_RECENT -> query.append(" ORDER BY u.create_date DESC ");
+                case M_POPULAR -> query.append(
+                    """
+                        LEFT JOIN (
+                            SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
+                            FROM appointments a
+                            JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
+                            GROUP BY ds.doctor_id
+                        ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
+                        ORDER BY COALESCE(app_counts.reserved_appointments, 0) DESC
+                    """
+                );
+                default -> query.append(
+                    """
+                        LEFT JOIN (
+                            SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
+                            FROM appointments a
+                            JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
+                            GROUP BY ds.doctor_id
+                        ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
+                        ORDER BY COALESCE(app_counts.reserved_appointments, 0) ASC
+                    """
+                );
+            }
+
         }
 
         query.append(" LIMIT ? OFFSET ? ");
@@ -93,8 +125,14 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         params.add(offset);
         types.add(java.sql.Types.INTEGER);
 
-        return (List<DoctorView>) jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), DV_ROW_MAPPER);
+        return (List<DoctorView>) jdbcTemplate.query(
+                query.toString(),
+                params.toArray(),
+                types.stream().mapToInt(i -> i).toArray(),
+                DV_ROW_MAPPER
+        );
     }
+
 
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
@@ -131,7 +169,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
+                "SELECT DISTINCT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
                 new Object[]{id},
                 new int[]{ java.sql.Types.BIGINT },
                 DV_ROW_MAPPER

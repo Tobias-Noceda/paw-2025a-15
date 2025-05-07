@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 public class PatientDetail {
     private final long patientId;
-    private final Integer age;
+    private final LocalDate birthdate;
     private final BloodTypeEnum bloodType;
     private final Double height;
     private final Double weight;
@@ -17,10 +20,10 @@ public class PatientDetail {
     private final String hobbies;
     private final String job;
 
-    public PatientDetail(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight, 
+    public PatientDetail(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight, 
     Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet, String hobbies, String job) {
         this.patientId = patientId;
-        this.age = age;
+        this.birthdate = birthdate;
         this.bloodType = bloodType;
         this.height = height;
         this.weight = weight;
@@ -38,8 +41,8 @@ public class PatientDetail {
         return patientId;
         }
 
-    public Integer getAge() {
-        return age;
+    public LocalDate getBirthdate() {
+        return birthdate;
     }
 
     public BloodTypeEnum getBloodType() {
@@ -62,7 +65,7 @@ public class PatientDetail {
         return drinks;
     }
 
-    public String getMeds() {
+    public String   getMeds() {
         return meds;
     }
 
@@ -86,5 +89,9 @@ public class PatientDetail {
         return job;
     }
 
+    public Integer getAge(){
+        if(birthdate==null) return null;
+        return Period.between(this.birthdate, LocalDate.now()).getYears();
+    }
 
 }

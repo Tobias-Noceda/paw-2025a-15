@@ -14,8 +14,10 @@
     <link rel="stylesheet" href="<c:url value='/css/landing-page.css'/>">
   </head>
   <body class="landing-page">
-    <jsp:include page="components/header.jsp"> <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="pictureId" value="${user.pictureId}"/> <jsp:param name="role" value="${user.role}"/>
+    <jsp:include page="components/header.jsp">
+      <jsp:param name="username" value="${user.name}"/>
+      <jsp:param name="id" value="${user.id}"/>
+      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container">
 
@@ -35,14 +37,39 @@
               <form:label path="insurances" class="field-label">
                 <spring:message code="doctorForm.obrasSociales"/>
               </form:label>
-              <form:select path="insurances" class="filter-select">
-                <form:option value="">
-                  <spring:message code="landing.filter.insurances"/>
-                </form:option>
-                <form:options items="${insurances}"
-                              itemLabel="name"
-                              itemValue="id"/>
-              </form:select>
+              <div class="custom-select">
+                <div class="select-box">
+                  <span class="select-text">
+                    <c:choose>
+                      <c:when test="${landingForm.insurances > 0}">
+                        <c:forEach var="insurance" items="${insurances}">
+                          <c:if test="${insurance.id == landingForm.insurances}">
+                            ${insurance.name}
+                          </c:if>
+                        </c:forEach>
+                      </c:when>
+                      <c:otherwise>
+                        <spring:message code="landing.filter.insurances"/>
+                      </c:otherwise>
+                    </c:choose>
+                  </span>
+                  <div class="select-arrow"></div>
+                </div>
+                <ul class="options-list">
+                  <li class="option" data-value="">
+                    <span class="option-image"></span>
+                    <span class="option-text"><spring:message code="landing.filter.insurances"/></span>
+                  </li>
+
+                  <c:forEach var="insurance" items="${insurances}">
+                    <li class="option" data-value="${insurance.id}">
+                      <img src="<c:url value='/supersecret/insurance-picture/${insurance.id}'/>" alt="${insurance.name}" class="option-image" />
+                      <span class="option-text">${insurance.name}</span>
+                    </li>
+                  </c:forEach>
+                </ul>
+              </div>
+              <form:hidden id="selectedInsurance" path="insurances" />
             </div>
 
             <!-- Día -->
@@ -70,6 +97,21 @@
                   <spring:message code="landing.filter.specialty"/>
                 </form:option>
                 <form:options items="${specialtySelectItems}"
+                              itemLabel="label"
+                              itemValue="value"/>
+              </form:select>
+            </div>
+
+
+            <div class="field-container">
+              <form:label path="orderBy" class="field-label">
+                <spring:message code="landing.order.label"/>
+              </form:label>
+              <form:select path="orderBy" class="filter-select">
+                <form:option value="">
+                  -
+                </form:option>
+                <form:options items="${orderSelectItems}"
                               itemLabel="label"
                               itemValue="value"/>
               </form:select>
@@ -157,7 +199,9 @@
             onclick="document.getElementById('pageInput').value = ${1}"
             <c:if test="${page == 1}">disabled</c:if>
           >
+
             <spring:message code="landing.pagination.first"/>
+
           </button>
 
           <button
@@ -166,7 +210,9 @@
             onclick="document.getElementById('pageInput').value = ${page - 1}"
             <c:if test="${page <= 1}">disabled</c:if>
           >
-            <spring:message code="doctorDetail.previousWeek"/>
+
+           <spring:message code="doctorDetail.previousWeek"/>
+
           </button>
 
           <div class="page-button">
@@ -179,7 +225,10 @@
             onclick="document.getElementById('pageInput').value = ${page + 1}"
             <c:if test="${page >= totalPages}">disabled</c:if>
           >
+
             <spring:message code="doctorDetail.nextWeek"/>
+
+
           </button>
 
           <button
@@ -188,6 +237,7 @@
             onclick="document.getElementById('pageInput').value = ${totalPages}"
             <c:if test="${page == totalPages}">disabled</c:if>
           >
+
             <spring:message code="landing.pagination.last"/>
           </button>
           <form:input type="hidden" path="query"/>
@@ -195,9 +245,53 @@
             <form:input type="hidden" path="insurances"/>
             <form:input type="hidden" path="weekday"/>
             <form:input type="hidden" path="specialty"/>
+            <form:input type="hidden" path="orderBy"/>
           </c:if>
         </form:form>
       </c:if>
     </div>
+    <script>
+      document.querySelectorAll('.custom-select').forEach(select => {
+        const box = select.querySelector('.select-box');
+        const optionsList = select.querySelector('.options-list');
+        const options = optionsList.querySelectorAll('.option');
+        const textSpan = box.querySelector('.select-text');
+        const hiddenInput = document.querySelector('#selectedInsurance');
+
+        box.addEventListener('click', (e) => {
+          document.querySelectorAll('.options-list').forEach(o => {
+            if (o !== optionsList) o.classList.remove('show');
+          });
+          optionsList.classList.toggle('show');
+          e.stopPropagation();
+        });
+
+        options.forEach(option => {
+          option.addEventListener('click', () => {
+            const value = option.getAttribute('data-value');
+            const label = option.querySelector('.option-text').innerText;
+
+            textSpan.innerText = label;
+            hiddenInput.value = value;
+            optionsList.classList.remove('show');
+          });
+        });
+      });
+
+      // Global click closes any dropdown
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.options-list').forEach(o => o.classList.remove('show'));
+      });
+
+      document.querySelectorAll('.options-list').forEach(o => {
+        if (o !== optionsList) o.classList.remove('show');
+      });
+
+      window.addEventListener("scroll", () => {
+        document.querySelectorAll('.options-list').forEach(o => {
+          list.classList.remove('show');
+        });
+      });
+    </script>
   </body>
 </html>

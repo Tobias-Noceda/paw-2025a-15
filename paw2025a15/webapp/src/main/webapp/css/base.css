@@ -4,7 +4,7 @@
    ————————————————————————————————————————————— */
 :root {
     --font-family: 'Inter', sans-serif;
-    --clr-bg: #f0f4fa;
+    --clr-bg: #d8eeff;
     --clr-card: #ffffff;
     --clr-primary: #4f83cc;
     --clr-primary-hover: #3b6fa8;
@@ -23,10 +23,12 @@
 }
 
 body {
+    flex-grow: 1;
     font-family: var(--font-family);
     background-color: var(--clr-bg);
     color: var(--clr-text);
-    min-height: 100vh;
+    margin: 0;
+    box-sizing: border-box; /* Normaliza el modelo de caja */
 }
 
 .page-container {

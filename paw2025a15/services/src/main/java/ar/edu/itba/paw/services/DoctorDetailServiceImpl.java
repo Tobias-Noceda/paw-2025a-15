@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,8 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, page, pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy,page, pageSize);
     }
 
     @Override

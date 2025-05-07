@@ -137,9 +137,34 @@
 
 .page-navigation-button {
     background-color: #007bff;
+    margin-right: 5px;
+    margin-left: 5px;
+    width: 90px;
     color: white;
     border: none;
     padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.page-navigation-button:hover {
+    background-color: #0056b3;
+}
+
+.page-navigation-button:disabled {
+    color: gray;
+    cursor: not-allowed;
+}
+
+.page-button {
+    background-color: white;
+    color: #256395;
+    border: none;
+    padding: 8px 10px;
     margin: 0 3px;
     font-size: 14px;
     font-weight: 700;
@@ -171,4 +196,77 @@
     cursor: pointer;
     transition: background-color 0.3s;
     text-decoration: none;
+}
+
+.custom-select {
+    width: 100%;
+    position: relative;
+    font-family: inherit;
+}
+  
+.select-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px 12px 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius, 8px);
+    background: #fff;
+    width: 100%;
+    font-size: 1rem;
+    cursor: pointer;
+} 
+  
+.select-box:hover {
+    border-color: #a0a0a0;
+}
+
+.select-arrow {
+    width: 12px;
+    height: 12px;
+    background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 20 20' fill='black' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z' clip-rule='evenodd'/></svg>") no-repeat center;
+    background-size: 20px;
+    pointer-events: none;
+}
+  
+.select-text {
+    display: block;
+    color: var(--clr-text);
+}
+  
+.options-list {
+    display: none;
+    position: absolute;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    margin-top: 1px;
+}
+  
+.options-list.show {
+    display: block;
+}
+  
+.option {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+  
+.option:hover {
+    background: #f0f0f0;
+}
+  
+.option-image {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    flex-shrink: 0;
 }

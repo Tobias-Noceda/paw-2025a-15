@@ -1,0 +1,123 @@
+/* /css/study-form.css */
+:root {
+    --sf-radius: 12px;
+    --sf-clr-card: #fff;
+    --sf-clr-bg: #f0f4fa;
+    --sf-clr-primary: #4f83cc;
+    --sf-clr-primary-hover: #3b6fa8;
+    --sf-clr-text: #101828;
+    --sf-transition: .2s ease-in-out;
+}
+
+.study-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding: 40px 20px;
+    background: var(--sf-clr-bg);
+    min-height: calc(100vh - /* altura header */ 60px);
+}
+
+.study-card {
+    background: var(--sf-clr-card);
+    border-radius: var(--sf-radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    max-width: 480px;
+    width: 100%;
+    padding: 32px;
+}
+
+.study-card h1,
+.study-card h2 {
+    margin-bottom: 24px;
+    font-size: 1.5rem;
+    color: var(--sf-clr-text);
+    text-align: center;
+}
+
+.study-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sf-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-field label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--sf-clr-text);
+}
+
+.sf-field input[type="text"],
+.sf-field input[type="date"],
+.sf-field input[type="file"],
+.sf-field select {
+    padding: 10px 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--sf-radius);
+    font-size: 1rem;
+    transition: border-color var(--sf-transition);
+}
+
+.sf-field input:focus,
+.sf-field select:focus {
+    outline: none;
+    border-color: var(--sf-clr-primary);
+}
+
+.sf-error {
+    color: #b42318;
+    background: #fdecea;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: .9rem;
+}
+
+.sf-button {
+    padding: 12px;
+    background: var(--sf-clr-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--sf-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--sf-transition);
+}
+
+.sf-button:hover {
+    background: var(--sf-clr-primary-hover);
+}
+
+/* 1) Quitar el padding “generoso” del input file */
+.sf-field input[type="file"] {
+    padding: 6px 0;      /* sólo deja espacio para el texto seleccionado */
+    font: inherit;       /* hereda tipografía */
+    border: 1px solid #d0d5dd;
+    border-radius: var(--sf-radius);
+    width: 100%;
+    border: none;
+    box-sizing: border-box;
+}
+
+/* 2) Estilo al botón “Browse…” */
+.sf-field input[type="file"]::file-selector-button {
+    background-color: var(--sf-clr-primary);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-radius: var(--sf-radius);
+    cursor: pointer;
+    transition: background-color var(--sf-transition);
+    font: inherit;
+}
+
+/* 3) Hover del botón */
+.sf-field input[type="file"]::file-selector-button:hover {
+    background-color: var(--sf-clr-primary-hover);
+}

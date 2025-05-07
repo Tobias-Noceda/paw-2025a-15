@@ -11,6 +11,7 @@
       CareTrace<c:if test="${param.title != null}"> - <spring:message code="header.${param.title}"></spring:message></c:if>
     </title>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="stylesheet" href="<c:url value="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=login"/>"  />
     <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
   </head>
   <body>
@@ -20,7 +21,7 @@
     <div class="topbar">
       <div class="logo">
         <a href="<c:url value="/"/>" class="logo-link">
-          <img src="${imgSrc}" alt="Logo">
+          <img src="${imgSrc}" alt="Logo"/>
         </a>
       </div>
       <c:if test="${pageContext.request.userPrincipal != null}">
@@ -69,7 +70,7 @@
       <c:if test="${pageContext.request.userPrincipal != null}">
         <button id="userBtn" class="user-btn" onclick="toggleUserDropdown()">
           <div class="user-image">
-            <img src="<c:url value='/supersecret/files/${param.pictureId}'/>" alt="User Image" />
+            <img src="<c:url value='/supersecret/user-profile-pic/${param.id}'/>" alt="User Image" />
           </div>
           <div class="user-info">
             <p class="user-name"><c:out value="${param.username}"/></p>
@@ -88,6 +89,9 @@
       <c:if test="${pageContext.request.userPrincipal == null}">
         <a href="<c:url value="/login"/>">
           <button class="login-btn">
+            <span class="login-icon material-symbols-outlined">
+              login
+            </span>
             <spring:message code="header.login" />
           </button>
         </a>
