@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -256,12 +257,140 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testUpdateLocaleNonexistentUser(){
-        final long USER_ID = 0;
+        final long USER_ID = 100L;
         final LocaleEnum NEW_LOCALE = LocaleEnum.ES_AR;
 
         userDao.updateLocale(USER_ID, NEW_LOCALE);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "users", String.format("user_id = %d", USER_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsCountByDoctorIdAndName(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long PATIENT_ID = TestData.Users.patient.getId();
+
+        int results = userDao.searchAuthPatientsCountByDoctorIdAndName(DOC_ID, PATIENT_NAME);
+
+        Assert.assertEquals(1, results);
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsCountByDoctorIdAndNameNullName(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = null;
+        final long PATIENT_ID = TestData.Users.patient.getId();
+
+        int results = userDao.searchAuthPatientsCountByDoctorIdAndName(DOC_ID, PATIENT_NAME);
+
+        Assert.assertEquals(1, results);
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsCountByDoctorIdAndNameBlankSpaceName(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = "";
+        final long PATIENT_ID = TestData.Users.patient.getId();
+
+        int results = userDao.searchAuthPatientsCountByDoctorIdAndName(DOC_ID, PATIENT_NAME);
+
+        Assert.assertEquals(1, results);
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsPageByDoctorIdAndName(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long PATIENT_ID = TestData.Users.patient.getId();
+        final User PATIENT = TestData.Users.patient;
+
+        List<User> results = userDao.searchAuthPatientsPageByDoctorIdAndName(DOC_ID, PATIENT_NAME, 1, 2);
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(PATIENT, results.get(0));
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsPageByDoctorIdAndNameWrongPage(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long PATIENT_ID = TestData.Users.patient.getId();
+
+        List<User> results = userDao.searchAuthPatientsPageByDoctorIdAndName(DOC_ID, PATIENT_NAME, 0, 2);
+
+        Assert.assertNotNull(results);
+        Assert.assertTrue(results.isEmpty());
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsPageByDoctorIdAndNameWrongPageSize(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long PATIENT_ID = TestData.Users.patient.getId();
+
+        List<User> results = userDao.searchAuthPatientsPageByDoctorIdAndName(DOC_ID, PATIENT_NAME, 1, 0);
+
+        Assert.assertNotNull(results);
+        Assert.assertTrue(results.isEmpty());
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsPageByDoctorIdAndNameNullName(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = null;
+        final long PATIENT_ID = TestData.Users.patient.getId();
+        final User PATIENT = TestData.Users.patient;
+
+        List<User> results = userDao.searchAuthPatientsPageByDoctorIdAndName(DOC_ID, PATIENT_NAME, 1, 2);
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(PATIENT, results.get(0));
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testSearchAuthPatientsPageByDoctorIdAndNameBlankName(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final String PATIENT_NAME = "";
+        final long PATIENT_ID = TestData.Users.patient.getId();
+        final User PATIENT = TestData.Users.patient;
+
+        List<User> results = userDao.searchAuthPatientsPageByDoctorIdAndName(DOC_ID, PATIENT_NAME, 1, 2);
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(PATIENT, results.get(0));
+        Assert.assertEquals(1, 
+            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = 0 ", DOC_ID, PATIENT_ID)));
+    
     }
 }
