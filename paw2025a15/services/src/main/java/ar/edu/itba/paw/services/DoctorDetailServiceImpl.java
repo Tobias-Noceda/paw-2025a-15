@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,33 +34,13 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPage(int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPage(page, pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy,page, pageSize);
     }
 
     @Override
-    public int getTotalDoctors() {
-        return doctorDetailDao.getTotalDoctors();
-    }
-
-    @Override
-    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize) {
-        return doctorDetailDao.findDoctorsPageByName(name, page, pageSize);
-    }
-
-    @Override
-    public int getTotalDoctorsByName(String name) {
-        return doctorDetailDao.getTotalDoctorsByName(name);
-    }
-
-    @Override
-    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
-        return doctorDetailDao.getFilteredDoctorsPage(specialty, insurance, weekday, page, pageSize);
-    }
-
-    @Override
-    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
-        return doctorDetailDao.getTotalFilteredDoctors(specialty, insurance, weekday);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
+        return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
 
     @Override

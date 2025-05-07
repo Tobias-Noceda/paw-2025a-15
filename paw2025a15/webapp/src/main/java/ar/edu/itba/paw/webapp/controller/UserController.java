@@ -19,9 +19,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.ChangePasswordForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.RecoverForm;
-import ar.edu.itba.paw.form.SearchForm;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -49,12 +49,6 @@ public class UserController {
     @RequestMapping("/login")
     public ModelAndView login() {
         return new ModelAndView("login");
-    }
-
-    @RequestMapping("/register/choose")
-    public ModelAndView registerChoose() {
-        ModelAndView mav = new ModelAndView("registerOne");
-        return mav;
     }
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.GET)
@@ -140,7 +134,6 @@ public class UserController {
     @RequestMapping("/profile")
     public ModelAndView profile(
             @AuthenticationPrincipal UserDetails userDetails,
-            SearchForm form,
             @ModelAttribute("profileForm") ProfileForm profileForm
     ) {
         ModelAndView mav = new ModelAndView("profileInfo");
@@ -154,6 +147,7 @@ public class UserController {
         }
 
         mav.addObject("bloodTypes", BloodTypeEnum.values());
+        mav.addObject("landingForm", new LandingForm());
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
         } else {

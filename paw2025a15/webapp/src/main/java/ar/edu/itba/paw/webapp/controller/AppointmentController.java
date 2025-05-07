@@ -1,31 +1,27 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Locale;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.form.AppointmentForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 
 @Controller
@@ -40,12 +36,10 @@ public class AppointmentController {
     @Autowired
     private DoctorShiftService dss;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentController.class);
 
     @RequestMapping("/appointments")
-    public ModelAndView patientProfile(
+    public ModelAndView appointments(
         @RequestParam(value = "action", required = false) String action,
-        @ModelAttribute("searchForm") final SearchForm searchForm,
         @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
         Locale locale
     ) {
@@ -73,42 +67,68 @@ public class AppointmentController {
             }
             default -> { return new ModelAndView("redirect:/login"); }
         }
-            
-        return mav;        
+        
+        mav.addObject("landingForm", new LandingForm());
+        mav.addObject("appointmentForm", new AppointmentForm());
+        mav.addObject("takeTurnForm", new TakeTurnForm());
+
+        return mav;
     }
 
-    @RequestMapping(value = "/cancelAppointment/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView cancelAppointment(@PathVariable("shiftId") long shiftId, @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date){
-        User user = us.getCurrentUser();
+    @RequestMapping(value = "/cancelAppointment", method = RequestMethod.POST)
+    public ModelAndView cancelAppointment(
+        @Valid @ModelAttribute("appointmentForm") final AppointmentForm form,
+        final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new NotFoundException("Error in appointment form");
+        }
 
-        as.cancelAppointment(shiftId, date, user.getId());
+        try {
+            User user = us.getCurrentUser();
+            as.cancelAppointment(form.getShiftId(), form.getDate(), user.getId());
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException("Error in appointment form");
+        }
+
         return new ModelAndView("redirect:/appointments");
     }
 
     @RequestMapping(value = "/takeAppointment", method = RequestMethod.POST)
-    public ModelAndView takeAppointment(@Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form) {
-        User user = us.getCurrentUser();
-        
-        as.addAppointment(form.getShiftId(), user.getId(), LocalDate.parse(form.getDate()));
-
-        return new ModelAndView("redirect:/appointments");
-    }
-
-    @RequestMapping(value = "/removeAppointment/{shiftId:\\d+}/{date}", method = RequestMethod.POST)
-    public ModelAndView removeAppointment(
-        @PathVariable("shiftId") long shiftId,
-        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    public ModelAndView takeAppointment(
+        @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
+        final BindingResult errors
     ) {
+        if(errors.hasErrors()) {
+            throw new NotFoundException("Error in appointment form");
+        }
+
         User user = us.getCurrentUser();
-        as.removeAppointment(shiftId, date, user.getId());
-        
+        try {
+            as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException("Error in appointment form");
+        }
+
         return new ModelAndView("redirect:/appointments");
     }
 
-    @Scheduled(cron = "0 0 3 * * ?", zone = "America/Argentina/Buenos_Aires")
-    public void clearRemovedAppointmentBeforeDate() {
-        LocalDate date = LocalDate.now().minusDays(1);
-        as.clearRemovedAppointmentBeforeDate(date);
-        LOGGER.info("Removed appointments before " + date + " cleared. At " + LocalDateTime.now().toLocalTime());
+    @RequestMapping(value = "/removeAppointment", method = RequestMethod.POST)
+    public ModelAndView removeAppointment(
+        @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
+        final BindingResult errors
+    ) {
+        if (errors.hasErrors()) {
+            throw new NotFoundException("Error in form");
+        }
+
+        User user = us.getCurrentUser();
+        try {
+            as.removeAppointment(form.getShiftId(), form.getDate(), user.getId());
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException("Error in form");
+        }
+        
+        return new ModelAndView("redirect:/appointments");
     }
 }

@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <html>
   <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
@@ -23,6 +25,53 @@
             <spring:message code="patient.details.upload.label"/>
           </a>
         </div>
+      <c:url value="/studies" var="studiesUrl"/>
+      <form:form modelAttribute="filterForm"
+                 action="${studiesUrl}"
+                 method="get"
+                 >
+        <div class="field-container" style="display: flex; flex-direction: column; gap: 12px;">
+
+          <!-- Tipo de estudio -->
+          <div>
+            <form:label path="type" class="field-label">
+              <spring:message code="studies.filter.label"/>
+            </form:label>
+            <form:select path="type" class="input-field">
+              <form:option value="">
+                <spring:message code="studies.all"/>
+              </form:option>
+              <form:options items="${studyTypeSelectItems}"
+                            itemLabel="label"
+                            itemValue="value"/>
+            </form:select>
+          </div>
+
+          <!-- Orden -->
+          <div>
+            <form:label path="mostRecent" class="field-label">
+              <spring:message code="studies.order.label"/>
+            </form:label>
+            <form:select path="mostRecent" class="input-field">
+              <form:option value="true">
+                <spring:message code="studies.order.mostRecent" />
+              </form:option>
+              <form:option value="false">
+                <spring:message code="studies.order.leastRecent" />
+              </form:option>
+            </form:select>
+          </div>
+          <div class="filter-button-div">
+          <button type="submit" class="filter-button">
+            <spring:message code="studies.apply"/>
+          </button>
+          </div>
+        </div>
+
+      </form:form>
+
+
+
         <div class="study-table-container">
           <div class="studies-table-header">
             <table class="studies-table">
@@ -121,37 +170,53 @@
             <div class="studies-table-body">
               <table class="studies-table">
                 <tbody>
+                  <c:set var="buttonText">
+                    <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+                  </c:set>
+                  <c:set var="confirmationText">
+                    <spring:message code="doctorDetail.deauthorize.confirm"/>
+                  </c:set>
+                  <c:set var="authCancelText">
+                    <spring:message code="doctorDetail.authorize.cancelButton"/>
+                  </c:set>
                   <c:forEach var="doctor" items="${patientAuthDoctors}">
-                    <tr class="doctor-row">
-                      <td class="text-cell"><c:out value="${doctor.name}"/></td>
+
+                    <c:url value="/doctors/${doctor.id}" var="doctorUrl"/>
+
+                    <tr class="doctor-row"
+
+                        onclick="window.location='${doctorUrl}'"
+
+                        style="cursor:pointer;">
+
                       <td class="text-cell">
-                        <spring:message code="specialty.${doctor.specialty}"/>
+
+                        <c:out value="${doctor.name}"/>
+
                       </td>
-                      <td class="deauthorize-cell">
-                        <form
-                          id="authDoctorForm"
-                          action="/patientAuthDoctor/${doctor.id}"
-                          method="post"
-                        >
-                          <c:set var="buttonText">
-                            <spring:message code="doctorDetail.toggleButton.deauthorize"/>
-                          </c:set>
-                          <c:set var="confirmationText">
-                            <spring:message code="doctorDetail.deauthorize.confirm"/>
-                          </c:set>
-                          <c:set var="authCancelText">
-                            <spring:message code="doctorDetail.authorize.cancelButton"/>
-                          </c:set>
-                          <button
-                            type="button" 
-                            class="deauthorize-button"
-                            onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}')"
+
+                      <td class="text-cell">
+                          <spring:message code="specialty.${doctor.specialty}"/>
+                      </td>
+                        <td class="deauthorize-cell">
+                          <c:url value="/patientAuthDoctor/${doctor.id}" var="deauthDoctorUrl" />
+                          <form
+                            id="authDoctorForm"
+                            action="${deauthDoctorUrl}"
+                            method="post"
                           >
-                            <c:out value="${buttonText}"/>
-                          </button>
-                        </form>
-                      </td>
-                    </tr>
+                            <button
+                              type="button"
+                              name="action"
+                              value="toggle"
+                              class="deauthorize-button"
+                              onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value);"
+                            >
+                              <c:out value="${buttonText}"/>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
                   </c:forEach>
                 </tbody>
               </table>

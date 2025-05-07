@@ -2,22 +2,26 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.form.FileFilterForm;
+import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
-import ar.edu.itba.paw.form.SearchForm;
+import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
@@ -28,6 +32,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class StudyController {
@@ -47,33 +52,27 @@ public class StudyController {
     @Autowired
     private EmailService es;
 
+    @Autowired
+    private MessageSource messageSource;
+
+    // TODO: rename to upload-study
     @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
-        @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm
-    ){
-        User patient = us.getUserById(patientId).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+        @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
+        @ModelAttribute("searchForm") final SearchForm searchForm
+        ){
+        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
+            throw new NotFoundException("Patient not found");
         }
 
-        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
-
-        User user = us.getCurrentUser();
-
-        if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
-        
-        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
-        
         ModelAndView mav = new ModelAndView("createStudy");
         mav.addObject("patient", patient);
         mav.addObject("patientId", patientId);
         mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());
+
 
         return mav;
     }
@@ -82,32 +81,22 @@ public class StudyController {
     public ModelAndView createStudy(
         @PathVariable("patientId") int patientId,
         @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
+        @ModelAttribute("searchForm") final SearchForm searchForm,
         BindingResult errors
     ) throws IOException{
-        User patient = us.getUserById(patientId).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found"));
+        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Patient not found");            
-        }
-
-        if(patient.getRole() != UserRoleEnum.PATIENT) throw new IllegalArgumentException("Invalid patient ID: " + patientId);
-
-        User user = us.getCurrentUser();
-
-        if(user.getRole() != UserRoleEnum.DOCTOR && user.getRole() != UserRoleEnum.PATIENT) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
-        
-        if(user.getId() != patientId && !dds.hasAuthDoctor(patientId, user.getId())) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
+            throw new NotFoundException("Patient not found");
         }
 
         if (errors.hasErrors()) {
-            return createStudyForm(patientId, createStudyForm);
+            return createStudyForm(patientId, createStudyForm,  searchForm);
         }
+        User user = us.getCurrentUser();
 
         LocalDateTime dateTime = LocalDateTime.now();
-        
+
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());
 
@@ -122,19 +111,25 @@ public class StudyController {
 
     @RequestMapping("/studies")
     public ModelAndView patientProfile(
-        @ModelAttribute("searchForm") SearchForm searchForm
+        @ModelAttribute("searchForm") SearchForm searchForm,
+        @ModelAttribute("filterForm") final FileFilterForm filterForm,
+        Locale locale
+
     ) {
         ModelAndView mav = new ModelAndView("studies");
-    
-        User user = us.getCurrentUser();
 
-        if(user.getRole() != UserRoleEnum.PATIENT) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User not authorized to upload study for this patient");
-        }
+        User user = us.getCurrentUser();
+        System.out.println("Study types: " + SelectItem.getStudyTypeSelectItems(messageSource, locale).stream().map(SelectItem::getValue).toList());
+        System.out.println("Study types: " + SelectItem.getStudyTypeSelectItems(messageSource, locale).stream().map(SelectItem::getLabel).toList());
 
         mav.addObject("user", user);
-        mav.addObject("patientStudies", ss.getStudiesByPatientId(user.getId()));
+        mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+        mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
+
+
+
+        mav.addObject("landingForm", new LandingForm());
         
         return mav;
     }

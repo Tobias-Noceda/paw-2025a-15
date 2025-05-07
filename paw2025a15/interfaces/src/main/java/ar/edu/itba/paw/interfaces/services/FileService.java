@@ -9,4 +9,6 @@ public interface FileService {
     public Optional<File> findById(long id);
 
     public File create(final byte[] content, final FileTypeEnum type);
+
+
 }

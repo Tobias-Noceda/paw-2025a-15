@@ -24,13 +24,9 @@ public interface UserService {
 
     public Optional<User> getUserByEmail(String email);
 
-    public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize);
+    public List<User> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize);
 
-    public int getAuthPatientsCountByDoctorId(long id);
-
-    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize);
-
-    public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
+    public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 
     public void changePasswordByID(long id, String password);
 

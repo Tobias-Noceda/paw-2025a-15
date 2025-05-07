@@ -21,6 +21,4 @@ public interface AppointmentService {
     public void cancelAppointment(long shiftId, LocalDate date, long cancelId);
 
     public void removeAppointment(long shiftId, LocalDate date, long doctorId);
-
-    public void clearRemovedAppointmentBeforeDate(LocalDate date);
 }

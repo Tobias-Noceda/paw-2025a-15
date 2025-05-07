@@ -8,29 +8,37 @@ import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.form.ProfileForm;
-import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.enums.BloodTypeEnum;
-import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.itba.paw.form.LandingForm;
+import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class FileController {
@@ -138,21 +146,23 @@ public class FileController {
         return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
-
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
     public ModelAndView saveProfileInfo(@AuthenticationPrincipal UserDetails userDetails,
-                                  @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
-                                  BindingResult result,
-                                  @ModelAttribute("searchForm") final SearchForm searchForm
+                    @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
+                    BindingResult result
     ) throws IOException {
-        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new IllegalArgumentException("No such email"));
+        User user = us.getCurrentUser();
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
         if (result.hasErrors()) {
             ModelAndView mav = new ModelAndView("profileInfo");
 
             mav.addObject("profileForm", profileForm);
             mav.addObject("bloodTypes", BloodTypeEnum.values());
             mav.addObject("user", user);
-
+            mav.addObject("landingForm", new LandingForm());
+            
             if(user.getRole().equals(UserRoleEnum.PATIENT)) {
                 mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElse(null));
             } else {
@@ -167,14 +177,41 @@ public class FileController {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
         }else {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
+        }//TODO:en vez de calcular el birthdate por la age deberia ser al reves. pedir input de birthdate directamente
+        if(user.getRole().equals(UserRoleEnum.PATIENT)) {
+            //pds.updatePatientDetails(user.getId(), LocalDate.of(LocalDate.now().getYear() - profileForm.getAge(), 1, 1), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
+            pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
         }
-        pds.updatePatientDetails(user.getId(), profileForm.getAge(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
         return new ModelAndView("redirect:/profile");
     }
 
+    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getIconForm() throws IOException {
+        String path = servletContext.getRealPath("/resources/icono.jpg");
+        java.io.File imgFile = new java.io.File(path);
+    
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+    
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
+    }
 
+    @GetMapping("/favicon.ico")
+    public ResponseEntity<byte[]> getFavicon() throws IOException {
+        String path = servletContext.getRealPath("/resources/favicon.png");
+        java.io.File imgFile = new java.io.File(path);
 
-    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+        
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+
+    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y accesos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
         Optional<File> f = fs.findById(id);
         if (!f.isPresent()) {
@@ -195,19 +232,16 @@ public class FileController {
         return ResponseEntity
                 .ok()
                 .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"file_" + id + getExtension(fileType) + "\"")
                 .body(content);
     }
 
-    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getIconForm() throws IOException {
-        String path = servletContext.getRealPath("/resources/icono.jpg");
-        java.io.File imgFile = new java.io.File(path);
-    
-        byte[] bytes = Files.readAllBytes(imgFile.toPath());
-    
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(bytes);
+    private String getExtension(FileTypeEnum mediaType) {
+        return switch (mediaType) {
+            case PNG -> ".png";
+            case JPEG -> ".jpg";
+            case PDF -> ".pdf";
+            default -> "";
+        };
     }
 }

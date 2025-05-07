@@ -17,8 +17,15 @@
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container appointments-div" style="display: flex; flex-direction: row;">
+      <c:url var="cancelUrl" value="/cancelAppointment" />
       <c:set var="confirmationMessage">
         <spring:message code="appointments.cancelConfirm" />
+      </c:set>
+      <c:set var="confirmText">
+        <spring:message code="appointments.cancel"/>
+      </c:set>
+      <c:set var="cancelText">
+        <spring:message code="appointments.dismiss"/>
       </c:set>
       <c:if test="${user.role == 'PATIENT'}">
         <div class="appointment-list-container">
@@ -58,14 +65,9 @@
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
                         <td class="text-cell"><c:out value="${appointment.address}"/></td>
                         <td class="cancel-cell">
-                          <c:url var="cancelUrl" value="/patientCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}" />
-                          <c:set var="confirmText">
-                            <spring:message code="appointments.cancel"/>
-                          </c:set>
-                          <c:set var="cancelText">
-                            <spring:message code="appointments.dismiss"/>
-                          </c:set>
-                          <form action="${cancelUrl}" method="post">
+                          <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
+                            <form:hidden path="shiftId" value="${appointment.shiftId}" />
+                            <form:hidden path="date" value="${appointment.date}" />
                             <button
                               class="cancel-button"
                               type="button"
@@ -75,7 +77,7 @@
                                 <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
                               </svg>
                             </button>
-                          </form>
+                          </form:form>
                         </td>
                       </tr>
                     </c:forEach>
@@ -175,24 +177,19 @@
                         <td class="text-cell"><c:out value="${formattedDate}"/></td>
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}"/></td>
                         <td class="cancel-cell">
-                          <c:url var="doctorCancelUrl" value="/doctorCancelAppointment/${user.id}/${appointment.shiftId}/${appointment.date}" />
-                          <c:set var="confirmText">
-                            <spring:message code="appointments.cancel"/>
-                          </c:set>
-                          <c:set var="cancelText">
-                            <spring:message code="appointments.dismiss"/>
-                          </c:set>
-                          <form action="${doctorCancelUrl}" method="post">
+                          <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
+                            <form:hidden path="shiftId" value="${appointment.shiftId}" />
+                            <form:hidden path="date" value="${appointment.date}" />
                             <button
                               class="cancel-button"
                               type="button"
                               onclick="openConfirmDialog(this.form, '${confirmationMessage}', null, '${confirmText}', '${cancelText}')"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
+                                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
                               </svg>
                             </button>
-                          </form>
+                          </form:form>
                         </td>
                       </tr>
                     </c:forEach>
@@ -272,13 +269,17 @@
                             <spring:message code="appointments.remove"/>
                           </c:set>
                           <c:set var="cancelRemoveText">
-                            <spring:message code="appointments.cancel"/>
+                            <spring:message code="appointments.dismiss"/>
                           </c:set>
-                          <form
-                            action="/removeAppointment/${appointment.shiftId}/${appointment.date}"
+                          <c:url var="removeUrl" value="/removeAppointment" />
+                          <form:form
+                            modelAttribute="takeTurnForm"
+                            action="${removeUrl}"
                             method="post"
                             id="removeAppointmentForm"
                           >
+                            <form:hidden path="shiftId" value="${appointment.shiftId}" />
+                            <form:hidden path="date" value="${appointment.date}" />
                             <button
                               class="cancel-button"
                               type="button"
@@ -288,7 +289,7 @@
                                 <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
                               </svg>
                             </button>
-                          </form>
+                          </form:form>
                         </td>
                       </tr>
                     </c:forEach>
