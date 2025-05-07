@@ -100,8 +100,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDoc(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
@@ -111,7 +109,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDateIsNull(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
@@ -122,7 +119,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDateIsBeforeNowDay(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
@@ -133,7 +129,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDateIsBeforeNowTime(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT_00));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
@@ -144,7 +139,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDateWrongWeekday(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT_WRONG_WEEKDAY));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
@@ -155,7 +149,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentTakenApp(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.of(APP));
@@ -167,7 +160,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentCreateFailure(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.empty());
@@ -180,7 +172,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentCreate(){
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.empty());
@@ -208,7 +199,7 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
-        );
+        ).getMessage().contains("Patient");
     }
 
     @Test
@@ -219,25 +210,22 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
-        );
+        ).getMessage().contains("Shift not found");
     }
 
     @Test
     public void testCancelAppointmentNonexistentDoc(){
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.of(APP));
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
-        );
+        ).getMessage().contains("Doctor");
     }
 
     @Test
     public void testCancelAppointmentUnauthUser(){
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.of(APP));
-        Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
