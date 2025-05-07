@@ -210,9 +210,7 @@ public class AppointmentsJdbcDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
     public void testRemoveAppointment(){
-        final Appointment APP = TestData.Appointments.appointment;
         final long SHIFT_ID = TestData.Appointments.appointment.getShiftId();
-        final Appointment APP2 = TestData.Appointments.appointment2;
         final long SHIFT2_ID = TestData.Appointments.appointment2.getShiftId();
         final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
 

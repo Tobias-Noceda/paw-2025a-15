@@ -1,7 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import static org.mockito.Answers.valueOf;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -18,11 +16,9 @@ import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -32,10 +28,8 @@ public class AppointmentServiceImplTest {
     private static final long PATIENT_ID = 1L;
     private static final String PATIENT_EMAIL = "grace@example.com";
     private static final String PATIENT_NAME = "grace";
-    private static final String PATIENT_NAME2 = "gracie";
     private static final String PATIENT_PASSWORD = "goodgraces";
     private static final String PATIENT_TELEPHONE = "1144445555";
-    private static final String PATIENT_TELEPHONE2 = "1144446666";
     private static final UserRoleEnum PATIENT_ROLE = UserRoleEnum.PATIENT;
     private static final LocaleEnum PATIENT_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
@@ -50,10 +44,7 @@ public class AppointmentServiceImplTest {
     private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
     private static final User DOC = new User(DOC_ID, DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, DOC_CREATE_DATE, DOC_LOCALE);
-    private static final String DOC_LICENCE = "med-licence";
-    private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
-    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC_ID, DOC_LICENCE, DOC_SPECIALTY);
-
+    
     private static final long SHIFT_ID = 1L;
     private static final String ADDRESS = "fake123";
     private static final LocalTime START_TIME = LocalTime.parse("10:00:00");
