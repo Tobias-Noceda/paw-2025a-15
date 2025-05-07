@@ -1,4 +1,6 @@
 package ar.edu.itba.paw.models;
+//TODO: sino se usa borrar, si se usa tener cuidado q en la db no hay AGE hay BIRTHDATE
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 public class PatientView {
     private final long id;

@@ -2,50 +2,86 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="<c:url value="/css/main.css"/>" />
-    <link rel="stylesheet" href="<c:url value="/css/file-charge.css"/>" />
-    <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
-  </head>
-  <body>
-    <div class="page-container">
-      <h1 style="margin: 0;"><spring:message code="uploadStudies.title" arguments="${patient.name}" htmlEscape="true"></spring:message></h1>
-      <div class="upload-card">
-        <c:url value='/upload-file/${patient.id}' var="uploadUrl" />
-        <form:form modelAttribute="createStudyForm" method="post" action="${uploadUrl}" enctype="multipart/form-data">
-          <div class="file-container">
-            <input name="file" type="file" accept=".png, .jpg, .jpeg, .pdf">
-          </div>
-          <div class="field-container">
-            <form:errors path="type" cssClass="form-error" element="p"/>
-            <div class="field-info-container">
-              <form:label cssClass="form-title" path="type">
-                <p><spring:message code="createStudy.type"/>:</p>
-              </form:label>
-              <form:select  path="type" cssClass="form-select">
-                <form:options items="${studyTypeSelectItems}" itemValue="name" itemLabel="displayName" />
-              </form:select>
-            </div>
-          </div>
-          <div class="field-container">
-            <form:errors path="date" cssClass="form-error" element="p"/>
-            <div class="field-info-container">
-              <form:label cssClass="form-title" path="date">
-                  <p><spring:message code="createStudy.date"/>:</p>
-              </form:label>
-              <form:input type="date" path="date" cssClass="form-input" />
-            </div>
-          </div>
-          <p class="description-label"><spring:message code="uploadStudies.description"></spring:message></p>
-          <div class="description-container">
-            <form:input type="text" path="comment" class="upload-input"/>
-            <button type="submit" class="upload-button"><spring:message code="uploadStudies.button"></spring:message></button>
-          </div>
-        </form:form>
+<head>
+  <meta charset="UTF-8"/>
+  <title>
+    <spring:message code="uploadStudies.title" arguments="${patient.name}" />
+  </title>
+  <link rel="stylesheet" href="<c:url value='/css/main.css'/>" />
+  <link rel="stylesheet" href="<c:url value='/css/file-charge.css'/>" />
+  <!-- cargamos sólo nuestro CSS de estudio -->
+  <link rel="stylesheet" href="<c:url value='/css/study-form.css'/>" />
+</head>
+<body>
+<jsp:include page="components/header.jsp">
+  <jsp:param name="username"  value="${user.name}"/>
+  <jsp:param name="id" value="${user.id}"/>
+  <jsp:param name="role"      value="${user.role}"/>
+</jsp:include>
+
+<div class="study-page-container">
+  <div class="study-card">
+    <h2>
+      <spring:message code="uploadStudies.title" arguments="${patient.name}" />
+    </h2>
+
+    <c:url value="/upload-study/${patient.id}" var="uploadUrl" />
+    <form:form
+            modelAttribute="createStudyForm"
+            method="post"
+            action="${uploadUrl}"
+            enctype="multipart/form-data"
+            class="study-form">
+
+      <!-- File -->
+      <div class="sf-field">
+        <label for="file">
+          <spring:message code="uploadStudies.fileLabel"/>:
+        </label>
+        <input id="file"
+               type="file"
+               name="file"
+               accept=".png,.jpg,.jpeg,.pdf" />
       </div>
+
+      <!-- Type -->
+      <div class="sf-field">
+        <label for="type">
+          <spring:message code="createStudy.type"/>:
+        </label>
+        <form:select id="type" path="type">
+          <form:options
+                  items="${studyTypeSelectItems}"
+                  itemValue="name"
+                  itemLabel="displayName" />
+        </form:select>
+        <form:errors path="type" cssClass="sf-error"/>
       </div>
-    </div>
-  </body>
+
+      <!-- Date -->
+      <div class="sf-field">
+        <label for="date">
+          <spring:message code="createStudy.date"/>:
+        </label>
+        <form:input id="date" value="${today}" type="date" path="date"/>
+        <form:errors path="date" cssClass="sf-error"/>
+      </div>
+
+      <!-- Comment -->
+      <div class="sf-field">
+        <label for="comment">
+          <spring:message code="uploadStudies.description"/>:
+        </label>
+        <form:input id="comment" type="text" path="comment"/>
+      </div>
+
+      <button type="submit" class="sf-button">
+        <spring:message code="uploadStudies.button"/>
+      </button>
+    </form:form>
+  </div>
+</div>
+</body>
 </html>

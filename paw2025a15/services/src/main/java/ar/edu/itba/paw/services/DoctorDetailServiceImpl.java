@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.models.AccessLevelEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.SpecialtyEnum;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
@@ -33,33 +34,13 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPage(int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPage(page, pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy,page, pageSize);
     }
 
     @Override
-    public int getTotalDoctors() {
-        return doctorDetailDao.getTotalDoctors();
-    }
-
-    @Override
-    public List<DoctorView> findDoctorsPageByName(String name, int page, int pageSize) {
-        return doctorDetailDao.findDoctorsPageByName(name, page, pageSize);
-    }
-
-    @Override
-    public int getTotalDoctorsByName(String name) {
-        return doctorDetailDao.getTotalDoctorsByName(name);
-    }
-
-    @Override
-    public List<DoctorView> getFilteredDoctorsPage(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, int page, int pageSize) {
-        return doctorDetailDao.getFilteredDoctorsPage(specialty, insurance, weekday, page, pageSize);
-    }
-
-    @Override
-    public int getTotalFilteredDoctors(SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
-        return doctorDetailDao.getTotalFilteredDoctors(specialty, insurance, weekday);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
+        return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
 
     @Override
@@ -77,16 +58,14 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         }
     }
 
-    @Override
-    public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
+    private void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
         if(accessLevels==null || accessLevels.isEmpty()) return;
         for (AccessLevelEnum accessLevel: accessLevels) {
             doctorDetailDao.authDoctor(patientId, doctorId, accessLevel);
         }
     }
 
-    @Override
-    public void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
+    private void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
         if(accessLevels==null || accessLevels.isEmpty()) return;
         if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
             doctorDetailDao.unauthDoctorAllAccessLevels(patientId, doctorId);
@@ -100,11 +79,6 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
         return doctorDetailDao.hasAuthDoctor(patientId, doctorId);
-    }
-
-    @Override
-    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        return doctorDetailDao.hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel);
     }
 
     @Override

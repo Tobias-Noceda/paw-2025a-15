@@ -13,7 +13,7 @@
   <body>
     <jsp:include page="components/header.jsp">
       <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="id" value="${user.id}"/>
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container" style="flex-direction: row;">
@@ -21,10 +21,10 @@
         <div class="patient-info">
           <h2 class="patient-name"><c:out value="${patient.name}"/></h2>
           <div class="patient-image">
-            <img src="<c:url value='/supersecret/files/${patient.pictureId}'/>" alt="Doctor Image" />
+            <img src="<c:url value='/supersecret/user-profile-pic/${patient.id}'/>" alt="Doctor Image" />
           </div>
           <div class="upload-button-div">
-            <a href="<c:url value='/upload-file/${patient.id}'/>" class="upload-button">
+            <a href="<c:url value='/upload-study/${patient.id}'/>" class="upload-button">
               <spring:message code="patient.details.upload.label"/>
             </a>
           </div>
@@ -216,7 +216,7 @@
               <table class="studies-table">
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
-                    <c:url value="/supersecret/files/${study.fileId}" var="studyLink" />
+                    <c:url value="/view-study/${study.id}" var="studyLink" />
                     <c:set var="studyName">
                       <spring:message code="studyType.${study.type}"/>_${study.studyDate}
                     </c:set>

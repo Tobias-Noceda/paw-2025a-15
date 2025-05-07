@@ -1,6 +1,6 @@
 :root {
     --font-family: 'Inter', sans-serif;
-    --clr-bg: #f0f4fa;
+    --clr-bg: #d8eeff;
     --clr-card: #ffffff;
     --clr-primary: #4f83cc;
     --clr-primary-hover: #3b6fa8;
@@ -82,9 +82,9 @@ body {
 }
 
 .field-container label {
-    font-size: 0.9rem;
     margin-bottom: 6px;
     font-weight: 500;
+    color: var(--sf-clr-text);
 }
 
 .input-field {
@@ -93,12 +93,14 @@ body {
     border: 1px solid #d0d5dd;
     border-radius: var(--radius);
     transition: border-color var(--transition);
+    resize:none;
 }
 
 .input-field:focus {
     outline: none;
     border-color: var(--clr-primary);
 }
+
 
 .btn-primary {
     width: 100%;
@@ -146,4 +148,229 @@ body {
 
 .hidden-file-input {
     display: none;
+}
+
+.toast {
+
+    position: fixed;
+
+    top: 1rem;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    background-color: #e6f9ec;    /* pastel green claro */
+
+    border-left: 4px solid #66c17e; /* verde un poco más oscuro */
+
+    padding: 0.75rem 1rem;
+
+    border-radius: 6px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+    font-family: Inter, sans-serif;
+
+    color: #2a6f3a;
+
+    min-width: 260px;
+
+    animation: slideDown 0.3s ease-out;
+
+    z-index: 1000;
+
+}
+
+
+/* Icono ✔️ */
+
+.toast-icon {
+
+    margin-right: 0.5rem;
+
+    font-size: 1.1rem;
+
+}
+
+
+/* Texto */
+
+.toast-text {
+
+    flex: 1;
+
+    font-size: 0.95rem;
+
+}
+
+
+/* Botón de cerrar */
+
+.toast-close {
+
+    background: none;
+
+    border: none;
+
+    font-size: 1.2rem;
+
+    line-height: 1;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    padding: 0 0.25rem;
+
+}
+
+
+/* Animación de entrada */
+
+@keyframes slideDown {
+
+    from { opacity: 0; transform: translate(-50%, -20px); }
+
+    to   { opacity: 1; transform: translate(-50%, 0); }
+
+}
+
+
+/* Clase para desvanecer antes de borrar */
+
+.toast.hide {
+
+    animation: fadeOut 0.5s forwards;
+
+}
+
+
+@keyframes fadeOut {
+
+    to { opacity: 0; transform: translate(-50%, -20px); }
+
+}
+
+
+
+/* ─── WEEKDAY PILLS ───────────────────────────────────── */
+.weekday-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.weekday-btn {
+    position: relative;
+    /* inline-block para auto-ajustar al tamaño de la “píldora” */
+    display: inline-block;
+}
+
+/* El checkbox real: invisible pero operativo y encima de todo */
+.weekday-btn > .weekday-checkbox {
+    position: absolute;
+    top:    0;
+    left:   0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding:0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+/* La “píldora” que ve el usuario */
+.weekday-btn > .weekday-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: var(--clr-card);
+    border: 1px solid var(--clr-text-muted);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    transition:
+            background var(--transition),
+            border-color var(--transition),
+            color var(--transition);
+}
+
+/* Estado “checked” */
+.weekday-btn > .weekday-checkbox:checked + .weekday-label {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+/* Hover visual extra */
+.weekday-btn:hover > .weekday-label {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-card);
+}
+
+.insurance-toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.insurance-btn {
+    position: relative;
+    display: inline-block;
+}
+
+.insurance-checkbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.insurance-label {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background-color: var(--clr-card);
+    border: 1px solid var(--clr-text-muted);
+    font-size: 0.9rem;
+    color: var(--clr-text);
+    transition: background var(--transition),
+    border-color var(--transition),
+    color var(--transition);
+}
+
+/* usa esto: */
+
+.insurance-checkbox:checked ~ .insurance-label {
+
+    background-color: var(--clr-primary);
+
+    border-color: var(--clr-primary);
+
+    color: var(--clr-card);
+
+}
+
+.insurance-btn:hover > .insurance-label {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-card);
 }

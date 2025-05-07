@@ -1,54 +1,70 @@
 package ar.edu.itba.paw.form;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
+import ar.edu.itba.paw.form.constraints.PastDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import ar.edu.itba.paw.models.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class ProfileForm {//TODO constraints en Strings por el largo del input, prob tmb una que prevenga sql injection
     
     MultipartFile profileImage;
 
-    @Size(min = 5, max = 15, message = "Phone number must be between 5 and 15 characters")
+    @Size(min = 5, max = 15, message = "{form.phoneNumber.invalid}")
     String phoneNumber;
 
-    @Min(value = 0, message = "Age cannot be less than 0")
-    @Max(value = 120, message = "Age cannot be greater than 120")
+    @Positive
+    @Max(value = 140, message = "{form.age.invalid}")
     private Integer age;
+
+    @PastDate
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthDate;
 
     private BloodTypeEnum bloodType;
 
-    @Positive(message = "Height must be positive")
+    @Positive
     private Double height;
 
-    @Positive(message = "Weight must be positive")
+    @Positive
     private Double weight;
 
     private Boolean smokes;
 
     private Boolean drinks;
 
-    @Size(max = 250, message = "Medications field cannot exceed 250 characters")
+    @Size(max = 250)
     private String meds;
 
-    @Size(max = 250, message = "Medications field cannot exceed 250 characters")
+    @Size(max = 250)
     private String conditions;
 
-    @Size(max = 250, message = "Medications field cannot exceed 250 characters")
+    @Size(max = 250)
     private String allergies;
 
-    @Size(max = 100, message = "Medications field cannot exceed 100 characters")
+    @Size(max = 100)
     private String diet;
 
-    @Size(max = 100, message = "Medications field cannot exceed 100 characters")
+    @Size(max = 100)
     private String hobbies;
 
-    @Size(max = 50, message = "Medications field cannot exceed 50 characters")
+    @Size(max = 50)
     private String job;
+
+    private List<Long> insurances;
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
 
     public MultipartFile getProfileImage() {
         return profileImage;
@@ -162,4 +178,7 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
         return job;
     }
 
+    public List<Long> getInsurances() { return insurances; }
+
+    public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
 }

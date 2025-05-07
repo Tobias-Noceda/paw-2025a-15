@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+
 public class DoctorDetail {
     private final long doctorId;
     private final String licence;

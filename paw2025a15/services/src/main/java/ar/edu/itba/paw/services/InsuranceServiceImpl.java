@@ -7,13 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.InsuranceDao;
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
 
 @Service
 public class InsuranceServiceImpl implements InsuranceService{
 
+    @Autowired
     private final InsuranceDao insuranceDao;
+
+    @Autowired
+    private FileService fs;
 
     @Autowired
     public InsuranceServiceImpl(final InsuranceDao insuranceDao){
@@ -40,6 +46,14 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public List<Insurance> getAllInsurances() {
         return insuranceDao.getAllInsurances();
+    }
+
+    @Override
+    public Optional<File> getInsurancePicture(long id) {
+        Insurance insurance = insuranceDao.getInsuranceById(id).orElse(null);
+        if (insurance == null) return Optional.empty();
+
+        return fs.findById(insurance.getPictureId());
     }
 
 }

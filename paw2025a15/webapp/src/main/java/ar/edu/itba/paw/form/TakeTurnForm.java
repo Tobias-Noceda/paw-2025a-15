@@ -1,11 +1,21 @@
 package ar.edu.itba.paw.form;
 
+import java.time.LocalDate;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import ar.edu.itba.paw.form.constraints.AvailableTurn;
 
 @AvailableTurn
 public class TakeTurnForm {
+    @NotNull
     private int shiftId;
-    private String date;
+
+    @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
 
     public int getShiftId() {
         return shiftId;
@@ -15,11 +25,11 @@ public class TakeTurnForm {
         this.shiftId = shiftId;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -21,15 +22,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
-import ar.edu.itba.paw.form.LabForm;
 import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
@@ -56,12 +56,17 @@ public class RegisterController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    private void loginUser(String email, String password) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication auth = authenticationManager.authenticate(authReq);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+    @RequestMapping("/register")
+    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale,  @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
+        final ModelAndView mav = new ModelAndView("doctorForm");
+        mav.addObject("doctor", form);
+        mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
+        mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
+        return mav;
     }
-
+    
     @RequestMapping(value = "/createPatient", method = RequestMethod.POST)
     public ModelAndView registerForm(
             @Valid @ModelAttribute("registerPatientForm") final PatientForm form,
@@ -126,6 +131,9 @@ public class RegisterController {
         } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
             errors.rejectValue("email", "error.emailExists");
             isValid = false;
+        } else if (!isRangeValid(form.getSchedules().getStartTime(), form.getSchedules().getEndTime())) {
+            errors.rejectValue("schedules.endTime","error.invalidRange");
+            isValid = false;
         } else {
             try {
                 // Crear el médico
@@ -138,7 +146,7 @@ public class RegisterController {
                         form.getSpeciality(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                dcs.addCoverages(doc.getId(), form.getObrasSociales());
+                dcs.setCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),
@@ -168,38 +176,17 @@ public class RegisterController {
         }
     }
 
+    private static boolean isRangeValid(String startTime, String endTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime start = LocalTime.parse(startTime, formatter);
+        LocalTime end = LocalTime.parse(endTime, formatter);
+        
+        return start.isBefore(end);
+    }
 
-    @RequestMapping(value = "/createLab", method = RequestMethod.POST)
-    public ModelAndView registerForm(
-            @Valid @ModelAttribute("registerLabForm") final LabForm form,
-            final BindingResult errors
-    ) {
-        boolean isValid = true;
-
-        if(errors.hasErrors()) {
-            isValid = false;
-        } else if (!form.getPassword().equals(form.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "error.passwordMismatch");
-            isValid = false;
-        } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists");
-            isValid = false;
-        } else {
-            try {
-                // TODO: Crear el laboratorio
-            } catch (Exception e) {
-                errors.reject("error.registerLaboratoryFailed");
-                isValid = false;
-            }
-        }
-
-        if(!isValid) {
-            final ModelAndView mav = new ModelAndView("labForm");
-            mav.addObject("lab", form);
-            return mav;
-        } else {
-            return new ModelAndView("redirect:/");
-        }
-
+    private void loginUser(String email, String password) {
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authenticationManager.authenticate(authReq);
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

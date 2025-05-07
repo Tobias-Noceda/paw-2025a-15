@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.WeekdayEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
 public class DoctorShiftJdbcDao implements DoctorShiftDao{
@@ -57,18 +57,6 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE doctor_id = ?", new Object[]  {doctorId},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER);
     }
-
-    @Override
-    public List<DoctorShift> getShiftsByDoctorIdAndWeekday(long doctorId, WeekdayEnum weekday) {
-        return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE doctor_id = ? AND shift_weekday = ?", new Object[]  {doctorId, weekday.ordinal()},
-          new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER}, ROW_MAPPER);
-    }
-
-    @Override
-    public List<DoctorShift> getShiftsByDoctorIdAndWeekdayAndStartTime(long doctorId, WeekdayEnum weekday, LocalTime startTime) {
-        return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE doctor_id = ? AND shift_weekday = ? AND shift_start_time > ?", new Object[]  {doctorId, weekday.ordinal(), startTime},
-          new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.TIME}, ROW_MAPPER);
-    }
     
     @Override
     public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date){
@@ -81,7 +69,4 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         return jdbcTemplate.query("SELECT ds.* FROM doctor_shifts AS ds WHERE ds.doctor_id = ? AND ds.shift_weekday = ? AND ds.shift_start_time > ? AND NOT EXISTS (SELECT 1 FROM appointments AS a WHERE a.appointment_date = ? AND a.shift_id = ds.shift_id)", new Object[]  {doctorId, weekday.ordinal(), time, date},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.TIME, java.sql.Types.DATE}, ROW_MAPPER);
     }
-
-
-
 }

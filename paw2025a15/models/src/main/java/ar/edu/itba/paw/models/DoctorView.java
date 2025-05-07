@@ -3,6 +3,9 @@ package ar.edu.itba.paw.models;
 import java.util.List;
 import java.util.Objects;
 
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
+
 public class DoctorView {
     private final long id;
     private final String name;

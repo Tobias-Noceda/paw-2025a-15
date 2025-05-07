@@ -4,7 +4,7 @@
    ————————————————————————————————————————————— */
 :root {
     --font-family: 'Inter', sans-serif;
-    --clr-bg: #f0f4fa;
+    --clr-bg: #d8eeff;
     --clr-card: #ffffff;
     --clr-primary: #4f83cc;
     --clr-primary-hover: #3b6fa8;
@@ -23,10 +23,12 @@
 }
 
 body {
+    flex-grow: 1;
     font-family: var(--font-family);
     background-color: var(--clr-bg);
     color: var(--clr-text);
-    min-height: 100vh;
+    margin: 0;
+    box-sizing: border-box; /* Normaliza el modelo de caja */
 }
 
 .page-container {
@@ -381,9 +383,9 @@ body {
 
 .card-grid {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: flex-start;
 }
 
 /* mensaje de “sin datos” */
@@ -458,36 +460,15 @@ body {
 /* convierte el form en un grid de 3 columnas */
 
 .landing-form {
-
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 20px;             /* espacio entre columnas y filas */
-
     align-items: end;      /* alinea los labels/selects y el botón abajo */
-
 }
 
 
 /* hace que el botón ocupe las 3 columnas completas */
 
 .landing-form .filter-button {
-
     grid-column: 1 / -1;
-
-}
-
-.doctor-landing-container {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 20px;
-
-    justify-content: center;   /* ahora centra */
-
-    margin: 0 auto;            /* opcional para asegurar centrado */
-
 }

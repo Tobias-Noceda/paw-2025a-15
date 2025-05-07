@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 @Repository
 public class StudyJdbcDao implements StudyDao{
@@ -50,9 +50,17 @@ public class StudyJdbcDao implements StudyDao{
     }
 
     @Override
-    public Optional<Study> getStudyById(long id) {
-        return jdbcTemplate.query("SELECT * FROM studies WHERE study_id = ?", new Object[]  {id},
-          new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
+    public Optional<Study> findStudyById(long id) {
+        return jdbcTemplate.query(
+            """
+                SELECT *
+                FROM studies
+                WHERE study_id = ?
+            """,
+            new Object[]  {id},
+            new int[] {java.sql.Types.BIGINT},
+            ROW_MAPPER
+        ).stream().findFirst();
     }
 
     @Override

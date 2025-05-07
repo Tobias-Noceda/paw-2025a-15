@@ -13,8 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.LocaleEnum;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 
 
 @Component

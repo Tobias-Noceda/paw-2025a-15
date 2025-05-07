@@ -10,11 +10,7 @@ import ar.edu.itba.paw.models.AppointmentData;
 public interface AppointmentDao {
     public Appointment addAppointment(long shiftId, long patientId, LocalDate date);
 
-    public List<Appointment> getAppointmentsByShiftId(long shiftId);
-
     public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);
-
-    public List<Appointment> getAppointmentsByPatientId(long patientId);
 
     public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId);
 
@@ -22,7 +18,9 @@ public interface AppointmentDao {
 
     public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId);
 
-    public List<AppointmentData> getOldAppointmentDataByDoctorId(long doctorId);
+    public List<Appointment> getAppointmentsForDate(LocalDate date);
 
     public boolean removeAppointment(long shiftId, LocalDate date);
+
+    public void clearRemovedAppointmentBeforeDate(LocalDate date);
 }

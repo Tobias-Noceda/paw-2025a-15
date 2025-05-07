@@ -7,6 +7,9 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,12 +20,11 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.lang.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -39,8 +41,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 @EnableWebMvc
 @EnableAsync
 @EnableScheduling
+@EnableCaching
 @ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
 @Configuration
+@SuppressWarnings("deprecation")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("classpath:schema.sql")
@@ -56,7 +60,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         super.addResourceHandlers(registry);
 
         registry.addResourceHandler("/css/**").addResourceLocations("/css/");
@@ -68,13 +72,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        ds.setUrl("jdbc:postgresql://localhost:5432/paw-2025a-15");
-        ds.setUsername("paw-2025a-15");
-        ds.setPassword("0meJb9emM");
+        //ds.setUrl("jdbc:postgresql://localhost:5432/paw-2025a-15");
+        //ds.setUsername("paw-2025a-15");
+        //ds.setPassword("0meJb9emM");
 
-        //ds.setUrl("jdbc:postgresql://localhost:5432/paw");
-        //ds.setUsername("root");
-        //ds.setPassword("root");
+        ds.setUrl("jdbc:postgresql://localhost:5432/paw");
+        ds.setUsername("root");
+        ds.setPassword("root");
 
         return ds;
     }
@@ -151,6 +155,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    @Override
     public LocalValidatorFactoryBean getValidator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
         bean.setValidationMessageSource(messageSource());
@@ -158,11 +163,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public TaskScheduler taskScheduler() {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(5); // you can configure how many threads
-        scheduler.setThreadNamePrefix("scheduled-task-");
-        scheduler.initialize();
-        return scheduler;
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
     }
 }

@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -46,16 +45,6 @@ public class EmailServiceImpl implements EmailService{
     private final String emailFromString = "caretracehealth@gmail.com";
 
     private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
-
-
-    private void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setFrom(emailFromString);
-        message.setText(text);
-        emailSender.send(message);
-    }
 
     private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, Locale locale) throws MessagingException{
         Context context = new Context(locale);
@@ -313,4 +302,57 @@ public class EmailServiceImpl implements EmailService{
             LOGGER.error("Error sending user reset password email to {}: {}", user.getEmail(), e.getMessage(), e);
         }
     }
+
+    @Override
+    @Async
+    public void sendPatientAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", doctor.getEmail());
+        templateModel.put("phone", doctor.getTelephone());
+        templateModel.put("shiftsLink", baseURL + "appointments/");
+
+        String subject = messageSource.getMessage("reminder.subject", null, locale);
+
+        try {
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentReminderTemplate", locale);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending patient reminder email to {}: {}", patient.getEmail(), e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Async
+    public void sendDoctorAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", patient.getEmail());
+        templateModel.put("phone", patient.getTelephone());
+        templateModel.put("uploadLink", baseURL + "appointments/");
+
+        String subject = messageSource.getMessage("reminder.subject", null, locale);
+
+        try {
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentReminderTemplate", locale);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending doctor reminder email to {}: {}", doctor.getEmail(), e.getMessage(), e);
+        }
+    }
+
+
+
 }

@@ -13,10 +13,11 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.LocaleEnum;
-import ar.edu.itba.paw.models.SpecialtyEnum;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,16 +34,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private FileService fs;
 
-    @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale) {
-        return userDao.create(email, password, name, telephone, role, pictureId, locale);
-    }
-
-    @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
-        return userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
-    }
-
     @Override//TODO check porfa
     public User createPatient(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale) {
         User user = userDao.create(email, password, name, telephone, role, 1, locale); // PictureId por defecto
@@ -58,45 +49,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createDoctor(String email, String password, String name, String telephone, long pictureId, String licence, SpecialtyEnum speciality, LocaleEnum locale) {
-        User doc = userDao.create(email, password, name, telephone, UserRoleEnum.DOCTOR, pictureId, locale);
-        dds.create(doc.getId(), licence, speciality);
-        return doc;
+    public Optional<User> getUserById(long id) {
+        return userDao.getUserById(id);
     }
 
     @Override
-    public Optional<User> getUserById(long id) {
-        return userDao.getUserById(id);
+    public Optional<File> getUserPicture(long id) {
+        User user = userDao.getUserById(id).orElse(null);
+        if (user == null) return Optional.empty();
+
+        return fs.findById(user.getPictureId());
     }
 
     @Override
     public Optional<User> getUserByEmail(String email) {
         return userDao.getUserByEmail(email);
     }
-
-    @Override
-    public List<User> getAuthPatientsPageByDoctorId(long id, int page, int pageSize) {
-        return userDao.getAuthPatientsPageByDoctorId(id, page, pageSize);
-    }
-
-    @Override
-    public int getAuthPatientsCountByDoctorId(long id) {
-        return userDao.getAuthPatientsCountByDoctorId(id);
-    }
     
     @Override
-    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
+    public List<User> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         return userDao.searchAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize);
     }
 
     @Override
-    public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
+    public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
         return userDao.searchAuthPatientsCountByDoctorIdAndName(doctorId, name);
-    }
-
-    @Override
-    public void changePassword(String email, String password) {
-        userDao.changePassword(email, password);
     }
 
     @Override
@@ -105,22 +82,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public  void updatePhoneNumber(long id, String number){ userDao.UpdatePhoneNumber(id, number); }
-
-    @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
         if(getUserById(id).isPresent() && fs.findById(pictureId).isPresent()) userDao.editUser(id, name, telephone, pictureId);
     }
 
     @Override
-    public Optional<User> getCurrentUser() {
+    public User getCurrentUser() {
         Authentication session = SecurityContextHolder.getContext().getAuthentication();
 
         if (session != null) {
-            return userDao.getUserByEmail(session.getName());
+            return userDao.getUserByEmail(session.getName()).orElse(null);
         }
 
-        return Optional.empty();
+        return null;
     }
 
     @Override

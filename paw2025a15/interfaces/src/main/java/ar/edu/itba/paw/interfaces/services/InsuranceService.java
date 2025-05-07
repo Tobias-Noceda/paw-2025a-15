@@ -3,8 +3,10 @@ package ar.edu.itba.paw.interfaces.services;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
 
+// TODO: Tal vez eliminar esto
 public interface InsuranceService {
     public Insurance create(String name, long pictureId);
 
@@ -13,4 +15,6 @@ public interface InsuranceService {
     public Optional<Insurance> getInsuranceById(long id);
 
     public List<Insurance> getAllInsurances();
+
+    public Optional<File> getInsurancePicture(long id);
 }

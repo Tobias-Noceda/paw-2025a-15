@@ -122,6 +122,11 @@
     box-sizing: border-box;
 }
 
+.doctor-row:hover {
+    background: #eef;
+
+}
+
 .studies-table .deauthorize-cell {
     padding: 5px 7.5px;
     text-align: left;
@@ -277,6 +282,7 @@
     box-sizing: border-box;
 }
 
+
 .upload-button {
     background-color: #007bff;
     color: white;
@@ -311,4 +317,42 @@
     .studies-table-body::-webkit-scrollbar-thumb:hover {
         background-color: #0e3b6b;
     }
+}
+.input-field {
+    padding: 6px 8px;
+    font-size: 0.875rem;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+    resize: none;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--clr-primary);
+}
+
+
+
+.filter-button {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 4px 8px; /* Espaciado compacto */
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    line-height: 1;
+}
+.filter-button:hover {
+    background-color: #0056b3;
+}
+
+.filter-button-div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }

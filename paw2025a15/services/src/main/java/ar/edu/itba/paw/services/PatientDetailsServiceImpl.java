@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,8 @@ import org.springframework.stereotype.Service;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.models.BloodTypeEnum;
 import ar.edu.itba.paw.models.PatientDetail;
-import ar.edu.itba.paw.models.PatientView;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 @Service
 public class PatientDetailsServiceImpl implements PatientDetailService{
@@ -18,10 +18,10 @@ public class PatientDetailsServiceImpl implements PatientDetailService{
     private PatientDetailDao patientDetailDao;
 
     @Override
-    public PatientDetail create(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+    public PatientDetail create(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
-        return patientDetailDao.create(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+        return patientDetailDao.create(patientId, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
     }
 
     @Override
@@ -30,15 +30,10 @@ public class PatientDetailsServiceImpl implements PatientDetailService{
     }
 
     @Override
-    public Optional<PatientView> getPatientByDoctorId(long patientId, long doctorId) {
-        return patientDetailDao.getPatientByDoctorId(patientId, doctorId);
-    }
-
-    @Override
-    public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+    public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
-        patientDetailDao.updatePatientDetails(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+        patientDetailDao.updatePatientDetails(patientId, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
     }
     
 }
