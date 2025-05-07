@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +20,7 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -90,30 +90,31 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
             types.add(java.sql.Types.VARCHAR);
         }
         if(orderBy!=null) {
-            if (orderBy.equals(DoctorOrderEnum.M_RECENT)) {
-                query.append(" ORDER BY u.create_date DESC ");
-            } else if (orderBy.equals(DoctorOrderEnum.L_RECENT)) {
-                query.append(" ORDER BY u.create_date ASC ");
-            }else if(orderBy.equals(DoctorOrderEnum.M_POPULAR)){
-                query.append("""
-                                LEFT JOIN (
-                                    SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
-                                    FROM appointments a
-                                    JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
-                                    GROUP BY ds.doctor_id
-                                ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
-                                ORDER BY COALESCE(app_counts.reserved_appointments, 0) DESC
-                            """);
-            }else{
-                query.append("""
-                                LEFT JOIN (
-                                    SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
-                                    FROM appointments a
-                                    JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
-                                    GROUP BY ds.doctor_id
-                                ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
-                                ORDER BY COALESCE(app_counts.reserved_appointments, 0) ASC
-                            """);
+            switch (orderBy) {
+                case M_RECENT -> query.append(" ORDER BY u.create_date DESC ");
+                case L_RECENT -> query.append(" ORDER BY u.create_date ASC ");
+                case M_POPULAR -> query.append(
+                    """
+                        LEFT JOIN (
+                            SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
+                            FROM appointments a
+                            JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
+                            GROUP BY ds.doctor_id
+                        ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
+                        ORDER BY COALESCE(app_counts.reserved_appointments, 0) DESC
+                    """
+                );
+                default -> query.append(
+                    """
+                        LEFT JOIN (
+                            SELECT ds.doctor_id, COUNT(*) AS reserved_appointments
+                            FROM appointments a
+                            JOIN doctor_shifts ds ON a.shift_id = ds.shift_id
+                            GROUP BY ds.doctor_id
+                        ) AS app_counts ON dd.doctor_id = app_counts.doctor_id
+                        ORDER BY COALESCE(app_counts.reserved_appointments, 0) ASC
+                    """
+                );
             }
 
         }
@@ -168,7 +169,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
         return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
+                "SELECT DISTINCT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
                 new Object[]{id},
                 new int[]{ java.sql.Types.BIGINT },
                 DV_ROW_MAPPER

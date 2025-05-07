@@ -6,12 +6,8 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.form.FileFilterForm;
-import ar.edu.itba.paw.form.SearchForm;
-import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.CreateStudyForm;
+import ar.edu.itba.paw.form.FileFilterForm;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
@@ -33,6 +30,7 @@ import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
 public class StudyController {
@@ -55,12 +53,11 @@ public class StudyController {
     @Autowired
     private MessageSource messageSource;
 
-    // TODO: rename to upload-study
-    @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.GET)
+    @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
-        @ModelAttribute("searchForm") final SearchForm searchForm
+        @ModelAttribute("landingForm") final LandingForm landingForm
         ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
@@ -70,18 +67,18 @@ public class StudyController {
 
         ModelAndView mav = new ModelAndView("createStudy");
         mav.addObject("patient", patient);
+        mav.addObject("user", us.getCurrentUser());
         mav.addObject("patientId", patientId);
         mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());
-
 
         return mav;
     }
 
-    @RequestMapping(path = "/upload-file/{patientId:\\d+}", method = RequestMethod.POST)
+    @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.POST)
     public ModelAndView createStudy(
         @PathVariable("patientId") int patientId,
         @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
-        @ModelAttribute("searchForm") final SearchForm searchForm,
+        @ModelAttribute("landingForm") final LandingForm landingForm,
         BindingResult errors
     ) throws IOException{
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
@@ -91,7 +88,7 @@ public class StudyController {
         }
 
         if (errors.hasErrors()) {
-            return createStudyForm(patientId, createStudyForm,  searchForm);
+            return createStudyForm(patientId, createStudyForm,  landingForm);
         }
         User user = us.getCurrentUser();
 
@@ -111,7 +108,6 @@ public class StudyController {
 
     @RequestMapping("/studies")
     public ModelAndView patientProfile(
-        @ModelAttribute("searchForm") SearchForm searchForm,
         @ModelAttribute("filterForm") final FileFilterForm filterForm,
         Locale locale
 
@@ -119,15 +115,11 @@ public class StudyController {
         ModelAndView mav = new ModelAndView("studies");
 
         User user = us.getCurrentUser();
-        System.out.println("Study types: " + SelectItem.getStudyTypeSelectItems(messageSource, locale).stream().map(SelectItem::getValue).toList());
-        System.out.println("Study types: " + SelectItem.getStudyTypeSelectItems(messageSource, locale).stream().map(SelectItem::getLabel).toList());
 
         mav.addObject("user", user);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
         mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
-
-
 
         mav.addObject("landingForm", new LandingForm());
         

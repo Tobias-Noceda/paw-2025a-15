@@ -61,9 +61,33 @@ public class FileController {
     @Autowired
     private PatientDetailService pds;
 
-    //===================================TODO: new, needs mappind in auth=================================================
+    @GetMapping("/favicon.ico")
+    public ResponseEntity<byte[]> getFavicon() throws IOException {
+        String path = servletContext.getRealPath("/resources/favicon.png");
+        java.io.File imgFile = new java.io.File(path);
 
-    @RequestMapping(path = "/getUserPic/{id:\\d+}", method = RequestMethod.GET)
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+        
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
+    }
+
+    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getIconForm() throws IOException {
+        String path = servletContext.getRealPath("/resources/icono.jpg");
+        java.io.File imgFile = new java.io.File(path);
+    
+        byte[] bytes = Files.readAllBytes(imgFile.toPath());
+    
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(bytes);
+    }
+
+    @RequestMapping(path = "/supersecret/user-profile-pic/{id:\\d+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> getUserPicture(@PathVariable("id") long id){
         Optional<File> f = us.getUserPicture(id);
         if (!f.isPresent()) {
@@ -86,7 +110,7 @@ public class FileController {
                 .body(content);
     }
 
-    @RequestMapping(path = "/getInsurancePic/{id:\\d+}", method = RequestMethod.GET)
+    @RequestMapping(path = "/supersecret/insurance-picture/{id:\\d+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> getInsurancePicture(@PathVariable("id") long id){
         Optional<File> f = is.getInsurancePicture(id);
         if (!f.isPresent()) {
@@ -109,7 +133,7 @@ public class FileController {
                 .body(content);
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/getStudy/{id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
+    @RequestMapping(method=RequestMethod.GET, path="/view-study/{id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getStudy(@PathVariable("id") long id){
         Optional<File> f = ss.getStudyFile(id);
         if (!f.isPresent()) {
@@ -130,20 +154,8 @@ public class FileController {
         return ResponseEntity
                 .ok()
                 .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"file_" + id + getExtension(fileType) + "\"")
                 .body(content);
-    }
-
-    //====================================================================================================================
-
-    @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
-    public ModelAndView getImageForm(){
-        return new ModelAndView("createFile");
-    }
-
-    @RequestMapping(path = "/supersecret/file", method = RequestMethod.POST)
-    public ModelAndView createImage(@RequestParam("file") MultipartFile file) throws IOException{
-        File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
-        return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
@@ -177,63 +189,12 @@ public class FileController {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
         }else {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
-        }//TODO:en vez de calcular el birthdate por la age deberia ser al reves. pedir input de birthdate directamente
+        }
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             //pds.updatePatientDetails(user.getId(), LocalDate.of(LocalDate.now().getYear() - profileForm.getAge(), 1, 1), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
             pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
         }
         return new ModelAndView("redirect:/profile");
-    }
-
-    @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getIconForm() throws IOException {
-        String path = servletContext.getRealPath("/resources/icono.jpg");
-        java.io.File imgFile = new java.io.File(path);
-    
-        byte[] bytes = Files.readAllBytes(imgFile.toPath());
-    
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(bytes);
-    }
-
-    @GetMapping("/favicon.ico")
-    public ResponseEntity<byte[]> getFavicon() throws IOException {
-        String path = servletContext.getRealPath("/resources/favicon.png");
-        java.io.File imgFile = new java.io.File(path);
-
-        byte[] bytes = Files.readAllBytes(imgFile.toPath());
-        
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(bytes);
-    }
-
-    @RequestMapping(method=RequestMethod.GET, path="/supersecret/files/{file_id:\\d+}")//TODO necesita re filtrado por roles y accesos en auth esto
-    public @ResponseBody ResponseEntity<byte[]> getImage(@PathVariable("file_id") long id){
-        Optional<File> f = fs.findById(id);
-        if (!f.isPresent()) {
-            throw new NoSuchElementException("File not found with ID: " + id);
-        }
-        
-        byte[] content = f.get().getContent();
-        FileTypeEnum fileType = f.get().getType();
-        
-        MediaType mediaType;
-        mediaType = switch (fileType) {
-            case PNG -> MediaType.IMAGE_PNG;
-            case JPEG -> MediaType.IMAGE_JPEG;
-            case PDF -> MediaType.APPLICATION_PDF;
-            default -> MediaType.APPLICATION_OCTET_STREAM;
-        };
-
-        return ResponseEntity
-                .ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"file_" + id + getExtension(fileType) + "\"")
-                .body(content);
     }
 
     private String getExtension(FileTypeEnum mediaType) {
@@ -243,5 +204,17 @@ public class FileController {
             case PDF -> ".pdf";
             default -> "";
         };
+    }
+
+    // TODO: Delete
+    @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
+    public ModelAndView getImageForm(){
+        return new ModelAndView("createFile");
+    }
+
+    @RequestMapping(path = "/supersecret/file", method = RequestMethod.POST)
+    public ModelAndView createImage(@RequestParam("file") MultipartFile file) throws IOException{
+        File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
+        return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 }

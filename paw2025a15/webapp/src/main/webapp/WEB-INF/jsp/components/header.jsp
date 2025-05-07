@@ -70,7 +70,7 @@
       <c:if test="${pageContext.request.userPrincipal != null}">
         <button id="userBtn" class="user-btn" onclick="toggleUserDropdown()">
           <div class="user-image">
-            <img  src="<c:url value='/supersecret/files/${param.pictureId}'/>" alt="User Image" />
+            <img src="<c:url value='/supersecret/user-profile-pic/${param.id}'/>" alt="User Image" />
           </div>
           <div class="user-info">
             <p class="user-name"><c:out value="${param.username}"/></p>

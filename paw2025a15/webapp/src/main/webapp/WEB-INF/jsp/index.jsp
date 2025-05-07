@@ -15,7 +15,7 @@
   </head>
   <body class="landing-page">
     <jsp:include page="components/header.jsp"> <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="pictureId" value="${user.pictureId}"/> <jsp:param name="role" value="${user.role}"/>
+      <jsp:param name="id" value="${user.id}"/> <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container">
 
@@ -35,14 +35,39 @@
               <form:label path="insurances" class="field-label">
                 <spring:message code="doctorForm.obrasSociales"/>
               </form:label>
-              <form:select path="insurances" class="filter-select">
-                <form:option value="">
-                  <spring:message code="landing.filter.insurances"/>
-                </form:option>
-                <form:options items="${insurances}"
-                              itemLabel="name"
-                              itemValue="id"/>
-              </form:select>
+              <div class="custom-select">
+                <div class="select-box">
+                  <span class="select-text">
+                    <c:choose>
+                      <c:when test="${not empty filterForm.insurances}">
+                        <c:forEach var="insurance" items="${insurances}">
+                          <c:if test="${insurance.id == filterForm.insurances}">
+                            ${insurance.name}
+                          </c:if>
+                        </c:forEach>
+                      </c:when>
+                      <c:otherwise>
+                        <spring:message code="landing.filter.insurances"/>
+                      </c:otherwise>
+                    </c:choose>
+                  </span>
+                  <div class="select-arrow"></div>
+                </div>
+                <ul class="options-list">
+                  <li class="option" data-value="">
+                    <span class="option-image"></span>
+                    <span class="option-text"><spring:message code="landing.filter.insurances"/></span>
+                  </li>
+
+                  <c:forEach var="insurance" items="${insurances}">
+                    <li class="option" data-value="${insurance.id}">
+                      <img src="<c:url value='/supersecret/insurance-picture/${insurance.id}'/>" alt="${insurance.name}" class="option-image" />
+                      <span class="option-text">${insurance.name}</span>
+                    </li>
+                  </c:forEach>
+                </ul>
+              </div>
+              <input type="hidden" id="selectedInsurance" name="insurances" value="${filterForm.insurances}" />
             </div>
 
             <!-- Día -->
@@ -223,5 +248,48 @@
         </form:form>
       </c:if>
     </div>
+    <script>
+      document.querySelectorAll('.custom-select').forEach(select => {
+        const box = select.querySelector('.select-box');
+        const optionsList = select.querySelector('.options-list');
+        const options = optionsList.querySelectorAll('.option');
+        const textSpan = box.querySelector('.select-text');
+        const hiddenInput = document.querySelector('#selectedInsurance');
+
+        box.addEventListener('click', (e) => {
+          document.querySelectorAll('.options-list').forEach(o => {
+            if (o !== optionsList) o.classList.remove('show');
+          });
+          optionsList.classList.toggle('show');
+          e.stopPropagation();
+        });
+
+        options.forEach(option => {
+          option.addEventListener('click', () => {
+            const value = option.getAttribute('data-value');
+            const label = option.querySelector('.option-text').innerText;
+
+            textSpan.innerText = label;
+            hiddenInput.value = value;
+            optionsList.classList.remove('show');
+          });
+        });
+      });
+
+      // Global click closes any dropdown
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.options-list').forEach(o => o.classList.remove('show'));
+      });
+
+      document.querySelectorAll('.options-list').forEach(o => {
+        if (o !== optionsList) o.classList.remove('show');
+      });
+
+      window.addEventListener("scroll", () => {
+        document.querySelectorAll('.options-list').forEach(o => {
+          list.classList.remove('show');
+        });
+      });
+    </script>
   </body>
 </html>

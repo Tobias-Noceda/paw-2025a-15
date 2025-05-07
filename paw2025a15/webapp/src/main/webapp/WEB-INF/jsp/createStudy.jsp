@@ -16,9 +16,9 @@
 </head>
 <body>
 <jsp:include page="components/header.jsp">
-  <jsp:param name="username"  value="${patient.name}"/>
-  <jsp:param name="pictureId" value="${patient.pictureId}"/>
-  <jsp:param name="role"      value="${patient.role}"/>
+  <jsp:param name="username"  value="${user.name}"/>
+  <jsp:param name="id" value="${user.id}"/>
+  <jsp:param name="role"      value="${user.role}"/>
 </jsp:include>
 
 <div class="study-page-container">
@@ -27,7 +27,7 @@
       <spring:message code="uploadStudies.title" arguments="${patient.name}" />
     </h2>
 
-    <c:url value="/upload-file/${patient.id}" var="uploadUrl" />
+    <c:url value="/upload-study/${patient.id}" var="uploadUrl" />
     <form:form
             modelAttribute="createStudyForm"
             method="post"

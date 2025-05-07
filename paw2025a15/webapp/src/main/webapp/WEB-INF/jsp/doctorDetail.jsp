@@ -13,7 +13,7 @@
   <body>
     <jsp:include page="components/header.jsp">
       <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="pictureId" value="${user.pictureId}"/>
+      <jsp:param name="id" value="${user.id}"/>
       <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container" style="flex-direction: row;">
@@ -29,7 +29,7 @@
           <div class="doctor-infopack">
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
             <div class="doctor-image">
-              <img src="<c:url value='/supersecret/files/${doctor.pictureId}'/>" alt="Doctor Image" />
+              <img src="<c:url value='/supersecret/user-profile-pic/${doctor.pictureId}'/>" alt="Doctor Image" />
             </div>
             <p class="doctor-email"><c:out value="${doctor.email}"/>, <c:out value="${doctor.telephone}"/></p>
             <div class="doctor-insurances-div">

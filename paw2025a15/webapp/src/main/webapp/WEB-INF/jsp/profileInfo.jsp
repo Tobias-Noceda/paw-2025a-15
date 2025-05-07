@@ -17,7 +17,7 @@
 <body>
 <jsp:include page="components/header.jsp">
   <jsp:param name="username"  value="${user.name}"/>
-  <jsp:param name="pictureId" value="${user.pictureId}"/>
+  <jsp:param name="id" value="${user.id}"/>
   <jsp:param name="role"      value="${user.role}"/>
 </jsp:include>
 
@@ -34,7 +34,7 @@
       <div class="profile-image">
         <div class="edit-image-wrapper">
           <img id="prof-image"
-               src="<c:url value='/supersecret/files/${user.pictureId}'/>"
+               src="<c:url value='/supersecret/user-profile-pic/${user.pictureId}'/>"
                alt="Avatar" />
           <button class="edit-button" type="button" onclick="handleImageChange()">
             ✏️
