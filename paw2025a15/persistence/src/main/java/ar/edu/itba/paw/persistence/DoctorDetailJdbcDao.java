@@ -100,7 +100,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         List<Integer> types = new ArrayList<>();
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -127,12 +127,12 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         List<Integer> types = new ArrayList<>();
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
 
-        return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
+        return jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), (rs, rowNum) -> rs.getInt(1)).stream().findFirst().orElse(0);
     }
 
     private List<WeekdayEnum> getWeekdaysById(long doctorId) {
