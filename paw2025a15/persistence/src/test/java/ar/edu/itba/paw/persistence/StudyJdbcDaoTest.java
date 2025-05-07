@@ -123,6 +123,8 @@ public class StudyJdbcDaoTest {//TODO-check que el userId sea de un patient
         Assert.assertEquals(2, foundStudies.size());
         Assert.assertTrue(foundStudies.contains(STUDY1));
         Assert.assertTrue(foundStudies.contains(STUDY2));
+        Assert.assertEquals(2, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "studies", String.format("user_id = %d", PATIENT_ID)));
     }
 
     @Test
@@ -132,6 +134,98 @@ public class StudyJdbcDaoTest {//TODO-check que el userId sea de un patient
         List<Study> foundStudies = studyDao.getStudiesByPatientId(PATIENT_ID);
 
         Assert.assertTrue(foundStudies.isEmpty());
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "studies", String.format("user_id = %d", PATIENT_ID)));
+    }
+
+    @Test
+    public void testGetStudiesByPatientIdAndDoctorIdUnauth(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final long PATIENT_ID = TestData.Users.patient.getId();
+
+        List<Study> foundStudies = studyDao.getStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID);
+
+        Assert.assertTrue(foundStudies.isEmpty());
+        Assert.assertEquals(2, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "studies", String.format("user_id = %d", PATIENT_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
+    public void testGetStudiesByPatientIdAndDoctorIdAuth(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final long PATIENT_ID = TestData.Users.patient.getId();
+        final Study STUDY1 = TestData.Studies.validStudyWithDate;
+        final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
+
+        List<Study> foundStudies = studyDao.getStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID);
+
+        Assert.assertFalse(foundStudies.isEmpty());
+        Assert.assertEquals(2, foundStudies.size());
+        Assert.assertTrue(foundStudies.contains(STUDY1));
+        Assert.assertTrue(foundStudies.contains(STUDY2));
+        Assert.assertEquals(2, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "studies", String.format("user_id = %d", PATIENT_ID)));
+    }
+
+    @Test
+    public void testAuthStudyForDoctorId(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final Study STUDY1 = TestData.Studies.validStudyWithDate;
+
+        boolean result = studyDao.authStudyForDoctorId(STUDY1.getId(), DOC_ID);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_studies", String.format("doctor_id = %d AND study_id = %d", DOC_ID, STUDY1.getId())));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
+    public void testHasAuthStudy(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final long STUDY1_ID = TestData.Studies.validStudyWithDate.getId();
+
+        boolean result = studyDao.hasAuthStudy(STUDY1_ID, DOC_ID);
+
+        Assert.assertTrue(result);
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_studies", String.format("doctor_id = %d AND study_id = %d", DOC_ID, STUDY1_ID)));
+    }
+
+    @Test
+    public void testHasAuthStudyUnauth(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final long STUDY1_ID = TestData.Studies.validStudyWithDate.getId();
+
+        boolean result = studyDao.hasAuthStudy(STUDY1_ID, DOC_ID);
+
+        Assert.assertFalse(result);
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_studies", String.format("doctor_id = %d AND study_id = %d", DOC_ID, STUDY1_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
+    public void testUnauthStudyForDoctorId(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final long STUDY1_ID = TestData.Studies.validStudyWithDate.getId();
+
+        studyDao.unauthStudyForDoctorId(STUDY1_ID, DOC_ID);
+
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_studies", String.format("doctor_id = %d AND study_id = %d", DOC_ID, STUDY1_ID)));
+    }
+
+    @Test
+    public void testUnauthStudyForDoctorIdUnauth(){
+        final long DOC_ID = TestData.Users.doctor.getId();
+        final long STUDY1_ID = TestData.Studies.validStudyWithDate.getId();
+
+        studyDao.unauthStudyForDoctorId(STUDY1_ID, DOC_ID);
+
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_studies", String.format("doctor_id = %d AND study_id = %d", DOC_ID, STUDY1_ID)));
     }
 
 }

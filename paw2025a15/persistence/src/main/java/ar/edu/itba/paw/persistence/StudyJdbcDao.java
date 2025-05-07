@@ -88,7 +88,7 @@ public class StudyJdbcDao implements StudyDao{
 
     @Override
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
-        return jdbcTemplate.query("SELECT * FROM studies AS s JOIN auth_studies AS as ON s.study_id = as.study_id WHERE s.user_id = ? AND as.doctor_id = ? ORDER BY study_date DESC", new Object[]  {patientId, doctorId},
+        return jdbcTemplate.query("SELECT * FROM studies AS s JOIN auth_studies AS ast ON s.study_id = ast.study_id WHERE s.user_id = ? AND ast.doctor_id = ? ORDER BY study_date DESC", new Object[]  {patientId, doctorId},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT}, ROW_MAPPER);
     }
 
@@ -100,7 +100,7 @@ public class StudyJdbcDao implements StudyDao{
 
     @Override
     public boolean hasAuthStudy(long studyId, long doctorId) {
-        return jdbcTemplate.query("SELECT 1 FROM auth_studies WHERE study_id = ? AND patient_id = ? LIMIT 1", new Object[]{doctorId, studyId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
+        return jdbcTemplate.query("SELECT 1 FROM auth_studies WHERE study_id = ? AND doctor_id = ? LIMIT 1", new Object[]{studyId, doctorId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
     }
 
     @Override
