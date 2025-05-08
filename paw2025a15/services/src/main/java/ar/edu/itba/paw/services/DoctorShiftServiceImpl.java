@@ -101,27 +101,6 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
         return toReturn;
     }
 
-    private List<AvailableTurn> getAvailableTurnsByDoctorIdAndDate(long doctorId, LocalDate date) {
-        List<AvailableTurn> turns = new ArrayList<>();
-        List<DoctorShift> shifts;
-        if(date.isBefore(LocalDate.now())) return turns;
-        else if(date.isEqual(LocalDate.now())) shifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDateTime(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date, LocalTime.now());
-        else shifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDate(doctorId, WeekdayEnum.fromInt(date.getDayOfWeek().getValue()-1), date);
-        for (DoctorShift shift : shifts) {
-            turns.add(new AvailableTurn(date, shift.getStartTime(), shift.getEndTime(), shift.getAddress(), shift.getId()));
-        }
-        return turns;
-    }
-
-    private List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate) {
-        List<AvailableTurn> allTurns = new ArrayList<>();
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            List<AvailableTurn> turnsForDay = getAvailableTurnsByDoctorIdAndDate(doctorId, date);
-            allTurns.addAll(turnsForDay);
-        }
-        return allTurns;
-    }
-
     @Transactional(readOnly = true)
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber) {
@@ -156,7 +135,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
             startOfWeek = now;
         }
 
-        return getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfWeek, endOfWeek);
+        return doctorShiftDao.getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfWeek, endOfWeek);
     }
 
     private boolean isLeapYear(int year) {
