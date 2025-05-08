@@ -130,4 +130,18 @@ public class StudyController {
         
         return mav;
     }
+
+    @RequestMapping("/study-info/{studyId:\\d+}")
+    public ModelAndView studyInfo(
+        @PathVariable("studyId") int studyId,
+        Locale locale
+    ) {
+        User user = us.getCurrentUser();
+        ModelAndView mav = new ModelAndView("studyInfo");
+        mav.addObject("landingForm", new LandingForm());
+        mav.addObject("study", ss.getStudyById(studyId).orElseThrow());
+        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+        mav.addObject("user", user);
+        return mav;
+    }
 }

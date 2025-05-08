@@ -92,12 +92,12 @@
               <table class="studies-table">
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
-                    <c:url value="/view-study/${study.id}" var="studyLink" />
+                    <c:url value="/study-info/${study.id}" var="studyLink" />
                     <c:set var="studyName">
                       <spring:message code="studyType.${study.type}"/>_${study.studyDate}
                     </c:set>
                     <tr class="study-row"
-                      onclick="window.open('${studyLink}', '_blank')"
+                      onclick="window.location='${studyLink}'"
                     >
                       <c:set var="studyDay">
                         <fmt:formatNumber value="${study.studyDate.dayOfMonth}" pattern="00" />
