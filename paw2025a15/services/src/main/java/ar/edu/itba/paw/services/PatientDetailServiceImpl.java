@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -53,11 +54,11 @@ public class PatientDetailServiceImpl implements PatientDetailService{
 
     @Transactional
     @Override
-    public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+    public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
         if(!getDetailByPatientId(patientId).isPresent()) throw new IllegalArgumentException("Patient details for userId: " + patientId + " does not exist!");
-        patientDetailDao.updatePatientDetails(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+        patientDetailDao.updatePatientDetails(patientId, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
         LOGGER.info("Edited patient details for userId: {}", patientId);
     }
     

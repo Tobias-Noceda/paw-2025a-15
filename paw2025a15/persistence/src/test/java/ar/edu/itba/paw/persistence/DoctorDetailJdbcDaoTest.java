@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.DoctorDetail;
@@ -294,8 +295,9 @@ public class DoctorDetailJdbcDaoTest {
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
         final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
         final DoctorView DOC = new DoctorView(DOC_ID, DOC_NAME, DOC_SPECIALTY, 1L, List.of(INSURANCE, INSURANCE2), List.of(WEEKDAY));
+        final DoctorOrderEnum DOC_ORDER = DoctorOrderEnum.L_RECENT;
 
-        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY, 1, 2);
+        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY, DOC_ORDER, 1, 2);
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
@@ -314,8 +316,9 @@ public class DoctorDetailJdbcDaoTest {
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
         final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
         final DoctorView DOC = new DoctorView(DOC_ID, DOC_NAME, DOC_SPECIALTY, 1L, List.of(INSURANCE, INSURANCE2), List.of(WEEKDAY));
+        final DoctorOrderEnum DOC_ORDER = DoctorOrderEnum.L_RECENT;
 
-        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(null, DOC_SPECIALTY, INSURANCE, WEEKDAY, 1, 2);
+        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(null, DOC_SPECIALTY, INSURANCE, WEEKDAY, DOC_ORDER, 1, 2);
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
@@ -334,8 +337,9 @@ public class DoctorDetailJdbcDaoTest {
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
         final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
         final DoctorView DOC = new DoctorView(DOC_ID, DOC_NAME, DOC_SPECIALTY, 1L, List.of(INSURANCE, INSURANCE2), List.of(WEEKDAY));
+        final DoctorOrderEnum DOC_ORDER = DoctorOrderEnum.L_RECENT;
 
-        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams("", DOC_SPECIALTY, INSURANCE, WEEKDAY, 1, 2);
+        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams("", DOC_SPECIALTY, INSURANCE, WEEKDAY, DOC_ORDER, 1, 2);
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
@@ -351,8 +355,9 @@ public class DoctorDetailJdbcDaoTest {
         final SpecialtyEnum DOC_SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
         final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final DoctorOrderEnum DOC_ORDER = DoctorOrderEnum.L_RECENT;
 
-        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY, 0, 2);
+        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY, DOC_ORDER, 0, 2);
 
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
@@ -367,8 +372,9 @@ public class DoctorDetailJdbcDaoTest {
         final SpecialtyEnum DOC_SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
         final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final DoctorOrderEnum DOC_ORDER = DoctorOrderEnum.L_RECENT;
 
-        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY, 1, 0);
+        List<DoctorView> results = doctorDetailDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY, DOC_ORDER, 1, 0);
 
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());

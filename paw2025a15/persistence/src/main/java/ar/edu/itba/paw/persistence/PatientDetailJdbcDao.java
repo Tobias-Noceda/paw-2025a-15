@@ -47,7 +47,7 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
         final Map<String, Object> args = new HashMap<>();
         args.put("patient_id", patientId);
         args.put("patient_birthdate", birthdate);
-        args.put("patient_blood_type", bloodType != null ? bloodType.getName() : null);
+        args.put("patient_blood_type", bloodType != null ? bloodType.ordinal() : null);
         args.put("patient_height", height);
         args.put("patient_weight", weight);
         args.put("patient_smokes", smokes);

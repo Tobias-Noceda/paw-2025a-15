@@ -59,7 +59,7 @@ public class FileController {
     private PatientDetailService pds;
 
     @Autowired
-    private DoctorCoverageService dcs;
+    private DoctorDetailService dds;
 
     @GetMapping("/favicon.ico")
     public ResponseEntity<byte[]> getFavicon() throws IOException {
@@ -196,7 +196,7 @@ public class FileController {
             //pds.updatePatientDetails(user.getId(), LocalDate.of(LocalDate.now().getYear() - profileForm.getAge(), 1, 1), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob());
             pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
         } else {
-            dcs.setCoverages(user.getId(), profileForm.getInsurances());
+            dds.createDoctorCoverages(user.getId(), profileForm.getInsurances());
         }
         redirectAttrs.addFlashAttribute("updateSuccessMessage",
 

@@ -94,7 +94,7 @@ CREATE TABLE doctor_details (--TODO-check que el userId sea de un doctor
 
 CREATE TABLE patient_details (--TODO-check que el userId sea de un patient
     patient_id BIGINT NOT NULL,
-    patient_age INT,
+    patient_birthdate DATE,
     patient_blood_type INT,
     patient_height NUMERIC(10,2),
     patient_weight NUMERIC(10,2),

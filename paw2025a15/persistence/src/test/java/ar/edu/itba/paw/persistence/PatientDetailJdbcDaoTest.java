@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class PatientDetailJdbcDaoTest {
     @Test
     public void testCreate(){
         final long PATIENT_ID = TestData.PatientDetails.patientDetail.getPatientId();
-        final Integer AGE = TestData.PatientDetails.patientDetail.getAge();
+        final LocalDate BIRTHDATE = TestData.PatientDetails.patientDetail.getBirthdate();
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.patientDetail.getBloodType();
         final Double HEIGHT = TestData.PatientDetails.patientDetail.getHeight();
         final Double WEIGHT = TestData.PatientDetails.patientDetail.getWeight();
@@ -60,11 +61,11 @@ public class PatientDetailJdbcDaoTest {
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
 
-        PatientDetail patientDetail = patientDetailDao.create(PATIENT_ID, AGE, BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        PatientDetail patientDetail = patientDetailDao.create(PATIENT_ID, BIRTHDATE, BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
 
         Assert.assertNotNull(patientDetail);
         Assert.assertEquals(PATIENT_ID, patientDetail.getPatientId());
-        Assert.assertEquals(AGE, patientDetail.getAge());
+        Assert.assertEquals(BIRTHDATE, patientDetail.getBirthdate());
         Assert.assertEquals(BLOOD_TYPE, patientDetail.getBloodType());
         Assert.assertEquals(HEIGHT, patientDetail.getHeight());
         Assert.assertEquals(WEIGHT, patientDetail.getWeight());
@@ -83,7 +84,7 @@ public class PatientDetailJdbcDaoTest {
     @Test
     public void testCreateNotNullBloodType(){
         final long PATIENT_ID = TestData.PatientDetails.patientDetail.getPatientId();
-        final Integer AGE = TestData.PatientDetails.patientDetail.getAge();
+        final LocalDate BIRTHDATE = TestData.PatientDetails.patientDetail.getBirthdate();
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.newPatientDetail.getBloodType();
         final Double HEIGHT = TestData.PatientDetails.patientDetail.getHeight();
         final Double WEIGHT = TestData.PatientDetails.patientDetail.getWeight();
@@ -96,11 +97,11 @@ public class PatientDetailJdbcDaoTest {
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
 
-        PatientDetail patientDetail = patientDetailDao.create(PATIENT_ID, AGE, BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        PatientDetail patientDetail = patientDetailDao.create(PATIENT_ID, BIRTHDATE, BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
 
         Assert.assertNotNull(patientDetail);
         Assert.assertEquals(PATIENT_ID, patientDetail.getPatientId());
-        Assert.assertEquals(AGE, patientDetail.getAge());
+        Assert.assertEquals(BIRTHDATE, patientDetail.getBirthdate());
         Assert.assertEquals(BLOOD_TYPE, patientDetail.getBloodType());
         Assert.assertEquals(HEIGHT, patientDetail.getHeight());
         Assert.assertEquals(WEIGHT, patientDetail.getWeight());
@@ -120,7 +121,7 @@ public class PatientDetailJdbcDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql"})
     public void testCreateExistentPatient(){
         final long PATIENT_ID =  TestData.PatientDetails.patientDetail.getPatientId();
-        final Integer AGE = TestData.PatientDetails.patientDetail.getAge();
+        final LocalDate BIRTHDATE = TestData.PatientDetails.patientDetail.getBirthdate();
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.patientDetail.getBloodType();
         final Double HEIGHT = TestData.PatientDetails.patientDetail.getHeight();
         final Double WEIGHT = TestData.PatientDetails.patientDetail.getWeight();
@@ -132,9 +133,9 @@ public class PatientDetailJdbcDaoTest {
         final String DIET = TestData.PatientDetails.patientDetail.getDiet();
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
-        //TODO preguntar si el service o el dao es el que tienen que tener la programacion defensiva de esto
+        
         Assert.assertThrows(DuplicateKeyException.class,()->{
-            patientDetailDao.create(PATIENT_ID, AGE, BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);});
+            patientDetailDao.create(PATIENT_ID, BIRTHDATE, BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);});
     }
 
     @Test
@@ -194,7 +195,7 @@ public class PatientDetailJdbcDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql"})
     public void testUpdatePatientDetails(){
         final long PATIENT_ID =  TestData.PatientDetails.patientDetail.getPatientId();
-        final Integer AGE = TestData.PatientDetails.patientDetail.getAge();
+        final LocalDate BIRTHDATE = TestData.PatientDetails.patientDetail.getBirthdate();
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.patientDetail.getBloodType();
         final Double HEIGHT = TestData.PatientDetails.patientDetail.getHeight();
         final Double WEIGHT = TestData.PatientDetails.patientDetail.getWeight();
@@ -207,7 +208,7 @@ public class PatientDetailJdbcDaoTest {
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
 
-        final Integer NEW_AGE = TestData.PatientDetails.newPatientDetail.getAge();
+        final LocalDate NEW_BIRTHDATE = TestData.PatientDetails.newPatientDetail.getBirthdate();
         final BloodTypeEnum NEW_BLOOD_TYPE = TestData.PatientDetails.newPatientDetail.getBloodType();
         final Double NEW_HEIGHT = TestData.PatientDetails.newPatientDetail.getHeight();
         final Double NEW_WEIGHT = TestData.PatientDetails.newPatientDetail.getWeight();
@@ -220,14 +221,14 @@ public class PatientDetailJdbcDaoTest {
         final String NEW_HOBBIES = TestData.PatientDetails.newPatientDetail.getHobbies();
         final String NEW_JOB = TestData.PatientDetails.newPatientDetail.getJob();
 
-        patientDetailDao.updatePatientDetails(PATIENT_ID, NEW_AGE, NEW_BLOOD_TYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB);
+        patientDetailDao.updatePatientDetails(PATIENT_ID, NEW_BIRTHDATE, NEW_BLOOD_TYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB);
 
         Assert.assertEquals(0, 
         JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "patient_details", 
         String.format(Locale.US, 
             "patient_id = %d AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s)",
             PATIENT_ID, 
-            AGE == null ? "patient_age IS NULL" : "patient_age = " + AGE,
+            BIRTHDATE == null ? "patient_birthdate IS NULL" : String.format("patient_birthdate = '%s'", java.sql.Date.valueOf(BIRTHDATE)),
             BLOOD_TYPE == null ? "patient_blood_type IS NULL" : "patient_blood_type = " + BLOOD_TYPE.ordinal(),
             HEIGHT == null ? "patient_height IS NULL" : String.format(Locale.US, "ROUND(patient_height, 3) = %.3f", HEIGHT),
             WEIGHT == null ? "patient_weight IS NULL" : String.format(Locale.US, "ROUND(patient_weight, 3) = %.3f", WEIGHT),
@@ -246,7 +247,7 @@ public class PatientDetailJdbcDaoTest {
         String.format(Locale.US, 
             "patient_id = %d AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s)",
             PATIENT_ID, 
-            NEW_AGE == null ? "patient_age IS NULL" : "patient_age = " + NEW_AGE,
+            NEW_BIRTHDATE == null ? "patient_birthdate IS NULL" : String.format("patient_birthdate = '%s'", java.sql.Date.valueOf(NEW_BIRTHDATE)),
             NEW_BLOOD_TYPE == null ? "patient_blood_type IS NULL" : "patient_blood_type = " + NEW_BLOOD_TYPE.ordinal(),
             NEW_HEIGHT == null ? "patient_height IS NULL" : String.format(Locale.US, "ROUND(patient_height, 2) = %.2f", NEW_HEIGHT),
             NEW_WEIGHT == null ? "patient_weight IS NULL" : String.format(Locale.US, "ROUND(patient_weight, 2) = %.2f", NEW_WEIGHT),
@@ -266,7 +267,7 @@ public class PatientDetailJdbcDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql"})
     public void testUpdatePatientDetailsNullNewBloodType(){
         final long PATIENT_ID =  TestData.PatientDetails.patientDetail.getPatientId();
-        final Integer AGE = TestData.PatientDetails.patientDetail.getAge();
+        final LocalDate BIRTHDATE = TestData.PatientDetails.patientDetail.getBirthdate();
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.patientDetail.getBloodType();
         final Double HEIGHT = TestData.PatientDetails.patientDetail.getHeight();
         final Double WEIGHT = TestData.PatientDetails.patientDetail.getWeight();
@@ -279,7 +280,7 @@ public class PatientDetailJdbcDaoTest {
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
 
-        final Integer NEW_AGE = TestData.PatientDetails.newPatientDetail.getAge();
+        final LocalDate NEW_BIRTHDATE = TestData.PatientDetails.newPatientDetail.getBirthdate();
         final BloodTypeEnum NEW_BLOOD_TYPE = null;
         final Double NEW_HEIGHT = TestData.PatientDetails.newPatientDetail.getHeight();
         final Double NEW_WEIGHT = TestData.PatientDetails.newPatientDetail.getWeight();
@@ -292,14 +293,14 @@ public class PatientDetailJdbcDaoTest {
         final String NEW_HOBBIES = TestData.PatientDetails.newPatientDetail.getHobbies();
         final String NEW_JOB = TestData.PatientDetails.newPatientDetail.getJob();
 
-        patientDetailDao.updatePatientDetails(PATIENT_ID, NEW_AGE, NEW_BLOOD_TYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB);
+        patientDetailDao.updatePatientDetails(PATIENT_ID, NEW_BIRTHDATE, NEW_BLOOD_TYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB);
 
         Assert.assertEquals(0, 
         JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "patient_details", 
         String.format(Locale.US, 
             "patient_id = %d AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s)",
             PATIENT_ID, 
-            AGE == null ? "patient_age IS NULL" : "patient_age = " + AGE,
+            BIRTHDATE == null ? "patient_birthdate IS NULL" : String.format("patient_birthdate = '%s'", java.sql.Date.valueOf(BIRTHDATE)),
             BLOOD_TYPE == null ? "patient_blood_type IS NULL" : "patient_blood_type = " + BLOOD_TYPE.ordinal(),
             HEIGHT == null ? "patient_height IS NULL" : String.format(Locale.US, "ROUND(patient_height, 3) = %.3f", HEIGHT),
             WEIGHT == null ? "patient_weight IS NULL" : String.format(Locale.US, "ROUND(patient_weight, 3) = %.3f", WEIGHT),
@@ -318,7 +319,7 @@ public class PatientDetailJdbcDaoTest {
         String.format(Locale.US, 
             "patient_id = %d AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s) AND (%s)",
             PATIENT_ID, 
-            NEW_AGE == null ? "patient_age IS NULL" : "patient_age = " + NEW_AGE,
+            NEW_BIRTHDATE == null ? "patient_birthdate IS NULL" : String.format("patient_birthdate = '%s'", java.sql.Date.valueOf(NEW_BIRTHDATE)),
             NEW_BLOOD_TYPE == null ? "patient_blood_type IS NULL" : "patient_blood_type = " + NEW_BLOOD_TYPE.ordinal(),
             NEW_HEIGHT == null ? "patient_height IS NULL" : String.format(Locale.US, "ROUND(patient_height, 2) = %.2f", NEW_HEIGHT),
             NEW_WEIGHT == null ? "patient_weight IS NULL" : String.format(Locale.US, "ROUND(patient_weight, 2) = %.2f", NEW_WEIGHT),
@@ -339,7 +340,7 @@ public class PatientDetailJdbcDaoTest {
     public void testUpdatePatientDetailsNonexistentPatient(){
         final long PATIENT_ID =  TestData.Users.doctor.getId();
 
-        final Integer NEW_AGE = TestData.PatientDetails.newPatientDetail.getAge();
+        final LocalDate NEW_BIRTHDATE = TestData.PatientDetails.newPatientDetail.getBirthdate();
         final BloodTypeEnum NEW_BLOOD_TYPE = TestData.PatientDetails.newPatientDetail.getBloodType();
         final Double NEW_HEIGHT = TestData.PatientDetails.newPatientDetail.getHeight();
         final Double NEW_WEIGHT = TestData.PatientDetails.newPatientDetail.getWeight();
@@ -352,7 +353,7 @@ public class PatientDetailJdbcDaoTest {
         final String NEW_HOBBIES = TestData.PatientDetails.newPatientDetail.getHobbies();
         final String NEW_JOB = TestData.PatientDetails.newPatientDetail.getJob();
         
-        patientDetailDao.updatePatientDetails(PATIENT_ID, NEW_AGE, NEW_BLOOD_TYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB);
+        patientDetailDao.updatePatientDetails(PATIENT_ID, NEW_BIRTHDATE, NEW_BLOOD_TYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "patient_details", String.format("patient_id = %d", PATIENT_ID)));

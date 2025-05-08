@@ -1,2 +1,2 @@
-INSERT INTO patient_details(patient_id, patient_age, patient_blood_type, patient_height, patient_weight, patient_smokes, patient_drinks, patient_meds, patient_conditions, patient_allergies, patient_diet, patient_hobbies, patient_job) 
-VALUES(1, 30, 6, 1.75, 89.00, false, true, 'a', 'a', 'a', 'a', 'a', 'a');
+INSERT INTO patient_details(patient_id, patient_birthdate, patient_blood_type, patient_height, patient_weight, patient_smokes, patient_drinks, patient_meds, patient_conditions, patient_allergies, patient_diet, patient_hobbies, patient_job) 
+VALUES(1, '2000-01-01', 6, 1.75, 89.00, false, true, 'a', 'a', 'a', 'a', 'a', 'a');

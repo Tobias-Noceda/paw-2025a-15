@@ -33,7 +33,7 @@ public class PatientDetailServiceImplTest {
     private static final User PATIENT = new User(PATIENT_ID, PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_CREATE_DATE, PATIENT_LOCALE);
 
 
-    private static final Integer AGE = 26;
+    private static final LocalDate BIRTHDATE = LocalDate.parse("2000-01-01");
     private static final BloodTypeEnum BLOODTYPE = BloodTypeEnum.AB_POSITIVE;
     private static final Double HEIGHT = 1.50;
     private static final Double WEIGHT = 56.00;
@@ -94,7 +94,7 @@ public class PatientDetailServiceImplTest {
         Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(IllegalArgumentException.class, () -> 
-            pds.updatePatientDetails(PATIENT_ID, AGE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
+            pds.updatePatientDetails(PATIENT_ID, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
         );
     }
 
