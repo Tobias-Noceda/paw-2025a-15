@@ -1,0 +1,1 @@
+INSERT INTO patient_details(patient_id) VALUES(1);

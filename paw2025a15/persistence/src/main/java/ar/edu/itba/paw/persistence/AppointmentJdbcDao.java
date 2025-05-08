@@ -57,21 +57,21 @@ public class AppointmentJdbcDao implements AppointmentDao{
 
     @Override
     public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId) {
-        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE a.patient_id = ? AND (a.appointment_date + ds.shift_start_time) > ? ORDER BY a.appointment_date ASC, ds.shift_start_time ASC",
+        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE a.patient_id = ? AND TO_TIMESTAMP(CONCAT(a.appointment_date, ' ', ds.shift_start_time), 'YYYY-MM-DD HH24:MI:SS') > ? ORDER BY a.appointment_date ASC, ds.shift_start_time ASC",
           new Object[]  {patientId, LocalDateTime.now()},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.TIMESTAMP}, ADATA_ROW_MAPPER);
     }
 
     @Override
     public List<AppointmentData> getOldAppointmentDataByPatientId(long patientId) {
-        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE a.patient_id = ? AND (a.appointment_date + ds.shift_start_time) < ? ORDER BY a.appointment_date DESC, ds.shift_start_time DESC",
+        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE a.patient_id = ? AND TO_TIMESTAMP(CONCAT(a.appointment_date, ' ', ds.shift_start_time), 'YYYY-MM-DD HH24:MI:SS') < ? ORDER BY a.appointment_date DESC, ds.shift_start_time DESC",
           new Object[]  {patientId, LocalDateTime.now()},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.TIMESTAMP}, ADATA_ROW_MAPPER);
     }
 
     @Override
     public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {
-        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE ds.doctor_id = ? AND ds.doctor_id <> a.patient_id AND (a.appointment_date + ds.shift_start_time) > ? ORDER BY a.appointment_date ASC, ds.shift_start_time ASC",
+        return jdbcTemplate.query("SELECT ds.shift_id, u.user_name AS patient_name, d.user_name AS doctor_name, a.appointment_date, ds.shift_start_time, ds.shift_end_time, ds.shift_address FROM appointments AS a JOIN users AS u ON a.patient_id = u.user_id JOIN doctor_shifts AS ds ON ds.shift_id = a.shift_id JOIN users AS d ON ds.doctor_id = d.user_id WHERE ds.doctor_id = ? AND ds.doctor_id <> a.patient_id AND TO_TIMESTAMP(CONCAT(a.appointment_date, ' ', ds.shift_start_time), 'YYYY-MM-DD HH24:MI:SS') > ? ORDER BY a.appointment_date ASC, ds.shift_start_time ASC",
           new Object[]  {doctorId, LocalDateTime.now()},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.TIMESTAMP}, ADATA_ROW_MAPPER);
     }
@@ -101,14 +101,7 @@ public class AppointmentJdbcDao implements AppointmentDao{
 
     @Override
     public void clearRemovedAppointmentBeforeDate(LocalDate date) {
-        jdbcTemplate.update(
-            """
-                DELETE FROM appointments a
-                USING doctor_shifts ds
-                WHERE a.shift_id = ds.shift_id
-                AND a.patient_id = ds.doctor_id
-                AND a.appointment_date < ?
-            """,
+        jdbcTemplate.update("DELETE FROM appointments AS a USING doctor_shifts AS ds WHERE a.shift_id = ds.shift_id AND a.patient_id = ds.doctor_id AND a.appointment_date < ?",
             new Object[]{Date.valueOf(date)},
             new int[]{java.sql.Types.DATE}
         );

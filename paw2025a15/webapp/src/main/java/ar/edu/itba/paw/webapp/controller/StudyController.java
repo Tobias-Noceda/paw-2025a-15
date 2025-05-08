@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.CreateStudyForm;
 import ar.edu.itba.paw.form.FileFilterForm;
 import ar.edu.itba.paw.form.LandingForm;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -41,10 +41,10 @@ public class StudyController {
     private StudyService ss;
 
     @Autowired
-    private DoctorDetailService dds;
+    private UserService us;
 
     @Autowired
-    private UserService us;
+    private AuthDoctorService ads;
 
     @Autowired
     private FileService fs;
@@ -97,14 +97,12 @@ public class StudyController {
         }
         User user = us.getCurrentUser();
 
-        LocalDateTime dateTime = LocalDateTime.now();
-
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), dateTime, createStudyForm.getDate());
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), createStudyForm.getDate());
 
 
         if(patientId != user.getId()) {
-            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), dateTime);
+            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), LocalDateTime.now());
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {
             return new ModelAndView("redirect:/studies");
@@ -123,7 +121,7 @@ public class StudyController {
 
         mav.addObject("user", user);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
-        mav.addObject("patientAuthDoctors", dds.getAuthDoctorsByPatientId(user.getId()));
+        mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
         mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
 
         mav.addObject("landingForm", new LandingForm());

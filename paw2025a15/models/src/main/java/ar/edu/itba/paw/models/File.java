@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models;
 
+import java.util.Arrays;
+
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 
 public class File {
@@ -24,5 +26,33 @@ public class File {
 
     public FileTypeEnum getType(){
         return type;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof File)) return false;
+
+        File o = (File) other;
+
+        return (this.id==o.id) && (this.type.equals(o.type)) && Arrays.equals(this.content,o.content);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(id);
+        result = 31 * result + Arrays.hashCode(content);
+        result = 31 * result + type.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "File{" +
+            "id=" + id +
+            ", type=" + type +
+            ", content=" + content +
+            '}';
     }
 }

@@ -1,0 +1,1 @@
+INSERT INTO patient_details(patient_id, patient_job) VALUES(1, 'carpenter');

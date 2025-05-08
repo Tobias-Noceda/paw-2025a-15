@@ -11,13 +11,17 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @ComponentScan({ "ar.edu.itba.paw.persistence" })
 @Configuration
+@EnableTransactionManagement(proxyTargetClass = true)
 public class TestConfig {
 
     @Value("classpath:pgsql.sql") 
-    private Resource hsqldbSql; 
+    private Resource pgsql; 
  
     @Value("classpath:hsqldb.sql")
     private Resource schemaSql;
@@ -25,7 +29,7 @@ public class TestConfig {
     @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
-        ds.setDriverClass(org.hsqldb.jdbcDriver.class);
+        ds.setDriverClass(org.hsqldb.jdbc.JDBCDriver.class);
         ds.setUrl("jdbc:hsqldb:mem:paw");
         ds.setUsername("ha");
         ds.setPassword("");
@@ -43,10 +47,15 @@ public class TestConfig {
  
      private DatabasePopulator databasePopulator() {
          final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-         populator.addScript(hsqldbSql);
+         populator.addScript(pgsql);
          populator.addScript(schemaSql);
  
          return populator;
      }
+
+     @Bean
+    public TransactionManager transactionManager(DataSource ds){
+        return new JdbcTransactionManager(ds);
+    }
 
 }

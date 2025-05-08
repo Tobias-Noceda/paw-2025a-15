@@ -65,7 +65,7 @@ public class UserJdbcDao implements UserDao{
 
     @Override
     public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
-        if(page < 0 || pageSize <= 0) return Collections.emptyList();
+        if(page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
         StringBuilder query = new StringBuilder(
             """
@@ -79,7 +79,7 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -96,7 +96,7 @@ public class UserJdbcDao implements UserDao{
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
         StringBuilder query = new StringBuilder(
             """
-                SELECT COUNT(DISTINCT u.*)
+                SELECT COUNT(DISTINCT ad.patient_id)
                 FROM auth_doctors AS ad JOIN users AS u ON ad.patient_id = u.user_id
                 WHERE ad.doctor_id = ?
             """
@@ -106,12 +106,12 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
 
-        return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
+        return jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), (rs, rowNum) -> rs.getInt(1)).stream().findFirst().orElse(0);
     }
 
     @Override

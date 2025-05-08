@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,17 +37,33 @@ public class StudyJdbcDao implements StudyDao{
     }
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate) {
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
         final Map<String, Object> args = new HashMap<>();
         args.put("study_type", type.ordinal());
         args.put("study_comment", comment);
         args.put("file_id", fileId);
         args.put("user_id", userId);
         args.put("uploader_id", uploaderId);
+        LocalDateTime uploadDate = LocalDateTime.now();
         args.put("upload_date", Timestamp.valueOf(uploadDate));
         args.put("study_date", studyDate);
         final Number study_id = jdbcInsert.executeAndReturnKey(args);
         return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, studyDate);
+    }
+    
+    @Override
+    public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("study_type", type.ordinal());
+        args.put("study_comment", comment);
+        args.put("file_id", fileId);
+        args.put("user_id", userId);
+        args.put("uploader_id", uploaderId);
+        LocalDateTime uploadDate = LocalDateTime.now();
+        args.put("upload_date", Timestamp.valueOf(uploadDate));
+        args.put("study_date", Date.valueOf(uploadDate.toLocalDate()));
+        final Number study_id = jdbcInsert.executeAndReturnKey(args);
+        return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, uploadDate.toLocalDate());
     }
 
     @Override
@@ -67,6 +84,29 @@ public class StudyJdbcDao implements StudyDao{
     public List<Study> getStudiesByPatientId(long id) {
         return jdbcTemplate.query("SELECT * FROM studies WHERE user_id = ? ORDER BY study_date DESC", new Object[]  {id},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER);
+    }
+
+    @Override
+    public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
+        return jdbcTemplate.query("SELECT * FROM studies AS s JOIN auth_studies AS ast ON s.study_id = ast.study_id WHERE s.user_id = ? AND ast.doctor_id = ? ORDER BY study_date DESC", new Object[]  {patientId, doctorId},
+          new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT}, ROW_MAPPER);
+    }
+
+    @Override
+    public boolean authStudyForDoctorId(long studyId, long doctorId) {
+        String sql = "INSERT INTO auth_studies (doctor_id, study_id) VALUES (?, ?)";
+        return jdbcTemplate.update(sql, doctorId, studyId) == 1;
+    }
+
+    @Override
+    public boolean hasAuthStudy(long studyId, long doctorId) {
+        return jdbcTemplate.query("SELECT 1 FROM auth_studies WHERE study_id = ? AND doctor_id = ? LIMIT 1", new Object[]{studyId, doctorId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
+    }
+
+    @Override
+    public void unauthStudyForDoctorId(long studyId, long doctorId) {
+        if(!hasAuthStudy(studyId, doctorId)) return;
+        jdbcTemplate.update("DELETE FROM auth_studies WHERE study_id = ? AND doctor_id = ?", studyId, doctorId);
     }
 
 }

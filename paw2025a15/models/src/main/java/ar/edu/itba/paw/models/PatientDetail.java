@@ -9,7 +9,7 @@ public class PatientDetail {
     private final long patientId;
     private final LocalDate birthdate;
     private final BloodTypeEnum bloodType;
-    private final Double height;
+    private final Double height; //TODO pasarlo a otro datatype, el punto y coma vana  causar dolores de cabeza
     private final Double weight;
     private final Boolean smokes;
     private final Boolean drinks;
@@ -93,5 +93,63 @@ public class PatientDetail {
         if(birthdate==null) return null;
         return Period.between(this.birthdate, LocalDate.now()).getYears();
     }
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
 
+        if(!(other instanceof PatientDetail)) return false;
+
+        PatientDetail o = (PatientDetail) other;
+
+        return (this.patientId==o.patientId) 
+        && (this.birthdate==null?(o.birthdate==null):(this.birthdate.equals(o.birthdate)))
+        && (this.bloodType==null?(o.bloodType==null):(this.bloodType.equals(o.bloodType)))
+        && (this.height==null?(o.height==null):(this.height.equals(o.height)))
+        && (this.weight==null?(o.weight==null):(this.weight.equals(o.weight)))
+        && (this.smokes==null?(o.smokes==null):(this.smokes.equals(o.smokes)))
+        && (this.drinks==null?(o.drinks==null):(this.drinks.equals(o.drinks)))
+        && (this.meds==null?(o.meds==null):(this.meds.equals(o.meds)))
+        && (this.conditions==null?(o.conditions==null):(this.conditions.equals(o.conditions)))
+        && (this.allergies==null?(o.allergies==null):(this.allergies.equals(o.allergies)))
+        && (this.diet==null?(o.diet==null):(this.diet.equals(o.diet)))
+        && (this.hobbies==null?(o.hobbies==null):(this.hobbies.equals(o.hobbies)))
+        && (this.job==null?(o.job==null):(this.job.equals(o.job)));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(patientId);
+        result = 31 * result + birthdate.hashCode();
+        result = 31 * result + bloodType.hashCode();
+        result = 31 * result + Double.hashCode(height);
+        result = 31 * result + Double.hashCode(weight);
+        result = 31 * result + Boolean.hashCode(smokes);
+        result = 31 * result + Boolean.hashCode(drinks);
+        result = 31 * result + meds.hashCode();
+        result = 31 * result + conditions.hashCode();
+        result = 31 * result + allergies.hashCode();
+        result = 31 * result + diet.hashCode();
+        result = 31 * result + hobbies.hashCode();
+        result = 31 * result + job.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "PatientDetails{" +
+            "patientId=" + patientId +
+            ", birthdate=" + birthdate +
+            ", bloodType=" + bloodType +
+            ", height=" + height +
+            ", weight=" + weight +
+            ", smokes=" + smokes +
+            ", drinks=" + drinks +
+            ", meds=" + meds +
+            ", conditions=" + conditions +
+            ", allergies=" + allergies +
+            ", diet=" + diet +
+            ", hobbies=" + hobbies +
+            ", job=" + job +
+            '}';
+    }
 }

@@ -47,6 +47,22 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
     }
 
     @Override
+    public int[] batchCreate(List<DoctorShift> shifts) {
+        String sql = "INSERT INTO doctor_shifts (doctor_id, shift_weekday, shift_address, shift_start_time, shift_end_time) VALUES (?, ?, ?, ?, ?)";
+
+        List<Object[]> batchArgs = shifts.stream()
+            .map(shift -> new Object[]{
+                shift.getDoctorId(),
+                shift.getWeekday().ordinal(),
+                shift.getAddress(),
+                shift.getStartTime(),
+                shift.getEndTime()
+            }).toList();
+
+        return jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
     public Optional<DoctorShift> getShiftById(long id) {
         return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE shift_id = ?", new Object[]  {id},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();

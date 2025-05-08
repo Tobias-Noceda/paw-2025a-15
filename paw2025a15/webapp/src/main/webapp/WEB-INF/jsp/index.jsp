@@ -134,7 +134,7 @@
                   <jsp:param name="doctorName" value="${doctor.name}" />
                   <jsp:param name="imageId" value="${doctor.imageId}" />
                   <jsp:param name="insurances" value="${doctor.insurances}" />
-                  <jsp:param name="speciality" value="${doctor.specialty}" />
+                  <jsp:param name="specialty" value="${doctor.specialty}" />
                   <jsp:param name="weekdays" value="${doctor.weekdays}" />
                 </jsp:include>
               </c:forEach>
