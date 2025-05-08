@@ -129,11 +129,15 @@
           <c:when test="${not empty docList}">
             <div class="card-grid">
               <c:forEach var="doctor" items="${docList}">
+                <c:set var="insuranceNames" value="" />
+                <c:forEach var="insurance" items="${doctor.insurances}" varStatus="status">
+                  <c:set var="insuranceNames" value="${insuranceNames}${insurance.name}${!status.last ? ',' : ''}" />
+                </c:forEach>
                 <jsp:include page="components/doctorCard.jsp">
                   <jsp:param name="id" value="${doctor.id}" />
                   <jsp:param name="doctorName" value="${doctor.name}" />
                   <jsp:param name="imageId" value="${doctor.imageId}" />
-                  <jsp:param name="insurances" value="${doctor.insurances}" />
+                  <jsp:param name="insurances" value="${insuranceNames}" />
                   <jsp:param name="specialty" value="${doctor.specialty}" />
                   <jsp:param name="weekdays" value="${doctor.weekdays}" />
                 </jsp:include>

@@ -20,15 +20,17 @@
       <div class="patient-card">
         <div class="patient-info">
           <h2 class="patient-name"><c:out value="${patient.name}"/></h2>
-          <div class="patient-image">
-            <img src="<c:url value='/supersecret/user-profile-pic/${patient.id}'/>" alt="Doctor Image" />
+          <div class="doctor-infopack">
+            <div class="patient-image">
+              <img src="<c:url value='/supersecret/user-profile-pic/${patient.id}'/>" alt="Patient Image" />
+            </div>
           </div>
           <div class="upload-button-div">
             <a href="<c:url value='/upload-study/${patient.id}'/>" class="upload-button">
               <spring:message code="patient.details.upload.label"/>
             </a>
           </div>
-          <p><spring:message code="profileInfo.basic"/></p>
+          <p class="section-title" ><spring:message code="profileInfo.basic"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="patient-email-div">
             <p class="patient-email-label"><spring:message code="patient.details.email.label"/></p>
@@ -89,7 +91,7 @@
           </div>
           </c:if>
           <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">
-          <p><spring:message code="profileInfo.habits"/></p>
+          <p class="section-title" ><spring:message code="profileInfo.habits"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="habits">
             <div class="patient-email-div">
@@ -128,7 +130,7 @@
           </div>
           </c:if>
           <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">
-          <p><spring:message code="profileInfo.medical"/></p>
+          <p class="section-title"><spring:message code="profileInfo.medical"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="med">
             <div class="patient-email-div">
@@ -167,7 +169,7 @@
           </div>
           </c:if>
           <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">
-          <p><spring:message code="profileInfo.social"/></p>
+          <p class="section-title"><spring:message code="profileInfo.social"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="lifestyle">
             <div class="patient-email-div">

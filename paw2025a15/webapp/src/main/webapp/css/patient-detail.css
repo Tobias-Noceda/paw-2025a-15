@@ -13,22 +13,53 @@
 }
 
 .patient-image {
+
+    /* fijamos ancho y alto iguales para tener un círculo */
+
+    width: 200px;
+
+    aspect-ratio: 1 / 1;   /* alternativa moderna a height fijo */
+
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    /* centrado interno (opcional) */
+
     display: flex;
-    justify-content: center;
+
     align-items: center;
-    flex: 0 0 200px;
-    width: 100%;
-    margin: 20px 0;
-    box-sizing: border-box;
+
+    justify-content: center;
+
 }
 
+
 .patient-image img {
-    height: auto;
-    border-radius: 50%;
-    object-fit: cover;
-    max-width: 200px;
-    max-height: 200px;
+
+    display: block;            /* quita pequeños espacios-borde */
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;         /* recorta la imagen sin deformar */
+
+    object-position: center;   /* centra el recorte */
+
 }
+
+.doctor-infopack {
+
+    display: flex;             /* o grid, según tu layout */
+
+    justify-content: center;   /* centrar horizontal */
+
+    align-items: center;       /* centrar vertical si hay altura fija */
+
+}
+
+
 
 .patient-info {
     flex: 1;
@@ -72,10 +103,216 @@
     margin: 0;
 }
 
+/* Aplica a todo texto dentro de la tarjeta */
+
+.patient-card,
+
+.patient-card p,
+
+.patient-card .patient-email,
+
+.patient-card .patient-telephone {
+
+    /* permite partir palabras muy largas y ajustarlas al ancho */
+
+    word-wrap: break-word;        /* para navegadores antiguos */
+
+    overflow-wrap: break-word;    /* estándar moderno */
+
+    word-break: break-word;       /* última opción */
+
+    white-space: normal;          /* quita posibles nowrap heredados */
+
+}
+
 /* Ajustes específicos para navegadores */
 @-moz-document url-prefix() {
     /* Correcciones específicas para Firefox si es necesario */
     .patient-card {
         max-height: min-content; /* Asegura consistencia en Firefox */
     }
+}
+
+
+/* 1) Contenedor flex para cada fila label+valor */
+
+.patient-email-div,
+
+.patient-telephone-div {
+
+    display: flex;
+
+    align-items: flex-start; /* si el valor ocupa varias líneas, que arranque en el tope */
+
+    flex-wrap: wrap;         /* permite al valor saltar a la siguiente línea */
+
+}
+
+
+/* 2) El label nunca hace wrap */
+
+.patient-email-label,
+
+.patient-telephone-label {
+
+    flex: 0 0 auto;    /* tamaño automático, no crece ni encoge */
+
+    white-space: nowrap;  /* impide cualquier quiebre */
+
+    margin-right: 0.5em;  /* espacio entre label y texto */
+
+}
+
+
+/* 3) El valor sí puede partirse en palabras largas */
+
+.patient-email,
+
+.patient-telephone {
+
+    flex: 1 1 auto;           /* sí crece/encoge para ocupar el espacio sobrante */
+
+    word-wrap: break-word;    /* para navegadores legacy */
+
+    overflow-wrap: break-word;/* estándar moderno */
+
+    /* word-break: keep-all;  // evita quiebres arbitrarios dentro de palabras (opcional) */
+
+}
+
+
+/* 4) Bibliotecas textuales generales: conservar solo overflow-wrap */
+
+.patient-card p {
+
+    /* eliminado word-break: break-word; o break-all para no reventar letra a letra */
+
+    overflow-wrap: break-word;
+
+    white-space: normal;
+
+}
+
+.patient-card .section-title {
+
+    display: block;
+
+    margin: 20px 0 8px;           /* separación antes y después */
+
+    padding: 6px 12px;            /* espacio interior */
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    color: #ffffff;               /* texto blanco */
+
+    background-color: #2E4A7D;    /* mismo azul que tu topbar */
+
+    border-radius: 4px;
+
+    line-height: 1.3;
+
+}
+
+
+/* Opción: separador más fino y con color suave */
+
+.patient-card .section-separator {
+
+    border: none;
+
+    border-bottom: 1px solid #ccc;
+
+    margin: 0;                    /* ya controlado por el título */
+
+}
+
+
+/* Si quieres el <hr> con algo de margen extra */
+
+.patient-card .section-separator {
+
+    margin: 0 0 16px 0;
+
+}
+
+/* ——————————————————————————————————————————————
+
+   Espacio entre párrafos dentro de .patient-card
+
+   —————————————————————————————————————————————— */
+
+.patient-card p {
+
+    margin: 0 0 1em 0;      /* top 0, right 0, bottom 1em, left 0 */
+
+    line-height: 1.4;
+
+}
+
+
+/* ——————————————————————————————————————————————
+
+   Espacio entre cada fila label+valor
+
+   —————————————————————————————————————————————— */
+
+.patient-card .patient-email-div,
+
+.patient-card .patient-telephone-div {
+
+    margin-bottom: 0.75em;  /* separa cada grupo etiqueta+texto */
+
+}
+
+
+/* Si además quisieras separar el propio label de su valor (verticalmente) */
+
+.patient-card .patient-email-label,
+
+.patient-card .patient-telephone-label {
+
+    display: inline-block;  /* para que margin-bottom funcione */
+
+    margin-bottom: 0.25em;  /* un pequeño hueco antes del valor */
+
+}
+
+
+/* Hacemos que cada fila siga siendo flex, pero sin partir el label ni el valor juntos */
+.patient-card .patient-email-div,
+.patient-card .patient-telephone-div {
+    display: flex;
+    flex-wrap: wrap;          /* permite que el valor muy largo baje de línea */
+    align-items: flex-start;  /* alinea label y valor arriba */
+    margin-bottom: 0.75em;    /* espacio entre filas */
+}
+
+/* El label nunca se quiebra y siempre va junto al valor */
+.patient-card .patient-email-label,
+.patient-card .patient-telephone-label {
+    flex: 0 0 auto;
+    white-space: nowrap;      /* no permite wrap en el label */
+    margin-right: 0.5em;      /* separación antes del valor */
+    position: relative;
+}
+
+
+/* El valor ocupa el resto del espacio y puede hacer wrap */
+.patient-card .patient-email,
+.patient-card .patient-telephone {
+    flex: 1 1 auto;           /* crece/encoge en el espacio sobrante */
+    display: inline-block;    /* para que el texto vaya en línea */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: normal;
+}
+
+/* Opcional: si tienes otros .patient-card p muy generales,
+   asegúrate de que no estén forzando display:block sobre el valor */
+.patient-card p.patient-email,
+.patient-card p.patient-telephone {
+    margin: 0;                /* eliminamos márgenes que rompan la fila */
+    padding: 0;
 }
