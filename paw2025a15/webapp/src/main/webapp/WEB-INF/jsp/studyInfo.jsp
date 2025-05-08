@@ -18,8 +18,8 @@
 </jsp:include>
 
 <div class="page-container" style="display: flex; flex-direction: row; gap: 2rem; padding: 2rem;">
-    <!-- Panel izquierdo: Detalle del estudio -->
-    <div class="patient-card" style="flex: 1;">
+    <!-- Panel izquierdo: Detalle del estudio (más angosto) -->
+    <div class="patient-card" style="flex: 0.5;">
         <div class="patient-info">
             <h2 class="patient-name"><c:out value="${study.comment}"/></h2>
 
@@ -88,7 +88,7 @@
                         </c:set>
                         <c:forEach var="doctor" items="${patientAuthDoctors}">
                             <c:url value="/doctors/${doctor.id}" var="doctorUrl"/>
-                            <c:url value="/patientAuthDoctor/${doctor.id}" var="deauthDoctorUrl" />
+                            <c:url value="/authFileDoctor/${doctor.id}/${study.id}" var="updateAuthUrl" />
                             <tr class="doctor-row" onclick="window.location='${doctorUrl}'" style="cursor:pointer;">
                                 <td class="text-cell">
                                     <c:out value="${doctor.name}"/>
@@ -97,7 +97,7 @@
                                     <spring:message code="specialty.${doctor.specialty}"/>
                                 </td>
                                 <td class="deauthorize-cell">
-                                    <form action="${deauthDoctorUrl}" method="post">
+                                    <form action="${updateAuthUrl}" method="post">
                                         <button
                                                 type="button"
                                                 name="action"

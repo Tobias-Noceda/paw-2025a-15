@@ -106,4 +106,14 @@ public class DoctorController {
 
         return new ModelAndView("redirect:/doctors/" + doctorId);        
     }
+
+    @RequestMapping(value = "/authFileDoctor/{doctorId:\\d+}/{studyId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView authDoctorToFile(
+            @PathVariable("doctorId") long doctorId,
+            @PathVariable("studyId") long studyId
+    ){
+
+        return new ModelAndView("redirect:/doctors/" + doctorId);
+
+    }
 }
