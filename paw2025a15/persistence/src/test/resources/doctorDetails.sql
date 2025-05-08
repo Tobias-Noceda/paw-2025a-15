@@ -1,0 +1,1 @@
+INSERT INTO doctor_details(doctor_id, doctor_licence, doctor_specialty) VALUES(2, 'med-licence', 2);

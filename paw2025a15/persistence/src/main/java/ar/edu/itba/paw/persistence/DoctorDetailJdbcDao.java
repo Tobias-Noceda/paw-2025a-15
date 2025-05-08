@@ -19,7 +19,6 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
@@ -35,7 +34,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
             rs.getString("user_name"),
             SpecialtyEnum.fromInt(rs.getInt("doctor_specialty")),
             rs.getLong("picture_id"),
-            getInsurancesById(rs.getLong("doctor_id")),
+            getDoctorInsurancesById(rs.getLong("doctor_id")),
             getWeekdaysById(rs.getLong("doctor_id"))
         );
         return doc;
@@ -68,6 +67,25 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
+    public void addDoctorCoverage(long doctorId, long insuranceId) {
+        String sql = "INSERT INTO doctor_coverages (doctor_id, insurance_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, doctorId, insuranceId);
+    }
+
+    @Override
+    public boolean removeDoctorCoverage(long doctorId, long insuranceId) {
+        String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ? AND insurance_id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, doctorId, insuranceId);
+        return rowsAffected > 0;
+    }
+
+    @Override
+    public List<Insurance> getDoctorInsurancesById(long doctorId) {
+        String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id")));
+    }
+
+    @Override
     public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
         if (page < 1 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
@@ -85,7 +103,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
 
         if (name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -147,68 +165,17 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         List<Integer> types = new ArrayList<>();
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name ILIKE ? ESCAPE '\\' ");
+            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
             params.add("%" + name.trim() + "%");
             types.add(java.sql.Types.VARCHAR);
         }
 
-        return jdbcTemplate.queryForObject(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), Integer.class);
-    }
-
-    //TODO estas capaz estan mal que esten aca fusion de todo lo de "doctor" aca seguro termina siendo
-    private List<Insurance> getInsurancesById(long doctorId) {
-        String sql = "SELECT insurances.* from insurances JOIN doctor_coverages ON doctor_coverages.insurance_id = insurances.insurance_id WHERE doctor_coverages.doctor_id = ?";
-        return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> new Insurance(rs.getLong("insurance_id"), rs.getString("insurance_name"), rs.getLong("picture_id")));
+        return jdbcTemplate.query(query.toString(), params.toArray(), types.stream().mapToInt(i -> i).toArray(), (rs, rowNum) -> rs.getInt(1)).stream().findFirst().orElse(0);
     }
 
     private List<WeekdayEnum> getWeekdaysById(long doctorId) {
         String sql = "SELECT DISTINCT shift_weekday FROM doctor_shifts WHERE doctor_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId}, new int[]{java.sql.Types.BIGINT}, (rs, rowNum) -> WeekdayEnum.fromInt(rs.getInt("shift_weekday")));
-    }
-
-    @Override
-    public List<DoctorView> getAuthDoctorsByPatientId(long id) {
-        return (List<DoctorView>) jdbcTemplate.query(
-                "SELECT DISTINCT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
-                new Object[]{id},
-                new int[]{ java.sql.Types.BIGINT },
-                DV_ROW_MAPPER
-        );
-    }
-
-    @Override
-    public boolean hasAuthDoctor(long patientId, long doctorId) {
-        return jdbcTemplate.query("SELECT 1 FROM auth_doctors WHERE doctor_id = ? AND patient_id = ? LIMIT 1", new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
-    }
-
-    @Override
-    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        return jdbcTemplate.query("SELECT 1 FROM auth_doctors WHERE doctor_id = ? AND patient_id = ? AND access_level = ? LIMIT 1", new Object[]{doctorId, patientId, accessLevel.ordinal()}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.INTEGER}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
-    }
-
-    @Override
-    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) return;
-        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_BASIC)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
-        jdbcTemplate.update("INSERT INTO auth_doctors(patient_id, doctor_id, access_level) VALUES (?, ?, ?)", patientId, doctorId, accessLevel.ordinal());
-    }
-
-    @Override
-    public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {//TODO unauth all study access
-        if(!hasAuthDoctor(patientId, doctorId)) return;
-        jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ?", patientId, doctorId);
-    }
-
-    @Override
-    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        if(accessLevel!=AccessLevelEnum.VIEW_BASIC) jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ?", patientId, doctorId, accessLevel.ordinal());
-        else unauthDoctorAllAccessLevels(patientId, doctorId);
-    }
-
-    @Override
-    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
-        String sql = "SELECT DISTINCT access_level FROM auth_doctors WHERE doctor_id = ? AND patient_id = ?";
-        return jdbcTemplate.query(sql, new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum) -> AccessLevelEnum.fromInt(rs.getInt("access_level")));
     }
 
     private void addFiltersToQuery(StringBuilder query, List<Object> params, List<Integer> types, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {

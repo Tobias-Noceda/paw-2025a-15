@@ -143,10 +143,10 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.specialty"/></label>
-          <form:select path="speciality" cssClass="login-select">
+          <form:select path="specialty" cssClass="login-select">
             <form:options items="${specialtySelectItems}" itemValue="value" itemLabel="label"/>
           </form:select>
-          <form:errors path="speciality" cssClass="error-box" element="div"/>
+          <form:errors path="specialty" cssClass="error-box" element="div"/>
         </div>
 
         <div class="field-container">

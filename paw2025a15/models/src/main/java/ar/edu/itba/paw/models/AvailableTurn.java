@@ -41,4 +41,38 @@ public class AvailableTurn {
     public String getStartToEndTime() {
         return getStartTime() + " - " + getEndTime();
     }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other) return true;
+
+        if(!(other instanceof AvailableTurn)) return false;
+
+        AvailableTurn o = (AvailableTurn) other;
+
+        return (this.date.equals(o.date)) && (this.startTime.equals(o.startTime))
+        && (this.endTime.equals(o.endTime)) && (this.address.equals(o.address))
+        && (this.shiftId==o.shiftId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Long.hashCode(shiftId);
+        result = 31 * result + date.hashCode();
+        result = 31 * result + address.hashCode();
+        result = 31 * result + startTime.hashCode();
+        result = 31 * result + endTime.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString(){
+        return "AvailableTurn{" +
+            "shiftId=" + shiftId +
+            "," + "date=" + date +
+            "," + "address=" + address +
+            "," + "startTime=" + startTime +
+            "," + "endTime=" + endTime +
+            '}';
+    }
 }

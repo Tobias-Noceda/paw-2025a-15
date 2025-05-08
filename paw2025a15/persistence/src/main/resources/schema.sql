@@ -1,10 +1,8 @@
 CREATE TABLE IF NOT EXISTS files(
     file_id SERIAL PRIMARY KEY,
     file_content BYTEA NOT NULL,
-    file_type VARCHAR(20) NOT NULL
+    file_type INT NOT NULL
 );
-
-
 
 INSERT INTO files (file_id, file_content, file_type)
 VALUES (
@@ -14,17 +12,6 @@ VALUES (
 )
 ON CONFLICT (file_id) DO NOTHING;
 SELECT setval('files_file_id_seq', COALESCE((SELECT MAX(file_id) FROM files), 1));
-
---CHANGES FOR FILES TABLE
---ALTER TABLE files
---ALTER COLUMN file_type TYPE INT
---USING (
---CASE
---    WHEN file_type = 'image/png' THEN 0
---    WHEN file_type = 'image/jpeg' THEN 1
---    WHEN file_type = 'application/pdf' THEN 2
---END
---);
 
 CREATE TABLE IF NOT EXISTS insurances(
     insurance_id SERIAL PRIMARY KEY,
@@ -40,75 +27,28 @@ CREATE TABLE IF NOT EXISTS users (
     user_password VARCHAR(100) NOT NULL,
     user_name VARCHAR (100) NOT NULL,
     picture_id BIGINT NOT NULL DEFAULT 1,
+    user_role INT NOT NULL DEFAULT 0,
+    user_telephone VARCHAR(20) NOT NULL DEFAULT '1112345678',
+    locale INT NOT NULL DEFAULT 0,
+    create_date DATE NOT NULL,
 
     FOREIGN KEY (picture_id) REFERENCES files(file_id)
 );
 
--- Add roles
--- -- Step 1: Add the column with a default value
--- ALTER TABLE users
--- ADD COLUMN user_role INT;
-
--- -- Step 2: Update the values based on the condition
--- UPDATE users
--- SET user_role = CASE
---     WHEN user_id IN (SELECT doctor_id FROM doctor_details) THEN 1
---     ELSE 0
--- END;
-
--- -- Step 3: Enable the NULL constraint on the new column
--- ALTER TABLE users
--- ALTER COLUMN user_role SET NOT NULL;
-
--- Add telephone
--- ALTER TABLE users
--- ADD COLUMN user_telephone VARCHAR(20) NOT NULL DEFAULT '1112345678';
-
--- ALTER TABLE users
--- ADD COLUMN locale INT NOT NULL DEFAULT 0;
-
--- ALTER TABLE users
--- ADD COLUMN create_date DATE;
--- -- la logica de esto es que esten dispersos similar
--- UPDATE users
--- SET create_date = DATEADD(DAY, (userid * @totalDays / @maxId), @startDate);
--- ALTER TABLE users
--- ALTER COLUMN create_date SET NOT NULL;
---
--- UPDATE users
--- SET create_date = DATE '2025-04-09';
--- --
--- ALTER TABLE users
--- ALTER COLUMN create_date SET NOT NULL;
-
 CREATE TABLE IF NOT EXISTS studies (
     study_id SERIAL PRIMARY KEY,
-    study_type VARCHAR(100) NOT NULL,
+    study_comment VARCHAR(100),
     file_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     uploader_id BIGINT NOT NULL,
     upload_date TIMESTAMP NOT NULL,
+    study_type INT NOT NULL DEFAULT 0,
+    study_date DATE NOT NULL,
 
     FOREIGN KEY (file_id) REFERENCES files(file_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
-
---CHANGES FOR STUDIES TABLE
---ALTER TABLE studies
---RENAME COLUMN study_type TO study_comment;
---ALTER TABLE studies
---ALTER COLUMN study_comment DROP NOT NULL;
---ALTER TABLE studies
---ADD COLUMN study_type INT NOT NULL DEFAULT 0;
---UPDATE studies
---SET study_type = 0 WHERE study_type IS NULL;
---ALTER TABLE studies
---ADD COLUMN study_date DATE;
---UPDATE studies
---SET study_date = upload_date::DATE;
---ALTER TABLE studies
---ALTER COLUMN study_date SET NOT NULL;
 
 CREATE TABLE IF NOT EXISTS patient_coverages (
     patient_id BIGINT PRIMARY KEY,
@@ -163,10 +103,10 @@ CREATE TABLE IF NOT EXISTS doctor_details (
 
 CREATE TABLE IF NOT EXISTS patient_details (
     patient_id BIGINT NOT NULL,
-    patient_age INT,
+    patient_birthdate DATE,
     patient_blood_type INT,
-    patient_height NUMERIC,
-    patient_weight NUMERIC,
+    patient_height NUMERIC(10,2),--TODO: constraints consistentes en toda la webapp a manejar hasta 2 decimales de esto
+    patient_weight NUMERIC(10,2),
     patient_smokes BOOLEAN,
     patient_drinks BOOLEAN,
     patient_meds VARCHAR(250),
@@ -180,38 +120,15 @@ CREATE TABLE IF NOT EXISTS patient_details (
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
 );
 
--- INSERT INTO patient_details (patient_id)
--- SELECT user_id
--- FROM users
--- WHERE user_role = 0 --patient role
---  AND user_id NOT IN (SELECT patient_id FROM patient_details);
-
---ALTER TABLE patient_details
---ADD COLUMN patient_birthdate DATE;
-
---PDATE patient_details
---SET patient_birthdate = make_date(EXTRACT(YEAR FROM CURRENT_DATE)::int - patient_age, 1, 1)
---WHERE patient_age IS NOT NULL;
-
---ALTER TABLE patient_details DROP COLUMN patient_age;
-
 CREATE TABLE IF NOT EXISTS auth_doctors (
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
+    access_level INT NOT NULL DEFAULT 0,
 
-    PRIMARY KEY(doctor_id, patient_id),
+    PRIMARY KEY(doctor_id, patient_id, access_level),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id),
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
-
--- ALTER TABLE auth_doctors
--- ADD COLUMN allowed INT NOT NULL DEFAULT 0;
--- ALTER TABLE auth_doctors
--- RENAME COLUMN allowed TO access_level;
--- ALTER TABLE auth_doctors
--- DROP CONSTRAINT auth_doctors_pkey;
--- ALTER TABLE auth_doctors
--- ADD PRIMARY KEY (doctor_id, patient_id, access_level);
 
 CREATE TABLE IF NOT EXISTS auth_studies (
     doctor_id BIGINT NOT NULL,

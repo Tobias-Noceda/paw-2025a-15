@@ -4,14 +4,12 @@ import javax.validation.Valid;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,13 +45,10 @@ public class UserController {
     private EmailService es;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private InsuranceService is;
 
     @Autowired
-    private DoctorCoverageService dcs;
+    private DoctorDetailService dds;
 
     @RequestMapping("/login")
     public ModelAndView login() {
@@ -137,7 +132,7 @@ public class UserController {
             return mav;
         }
         ModelAndView mav = new ModelAndView("login");
-        us.changePasswordByID(id, passwordEncoder.encode(form.getPassword()));
+        us.changePasswordByID(id, form.getPassword());
         return mav;
     }
     @RequestMapping("/profile")
@@ -162,7 +157,7 @@ public class UserController {
             mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
         } else {
             mav.addObject("patientDetails", null);
-            profileForm.setInsurances(InsuranceToLong(dcs.getInsurancesById(user.getId())));
+            profileForm.setInsurances(InsuranceToLong(dds.getDoctorInsurancesById(user.getId())));
         }
 
         return mav;

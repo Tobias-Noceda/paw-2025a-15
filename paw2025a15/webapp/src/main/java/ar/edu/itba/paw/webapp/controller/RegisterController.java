@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,13 +22,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.form.PatientForm;
-import ar.edu.itba.paw.interfaces.services.DoctorCoverageService;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
@@ -42,16 +41,16 @@ public class RegisterController {
     private InsuranceService is;
 
     @Autowired
-    private DoctorCoverageService dcs;
+    private PatientDetailService pds;
+
+    @Autowired
+    private DoctorDetailService dds;
     
     @Autowired
     private DoctorShiftService dss;
     
     @Autowired
     private MessageSource messageSource;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -84,12 +83,11 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                us.createPatient(
+                pds.createPatient(
                         form.getEmail(),
-                        passwordEncoder.encode(form.getPassword()),
+                        form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
-                        UserRoleEnum.PATIENT,
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
                 loginUser(form.getEmail(), form.getPassword());
@@ -137,16 +135,16 @@ public class RegisterController {
         } else {
             try {
                 // Crear el médico
-                User doc = us.createDoctor(
+                User doc = dds.createDoctor(
                         form.getEmail(),
-                        passwordEncoder.encode(form.getPassword()),
+                        form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         "med-licence",
-                        form.getSpeciality(),
+                        form.getSpecialty(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                dcs.setCoverages(doc.getId(), form.getObrasSociales());
+                dds.createDoctorCoverages(doc.getId(), form.getObrasSociales());
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),
