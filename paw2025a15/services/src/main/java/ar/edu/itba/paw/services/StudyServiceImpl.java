@@ -83,14 +83,15 @@ public class StudyServiceImpl implements StudyService{
         return studyDao.getStudiesByPatientId(id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<File> getStudyFile(long id) {
         Study study = studyDao.findStudyById(id).orElse(null);
-        if (study == null) return Optional.empty();
-
+        if (study == null)  throw new IllegalArgumentException("Study with id: " + id + " does not exist!");
         return fs.findById(study.getFileId());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Study> getFilteredStudies(long id, StudyTypeEnum type, boolean mostRecent) {
         List<Study> filtered;
@@ -120,7 +121,10 @@ public class StudyServiceImpl implements StudyService{
         if(getStudyById(studyId).isEmpty()) throw new IllegalArgumentException("Study with id: " + studyId + " does not exist!");
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthStudy(studyId, doctorId)) return true;
-        return studyDao.authStudyForDoctorId(studyId, doctorId);
+        boolean result = studyDao.authStudyForDoctorId(studyId, doctorId);
+        if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
+        else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
+        return result;
     }
 
     @Transactional(readOnly = true)
@@ -136,5 +140,6 @@ public class StudyServiceImpl implements StudyService{
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
         if(!hasAuthStudy(studyId, doctorId)) return;
         studyDao.unauthStudyForDoctorId(studyId, doctorId);
+        LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
     }
 }

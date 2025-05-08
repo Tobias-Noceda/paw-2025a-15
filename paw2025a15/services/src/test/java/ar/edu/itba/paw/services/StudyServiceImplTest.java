@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Assert;
@@ -50,6 +51,7 @@ public class StudyServiceImplTest {
     private static final LocalDate STUDY_DATE = LocalDate.parse("2025-04-09");
     private static final Study STUDY_WITH_DATE = new Study(STUDY_ID, STUDYTYPE, COMMENT, FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_UPLOAD_TIME, STUDY_DATE);
     private static final Study STUDY_WITHOUT_DATE = new Study(STUDY_ID, STUDYTYPE, COMMENT, FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_UPLOAD_TIME, STUDY_UPLOAD_TIME.toLocalDate());
+    private static final Study STUDY_NOT_OTHER = new Study(DOC_ID, StudyTypeEnum.ELECTROCARDIOGRAM, COMMENT, FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_UPLOAD_TIME, STUDY_DATE);
 
     @InjectMocks
     private StudyServiceImpl ss;
@@ -225,6 +227,18 @@ public class StudyServiceImplTest {
     }
 
     @Test
+    public void testAuthStudyForDoctorIdFailure() {
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
+        Mockito.when(studyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
+        Mockito.when(studyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
+
+        boolean result = ss.authStudyForDoctorId(STUDY_ID, DOC_ID);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
     public void testAuthStudyForDoctorIdAlreadyAuth() {
         Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
@@ -271,5 +285,61 @@ public class StudyServiceImplTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             ss.unauthStudyForDoctorId(STUDY_ID, DOC_ID)
         );
+    }
+
+    @Test
+    public void testGetStudyFile(){
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
+
+        Optional<File> file = ss.getStudyFile(STUDY_ID);
+
+        Assert.assertTrue(file.isPresent());
+        Assert.assertEquals(FILE, file.get());
+    }
+
+    @Test
+    public void testGetStudyFileNonexistentStudy(){
+        Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ss.getStudyFile(STUDY_ID)
+        );
+    }
+
+    @Test
+    public void testGetFilteredStudies(){
+        Mockito.when(studyDaoMock.getStudiesByPatientId(PATIENT_ID)).thenReturn(List.of(STUDY_NOT_OTHER, STUDY_WITH_DATE, STUDY_WITHOUT_DATE));
+
+        List<Study> results = ss.getFilteredStudies(PATIENT_ID, STUDY_NOT_OTHER.getType(), false);
+
+        Assert.assertFalse(results.isEmpty());
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(STUDY_NOT_OTHER, results.get(0));
+    }
+
+    @Test
+    public void testGetFilteredStudiesMultiple(){
+        Mockito.when(studyDaoMock.getStudiesByPatientId(PATIENT_ID)).thenReturn(List.of(STUDY_NOT_OTHER, STUDY_WITH_DATE, STUDY_WITHOUT_DATE));
+
+        List<Study> results = ss.getFilteredStudies(PATIENT_ID, STUDYTYPE, false);
+
+        Assert.assertFalse(results.isEmpty());
+        Assert.assertEquals(2, results.size());
+        Assert.assertTrue(results.contains(STUDY_WITHOUT_DATE));
+        Assert.assertTrue(results.contains(STUDY_WITH_DATE));
+    }
+
+    @Test
+    public void testGetFilteredStudiesNullType(){
+        Mockito.when(studyDaoMock.getStudiesByPatientId(PATIENT_ID)).thenReturn(List.of(STUDY_NOT_OTHER, STUDY_WITH_DATE, STUDY_WITHOUT_DATE));
+
+        List<Study> results = ss.getFilteredStudies(PATIENT_ID, null, false);
+
+        Assert.assertFalse(results.isEmpty());
+        Assert.assertEquals(3, results.size());
+        Assert.assertTrue(results.contains(STUDY_WITHOUT_DATE));
+        Assert.assertTrue(results.contains(STUDY_WITHOUT_DATE));
+        Assert.assertTrue(results.contains(STUDY_NOT_OTHER));
     }
 }
