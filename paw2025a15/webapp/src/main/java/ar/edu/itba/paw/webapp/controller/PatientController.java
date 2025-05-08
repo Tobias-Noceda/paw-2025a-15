@@ -54,7 +54,7 @@ public class PatientController {
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(patientId, user.getId()));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
-        mav.addObject("patientStudies", ss.getStudiesByPatientId(patientId));
+        mav.addObject("patientStudies", ss.getStudiesByPatientIdAndDoctorId(patientId,user.getId()));
         mav.addObject("patientDetails", pds.getDetailByPatientId(patientId).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
 
         return mav;

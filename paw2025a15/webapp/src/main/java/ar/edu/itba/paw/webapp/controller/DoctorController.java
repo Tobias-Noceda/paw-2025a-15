@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import java.util.List;
 import java.util.Locale;
 
+import ar.edu.itba.paw.interfaces.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,10 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ShiftsWeekForm;
 import ar.edu.itba.paw.form.TakeTurnForm;
-import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
@@ -39,6 +36,9 @@ public class DoctorController {
 
     @Autowired
     private AuthDoctorService ads;
+
+    @Autowired
+    private StudyService ss;
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
@@ -112,8 +112,8 @@ public class DoctorController {
             @PathVariable("doctorId") long doctorId,
             @PathVariable("studyId") long studyId
     ){
-
-        return new ModelAndView("redirect:/doctors/" + doctorId);
+        ss.toggleStudyForDoctorId(studyId, doctorId);
+        return new ModelAndView("redirect:/study-info/" + studyId);
 
     }
 }

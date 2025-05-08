@@ -86,9 +86,15 @@
                         <c:set var="authCancelText">
                             <spring:message code="doctorDetail.authorize.cancelButton"/>
                         </c:set>
+
                         <c:forEach var="doctor" items="${patientAuthDoctors}">
+                            <c:set var="hasAuth" value="${authMap[doctor.id]}" />
+                            <c:set var="buttonClass" value="${hasAuth ? 'btn-red' : 'btn-green'}"/>
+                            <c:set var="buttonLabel" value="${hasAuth ? 'Desautorizar' : 'Autorizar'}"/>
+
                             <c:url value="/doctors/${doctor.id}" var="doctorUrl"/>
                             <c:url value="/authFileDoctor/${doctor.id}/${study.id}" var="updateAuthUrl" />
+
                             <tr class="doctor-row" onclick="window.location='${doctorUrl}'" style="cursor:pointer;">
                                 <td class="text-cell">
                                     <c:out value="${doctor.name}"/>
@@ -99,18 +105,20 @@
                                 <td class="deauthorize-cell">
                                     <form action="${updateAuthUrl}" method="post">
                                         <button
-                                                type="button"
+                                                type="submit"
                                                 name="action"
                                                 value="toggle"
-                                                class="deauthorize-button"
-                                                onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value);"
+                                                class="${buttonClass}"
+                                                onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonLabel}', '${authCancelText}', this.name, this.value);"
                                         >
-                                            <c:out value="${buttonText}"/>
+                                            <c:out value="${buttonLabel}"/>
                                         </button>
                                     </form>
                                 </td>
                             </tr>
                         </c:forEach>
+
+
                         </tbody>
                     </table>
                 </div>
