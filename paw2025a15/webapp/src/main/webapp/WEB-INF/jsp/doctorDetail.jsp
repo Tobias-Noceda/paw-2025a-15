@@ -34,7 +34,13 @@
                 <img  src="<c:url value='/supersecret/user-profile-pic/${doctor.pictureId}'/>" alt="Doctor Image" />
               </div>
             </div>
-            <p class="doctor-email"><c:out value="${doctor.email}"/>, <c:out value="${doctor.telephone}"/></p>
+            <p class="doctor-email"><c:out value="${doctor.email}"/></p>
+
+            <p class="doctor-specialty-label"><spring:message code="patient.details.telephone.label"/></p>
+            <p class="doctor-insurances">
+              <c:out value="${doctor.telephone}"/>
+            </p>
+
             <div class="doctor-insurances-div">
               <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
               <p class="doctor-insurances">
@@ -55,7 +61,7 @@
               <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
               <p class="doctor-license"><c:out value="${doctorDetail.licence}"/></p>
             </div>
-            <p class="doctor-schedule-title"><spring:message code="doctor.details.schedule.label"/></p>
+            <p class="section-title"><spring:message code="doctor.details.schedule.label"/></p>
             <div class="doctor-schedule">
               <ul>
                 <c:forEach var="schedule" items="${doctorShifts}">
@@ -76,15 +82,18 @@
                 <c:set var="buttonText">
                   <spring:message code='doctorDetail.toggleButton.authorize'/>
                 </c:set>
-                <button 
-                  type="button" 
-                  name="action"
-                  value="toggle" 
-                  onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)" 
-                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
-                >
-                  <c:out value="${buttonText}"/>
-                </button>
+
+                <div class="action-buttons">
+                  <button
+                          type="button"
+                          name="action"
+                          value="toggle"
+                          onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
+                          class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
+                  >
+                    <c:out value="${buttonText}"/>
+                  </button>
+                </div>
               </div>
             </c:if>
             <c:if test="${isAuthDoctor}">
@@ -92,18 +101,9 @@
                 <c:set var="buttonText">
                   <spring:message code='doctorDetail.toggleButton.deauthorize'/>
                 </c:set>
-                <button 
-                  type="button" 
-                  name="action"
-                  value="toggle" 
-                  onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)" 
-                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
-                >
-                  <c:out value="${buttonText}"/>
-                </button>
+
               </div>
-              <hr style="border: 1px solid #ccc; margin: 10px 0;" />
-              <h2 class="doctor-name"><spring:message code='doctorDetail.update.currentPermits'/></h2>
+              <p class="section-title"><spring:message code='doctorDetail.update.currentPermits'/></p>
               <div class="doctor-name-div">
                 <c:forEach var="access" items="${['VIEW_MEDICAL','VIEW_SOCIAL','VIEW_HABITS']}">
                   <c:set var="idSafe" value="${fn:toLowerCase(fn:replace(access, '_', '-'))}" />
@@ -138,7 +138,8 @@
               <c:set var="confirmationSecondaryTextUpdate">
                 <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}    
               </c:set>
-              <div style="display: flex; justify-content: right; flex: 1;">
+              <div class="action-buttons">
+
                 <button 
                   type="button" 
                   name="action" 
@@ -147,6 +148,16 @@
                   class="doctor-update-button"
                 >
                   <spring:message code='doctorDetail.update.updateButton'/>
+                </button>
+
+                <button
+                        type="button"
+                        name="action"
+                        value="toggle"
+                        onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
+                        class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
+                >
+                  <c:out value="${buttonText}"/>
                 </button>
               </div>
             </c:if>
