@@ -22,6 +22,11 @@
         <h2 class="title">
             <spring:message code="changePassword.title"/>
         </h2>
+        <p class="subtitle">
+
+            <spring:message code="changePassword.subtitle"/>  <!-- si tienes un subtitle, si no, coméntalo -->
+
+        </p>
 
         <!-- Formulario con la misma clase que forgotPassword -->
         <form:form
@@ -71,9 +76,8 @@
             <!-- Links secundarios (opcional) -->
             <div class="extra-links">
                 <p>
-                    <spring:message code="changePassword.backToLogin"/>
                     <a href="<c:url value='/login'/>" class="link-primary">
-                        <spring:message code="login.title"/>
+                        <spring:message code="changePassword.backToLogin"/>
                     </a>
                 </p>
             </div>
