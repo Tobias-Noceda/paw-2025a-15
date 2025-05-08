@@ -1,12 +1,15 @@
 package ar.edu.itba.paw.form;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
+import ar.edu.itba.paw.form.constraints.PastDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class ProfileForm {//TODO constraints en Strings por el largo del input, prob tmb una que prevenga sql injection
     
@@ -18,6 +21,10 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
     @Positive
     @Max(value = 140, message = "{form.age.invalid}")
     private Integer age;
+
+    @PastDate
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthDate;
 
     private BloodTypeEnum bloodType;
 
@@ -48,6 +55,17 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
 
     @Size(max = 50)
     private String job;
+
+    @NotNull(message = "{form.insurances.notNull}")
+    private List<Long> insurances;
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
 
     public MultipartFile getProfileImage() {
         return profileImage;
@@ -161,4 +179,7 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
         return job;
     }
 
+    public List<Long> getInsurances() { return insurances; }
+
+    public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
 }

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.form;
 
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -8,6 +9,7 @@ public class LandingForm {
     private SpecialtyEnum specialty;
     private Long insurances; // <-- ID en lugar del objeto
     private WeekdayEnum weekday;
+    private DoctorOrderEnum orderBy;
 
     // Getters
     public String getQuery() {
@@ -30,22 +32,24 @@ public class LandingForm {
         return weekday;
     }
 
+    public DoctorOrderEnum getOrderBy() {
+        return orderBy;
+    }
+
+
     // Setter
-    public void setQuery(String query) {
-        this.query = query;
-    }
 
-    public void setSpecialty(SpecialtyEnum specialty) {
-        this.specialty = specialty;
+    public void setOrderBy(DoctorOrderEnum orderBy) {
+        this.orderBy = orderBy;
     }
+    public void setQuery(String query) { this.query = query; }
 
-    public void setInsurances(Long insurances) {
-        this.insurances = insurances;
-    }
+    public void setSpecialty(SpecialtyEnum specialty) { this.specialty = specialty; }
 
-    public void setWeekday(WeekdayEnum weekday) {
-        this.weekday = weekday;
-    }
+    public void setInsurances(Long insurances) { this.insurances = insurances; }
+
+    public void setWeekday(WeekdayEnum weekday) { this.weekday = weekday; }
+
 
     @Override
     public String toString() {

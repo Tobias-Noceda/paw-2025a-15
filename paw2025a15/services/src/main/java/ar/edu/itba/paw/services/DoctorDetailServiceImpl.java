@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,8 +81,8 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, page, pageSize);
+    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy,page, pageSize);
     }
 
     @Transactional(readOnly = true)

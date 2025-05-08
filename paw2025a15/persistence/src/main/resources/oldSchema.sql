@@ -186,6 +186,15 @@ CREATE TABLE IF NOT EXISTS patient_details (
 -- WHERE user_role = 0 --patient role
 --  AND user_id NOT IN (SELECT patient_id FROM patient_details);
 
+--ALTER TABLE patient_details
+--ADD COLUMN patient_birthdate DATE;
+
+--UPDATE patient_details
+--SET patient_birthdate = make_date(EXTRACT(YEAR FROM CURRENT_DATE)::int - patient_age, 1, 1)
+--WHERE patient_age IS NOT NULL;
+
+--ALTER TABLE patient_details DROP COLUMN patient_age;
+
 CREATE TABLE IF NOT EXISTS auth_doctors (
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,

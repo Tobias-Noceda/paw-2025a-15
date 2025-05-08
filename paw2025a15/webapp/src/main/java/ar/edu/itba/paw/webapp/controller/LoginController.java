@@ -14,7 +14,7 @@ public class LoginController {
         ModelAndView mav = new ModelAndView("login");
         if (error != null) {
             switch (error) {
-                case "userNotFound" -> mav.addObject("errorMessage", "error.userNotFound");
+                case "userNotFound" -> mav.addObject("errorMessage", "error.invalidCredentials");
                 case "invalidCredentials" -> mav.addObject("errorMessage", "error.invalidCredentials");
                 case "credentialsNotFound" -> mav.addObject("errorMessage", "error.credentialsNotFound");
                 default -> mav.addObject("errorMessage", "error.invalidCredentials");

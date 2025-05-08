@@ -2,8 +2,10 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
@@ -78,6 +81,31 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public List<Study> getStudiesByPatientId(long id) {
         return studyDao.getStudiesByPatientId(id);
+    }
+
+    @Override
+    public Optional<File> getStudyFile(long id) {
+        Study study = studyDao.findStudyById(id).orElse(null);
+        if (study == null) return Optional.empty();
+
+        return fs.findById(study.getFileId());
+    }
+
+    @Override
+    public List<Study> getFilteredStudies(long id, StudyTypeEnum type, boolean mostRecent) {
+        List<Study> filtered;
+        if(type == null) {
+           filtered = getStudiesByPatientId(id);
+        }else {
+           filtered = getStudiesByPatientId(id).stream()
+                    .filter(study -> study.getType() == type)
+                    .collect(Collectors.toList());
+        }
+        if (!mostRecent) {
+            Collections.reverse(filtered);
+        }
+
+        return filtered;
     }
 
     @Transactional(readOnly = true)

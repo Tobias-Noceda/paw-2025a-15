@@ -23,10 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
 
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.WebUserAuthDecision;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Configuration
 @EnableWebSecurity
@@ -71,7 +71,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // general
                 .requestMatchers("/", "/home").permitAll()
                 .requestMatchers("/supersecret/files/logo").permitAll()
-                .requestMatchers("/user-profile-picture/{userId}").permitAll()
+                .requestMatchers("/favicon").permitAll()
+                .requestMatchers("/supersecret/user-profile-pic/{userId}").permitAll()
+                .requestMatchers("/supersecret/insurance-picture/{userId}").permitAll()
                 .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
                 .requestMatchers("/patient/{patientId}")
@@ -85,9 +87,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/removeAppointment").hasRole("DOCTOR")
                 // studies
                 .requestMatchers("/studies").hasRole("PATIENT")
-                .requestMatchers("/study/{studyId}")
+                .requestMatchers("/view-study/{studyId}")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
-                .requestMatchers("/upload-file/{patientId}")
+                .requestMatchers("/upload-study/{patientId}") // TODO: change to /upload-study
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
                 // temporary
                 .requestMatchers("/**").permitAll()

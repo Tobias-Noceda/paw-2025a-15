@@ -13,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.interfaces.persistence.InsuranceDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
 
 @Service
 public class InsuranceServiceImpl implements InsuranceService{
 
+    @Autowired
     private static final Logger LOGGER = LoggerFactory.getLogger(InsuranceServiceImpl.class);
 
     @Autowired
@@ -66,6 +68,14 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public List<Insurance> getAllInsurances() {
         return insuranceDao.getAllInsurances();
+    }
+
+    @Override
+    public Optional<File> getInsurancePicture(long id) {
+        Insurance insurance = insuranceDao.getInsuranceById(id).orElse(null);
+        if (insurance == null) return Optional.empty();
+
+        return fs.findById(insurance.getPictureId());
     }
 
 }

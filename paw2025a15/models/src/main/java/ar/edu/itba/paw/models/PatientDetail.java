@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.models;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 public class PatientDetail {
     private final long patientId;
-    private final Integer age;
+    private final LocalDate birthdate;
     private final BloodTypeEnum bloodType;
     private final Double height; //TODO pasarlo a otro datatype, el punto y coma vana  causar dolores de cabeza
     private final Double weight;
@@ -17,10 +20,10 @@ public class PatientDetail {
     private final String hobbies;
     private final String job;
 
-    public PatientDetail(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight, 
+    public PatientDetail(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight, 
     Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet, String hobbies, String job) {
         this.patientId = patientId;
-        this.age = age;
+        this.birthdate = birthdate;
         this.bloodType = bloodType;
         this.height = height;
         this.weight = weight;
@@ -38,8 +41,8 @@ public class PatientDetail {
         return patientId;
         }
 
-    public Integer getAge() {
-        return age;
+    public LocalDate getBirthdate() {
+        return birthdate;
     }
 
     public BloodTypeEnum getBloodType() {
@@ -62,7 +65,7 @@ public class PatientDetail {
         return drinks;
     }
 
-    public String getMeds() {
+    public String   getMeds() {
         return meds;
     }
 
@@ -86,6 +89,10 @@ public class PatientDetail {
         return job;
     }
 
+    public Integer getAge(){
+        if(birthdate==null) return null;
+        return Period.between(this.birthdate, LocalDate.now()).getYears();
+    }
     @Override
     public boolean equals(Object other){
         if(this == other) return true;
@@ -95,7 +102,7 @@ public class PatientDetail {
         PatientDetail o = (PatientDetail) other;
 
         return (this.patientId==o.patientId) 
-        && (this.age==null?(o.age==null):(this.age.equals(o.age)))
+        && (this.birthdate==null?(o.birthdate==null):(this.birthdate.equals(o.birthdate)))
         && (this.bloodType==null?(o.bloodType==null):(this.bloodType.equals(o.bloodType)))
         && (this.height==null?(o.height==null):(this.height.equals(o.height)))
         && (this.weight==null?(o.weight==null):(this.weight.equals(o.weight)))
@@ -112,7 +119,7 @@ public class PatientDetail {
     @Override
     public int hashCode() {
         int result = Long.hashCode(patientId);
-        result = 31 * result + Integer.hashCode(age);
+        result = 31 * result + birthdate.hashCode();
         result = 31 * result + bloodType.hashCode();
         result = 31 * result + Double.hashCode(height);
         result = 31 * result + Double.hashCode(weight);
@@ -131,7 +138,7 @@ public class PatientDetail {
     public String toString(){
         return "PatientDetails{" +
             "patientId=" + patientId +
-            ", age=" + age +
+            ", birthdate=" + birthdate +
             ", bloodType=" + bloodType +
             ", height=" + height +
             ", weight=" + weight +

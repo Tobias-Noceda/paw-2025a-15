@@ -50,6 +50,7 @@
 }
 
 .appointment-list-container {
+    min-height: calc(100vh - 102px);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -79,9 +80,9 @@
 }
 
 .appointments-table {
+    table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
 }
 
 .no-appointments-container {

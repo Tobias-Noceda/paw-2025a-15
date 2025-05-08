@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,8 +21,7 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 public class PatientDetailJdbcDao implements PatientDetailDao{
 
     private static final RowMapper<PatientDetail> ROW_MAPPER = (rs, rowNum) -> 
-    new PatientDetail(rs.getLong("patient_id"), 
-    rs.getObject("patient_age") != null ? rs.getInt("patient_age") : null, 
+    new PatientDetail(rs.getLong("patient_id"), rs.getObject("patient_birthdate") != null ? rs.getDate("patient_birthdate").toLocalDate() : null, 
     rs.getObject("patient_blood_type") != null ? BloodTypeEnum.fromInt(rs.getInt("patient_blood_type")) : null,
     rs.getObject("patient_height") != null ? rs.getDouble("patient_height") : null, 
     rs.getObject("patient_weight") != null ? rs.getDouble("patient_weight") : null, 
@@ -41,13 +41,13 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
     }
 
     @Override
-    public PatientDetail create(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+    public PatientDetail create(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
         final Map<String, Object> args = new HashMap<>();
         args.put("patient_id", patientId);
-        args.put("patient_age", age);
-        args.put("patient_blood_type", bloodType != null ? bloodType.ordinal() : null);
+        args.put("patient_birthdate", birthdate);
+        args.put("patient_blood_type", bloodType != null ? bloodType.getName() : null);
         args.put("patient_height", height);
         args.put("patient_weight", weight);
         args.put("patient_smokes", smokes);
@@ -59,7 +59,7 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
         args.put("patient_hobbies", hobbies);
         args.put("patient_job", job);
         jdbcInsert.execute(args);
-        return new PatientDetail(patientId, age, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
+        return new PatientDetail(patientId, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
     }
 
     @Override
@@ -69,11 +69,11 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
     }
 
     @Override
-    public void updatePatientDetails(long patientId, Integer age, BloodTypeEnum bloodType, Double height, Double weight,
+    public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
-        String query = "UPDATE patient_details SET patient_age = ?, patient_blood_type = ?, patient_height = ?, patient_weight = ?, patient_smokes = ?, patient_drinks = ?, patient_meds = ?, patient_conditions = ?, patient_allergies = ?, patient_diet = ?, patient_hobbies = ?, patient_job = ? WHERE patient_id = ?";
-        jdbcTemplate.update(query, age, 
+        String query = "UPDATE patient_details SET patient_birthdate = ?, patient_blood_type = ?, patient_height = ?, patient_weight = ?, patient_smokes = ?, patient_drinks = ?, patient_meds = ?, patient_conditions = ?, patient_allergies = ?, patient_diet = ?, patient_hobbies = ?, patient_job = ? WHERE patient_id = ?";
+        jdbcTemplate.update(query, birthdate, 
             bloodType != null ? bloodType.ordinal() : null, 
             height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job, patientId);
     }

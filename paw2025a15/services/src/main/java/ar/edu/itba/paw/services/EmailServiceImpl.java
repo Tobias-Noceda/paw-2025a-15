@@ -290,7 +290,8 @@ public class EmailServiceImpl implements EmailService{
         //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
 
         String recoveryLink = baseURL + "changePassword/" + token + "/" + user.getId();
-        templateModel.put("resetLink", recoveryLink);
+        System.out.println("Recovery link: " + recoveryLink);
+        templateModel.put("recoveryLink", recoveryLink);
 
         Locale locale = user.getLocale().toLocale();
         String subject = messageSource.getMessage("passwordReset.subject", null, locale);
@@ -302,4 +303,57 @@ public class EmailServiceImpl implements EmailService{
             LOGGER.error("Error sending user reset password email to {}: {}", user.getEmail(), e.getMessage(), e);
         }
     }
+
+    @Override
+    @Async
+    public void sendPatientAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", doctor.getEmail());
+        templateModel.put("phone", doctor.getTelephone());
+        templateModel.put("shiftsLink", baseURL + "appointments/");
+
+        String subject = messageSource.getMessage("reminder.subject", null, locale);
+
+        try {
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentReminderTemplate", locale);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending patient reminder email to {}: {}", patient.getEmail(), e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Async
+    public void sendDoctorAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("doctorName", doctor.getName());
+        templateModel.put("patientName", patient.getName());
+        templateModel.put("dateNumber", appointment.getDateNumber());
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        templateModel.put("startTime", shift.getStartTime().toString());
+        templateModel.put("address", shift.getAddress());
+        templateModel.put("email", patient.getEmail());
+        templateModel.put("phone", patient.getTelephone());
+        templateModel.put("uploadLink", baseURL + "appointments/");
+
+        String subject = messageSource.getMessage("reminder.subject", null, locale);
+
+        try {
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentReminderTemplate", locale);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending doctor reminder email to {}: {}", doctor.getEmail(), e.getMessage(), e);
+        }
+    }
+
+
+
 }
