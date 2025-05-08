@@ -56,6 +56,7 @@ public class ProfileForm {//TODO constraints en Strings por el largo del input, 
     @Size(max = 50)
     private String job;
 
+    @NotNull(message = "{form.insurances.notNull}")
     private List<Long> insurances;
 
     public LocalDate getBirthDate() {

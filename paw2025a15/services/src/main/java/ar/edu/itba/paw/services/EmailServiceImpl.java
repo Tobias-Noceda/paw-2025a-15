@@ -290,7 +290,8 @@ public class EmailServiceImpl implements EmailService{
         //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
 
         String recoveryLink = baseURL + "changePassword/" + token + "/" + user.getId();
-        templateModel.put("resetLink", recoveryLink);
+        System.out.println("Recovery link: " + recoveryLink);
+        templateModel.put("recoveryLink", recoveryLink);
 
         Locale locale = user.getLocale().toLocale();
         String subject = messageSource.getMessage("passwordReset.subject", null, locale);
