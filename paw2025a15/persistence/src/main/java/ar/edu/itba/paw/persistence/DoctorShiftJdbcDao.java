@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
+import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -23,6 +24,7 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 public class DoctorShiftJdbcDao implements DoctorShiftDao{
 
     private static final RowMapper<DoctorShift> ROW_MAPPER = (rs, rowNum) -> new DoctorShift(rs.getLong("shift_id"), rs.getLong("doctor_id"), WeekdayEnum.fromInt(rs.getInt("shift_weekday")), rs.getString("shift_address"), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_end_time").toLocalTime());
+    private static final RowMapper<AvailableTurn> AVAILABLE_TURN_ROW_MAPPER = (rs, rowNum) -> new AvailableTurn(rs.getDate("date").toLocalDate(), rs.getTime("shift_start_time").toLocalTime(), rs.getTime("shift_end_time").toLocalTime(), rs.getString("shift_address"), rs.getLong("shift_id"));
     
     private final JdbcTemplate jdbcTemplate;
 
@@ -73,11 +75,27 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE doctor_id = ?", new Object[]  {doctorId},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER);
     }
-    
+
     @Override
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date){
-        return jdbcTemplate.query("SELECT ds.* FROM doctor_shifts AS ds WHERE ds.doctor_id = ? AND ds.shift_weekday = ? AND NOT EXISTS (SELECT 1 FROM appointments AS a WHERE a.appointment_date = ? AND a.shift_id = ds.shift_id)", new Object[]  {doctorId, weekday.ordinal(), date},
-          new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.DATE}, ROW_MAPPER);
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate) {
+        return jdbcTemplate.query(
+            """
+                SELECT 
+                    gs.date,
+                    ds.*
+                FROM 
+                    generate_series(?::date, ?::date, interval '1 day') AS gs(date)
+                JOIN 
+                    doctor_shifts ds
+                    ON EXTRACT(ISODOW FROM gs.date)::int = ds.shift_weekday
+                WHERE 
+                    ds.doctor_id = ?
+                ORDER BY gs.date, ds.shift_start_time
+            """,
+            new Object[]  {startDate, endDate, doctorId},
+            new int[] {java.sql.Types.DATE, java.sql.Types.DATE, java.sql.Types.BIGINT},
+            AVAILABLE_TURN_ROW_MAPPER
+        );
     }
 
     @Override

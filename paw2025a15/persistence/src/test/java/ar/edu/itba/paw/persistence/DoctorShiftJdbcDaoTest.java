@@ -133,49 +133,6 @@ public class DoctorShiftJdbcDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql"})
-    public void testGetAvailableShiftsByDoctorIdWeekdayAndDateNoAppointments(){
-        final long DOC_ID = TestData.DoctorShifts.doctorShift.getDoctorId();
-        final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
-        final LocalDate DATE = TestData.Appointments.appointment.getDate();
-        final DoctorShift SHIFT1 = TestData.DoctorShifts.doctorShift;
-        final DoctorShift SHIFT2 = TestData.DoctorShifts.doctorShift2;
-
-        List<DoctorShift> foundShifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDate(DOC_ID, WEEKDAY, DATE);
-
-        Assert.assertFalse(foundShifts.isEmpty());
-        Assert.assertEquals(2, foundShifts.size());
-        Assert.assertTrue(foundShifts.contains(SHIFT1));
-        Assert.assertTrue(foundShifts.contains(SHIFT2));
-        Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id = %d ", DOC_ID)));
-        Assert.assertEquals(0, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "appointments", String.format("shift_id = %d ", SHIFT1.getId())));
-        Assert.assertEquals(0, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "appointments", String.format("shift_id = %d ", SHIFT2.getId())));
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql"})
-    public void testGetAvailableShiftsByDoctorIdWeekdayAndDateAllAppointments(){
-        final long DOC_ID = TestData.DoctorShifts.doctorShift.getDoctorId();
-        final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
-        final LocalDate DATE = TestData.Appointments.appointment.getDate();
-        final DoctorShift SHIFT1 = TestData.DoctorShifts.doctorShift;
-        final DoctorShift SHIFT2 = TestData.DoctorShifts.doctorShift2;
-
-        List<DoctorShift> foundShifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDate(DOC_ID, WEEKDAY, DATE);
-
-        Assert.assertTrue(foundShifts.isEmpty());
-        Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id = %d ", DOC_ID)));
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "appointments", String.format("shift_id = %d ", SHIFT1.getId())));
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "appointments", String.format("shift_id = %d ", SHIFT2.getId())));
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql"})
     public void testGetAvailableShiftsByDoctorIdWeekdayAndDateTimeNoAppointments(){
         final long DOC_ID = TestData.DoctorShifts.doctorShift.getDoctorId();
         final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();

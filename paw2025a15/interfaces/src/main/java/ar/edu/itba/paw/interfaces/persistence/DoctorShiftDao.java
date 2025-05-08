@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -17,7 +18,7 @@ public interface DoctorShiftDao {
 
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);
 
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDate(long doctorId, WeekdayEnum weekday, LocalDate date);
+    public List <AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate);
     
     public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday, LocalDate date, LocalTime time);
 }
