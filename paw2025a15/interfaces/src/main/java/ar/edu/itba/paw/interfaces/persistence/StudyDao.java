@@ -16,7 +16,11 @@ public interface StudyDao {
 
     public List<Study> getStudiesByPatientId(long id);
 
+    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent);
+    
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId);
+    
+    public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent);
 
     public boolean authStudyForDoctorId(long studyId, long doctorId);
 

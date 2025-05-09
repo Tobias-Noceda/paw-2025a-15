@@ -23,6 +23,8 @@ public interface StudyService {
 
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId);
 
+    public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent);
+
     public boolean authStudyForDoctorId(long studyId, long doctorId);
 
     public boolean hasAuthStudy(long studyId, long doctorId);
