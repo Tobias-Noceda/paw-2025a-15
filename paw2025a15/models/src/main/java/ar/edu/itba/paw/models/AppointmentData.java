@@ -5,16 +5,20 @@ import java.time.LocalTime;
 
 public class AppointmentData {
     private final long shiftId;
+    private final long patientId;
     private final String patientName;
+    private final long doctorId;
     private final String doctorName;
     private final LocalDate date;
     private final LocalTime startTime;
     private final LocalTime endTime;
     private final String address;
 
-    public AppointmentData(long shiftId, String patientName, String doctorName, LocalDate date, LocalTime startTime, LocalTime endTime, String address){
+    public AppointmentData(long shiftId, long patientId, String patientName, long doctorId, String doctorName, LocalDate date, LocalTime startTime, LocalTime endTime, String address){
         this.shiftId = shiftId;
+        this.patientId = patientId;
         this.patientName = patientName;
+        this.doctorId = doctorId;
         this.doctorName = doctorName;
         this.date = date;
         this.startTime = startTime;
@@ -26,8 +30,16 @@ public class AppointmentData {
         return shiftId;
     }
 
+    public long getPatientId(){
+        return patientId;
+    }
+
     public String getPatientName(){
         return patientName;
+    }
+
+    public long getDoctorId(){
+        return doctorId;
     }
 
     public String getDoctorName(){

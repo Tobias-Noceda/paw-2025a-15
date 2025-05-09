@@ -94,6 +94,7 @@ public class AppointmentsJdbcDaoTest {
     public void testGetFutureAppointmentDataByPatientId(){
         final long PATIENT_ID = TestData.Users.patient.getId();
         final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long DOCTOR_ID = TestData.Users.doctor.getId();
         final String DOC_NAME = TestData.Users.doctor.getName();
         final long SHIFT_ID = TestData.DoctorShifts.doctorShift.getId();
         final LocalTime START_TIME = TestData.DoctorShifts.doctorShift.getStartTime();
@@ -103,8 +104,8 @@ public class AppointmentsJdbcDaoTest {
         final LocalTime END_TIME2 = TestData.DoctorShifts.doctorShift2.getEndTime();
         final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
         final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_NAME, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
-        final AppointmentData APP_DATA2 = new AppointmentData(SHIFT2_ID, PATIENT_NAME, DOC_NAME, APP_DATE, START_TIME2, END_TIME2, ADDRESS);
+        final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
+        final AppointmentData APP_DATA2 = new AppointmentData(SHIFT2_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME2, END_TIME2, ADDRESS);
 
          List<AppointmentData> results = appointmentDao.getFutureAppointmentDataByPatientId(PATIENT_ID);
 
@@ -124,6 +125,7 @@ public class AppointmentsJdbcDaoTest {
     public void testGetOldAppointmentDataByPatientId(){
         final long PATIENT_ID = TestData.Users.patient.getId();
         final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long DOCTOR_ID = TestData.Users.doctor.getId();
         final String DOC_NAME = TestData.Users.doctor.getName();
         final long SHIFT_ID = TestData.DoctorShifts.doctorShift.getId();
         final LocalTime START_TIME = TestData.DoctorShifts.doctorShift.getStartTime();
@@ -133,8 +135,8 @@ public class AppointmentsJdbcDaoTest {
         final LocalTime END_TIME2 = TestData.DoctorShifts.doctorShift2.getEndTime();
         final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
         final LocalDate APP_DATE = TestData.Appointments.oldAppointment.getDate();
-        final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_NAME, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
-        final AppointmentData APP_DATA2 = new AppointmentData(SHIFT2_ID, PATIENT_NAME, DOC_NAME, APP_DATE, START_TIME2, END_TIME2, ADDRESS);
+        final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
+        final AppointmentData APP_DATA2 = new AppointmentData(SHIFT2_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME2, END_TIME2, ADDRESS);
 
          List<AppointmentData> results = appointmentDao.getOldAppointmentDataByPatientId(PATIENT_ID);
 
@@ -152,7 +154,9 @@ public class AppointmentsJdbcDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
     public void testGetFutureAppointmentDataByDoctorId(){
+        final long PATIENT_ID = TestData.Users.patient.getId();
         final String PATIENT_NAME = TestData.Users.patient.getName();
+        final long DOCTOR_ID = TestData.Users.doctor.getId();
         final String DOC_NAME = TestData.Users.doctor.getName();
         final long SHIFT_ID = TestData.DoctorShifts.doctorShift.getId();
         final long DOC_ID = TestData.DoctorShifts.doctorShift.getDoctorId();
@@ -163,8 +167,8 @@ public class AppointmentsJdbcDaoTest {
         final LocalTime END_TIME2 = TestData.DoctorShifts.doctorShift2.getEndTime();
         final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
         final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_NAME, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
-        final AppointmentData APP_DATA2 = new AppointmentData(SHIFT2_ID, PATIENT_NAME, DOC_NAME, APP_DATE, START_TIME2, END_TIME2, ADDRESS);
+        final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
+        final AppointmentData APP_DATA2 = new AppointmentData(SHIFT2_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME2, END_TIME2, ADDRESS);
 
          List<AppointmentData> results = appointmentDao.getFutureAppointmentDataByDoctorId(DOC_ID);
 

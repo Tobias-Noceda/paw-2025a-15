@@ -30,4 +30,6 @@ public interface StudyService {
     public boolean hasAuthStudy(long studyId, long doctorId);
 
     public void unauthStudyForDoctorId(long studyId, long doctorId);
+
+    public void toggleStudyForDoctorId(long studyId, long doctorId);
 }

@@ -141,4 +141,13 @@ public class StudyServiceImpl implements StudyService{
         studyDao.unauthStudyForDoctorId(studyId, doctorId);
         LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
     }
+
+    @Override
+    public void toggleStudyForDoctorId(long studyId, long doctorId) {
+        if(hasAuthStudy(studyId, doctorId)) {
+            unauthStudyForDoctorId(studyId, doctorId);
+        }else{
+            authStudyForDoctorId(studyId, doctorId);
+        }
+    }
 }

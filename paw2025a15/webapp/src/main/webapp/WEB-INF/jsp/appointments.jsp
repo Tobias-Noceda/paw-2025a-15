@@ -46,7 +46,12 @@
                 <table class="appointments-table">
                   <tbody>
                     <c:forEach var="appointment" items="${patientFutureAppointments}">
-                      <tr class="appointment-row">
+                      <c:url value="/doctors/${appointment.doctorId}" var="doctorUrl" />
+                      <tr
+                        class="appointment-row"
+                        onclick="window.location='${doctorUrl}'"
+                        style="cursor: pointer;"
+                      >
                         <c:set var="day">
                           <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
                         </c:set>
@@ -109,7 +114,12 @@
                 <table class="appointments-table">
                   <tbody>
                     <c:forEach var="appointment" items="${patientOldAppointments}">
-                      <tr class="appointment-row">
+                      <c:url value="/doctors/${appointment.doctorId}" var="doctorUrl" />
+                      <tr
+                        class="appointment-row"
+                        onclick="window.location='${doctorUrl}'"
+                        style="cursor: pointer;"
+                      >
                         <c:set var="day">
                           <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
                         </c:set>
@@ -159,7 +169,12 @@
                 <table class="appointments-table">
                   <tbody>
                     <c:forEach var="appointment" items="${doctorTakenAppointments}">
-                      <tr class="appointment-row">
+                      <c:url value="/patient/${appointment.patientId}" var="patientUrl" />
+                      <tr
+                        class="appointment-row"
+                        onclick="window.location='${patientUrl}'"
+                        style="cursor: pointer;"
+                      >
                         <c:set var="day">
                           <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
                         </c:set>

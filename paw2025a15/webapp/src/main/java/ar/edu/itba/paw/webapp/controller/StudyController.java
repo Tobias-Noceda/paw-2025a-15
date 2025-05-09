@@ -3,10 +3,16 @@ package ar.edu.itba.paw.webapp.controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.Study;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,11 +28,6 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.CreateStudyForm;
 import ar.edu.itba.paw.form.FileFilterForm;
 import ar.edu.itba.paw.form.LandingForm;
-import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
-import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
@@ -136,4 +137,40 @@ public class StudyController {
         
         return mav;
     }
+    @RequestMapping("/study-info/{studyId:\\d+}")
+    public ModelAndView studyInfo(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable("studyId") int studyId,
+            Locale locale
+    ) {
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+
+        ModelAndView mav = new ModelAndView("studyInfo");
+
+        // Obtener el estudio
+        Study study = ss.getStudyById(studyId).orElseThrow();
+
+        // Obtener todos los doctores asociados al paciente (autorizados o no)
+        List<DoctorView> doctors = ads.getAuthDoctorsByPatientId(user.getId());
+
+        // Crear un mapa para saber si cada doctor está autorizado a ver este estudio
+        Map<Long, Boolean> authMap = new HashMap<>();
+        for (DoctorView doctor : doctors) {
+            boolean hasAuth = ss.hasAuthStudy(studyId, doctor.getId());
+            authMap.put(doctor.getId(), hasAuth);
+        }
+
+        mav.addObject("landingForm", new LandingForm());
+        mav.addObject("study", study);
+        mav.addObject("patientAuthDoctors", doctors); // todos los posibles
+        mav.addObject("authMap", authMap);            // mapa de autorización
+        mav.addObject("user", user);
+        return mav;
+    }
+
+
 }
