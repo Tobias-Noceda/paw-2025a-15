@@ -61,17 +61,14 @@ public class ErrorControllerAdvice {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(MediaTypeException.class)
     public ModelAndView handle415Exception() {
-        return new ModelAndView("errorPages/418");
-    }
-
-    @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
-    @ExceptionHandler(RuntimeException.class)
-    public ModelAndView handle418Exception() {
-        return new ModelAndView("errorPages/418");
+        return new ModelAndView("errorPages/415");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({
+        Exception.class,
+        RuntimeException.class
+    })
     public ModelAndView handle500Exception() {
         return new ModelAndView("errorPages/500");
     }
