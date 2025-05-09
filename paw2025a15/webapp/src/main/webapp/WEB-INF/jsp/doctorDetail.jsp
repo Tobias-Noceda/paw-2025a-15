@@ -32,10 +32,11 @@
             </div>
             <p class="doctor-email"><c:out value="${doctor.email}"/></p>
 
-            <p class="doctor-specialty-label"><spring:message code="patient.details.telephone.label"/></p>
-            <p class="doctor-insurances">
-              <c:out value="${doctor.telephone}"/>
-            </p>
+
+            <div class="doctor-telephone-div">
+              <p class="doctor-telephone-label"><spring:message code="patient.details.telephone.label"/></p>
+              <p class="doctor-telephone"><c:out value="${doctor.telephone}"/></p>
+            </div>
 
             <div class="doctor-insurances-div">
               <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>

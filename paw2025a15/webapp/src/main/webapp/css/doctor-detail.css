@@ -140,6 +140,7 @@
     margin: 0 0 10px 0;
 }
 
+.doctor-telephone-div,
 .doctor-insurances-div,
 .doctor-specialty-div,
 .doctor-address-div,
@@ -150,6 +151,7 @@
     margin: 3px 0 0 0;
 }
 
+.doctor-telephone-label,
 .doctor-insurances-label,
 .doctor-specialty-label,
 .doctor-address-label,
@@ -165,6 +167,7 @@
     margin: 15px 0 5px 0;
 }
 
+.doctor-telephone,
 .doctor-insurances,
 .doctor-specialty,
 .doctor-address,
@@ -417,6 +420,7 @@
     margin-bottom: 1em;       /* espacio entre filas */
 }
 
+.doctor-detail-card .doctor-telephone-label,
 .doctor-detail-card .doctor-insurances-label,
 .doctor-detail-card .doctor-specialty-label,
 .doctor-detail-card .doctor-address-label,
@@ -428,6 +432,7 @@
 }
 
 /* 5.1) Añadir “:” tras cada label */
+.doctor-detail-card .doctor-telephone-label::after,
 .doctor-detail-card .doctor-insurances-label::after,
 .doctor-detail-card .doctor-specialty-label::after,
 .doctor-detail-card .doctor-address-label::after,
