@@ -4,7 +4,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <link rel="stylesheet" href="<c:url value="/css/doctor-form.css"/>">
     <link rel="stylesheet" href="<c:url value="/css/main.css" />" />    <!-- Incluimos FontAwesome para el ícono del ojito -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

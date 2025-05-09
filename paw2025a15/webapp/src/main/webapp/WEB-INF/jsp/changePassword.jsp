@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><spring:message code="changePassword.title"/></title>
-    <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+    <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>" />
     <!-- reutilizamos exactamente el mismo CSS -->
     <link rel="stylesheet" href="<c:url value='/css/login-form.css'/>">
 </head>

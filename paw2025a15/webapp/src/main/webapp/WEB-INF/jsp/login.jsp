@@ -9,7 +9,7 @@
   <title><spring:message code="login.title"/></title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+  <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>" />
 
   <!-- Fuente moderna -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
   <div class="login-card">
 
     <!-- Logo -->
-    <img src="<c:url value='/resources/favicon.png'/>"
+    <img src="<c:url value='/favicon.ico'/>"
          alt="Caretrace Logo"
          class="logo">
 

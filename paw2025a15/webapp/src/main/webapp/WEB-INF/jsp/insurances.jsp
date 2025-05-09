@@ -3,7 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
   <head>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
   </head>
   <body>
     <c:set var="title">

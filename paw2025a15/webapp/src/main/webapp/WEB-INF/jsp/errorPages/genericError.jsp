@@ -8,7 +8,7 @@
     <title>
       <spring:message code="error.title" arguments="${param.errorCode}" />
     </title>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       body {

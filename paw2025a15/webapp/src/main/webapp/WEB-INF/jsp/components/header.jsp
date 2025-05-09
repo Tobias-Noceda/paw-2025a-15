@@ -10,7 +10,7 @@
     <title>
       CareTrace<c:if test="${param.title != null}"> - <spring:message code="header.${param.title}"></spring:message></c:if>
     </title>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <link rel="stylesheet" href="<c:url value="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=login"/>"  />
     <link rel="stylesheet" href="<c:url value="/css/main.css" />" />
   </head>

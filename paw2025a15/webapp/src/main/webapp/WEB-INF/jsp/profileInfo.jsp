@@ -8,7 +8,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><spring:message code="profile.title"/></title>
-  <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+  <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<c:url value='/css/profile-info.css'/>">
   <link rel="stylesheet" href="<c:url value='/css/base.css'/>">

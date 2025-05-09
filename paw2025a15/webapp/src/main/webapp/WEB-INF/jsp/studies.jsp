@@ -6,7 +6,7 @@
 
 <html>
   <head>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <link rel="stylesheet" href="<c:url value="/css/studies.css"/>">
 
   </head>

@@ -16,14 +16,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.LandingForm;
@@ -60,19 +57,6 @@ public class FileController {
 
     @Autowired
     private DoctorDetailService dds;
-
-    @GetMapping("/favicon.ico")
-    public ResponseEntity<byte[]> getFavicon() throws IOException {
-        String path = servletContext.getRealPath("/resources/favicon.png");
-        java.io.File imgFile = new java.io.File(path);
-
-        byte[] bytes = Files.readAllBytes(imgFile.toPath());
-        
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(bytes);
-    }
 
     @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
     public ResponseEntity<byte[]> getIconForm() throws IOException {
@@ -203,17 +187,5 @@ public class FileController {
             case PDF -> ".pdf";
             default -> "";
         };
-    }
-
-    // TODO: Delete
-    @RequestMapping(path = "/supersecret/file", method = RequestMethod.GET)
-    public ModelAndView getImageForm(){
-        return new ModelAndView("createFile");
-    }
-
-    @RequestMapping(path = "/supersecret/file", method = RequestMethod.POST)
-    public ModelAndView createImage(@RequestParam("file") MultipartFile file) throws IOException{
-        File f = fs.create(file.getBytes(), FileTypeEnum.fromString(file.getContentType()));
-        return new ModelAndView("redirect:/supersecret/files/" + f.getId());
     }
 }
