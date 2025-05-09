@@ -8,7 +8,7 @@
   </head>
   <body>
     <jsp:include page="genericError.jsp" >
-      <jsp:param name="errorCode" value="502"/>
+      <jsp:param name="errorCode" value="418"/>
     </jsp:include> 
   </body>
 </html>

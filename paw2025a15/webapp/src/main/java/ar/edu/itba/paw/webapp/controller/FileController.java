@@ -3,7 +3,6 @@ package ar.edu.itba.paw.webapp.controller;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
@@ -34,6 +33,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.MediaTypeException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -89,19 +89,16 @@ public class FileController {
 
     @RequestMapping(path = "/supersecret/user-profile-pic/{id:\\d+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> getUserPicture(@PathVariable("id") long id){
-        Optional<File> f = us.getUserPicture(id);
-        if (!f.isPresent()) {
-            throw new NoSuchElementException("Profile picture not found for user with ID: " + id);
-        }
+        File f = us.getUserPicture(id).orElseThrow(() -> new NoSuchElementException("Profile picture not found for user with ID: " + id));
         
-        byte[] content = f.get().getContent();
-        FileTypeEnum fileType = f.get().getType();
+        byte[] content = f.getContent();
+        FileTypeEnum fileType = f.getType();
         
         MediaType mediaType;
         mediaType = switch (fileType) {
             case PNG -> MediaType.IMAGE_PNG;
             case JPEG -> MediaType.IMAGE_JPEG;
-            default -> throw new IllegalArgumentException("The profile picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de perfil de usuario
+            default -> throw new MediaTypeException("The profile picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de perfil de usuario
         };
 
         return ResponseEntity
@@ -112,19 +109,16 @@ public class FileController {
 
     @RequestMapping(path = "/supersecret/insurance-picture/{id:\\d+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> getInsurancePicture(@PathVariable("id") long id){
-        Optional<File> f = is.getInsurancePicture(id);
-        if (!f.isPresent()) {
-            throw new NoSuchElementException("Logo picture not found for insurance with ID: " + id);
-        }
+        File f = is.getInsurancePicture(id).orElseThrow(() ->  new NoSuchElementException("Logo picture not found for insurance with ID: " + id));
         
-        byte[] content = f.get().getContent();
-        FileTypeEnum fileType = f.get().getType();
+        byte[] content = f.getContent();
+        FileTypeEnum fileType = f.getType();
         
         MediaType mediaType;
         mediaType = switch (fileType) {
             case PNG -> MediaType.IMAGE_PNG;
             case JPEG -> MediaType.IMAGE_JPEG;
-            default -> throw new IllegalArgumentException("The logo picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de logo de insurance
+            default -> throw new MediaTypeException("The logo picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de logo de insurance
         };
 
         return ResponseEntity
@@ -135,13 +129,10 @@ public class FileController {
 
     @RequestMapping(method=RequestMethod.GET, path="/view-study/{id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
     public @ResponseBody ResponseEntity<byte[]> getStudy(@PathVariable("id") long id){
-        Optional<File> f = ss.getStudyFile(id);
-        if (!f.isPresent()) {
-            throw new NoSuchElementException("Study not found with ID: " + id);
-        }
+        File f = ss.getStudyFile(id).orElseThrow(() -> new NoSuchElementException("Study not found with ID: " + id));
         
-        byte[] content = f.get().getContent();
-        FileTypeEnum fileType = f.get().getType();
+        byte[] content = f.getContent();
+        FileTypeEnum fileType = f.getType();
         
         MediaType mediaType;
         mediaType = switch (fileType) {

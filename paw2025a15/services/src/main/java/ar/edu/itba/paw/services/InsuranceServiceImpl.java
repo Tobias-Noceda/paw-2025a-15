@@ -15,6 +15,8 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
 public class InsuranceServiceImpl implements InsuranceService{
@@ -31,8 +33,8 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional
     @Override
     public Insurance create(String name, long pictureId) {
-        if(getInsuranceByName(name).isPresent()) throw new IllegalArgumentException("Insurance with name: " + name + " already exists!");
-        if(!fs.findById(pictureId).isPresent()) throw new IllegalArgumentException("Logo with id: " + pictureId + " does not exist!");
+        if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        if(fs.findById(pictureId).isEmpty()) throw new NotFoundException("Logo with id: " + pictureId + " does not exist!");
         Insurance insurance = insuranceDao.create(name, pictureId);
         if(insurance == null){
             LOGGER.error("Failed to create insurance: {} at {}", name, LocalDateTime.now());
@@ -45,9 +47,9 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional
     @Override
     public void edit(long id, String name, long pictureId) {
-        if(!getInsuranceById(id).isPresent()) throw new IllegalArgumentException("Insurance with id: " + id + " does not exist!");
-        if(getInsuranceByName(name).isPresent()) throw new IllegalArgumentException("Insurance with name: " + name + " already exists!");
-        if(!fs.findById(pictureId).isPresent()) throw new IllegalArgumentException("Logo with id: " + pictureId + " does not exists!");
+        if(getInsuranceById(id).isEmpty()) throw new NotFoundException("Insurance with id: " + id + " does not exist!");
+        if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        if(fs.findById(pictureId).isEmpty()) throw new NotFoundException("Logo with id: " + pictureId + " does not exists!");
         insuranceDao.edit(id, name, pictureId);
         LOGGER.info("Edited insurance information for insurance with id: {}", id);
     }
@@ -72,10 +74,8 @@ public class InsuranceServiceImpl implements InsuranceService{
 
     @Override
     public Optional<File> getInsurancePicture(long id) {
-        Insurance insurance = insuranceDao.getInsuranceById(id).orElse(null);
-        if (insurance == null) return Optional.empty();
+        Insurance insurance = insuranceDao.getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
 
         return fs.findById(insurance.getPictureId());
     }
-
 }

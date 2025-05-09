@@ -26,7 +26,7 @@ public enum BloodTypeEnum {
         if (num >= 0 && num < values.length){
             return values[num];
         }
-        throw new IllegalArgumentException("Number out of range");
+        throw new IllegalArgumentException("Number out of BloodType range");
     }
 
     public static BloodTypeEnum fromString(String str){
@@ -37,5 +37,4 @@ public enum BloodTypeEnum {
         }
         throw new IllegalArgumentException("Unsupported blood type: " + str);
     }
-    
 }

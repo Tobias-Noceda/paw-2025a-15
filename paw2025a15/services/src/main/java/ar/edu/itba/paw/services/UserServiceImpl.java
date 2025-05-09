@@ -20,6 +20,8 @@ import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale){
-        if(getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
+        if(getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         User user = userDao.create(email, passwordEncoder.encode(password), name, telephone, role, 1, locale); // PictureId por defecto
         if(user == null){
             LOGGER.error("Failed to create user for email: {} at {}", email, LocalDateTime.now()); 
@@ -57,8 +59,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public Optional<File> getUserPicture(long id) {
-        User user = getUserById(id).orElse(null);
-        if (user == null) return Optional.empty();
+        User user = getUserById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist!"));
+
         return fs.findById(user.getPictureId());
     }
 
@@ -83,7 +85,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void changePasswordByID(long id, String password) {
-        if(!getUserById(id).isPresent()) throw new IllegalArgumentException("User with id: " + id + " does not exist!");
+        if(getUserById(id).isEmpty()) throw new NotFoundException("User with id: " + id + " does not exist!");
         userDao.changePasswordByID(id, passwordEncoder.encode(password));
         LOGGER.info("Changed password for user with id: {}", id);
     }
@@ -91,8 +93,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
-        if(!getUserById(id).isPresent()) throw new IllegalArgumentException("User with id: " + id + " does not exist!");
-        if(!fs.findById(pictureId).isPresent()) throw new IllegalArgumentException("Picture with id: " + pictureId + " does not exist!");
+        if(getUserById(id).isEmpty()) throw new NotFoundException("User with id: " + id + " does not exist!");
+        if(fs.findById(pictureId).isEmpty()) throw new NotFoundException("Picture with id: " + pictureId + " does not exist!");
         userDao.editUser(id, name, telephone, pictureId);
         LOGGER.info("Edited user information for user with id: {}", id);
     }
@@ -100,13 +102,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateLocale(long userId, LocaleEnum locale) {
-        if(!getUserById(userId).isPresent()) throw new IllegalArgumentException("User with id: " + userId + " does not exist!");
+        if(getUserById(userId).isEmpty()) throw new NotFoundException("User with id: " + userId + " does not exist!");
         userDao.updateLocale(userId, locale);
         LOGGER.info("Updating locale information for user with id: {}", userId);
     }
 
     @Override
-    public User getCurrentUser() {//TODO: capaz va directo en advice, por lo que no testee
+    public User getCurrentUser() {//TODO: capaz va directo en advice, por lo que no testee Tobi
         Authentication session = SecurityContextHolder.getContext().getAuthentication();
         if (session != null) return userDao.getUserByEmail(session.getName()).orElse(null);
         return null;

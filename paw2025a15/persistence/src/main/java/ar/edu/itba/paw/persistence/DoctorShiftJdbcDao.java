@@ -66,7 +66,13 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
 
     @Override
     public Optional<DoctorShift> getShiftById(long id) {
-        return jdbcTemplate.query("SELECT * FROM doctor_shifts WHERE shift_id = ?", new Object[]  {id},
+        return jdbcTemplate.query(
+            """
+                SELECT *
+                FROM doctor_shifts
+                WHERE shift_id = ?
+                ORDER BY shift_weekday, shift_start_time
+            """, new Object[]  {id},
           new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
     }
 

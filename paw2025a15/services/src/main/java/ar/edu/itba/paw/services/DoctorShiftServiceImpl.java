@@ -6,10 +6,8 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +21,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
 public class DoctorShiftServiceImpl implements DoctorShiftService{
@@ -39,7 +38,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
         if(!startTime.isBefore(endTime)) throw new IllegalArgumentException("Start time of a shift must be before the end time");
-        if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         long amount =  Duration.between(startTime,endTime).toMinutes()/slot;
         //long slot = Duration.between(startTime, endTime).toMinutes() / amount;
         List<DoctorShift> shifts = new ArrayList<>();
@@ -67,31 +66,25 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Transactional(readOnly = true)
     @Override
     public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId) {
-        if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
-        List<DoctorShift> aux = doctorShiftDao.getShiftsByDoctorId(doctorId);
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        List<DoctorShift> shifts = doctorShiftDao.getShiftsByDoctorId(doctorId);
         
-        if (aux == null || aux.isEmpty()) return Collections.emptyList();
-        if(aux.size() == 1) return aux;
-        
-        // Ordenar por día y luego por hora de inicio
-        List<DoctorShift> sorted = aux.stream()
-            .sorted(Comparator.comparing(DoctorShift::getWeekday)
-            .thenComparing(DoctorShift::getStartTime))
-            .collect(Collectors.toList());
+        if (shifts == null || shifts.isEmpty()) return Collections.emptyList();
+        if(shifts.size() == 1) return shifts;
         
         List<DoctorShift> toReturn = new ArrayList<>();
-        DoctorShift current = sorted.get(0);
+        DoctorShift current = shifts.get(0);
         DoctorShift end;
 
-        for (int i = 1; i < sorted.size(); i++) {
-            end = sorted.get(i);
+        for (int i = 1; i < shifts.size(); i++) {
+            end = shifts.get(i);
             // Si es el mismo día y el turno actual termina cuando el próximo empieza
             if(current.getWeekday() == end.getWeekday() && current.getEndTime().equals(end.getStartTime())) {
                 current = new DoctorShift(current.getId(), current.getDoctorId(), current.getWeekday(), current.getAddress(), current.getStartTime(), end.getEndTime());
             } else {
                 toReturn.add(current);
-                if(i < sorted.size()) {
-                    current = sorted.get(i);
+                if(i < shifts.size()) {
+                    current = shifts.get(i);
                 }
             }
         }
@@ -104,7 +97,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Transactional(readOnly = true)
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber) {
-        if(!dds.getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         LocalDate now = LocalDate.now();
         int year = (now.getMonthValue() <= month.getValue()) ? now.getYear() : (now.getYear() + 1);
         LocalDate startOfWeek;

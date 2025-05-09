@@ -16,10 +16,6 @@ public class LandingForm {
         return query;
     }
 
-    public String getEscapedQuery() {
-        return escapeLikeSpecialChars(query);
-    }
-
     public SpecialtyEnum getSpecialty() {
         return specialty;
     }
@@ -59,13 +55,5 @@ public class LandingForm {
                 ", insurances=" + insurances +
                 ", weekday=" + weekday +
                 '}';
-    }
-
-    private String escapeLikeSpecialChars(String input) {
-        if (input == null) return null;
-        return input
-                .replace("\\", "\\\\")  // Escape backslash first!
-                .replace("%", "\\%")
-                .replace("_", "\\_");
     }
 }

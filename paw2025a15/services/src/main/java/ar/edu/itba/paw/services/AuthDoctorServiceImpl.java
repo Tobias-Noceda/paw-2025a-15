@@ -15,6 +15,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
 public class AuthDoctorServiceImpl implements AuthDoctorService{
@@ -39,8 +40,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
-        if(pds.getDetailByPatientId(patientId).isEmpty()) throw new IllegalArgumentException("Patient with id: " + patientId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
+        if(pds.getDetailByPatientId(patientId).isEmpty()) throw new NotFoundException("Patient with id: " + patientId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthDoctor(patientId, doctorId)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
@@ -81,8 +82,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        if(pds.getDetailByPatientId(patientId).isEmpty()) throw new IllegalArgumentException("Patient with id: " + patientId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new IllegalArgumentException("Doctor with id: " + doctorId + " does not exist!");
+        if(pds.getDetailByPatientId(patientId).isEmpty()) throw new NotFoundException("Patient with id: " + patientId + " does not exist!");
+        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         List<AccessLevelEnum> toRemove;
         if(accessLevels==null || accessLevels.isEmpty()){
             toRemove = getAuthAccessLevelEnums(patientId, doctorId);

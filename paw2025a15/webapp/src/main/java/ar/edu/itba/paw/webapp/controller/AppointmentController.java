@@ -21,8 +21,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
-
+import ar.edu.itba.paw.models.exceptions.FormErrorException;
 
 @Controller
 public class AppointmentController {
@@ -81,14 +80,14 @@ public class AppointmentController {
         final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            throw new NotFoundException("Error in appointment form");
+            throw new FormErrorException("Error in appointment form: " + errors.getFieldErrors().toString());
         }
 
         try {
             User user = us.getCurrentUser();
             as.cancelAppointment(form.getShiftId(), form.getDate(), user.getId());
-        } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Error in appointment form");
+        } catch (Exception e) {
+            throw new FormErrorException("Error in appointment form: " + e.getMessage());
         }
 
         return new ModelAndView("redirect:/appointments");
@@ -100,14 +99,14 @@ public class AppointmentController {
         final BindingResult errors
     ) {
         if(errors.hasErrors()) {
-            throw new NotFoundException("Error in appointment form");
+            throw new FormErrorException("Error in appointment form: " + errors.getFieldErrors().toString());
         }
 
         User user = us.getCurrentUser();
         try {
             as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
-        } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Error in appointment form");
+        } catch (Exception e) {
+            throw new FormErrorException("Error in appointment form: " + e.getMessage());
         }
 
         return new ModelAndView("redirect:/appointments");
@@ -119,14 +118,14 @@ public class AppointmentController {
         final BindingResult errors
     ) {
         if (errors.hasErrors()) {
-            throw new NotFoundException("Error in form");
+            throw new FormErrorException("Error in takeTurn form: " + errors.getFieldErrors().toString());
         }
 
         User user = us.getCurrentUser();
         try {
             as.removeAppointment(form.getShiftId(), form.getDate(), user.getId());
-        } catch (IllegalArgumentException e) {
-            throw new NotFoundException("Error in form");
+        } catch (Exception e) {
+            throw new FormErrorException("Error in form: " + e.getMessage());
         }
         
         return new ModelAndView("redirect:/appointments");

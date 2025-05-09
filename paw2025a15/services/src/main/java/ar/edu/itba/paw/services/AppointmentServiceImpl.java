@@ -24,6 +24,9 @@ import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentData;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService{
@@ -48,15 +51,15 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Transactional
     @Override
     public Appointment addAppointment(long shiftId, long patientId, LocalDate date) {
-        User patient = us.getUserById(patientId).orElseThrow(() -> new IllegalArgumentException("Patient with id: " + patientId + " does not exist!"));
-        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift not found"));
-        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("Doctor with id: " + shift.getDoctorId() + " does not exist!"));
+        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with id: " + shiftId + " not found"));
+        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctorId() + " does not exist!"));
         if(date==null || date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         
         // TODO: cambiar a usar el enum de java.time en vez del nuestro para poder comparar
         if(date.getDayOfWeek().ordinal() != shift.getWeekday().ordinal()) throw new IllegalArgumentException("Shift must be on the same day of the week as the appointment date");
         
-        getAppointmentsByShiftIdAndDate(shiftId, date).ifPresent(a -> {throw new IllegalArgumentException("Shift already taken");});
+        getAppointmentsByShiftIdAndDate(shiftId, date).ifPresent(a -> {throw new AppointmentAlreadyTakenException("Shift already taken");});
 
         Appointment appointment = appointmentDao.addAppointment(shiftId, patientId, date);
         if(appointment == null){
@@ -102,10 +105,10 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Transactional
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, long cancelId) {
-        Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(() -> new IllegalArgumentException("Appointment with shiftId: " + shiftId + " and date: " + date + " does not exist!"));
-        User patient = us.getUserById(appointment.getPatientId()).orElseThrow(() -> new IllegalArgumentException("Patient with id: " + appointment.getPatientId() + " does not exist!"));
-        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift with shiftId: " + shiftId + " does not exist!"));
-        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new IllegalArgumentException("Doctor with id: " + shift.getDoctorId() + " does not exist!"));
+        Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(() -> new NotFoundException("Appointment with shiftId: " + shiftId + " and date: " + date + " does not exist!"));
+        User patient = us.getUserById(appointment.getPatientId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatientId() + " does not exist!"));
+        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
+        User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctorId() + " does not exist!"));
 
         if(cancelId==patient.getId()){
             if(appointmentDao.removeAppointment(shiftId, date)){
@@ -119,14 +122,14 @@ public class AppointmentServiceImpl implements AppointmentService{
                 es.sendDoctorCancellationConfirmationEmail(patient, doctor, appointment, shift);
                 es.sendPatientCancelledAppointmentEmail(patient, doctor, appointment, shift);
             }
-        } else throw new IllegalArgumentException("User not authorized to cancel this appointment");
+        } else throw new UnauthorizedException("User not authorized to cancel this appointment");
     }
 
     @Transactional
     @Override
     public void removeAppointment(long shiftId, LocalDate date, long doctorId) {
-        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new IllegalArgumentException("Shift with shiftId: " + shiftId + " does not exist!"));
-        if(shift.getDoctorId() != doctorId) throw new IllegalArgumentException("User not authorized to remove this appointment");
+        DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
+        if(shift.getDoctorId() != doctorId) throw new UnauthorizedException("User not authorized to remove this appointment");
 
         addAppointment(shiftId, doctorId, date);
         LOGGER.info("Doctor with id: {} has removed an appointment from their free appointments at shiftId: {} and date: {}", doctorId, shiftId, date);

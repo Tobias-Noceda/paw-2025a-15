@@ -70,11 +70,11 @@ public class GeneralController {
                 insurance = null;
             }
             List<DoctorView> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
-            totalLength = dds.getTotalDoctorsByParams(landingForm.getEscapedQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday());
+            totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday());
             mav.addObject("docList", doctors);
         } else {
             List<User> patients = us.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);
-            totalLength = us.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getEscapedQuery());
+            totalLength = us.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getQuery());
             mav.addObject("patients", patients);
         }
 

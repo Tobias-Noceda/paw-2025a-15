@@ -26,6 +26,6 @@ public enum StudyTypeEnum {
         if (num >= 0 && num < values.length) {
             return values[num];
         }
-        throw new IllegalArgumentException("Number out of range");
+        throw new IllegalArgumentException("Number out of StudyType range");
     }
 }

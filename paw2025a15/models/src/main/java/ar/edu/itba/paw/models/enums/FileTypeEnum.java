@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.models.enums;
 
+import ar.edu.itba.paw.models.exceptions.MediaTypeException;
+
 public enum FileTypeEnum {
 
     PNG("image/png"),
@@ -21,7 +23,7 @@ public enum FileTypeEnum {
         if (num >= 0 && num < values.length){
             return values[num];
         }
-        throw new IllegalArgumentException("Number out of range");
+        throw new MediaTypeException("Number out of FileType range");
     }
 
     public static FileTypeEnum fromString(String str){
@@ -30,7 +32,7 @@ public enum FileTypeEnum {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unsupported file type: " + str);
+        throw new MediaTypeException("Unsupported file type: " + str);
     }
 
 }

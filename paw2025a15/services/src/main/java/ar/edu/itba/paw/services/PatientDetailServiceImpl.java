@@ -18,6 +18,8 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
 public class PatientDetailServiceImpl implements PatientDetailService{
@@ -33,8 +35,12 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     @Transactional
     @Override
     public User createPatient(String email, String password, String name, String telephone, LocaleEnum locale) {
-        if(us.getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
+        if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         User patient = us.create(email, password, name, telephone, UserRoleEnum.PATIENT, locale);
+        if(patient == null){
+            LOGGER.error("Failed to create user for email: {} at {}", email, LocalDateTime.now()); 
+            throw new RuntimeException("Failed to create user for email: " + email);
+        }
         long patientId = patient.getId();
         PatientDetail pd = patientDetailDao.create(patient.getId(), null, null, null, null, null, null, null, null, null, null, null, null);
         if(pd == null){
@@ -57,7 +63,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
-        if(!getDetailByPatientId(patientId).isPresent()) throw new IllegalArgumentException("Patient details for userId: " + patientId + " does not exist!");
+        if(getDetailByPatientId(patientId).isEmpty()) throw new NotFoundException("Patient details for userId: " + patientId + " does not exist!");
         patientDetailDao.updatePatientDetails(patientId, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
         LOGGER.info("Edited patient details for userId: {}", patientId);
     }

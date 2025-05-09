@@ -79,8 +79,8 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
-            params.add("%" + name.trim() + "%");
+            query.append(" AND u.user_name LIKE ? ");
+            params.add("%" + sanitize(name) + "%");
             types.add(java.sql.Types.VARCHAR);
         }
         query.append(" LIMIT ? OFFSET ? ");
@@ -106,8 +106,8 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ESCAPE '\\' ");
-            params.add("%" + name.trim() + "%");
+            query.append(" AND u.user_name LIKE ? ");
+            params.add("%" + sanitize(name) + "%");
             types.add(java.sql.Types.VARCHAR);
         }
 
@@ -127,5 +127,14 @@ public class UserJdbcDao implements UserDao{
     @Override
     public void updateLocale(long userId, LocaleEnum locale) {
         jdbcTemplate.update("UPDATE users SET locale = ? WHERE user_id = ?", locale.ordinal(), userId);
+    }
+
+    private String sanitize(String name) {
+        if (name == null) return null;
+        return name
+                .replace("\\", "\\\\\\")
+                .replace("%", "\\\\%")
+                .replace("_", "\\\\_")
+                .trim();
     }
 }

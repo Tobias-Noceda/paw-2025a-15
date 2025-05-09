@@ -48,10 +48,7 @@ public class DoctorController {
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
-        DoctorDetail detail = dds.getDetailByDoctorId(id).orElse(null);
-        if (detail == null) {
-            throw new NotFoundException("Doctor not found");
-        }
+        DoctorDetail detail = dds.getDetailByDoctorId(id).orElseThrow(() -> new NotFoundException("Doctor not found"));
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 
@@ -87,10 +84,7 @@ public class DoctorController {
         @RequestParam("action") String action, 
         @RequestParam(value = "accessLevels", required = false) List<String> accessLevels
     ) {
-        DoctorDetail detail = dds.getDetailByDoctorId(doctorId).orElse(null);
-        if (detail == null) {
-            throw new NotFoundException("Doctor not found");
-        }
+        dds.getDetailByDoctorId(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
 
         User user = us.getCurrentUser();
         if ("update".equals(action)) {

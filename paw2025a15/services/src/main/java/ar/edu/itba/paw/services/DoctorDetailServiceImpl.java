@@ -23,6 +23,8 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 
 @Service
 public class DoctorDetailServiceImpl implements DoctorDetailService{
@@ -41,7 +43,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional
     @Override
     public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, LocaleEnum locale) {
-        if(us.getUserByEmail(email).isPresent()) throw new IllegalArgumentException("User with email: " + email + " already exists!");
+        if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         User doc = us.create(email, password, name, telephone, UserRoleEnum.DOCTOR, locale);
         long doctorId = doc.getId();
         DoctorDetail dd = doctorDetailDao.create(doctorId, licence, specialty);
@@ -63,11 +65,11 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional
     @Override
     public void createDoctorCoverages(long doctorId, List<Long> insurances) {
-        if(!getDetailByDoctorId(doctorId).isPresent()) throw new IllegalArgumentException("Doctor with userId: " + doctorId + " does not exist!");
+        if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
         List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
-        if(currentInsurances != null && !currentInsurances.isEmpty()) throw new IllegalArgumentException("Doctor with userId: " + doctorId + " already has insurances created!");
+        if(currentInsurances != null && !currentInsurances.isEmpty()) throw new AlreadyExistsException("Doctor with userId: " + doctorId + " already has insurances created!");
         for (Long insuranceId : insurances) {//TODO capaz un batch insert tmb directo sql
-            if(!is.getInsuranceById(insuranceId).isPresent()) throw new IllegalArgumentException("Insurance with insuranceId: " + insuranceId + " does not exist!");
+            if(is.getInsuranceById(insuranceId).isEmpty()) throw new NotFoundException("Insurance with insuranceId: " + insuranceId + " does not exist!");
             doctorDetailDao.addDoctorCoverage(doctorId, insuranceId);
             LOGGER.info("Adding insurance with insuranceId:{} for doctor with userId: {}", insuranceId, doctorId);
         }
