@@ -19,7 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <maven-war-plugin.version>2.6</maven-war-plugin.version>
+    <maven-war-plugin.version>3.2.2</maven-war-plugin.version>
     
     <org.springframework.version>5.3.33</org.springframework.version>
     <spring-security.version>5.8.11</spring-security.version>
@@ -218,6 +218,7 @@
   </dependencyManagement>
           
   <build>
+  <pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
@@ -241,5 +242,6 @@
           </configuration>
       </plugin>
     </plugins>
+    </pluginManagement>
   </build>
 </project>
