@@ -5,6 +5,8 @@ import java.util.Locale;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,6 +24,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @Controller
 public class AppointmentController {
@@ -38,15 +41,19 @@ public class AppointmentController {
 
     @RequestMapping("/appointments")
     public ModelAndView appointments(
+        @AuthenticationPrincipal UserDetails userDetails,
         @RequestParam(value = "action", required = false) String action,
         @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
         Locale locale
     ) {
         ModelAndView mav = new ModelAndView("appointments");
 
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
         
-        mav.addObject("user", user);
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+
         switch (user.getRole()) {
             case DOCTOR -> {
                 mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
@@ -76,6 +83,7 @@ public class AppointmentController {
 
     @RequestMapping(value = "/cancelAppointment", method = RequestMethod.POST)
     public ModelAndView cancelAppointment(
+        @AuthenticationPrincipal UserDetails userDetails,
         @Valid @ModelAttribute("appointmentForm") final AppointmentForm form,
         final BindingResult errors
     ) {
@@ -83,8 +91,12 @@ public class AppointmentController {
             throw new FormErrorException("Error in appointment form: " + errors.getFieldErrors().toString());
         }
 
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
         try {
-            User user = us.getCurrentUser();
             as.cancelAppointment(form.getShiftId(), form.getDate(), user.getId());
         } catch (Exception e) {
             throw new FormErrorException("Error in appointment form: " + e.getMessage());
@@ -95,6 +107,7 @@ public class AppointmentController {
 
     @RequestMapping(value = "/takeAppointment", method = RequestMethod.POST)
     public ModelAndView takeAppointment(
+        @AuthenticationPrincipal UserDetails userDetails,
         @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
         final BindingResult errors
     ) {
@@ -102,7 +115,11 @@ public class AppointmentController {
             throw new FormErrorException("Error in appointment form: " + errors.getFieldErrors().toString());
         }
 
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
         try {
             as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
         } catch (Exception e) {
@@ -114,6 +131,7 @@ public class AppointmentController {
 
     @RequestMapping(value = "/removeAppointment", method = RequestMethod.POST)
     public ModelAndView removeAppointment(
+        @AuthenticationPrincipal UserDetails userDetails,
         @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
         final BindingResult errors
     ) {
@@ -121,7 +139,11 @@ public class AppointmentController {
             throw new FormErrorException("Error in takeTurn form: " + errors.getFieldErrors().toString());
         }
 
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
         try {
             as.removeAppointment(form.getShiftId(), form.getDate(), user.getId());
         } catch (Exception e) {

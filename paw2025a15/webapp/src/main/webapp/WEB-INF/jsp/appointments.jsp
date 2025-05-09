@@ -12,9 +12,6 @@
     <c:set var="title">appointments</c:set>
     <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
-      <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="id" value="${user.id}"/>
-      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container appointments-div" style="display: flex; flex-direction: row;">
       <c:url var="cancelUrl" value="/cancelAppointment" />
@@ -27,7 +24,7 @@
       <c:set var="cancelText">
         <spring:message code="appointments.dismiss"/>
       </c:set>
-      <c:if test="${user.role == 'PATIENT'}">
+      <c:if test="${user_data.role == 'PATIENT'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.future"></spring:message></h3>
           <div class="appointment-table-container">
@@ -141,7 +138,7 @@
           </div>
         </div>
       </c:if>
-      <c:if test="${user.role == 'DOCTOR'}">
+      <c:if test="${user_data.role == 'DOCTOR'}">
         <div class="appointment-list-container">
           <h3 class="table-title"><spring:message code="appointments.taken"></spring:message></h3>
           <div class="appointment-table-container">

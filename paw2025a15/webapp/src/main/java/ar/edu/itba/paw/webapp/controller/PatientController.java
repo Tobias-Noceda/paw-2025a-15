@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @Controller
 public class PatientController {
@@ -35,6 +38,7 @@ public class PatientController {
 
     @RequestMapping("/patient/{patientId:\\d+}")
     public ModelAndView patient(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("patientId") int patientId,
             @ModelAttribute("registerPatientForm") final PatientForm form
     ) {
@@ -47,9 +51,12 @@ public class PatientController {
 
         final ModelAndView mav = new ModelAndView("patientDetail");
         
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
         
-        mav.addObject("user", user);
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+
         mav.addObject("patient", patient);
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(patientId, user.getId()));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());

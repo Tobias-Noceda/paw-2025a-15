@@ -71,7 +71,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // general
                 .requestMatchers("/", "/home").permitAll()
                 .requestMatchers("/supersecret/files/logo").permitAll()
-                .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/supersecret/user-profile-pic/{userId}").permitAll()
                 .requestMatchers("/supersecret/insurance-picture/{userId}").permitAll()
                 .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")

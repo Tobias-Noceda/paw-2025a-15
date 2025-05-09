@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,12 +103,5 @@ public class UserServiceImpl implements UserService {
         if(getUserById(userId).isEmpty()) throw new NotFoundException("User with id: " + userId + " does not exist!");
         userDao.updateLocale(userId, locale);
         LOGGER.info("Updating locale information for user with id: {}", userId);
-    }
-
-    @Override
-    public User getCurrentUser() {//TODO: capaz va directo en advice, por lo que no testee Tobi
-        Authentication session = SecurityContextHolder.getContext().getAuthentication();
-        if (session != null) return userDao.getUserByEmail(session.getName()).orElse(null);
-        return null;
     }
 }

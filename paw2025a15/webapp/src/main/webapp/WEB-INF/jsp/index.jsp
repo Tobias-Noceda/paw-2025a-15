@@ -14,15 +14,11 @@
     <link rel="stylesheet" href="<c:url value='/css/landing-page.css'/>">
   </head>
   <body class="landing-page">
-    <jsp:include page="components/header.jsp">
-      <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="id" value="${user.id}"/>
-      <jsp:param name="role" value="${user.role}"/>
-    </jsp:include>
+    <jsp:include page="components/header.jsp"/>
     <div class="page-container">
 
       <!-- FILTROS -->
-      <c:if test="${user.role=='PATIENT' || pageContext.request.userPrincipal==null}">
+      <c:if test="${user_data.role=='PATIENT' || user_data == null}">
         <div class="card filter-card" >
           <h2 class="section-title"><spring:message code="landing.filter.title"/></h2>
           <c:url value='/' var="filterUrl"/>
@@ -155,7 +151,7 @@
         </c:choose>
       </c:if>
 
-      <c:if test="${user.role == 'DOCTOR' || user.role == 'LABORATORY'}">
+      <c:if test="${user_data.role == 'DOCTOR' || user_data.role == 'LABORATORY'}">
         <div class="">
           <!-- 1) Título idéntico -->
           <h2 class="section-title">
@@ -182,6 +178,9 @@
                 <p class="subtitle">
                   <spring:message code="landing.noPatients"/>
                 </p>
+                <a href="<c:url value='/'/>" class="no-doctors-button">
+                  <spring:message code="landing.noDoctors.button" />
+                </a>
               </div>
             </c:otherwise>
           </c:choose>
@@ -245,7 +244,7 @@
             <spring:message code="landing.pagination.last"/>
           </button>
           <form:input type="hidden" path="query"/>
-          <c:if test="${user.role == 'PATIENT' || pageContext.request.userPrincipal==null}">
+          <c:if test="${user_data.role == 'PATIENT' || user_data == null}">
             <form:input type="hidden" path="insurances"/>
             <form:input type="hidden" path="weekday"/>
             <form:input type="hidden" path="specialty"/>

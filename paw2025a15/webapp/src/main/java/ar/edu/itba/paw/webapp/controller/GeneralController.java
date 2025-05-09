@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +25,7 @@ import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 
@@ -55,10 +58,12 @@ public class GeneralController {
         }
         final ModelAndView mav = new ModelAndView("index");
         
-        final User user = us.getCurrentUser();
-        if(user != null) {
-            mav.addObject("user", user);
+        Authentication session = SecurityContextHolder.getContext().getAuthentication();
+        if (session == null) {
+            throw new UnauthorizedException("User not logged in");
         }
+        
+        User user = us.getUserByEmail(session.getName()).orElse(null);
 
         int totalLength;
         

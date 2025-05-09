@@ -31,7 +31,8 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.MediaTypeException;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -140,16 +141,17 @@ public class FileController {
                     BindingResult result,
                                         RedirectAttributes redirectAttrs
     ) throws IOException {
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
         if (user == null) {
-            throw new NotFoundException("User not found");
+            throw new UnauthorizedException("User not found");
         }
+
         if (result.hasErrors()) {
             ModelAndView mav = new ModelAndView("profileInfo");
 
             mav.addObject("profileForm", profileForm);
             mav.addObject("bloodTypes", BloodTypeEnum.values());
-            mav.addObject("user", user);
             mav.addObject("landingForm", new LandingForm());
             
             if(user.getRole().equals(UserRoleEnum.PATIENT)) {

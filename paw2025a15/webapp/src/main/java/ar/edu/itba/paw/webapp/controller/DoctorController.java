@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @Controller
 public class DoctorController {
@@ -42,6 +45,7 @@ public class DoctorController {
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("id") long id,
             @RequestParam(value = "action", required = false) String action,
             @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
@@ -52,7 +56,11 @@ public class DoctorController {
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 
-        final User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
 
         if (action != null) {
             if ("previous".equals(action)) {
@@ -63,7 +71,6 @@ public class DoctorController {
         }
         
         mav.addObject("doctorDetail", detail);
-        mav.addObject("user", user);
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(user.getId(), id));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
@@ -79,6 +86,7 @@ public class DoctorController {
 
     @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
     public ModelAndView authUnauthDoctor(
+        @AuthenticationPrincipal UserDetails userDetails,
         @PathVariable("doctorId") long doctorId,
         @RequestHeader(value = "Referer", required = false) String referer, 
         @RequestParam("action") String action, 
@@ -86,7 +94,11 @@ public class DoctorController {
     ) {
         dds.getDetailByDoctorId(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
 
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
         if ("update".equals(action)) {
             ads.updateAuthDoctor(user.getId(), doctorId, (accessLevels == null ? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
         }

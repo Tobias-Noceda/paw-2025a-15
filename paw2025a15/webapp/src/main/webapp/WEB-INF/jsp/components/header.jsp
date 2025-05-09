@@ -24,13 +24,13 @@
           <img src="${imgSrc}" alt="Logo"/>
         </a>
       </div>
-      <c:if test="${pageContext.request.userPrincipal != null}">
+      <c:if test="${user_data != null}">
         <nav class="nav-links">
-          <c:if test="${param.role == 'PATIENT' || param.role == 'DOCTOR'}">
+          <c:if test="${user_data.role == 'PATIENT' || user_data.role == 'DOCTOR'}">
             <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title == "appointments"}'>active</c:if>">
               <spring:message code="header.appointments" />
             </a>
-            <c:if test="${param.role == 'PATIENT'}">
+            <c:if test="${user_data.role == 'PATIENT'}">
               <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
               </a>
@@ -39,10 +39,10 @@
         </nav>
       </c:if>
       <c:set var="barPlaceholder">
-        <c:if test="${param.role == 'PATIENT' || pageContext.request.userPrincipal == null}">
+        <c:if test="${user_data.role == 'PATIENT' || user_data == null}">
           <spring:message code="header.patient.placeholder"/>
         </c:if>
-        <c:if test="${param.role == 'DOCTOR' || param.role == 'LABORATORY'}">
+        <c:if test="${user_data.role == 'DOCTOR' || user_data.role == 'LABORATORY'}">
           <spring:message code="header.doctor.placeholder"/>
         </c:if>
       </c:set>
@@ -58,7 +58,7 @@
           <form:form modelAttribute="landingForm" action="${searchLink}" method="get" class="search-bar-form">
             <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
             <button type="submit" style="display: none;"></button>
-            <c:if test="${role == 'PATIENT' || pageContext.request.userPrincipal==null}">
+            <c:if test="${user_data.role == 'PATIENT' || user_data == null}">
               <form:input type="hidden" path="insurances"/>
               <form:input type="hidden" path="weekday"/>
               <form:input type="hidden" path="specialty"/>
@@ -67,14 +67,14 @@
         </div>
       </div>
       <!-- Show only if user IS authenticated -->
-      <c:if test="${pageContext.request.userPrincipal != null}">
+      <c:if test="${user_role != null}">
         <button id="userBtn" class="user-btn" onclick="toggleUserDropdown()">
           <div class="user-image">
-            <img src="<c:url value='/supersecret/user-profile-pic/${param.id}'/>" alt="User Image" />
+            <img src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
           </div>
           <div class="user-info">
-            <p class="user-name"><c:out value="${param.username}"/></p>
-            <p class="user-role"><spring:message code="role.${param.role}" /></p>
+            <p class="user-name"><c:out value="${user_data.username}"/></p>
+            <p class="user-role"><spring:message code="role.${user_data.role}" /></p>
           </div>
         </button>
         <div id="userDropdownMenu" class="user-dropdown-menu">
@@ -86,7 +86,7 @@
       </c:if>
 
       <!-- Show only if user is NOT authenticated -->
-      <c:if test="${pageContext.request.userPrincipal == null}">
+      <c:if test="${user_data == null}">
         <a href="<c:url value="/login"/>">
           <button class="login-btn">
             <span class="login-icon material-symbols-outlined">

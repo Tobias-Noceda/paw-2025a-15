@@ -9,6 +9,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,6 +33,7 @@ import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
@@ -69,7 +72,6 @@ public class StudyController {
         ModelAndView mav = new ModelAndView("createStudy");
         mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
-        mav.addObject("user", us.getCurrentUser());
         mav.addObject("patientId", patientId);
         mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());
 
@@ -78,6 +80,7 @@ public class StudyController {
 
     @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.POST)
     public ModelAndView createStudy(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("patientId") int patientId,
             @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
             @ModelAttribute("landingForm") final LandingForm landingForm,
@@ -92,7 +95,11 @@ public class StudyController {
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm, landingForm);
         }
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
 
         File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), createStudyForm.getDate());
@@ -108,15 +115,19 @@ public class StudyController {
 
     @RequestMapping("/studies")
     public ModelAndView patientProfile(
+        @AuthenticationPrincipal UserDetails userDetails,
         @ModelAttribute("filterForm") final FileFilterForm filterForm,
         Locale locale
 
     ) {
         ModelAndView mav = new ModelAndView("studies");
 
-        User user = us.getCurrentUser();
+        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
+        
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
 
-        mav.addObject("user", user);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
         mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
