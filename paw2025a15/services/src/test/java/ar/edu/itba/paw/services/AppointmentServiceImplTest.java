@@ -21,6 +21,9 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AppointmentServiceImplTest {
@@ -74,7 +77,7 @@ public class AppointmentServiceImplTest {
     public void testAddAppointmentNonexistentPatient(){
         Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE)
         );
     }
@@ -84,7 +87,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE)
         );
     }
@@ -93,7 +96,7 @@ public class AppointmentServiceImplTest {
     public void testAddAppointmentNonexistentDoc(){
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE)
         );
     }
@@ -144,7 +147,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.of(APP));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AppointmentAlreadyTakenException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE)
         );
     }
@@ -178,7 +181,7 @@ public class AppointmentServiceImplTest {
     public void testCancelAppointmentNonexistentApp(){
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
         );
     }
@@ -188,7 +191,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.of(APP));
         Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
         ).getMessage().contains("Patient");
     }
@@ -199,7 +202,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
         ).getMessage().contains("Shift not found");
     }
@@ -209,7 +212,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.of(APP));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, PATIENT_ID)
         ).getMessage().contains("Doctor");
     }
@@ -220,7 +223,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(UnauthorizedException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, 100L)
         );
     }
@@ -229,7 +232,7 @@ public class AppointmentServiceImplTest {
     public void testRemoveAppointmentNonexistentShift(){
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             as.removeAppointment(SHIFT_ID, APP_DATE, DOC_ID)
         );
     }
@@ -238,7 +241,7 @@ public class AppointmentServiceImplTest {
     public void testRemoveAppointmentUnauthDoc(){
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(UnauthorizedException.class, () -> 
             as.removeAppointment(SHIFT_ID, APP_DATE, 100L)
         );
     }

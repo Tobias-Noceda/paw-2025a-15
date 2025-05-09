@@ -18,6 +18,8 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PatientDetailServiceImplTest {
@@ -73,9 +75,19 @@ public class PatientDetailServiceImplTest {
     public void testCreatePatientExistentUser(){
         Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.of(PATIENT));
         
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
             pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE)
         );
+    }
+
+    @Test
+    public void testCreatePatientUSFailure(){
+        Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
+        Mockito.when(us.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE))).thenReturn(null);
+
+        Assert.assertThrows(RuntimeException.class, () -> 
+            pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE)
+        ).getMessage().contains("Failed to create user for email");
     }
 
     @Test
@@ -93,7 +105,7 @@ public class PatientDetailServiceImplTest {
     public void testUpdatePatientDetailsNonexistent(){
         Mockito.when(patientDetailDaoMock.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             pds.updatePatientDetails(PATIENT_ID, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
         );
     }

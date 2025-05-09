@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -44,13 +45,13 @@ public class StudyServiceImpl implements StudyService{
     private DoctorDetailService dds;
 
     @Autowired
-    private AuthDoctorServiceImpl ads;
+    private AuthDoctorService ads;
 
     @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
         if(pds.getDetailByPatientId(userId).isEmpty()) throw new NotFoundException("Patient with id: " + userId + " does not exist!");
-        if(userId!=uploaderId && dds.getDetailByDoctorId(uploaderId).isEmpty() && !ads.hasAuthDoctor(userId, uploaderId)) throw new UnauthorizedException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
+        if(userId!=uploaderId && (dds.getDetailByDoctorId(uploaderId).isEmpty() || !ads.hasAuthDoctor(userId, uploaderId))) throw new UnauthorizedException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
         if(fs.findById(fileId).isEmpty()) throw new NotFoundException("File not found with ID: " + fileId);
         Study study;
         if(studyDate == null) study = studyDao.create(type, comment, fileId, userId, uploaderId);
@@ -67,7 +68,7 @@ public class StudyServiceImpl implements StudyService{
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
         if(pds.getDetailByPatientId(userId).isEmpty()) throw new NotFoundException("Patient with id: " + userId + " does not exist!");
-        if(userId!=uploaderId && dds.getDetailByDoctorId(uploaderId).isEmpty()  && !ads.hasAuthDoctor(userId, uploaderId)) throw new UnauthorizedException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
+        if(userId!=uploaderId && (dds.getDetailByDoctorId(uploaderId).isEmpty()  || !ads.hasAuthDoctor(userId, uploaderId))) throw new UnauthorizedException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
         if(fs.findById(fileId).isEmpty()) throw new NotFoundException("File not found with ID: " + fileId);
         Study study = studyDao.create(type, comment, fileId, userId, uploaderId);   
         if(study == null){

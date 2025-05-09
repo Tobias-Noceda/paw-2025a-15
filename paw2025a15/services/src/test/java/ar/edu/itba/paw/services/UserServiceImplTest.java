@@ -19,6 +19,8 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
@@ -75,7 +77,7 @@ public class UserServiceImplTest {
     public void testCreateExistentEmail(){
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.of(PATIENT));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
             us.create(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, PATIENT_LOCALE)
         );
     }
@@ -106,16 +108,16 @@ public class UserServiceImplTest {
     public void testGetUserPictureNonexistentUser(){
         Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Optional<File> file = us.getUserPicture(PATIENT_ID);
-
-        Assert.assertTrue(file.isEmpty());
+        Assert.assertThrows(NotFoundException.class, () -> 
+            us.getUserPicture(PATIENT_ID)
+        );
     }
 
     @Test
     public void testChangePasswordByIDNonexistentUser(){
         Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             us.changePasswordByID(PATIENT_ID, DOC_PASSWORD)
         );
     }
@@ -124,7 +126,7 @@ public class UserServiceImplTest {
     public void testEditUserNonexistent(){
         Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID)
         );
     }
@@ -134,7 +136,7 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(fs.findById(Mockito.eq(PATIENT_PIC2_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PATIENT_PIC2_ID)
         );
     }
@@ -143,7 +145,7 @@ public class UserServiceImplTest {
     public void testUpdateLocaleNonexistentUser(){
         Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             us.updateLocale(PATIENT_ID, PATIENT_LOCALE)
         );
     }

@@ -22,6 +22,8 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DoctorDetailServiceImplTest {
@@ -78,7 +80,7 @@ public class DoctorDetailServiceImplTest {
     public void testCreateDoctorExistentUser(){
         Mockito.when(us.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.of(DOC));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
             dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
         );
     }
@@ -98,7 +100,7 @@ public class DoctorDetailServiceImplTest {
     public void testCreateDoctorCoveragesNonexistentDoc(){
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
     }
@@ -108,7 +110,7 @@ public class DoctorDetailServiceImplTest {
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(INSURANCESLIST);
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
     }
@@ -119,7 +121,7 @@ public class DoctorDetailServiceImplTest {
         Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
         Mockito.when(is.getInsuranceById(Mockito.anyLong())).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
     }

@@ -22,6 +22,7 @@ import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DoctorShiftServiceImplTest {
@@ -69,7 +70,7 @@ public class DoctorShiftServiceImplTest {
     public void testCreateShiftsNonexistentDoc(){
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, slot)
         );
     }
@@ -96,7 +97,7 @@ public class DoctorShiftServiceImplTest {
     public void testGetUnifiedShiftsByDoctorIdNonexistentDOc(){
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             dss.getUnifiedShiftsByDoctorId(DOC_ID)
         );
     }
@@ -140,7 +141,7 @@ public class DoctorShiftServiceImplTest {
     public void testGetAvailableTurnsByDoctorIdByMonthAndWeekNumberNonexistentDoc(){
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(DOC_ID, MONTH, WEEK0)
         );
     }

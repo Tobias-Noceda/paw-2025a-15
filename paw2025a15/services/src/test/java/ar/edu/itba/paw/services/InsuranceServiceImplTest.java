@@ -15,6 +15,8 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InsuranceServiceImplTest {
@@ -60,7 +62,7 @@ public class InsuranceServiceImplTest {
     public void testCreateExistentName(){
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME))).thenReturn(Optional.of(INSURANCE));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
             is.create(INSURANCE_NAME, INSURANCE_PIC_ID)
         );
     }
@@ -70,7 +72,7 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME))).thenReturn(Optional.empty());
         Mockito.when(fs.findById(INSURANCE_PIC_ID)).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             is.create(INSURANCE_NAME, INSURANCE_PIC_ID)
         );
     }
@@ -90,7 +92,7 @@ public class InsuranceServiceImplTest {
     public void testEditNonexistentInsurance(){
         Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
         );
     }
@@ -100,7 +102,7 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.of(INSURANCE));
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME2))).thenReturn(Optional.of(INSURANCE2));
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
             is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
         );
     }
@@ -111,7 +113,16 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME2))).thenReturn(Optional.empty());
         Mockito.when(fs.findById(Mockito.eq(INSURANCE_PIC2_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
+        );
+    }
+
+    @Test
+    public void testGetInsurancePicNonexistentInsurance(){
+        Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
             is.edit(INSURANCE_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID)
         );
     }

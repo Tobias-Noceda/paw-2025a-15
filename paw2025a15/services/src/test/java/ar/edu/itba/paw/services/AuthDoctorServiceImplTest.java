@@ -16,6 +16,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthDoctorServiceImplTest {
@@ -43,7 +44,7 @@ public class AuthDoctorServiceImplTest {
     public void testToggleAuthDoctorNonexistentPatient(){
         Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ads.toggleAuthDoctor(PATIENT_ID, DOC_ID)
         );
     }
@@ -53,7 +54,7 @@ public class AuthDoctorServiceImplTest {
         Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ads.toggleAuthDoctor(PATIENT_ID, DOC_ID)
         );
     }
@@ -62,7 +63,7 @@ public class AuthDoctorServiceImplTest {
     public void testUpdateAuthDoctorNonexistentPatient(){
         Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ads.updateAuthDoctor(PATIENT_ID, DOC_ID, accessLevels)
         );
     }
@@ -72,7 +73,7 @@ public class AuthDoctorServiceImplTest {
         Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ads.updateAuthDoctor(PATIENT_ID, DOC_ID, accessLevels)
         );
     }
