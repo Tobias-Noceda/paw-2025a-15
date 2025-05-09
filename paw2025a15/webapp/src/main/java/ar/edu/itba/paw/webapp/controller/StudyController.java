@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.form.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -59,7 +58,6 @@ public class StudyController {
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
-        @ModelAttribute("searchForm") final SearchForm searchForm,
         @ModelAttribute("landingForm") final LandingForm landingForm
         ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
@@ -82,7 +80,6 @@ public class StudyController {
     public ModelAndView createStudy(
             @PathVariable("patientId") int patientId,
             @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
-            @ModelAttribute("searchForm") final SearchForm searchForm,
             @ModelAttribute("landingForm") final LandingForm landingForm,
             BindingResult errors
     ) throws IOException{
@@ -93,7 +90,7 @@ public class StudyController {
         }
 
         if (errors.hasErrors()) {
-            return createStudyForm(patientId, createStudyForm,  searchForm, landingForm);
+            return createStudyForm(patientId, createStudyForm, landingForm);
         }
         User user = us.getCurrentUser();
 
