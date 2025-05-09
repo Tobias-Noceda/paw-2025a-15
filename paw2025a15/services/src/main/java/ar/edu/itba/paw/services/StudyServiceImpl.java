@@ -2,11 +2,8 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,29 +96,22 @@ public class StudyServiceImpl implements StudyService{
         return fs.findById(study.getFileId());
     }
 
-    // TODO: fix it Tobi
     @Transactional(readOnly = true)
     @Override
     public List<Study> getFilteredStudies(long id, StudyTypeEnum type, boolean mostRecent) {
-        List<Study> filtered;
-        if(type == null) {
-           filtered = new ArrayList<>(getStudiesByPatientId(id));
-        }else {
-           filtered = getStudiesByPatientId(id).stream()
-                    .filter(study -> study.getType() == type)
-                    .collect(Collectors.toList());
-        }
-        if (!mostRecent) {
-            Collections.reverse(filtered);
-        }
-
-        return filtered;
+        return studyDao.getFilteredStudiesByPatientId(id, type, mostRecent);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
         return studyDao.getStudiesByPatientIdAndDoctorId(patientId, doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
+        return studyDao.getFilteredStudiesByPatientIdAndDoctorId(patientId, doctorId, type, mostRecent);
     }
 
     @Transactional

@@ -6,16 +6,12 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
   <head>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <link rel="stylesheet" href="<c:url value="/css/patient-detail.css"/>">
     <link rel="stylesheet" href="<c:url value="/css/studies.css"/>">
   </head>
   <body>
-    <jsp:include page="components/header.jsp">
-      <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="id" value="${user.id}"/>
-      <jsp:param name="role" value="${user.role}"/>
-    </jsp:include>
+    <jsp:include page="components/header.jsp"/>
     <div class="page-container" style="flex-direction: row;">
       <div class="patient-card">
         <div class="patient-info">

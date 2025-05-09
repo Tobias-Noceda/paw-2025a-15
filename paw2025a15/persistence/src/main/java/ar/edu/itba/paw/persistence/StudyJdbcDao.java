@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,9 +88,74 @@ public class StudyJdbcDao implements StudyDao{
     }
 
     @Override
+    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {
+        StringBuilder query = new StringBuilder(
+            """
+                SELECT *
+                FROM studies
+                WHERE user_id = ?
+            """);
+        
+        List<Object> args = new ArrayList<>();
+        args.add(id);
+        List<Integer> types = new ArrayList<>();
+        types.add(java.sql.Types.BIGINT);
+        if(type != null) {
+            query.append(" AND study_type = ?");
+            args.add(type.ordinal());
+            types.add(java.sql.Types.INTEGER);
+        }
+        if(mostRecent) {
+            query.append(" ORDER BY study_date DESC");
+        } else {
+            query.append(" ORDER BY study_date ASC");
+        }
+        return jdbcTemplate.query(
+            query.toString(),
+            args.toArray(),
+            types.stream().mapToInt(i -> i).toArray(),
+            ROW_MAPPER
+        );
+    }
+
+    @Override
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
         return jdbcTemplate.query("SELECT * FROM studies AS s JOIN auth_studies AS ast ON s.study_id = ast.study_id WHERE s.user_id = ? AND ast.doctor_id = ? ORDER BY study_date DESC", new Object[]  {patientId, doctorId},
           new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT}, ROW_MAPPER);
+    }
+
+    @Override
+    public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
+        StringBuilder query = new StringBuilder(
+            """
+                SELECT *
+                FROM studies AS s JOIN auth_studies AS ast ON s.study_id = ast.study_id
+                WHERE ast.doctor_id = ? 
+                AND s.user_id = ?
+            """);
+        
+        List<Object> args = new ArrayList<>();
+        args.add(doctorId);
+        args.add(patientId);
+        List<Integer> types = new ArrayList<>();
+        types.add(java.sql.Types.BIGINT, java.sql.Types.BIGINT);
+        if(type != null) {
+            query.append(" AND s.study_type = ?");
+            System.out.println(type.ordinal());
+            args.add(type.ordinal());
+            types.add(java.sql.Types.INTEGER);
+        }
+        if(mostRecent) {
+            query.append(" ORDER BY study_date DESC");
+        } else {
+            query.append(" ORDER BY study_date ASC");
+        }
+        return jdbcTemplate.query(
+            query.toString(),
+            args.toArray(),
+            types.stream().mapToInt(i -> i).toArray(),
+            ROW_MAPPER
+        );
     }
 
     @Override

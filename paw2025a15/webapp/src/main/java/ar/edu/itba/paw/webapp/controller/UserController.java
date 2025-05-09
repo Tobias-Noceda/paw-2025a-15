@@ -135,6 +135,7 @@ public class UserController {
         us.changePasswordByID(id, form.getPassword());
         return mav;
     }
+    
     @RequestMapping("/profile")
     public ModelAndView profile(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -143,7 +144,6 @@ public class UserController {
         ModelAndView mav = new ModelAndView("profileInfo");
 
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
-        mav.addObject("user", user);
 
         if (profileForm.getPhoneNumber() == null) { // u otro campo clave
             profileForm.setPhoneNumber(user.getTelephone());

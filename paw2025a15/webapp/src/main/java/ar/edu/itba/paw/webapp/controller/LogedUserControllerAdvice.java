@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -18,6 +20,8 @@ public class LogedUserControllerAdvice {
 
     @ModelAttribute(name = "user_data", binding = false)
     public User getLoggedUser() {
-        return us.getCurrentUser();
+        Authentication session = SecurityContextHolder.getContext().getAuthentication();
+        if (session != null) return us.getUserByEmail(session.getName()).orElse(null);
+        return null;
     }
 }

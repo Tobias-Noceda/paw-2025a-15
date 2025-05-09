@@ -6,7 +6,7 @@
 
 <html>
   <head>
-    <link rel="icon" type="image/png" href="<c:url value="/resources/favicon.png"/>" />
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <link rel="stylesheet" href="<c:url value="/css/studies.css"/>">
 
   </head>
@@ -14,15 +14,12 @@
     <c:set var="title">studies</c:set>
     <jsp:include page="components/header.jsp">
       <jsp:param name="title" value="${title}"/>
-      <jsp:param name="username" value="${user.name}"/>
-      <jsp:param name="id" value="${user.id}"/>
-      <jsp:param name="role" value="${user.role}"/>
     </jsp:include>
     <div class="page-container studies-div" style="display: flex; flex-direction: row;">
       <div class="study-list-container">
         <div class="title-container">
           <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
-          <a href="<c:url value='/upload-study/${user.id}'/>" class="upload-button">
+          <a href="<c:url value='/upload-study/${user_data.id}'/>" class="upload-button">
             <spring:message code="patient.details.upload.label"/>
           </a>
         </div>

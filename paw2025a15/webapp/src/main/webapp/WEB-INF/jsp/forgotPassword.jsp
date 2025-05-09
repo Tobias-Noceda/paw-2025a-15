@@ -10,7 +10,7 @@
   <title><spring:message code="forgotPassword.title"/></title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+  <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>" />
 
   <!-- Fuente Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">

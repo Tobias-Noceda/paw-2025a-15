@@ -8,7 +8,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><spring:message code="profile.title"/></title>
-  <link rel="icon" type="image/png" href="<c:url value='/resources/favicon.png'/>" />
+  <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<c:url value='/css/profile-info.css'/>">
   <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
@@ -33,11 +33,7 @@
 
 </c:if>
 
-<jsp:include page="components/header.jsp">
-  <jsp:param name="username"  value="${user.name}"/>
-  <jsp:param name="id" value="${user.id}"/>
-  <jsp:param name="role"      value="${user.role}"/>
-</jsp:include>
+<jsp:include page="components/header.jsp"/>
 
 <c:url value='/save-profile' var="saveProfileUrl"/>
 <div class="page-container">
@@ -51,7 +47,7 @@
     <div class="card profile-header">
       <div class="profile-image">
         <div class="edit-image-wrapper">
-          <img id="prof-image" src="<c:url value='/supersecret/user-profile-pic/${user.id}'/>" alt="User Image" />
+          <img id="prof-image" src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
           <button class="edit-button" type="button" onclick="handleImageChange()">
             ✏️
           </button>
@@ -64,9 +60,9 @@
         </div>
       </div>
       <div class="profile-info-block">
-        <p class="name"><c:out value="${user.name}"/></p>
-        <p class="email"><c:out value="${user.email}"/></p>
-        <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user.role}"/></p>
+        <p class="name"><c:out value="${user_data.name}"/></p>
+        <p class="email"><c:out value="${user_data.email}"/></p>
+        <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user_data.role}"/></p>
       </div>
     </div>
 
@@ -79,7 +75,7 @@
           <form:input path="phoneNumber"
                       type="number"
                       cssClass="input-field"
-                      value="${user.telephone}"
+                      value="${user_data.telephone}"
                       onkeydown="return blockInvalidPhoneKeys(event)"
                       onpaste="return blockNegativePaste(event)"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
