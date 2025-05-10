@@ -84,10 +84,26 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
+    @Deprecated
     public boolean removeDoctorCoverage(long doctorId, long insuranceId) {
         String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ? AND insurance_id = ?";
         int rowsAffected = jdbcTemplate.update(sql, doctorId, insuranceId);
         return rowsAffected > 0;
+    }
+
+    @Override
+    public void removeAllCoveragesForDoctorId(long doctorId) {
+        String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ?";
+        jdbcTemplate.update(sql, doctorId);
+    }
+    
+    @Override
+    public void removeDoctorCoverages(long doctorId, List<Long> toRemove) {
+        String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ? AND insurance_id = ?";
+        List<Object[]> batchArgs = toRemove.stream()
+            .map(insuranceId -> new Object[]{doctorId, insuranceId})
+            .toList();
+        jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
     @Override
