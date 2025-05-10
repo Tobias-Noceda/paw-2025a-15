@@ -14,7 +14,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
-import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.Insurance;
@@ -57,9 +56,6 @@ public class DoctorDetailServiceImplTest {
 
     @Mock
     private DoctorDetailDao doctorDetailDaoMock;
-
-    @Mock
-    private InsuranceService is;
 
     @Mock
     private UserService us;
@@ -117,11 +113,12 @@ public class DoctorDetailServiceImplTest {
 
     @Test
     public void testCreateDoctorCoveragesNonexistentInsurance(){
+        int[] badResults = {1,0};
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
-        Mockito.when(is.getInsuranceById(Mockito.anyLong())).thenReturn(Optional.empty());
+        Mockito.when(doctorDetailDaoMock.addDoctorCoverages(Mockito.anyLong(), Mockito.anyList())).thenReturn(badResults);
 
-        Assert.assertThrows(NotFoundException.class, () -> 
+        Assert.assertThrows(RuntimeException.class, () -> 
             dds.createDoctorCoverages(DOC_ID, INSURANCES)
         );
     }

@@ -145,16 +145,15 @@ public class UserController {
 
         User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
 
-        if (profileForm.getPhoneNumber() == null) { // u otro campo clave
+        if (profileForm.getPhoneNumber() == null) { 
             profileForm.setPhoneNumber(user.getTelephone());
-            // podés completar otros campos acá también
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("landingForm", new LandingForm());
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
-            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());
+            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
         } else {
             mav.addObject("patientDetails", null);
             profileForm.setInsurances(InsuranceToLong(dds.getDoctorInsurancesById(user.getId())));

@@ -17,6 +17,8 @@ public interface DoctorDetailDao {
 
     public void addDoctorCoverage(long doctorId, long insuranceId);
 
+    public int[] addDoctorCoverages(long doctorId, List<Long> insurancesIds);
+
     public boolean removeDoctorCoverage(long doctorId, long insuranceId);
 
     public List<Insurance> getDoctorInsurancesById(long doctorId);

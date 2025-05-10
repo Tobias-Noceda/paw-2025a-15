@@ -139,6 +139,25 @@ public class DoctorDetailJdbcDaoTest {
     }
 
     @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql"})
+    public void testAddCoverages(){
+        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
+        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
+        final long INSURANCE2_ID = TestData.DoctorCoverages.doctorCoverage2.getInsuranceId();
+        final List<Long> INSURANCES_IDS = List.of(INSURANCE_ID, INSURANCE2_ID);
+
+        int[] results = doctorDetailDao.addDoctorCoverages(DOC_ID, INSURANCES_IDS);
+        
+        Assert.assertEquals(2, results.length);
+        Assert.assertEquals(1, results[0]);
+        Assert.assertEquals(1, results[1]);
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE_ID)));
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE2_ID)));
+    }
+
+    @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
     public void testAddCoverageExistentDocCov(){
         final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
@@ -33,9 +32,6 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Autowired
     private DoctorDetailDao doctorDetailDao;
-
-    @Autowired
-    private InsuranceService is;
 
     @Autowired
     private UserService us;
@@ -68,10 +64,14 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
         List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
         if(currentInsurances != null && !currentInsurances.isEmpty()) throw new AlreadyExistsException("Doctor with userId: " + doctorId + " already has insurances created!");
-        for (Long insuranceId : insurances) {//TODO capaz un batch insert tmb directo sql
-            if(is.getInsuranceById(insuranceId).isEmpty()) throw new NotFoundException("Insurance with insuranceId: " + insuranceId + " does not exist!");
-            doctorDetailDao.addDoctorCoverage(doctorId, insuranceId);
-            LOGGER.info("Adding insurance with insuranceId:{} for doctor with userId: {}", insuranceId, doctorId);
+        int[] added = doctorDetailDao.addDoctorCoverages(doctorId, insurances);
+        for (int i = 0; i < added.length; i++) {
+            if (added[i] > 0) {
+                LOGGER.info("Added insuranceId: {} for doctorId: {}", insurances.get(i), doctorId);
+            } else {
+                LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", insurances.get(i), doctorId, LocalDateTime.now());
+                throw new RuntimeException("Failed to add insuranceId: " + insurances.get(i) + "as doctor coverage for userId: " + doctorId);
+            }
         }
     }
 

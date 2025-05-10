@@ -73,6 +73,17 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     }
 
     @Override
+    public int[] addDoctorCoverages(long doctorId, List<Long> insurancesIds){
+        String sql = "INSERT INTO doctor_coverages (doctor_id, insurance_id) VALUES (?, ?) ";
+
+        List<Object[]> batchArgs = insurancesIds.stream()
+        .map(insuranceId -> new Object[]{doctorId, insuranceId})
+        .toList();
+
+        return jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
     public boolean removeDoctorCoverage(long doctorId, long insuranceId) {
         String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ? AND insurance_id = ?";
         int rowsAffected = jdbcTemplate.update(sql, doctorId, insuranceId);
