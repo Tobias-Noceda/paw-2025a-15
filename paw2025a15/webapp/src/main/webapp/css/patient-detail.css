@@ -316,3 +316,12 @@
     margin: 0;                /* eliminamos márgenes que rompan la fila */
     padding: 0;
 }
+
+
+/* contenedor común para botones de acción */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;          /* separa bloques (deauthorize vs access‐section) */
+    margin-top: 1.5em;
+}

@@ -23,7 +23,7 @@
 
     <span class="toast-text">
 
-        <c:out value="${updateSuccessMessage}"/>
+        <c:out value="${updateSuccessMessage}" escapeXml="true"/>
 
       </span>
 
@@ -60,8 +60,8 @@
         </div>
       </div>
       <div class="profile-info-block">
-        <p class="name"><c:out value="${user_data.name}"/></p>
-        <p class="email"><c:out value="${user_data.email}"/></p>
+        <p class="name"><c:out value="${user_data.name}" escapeXml="true"/></p>
+        <p class="email"><c:out value="${user_data.email}" escapeXml="true"/></p>
         <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user_data.role}"/></p>
       </div>
     </div>
