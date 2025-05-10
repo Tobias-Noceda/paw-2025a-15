@@ -19,6 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
+    <maven-war-plugin.version>3.2.2</maven-war-plugin.version>
     
     <org.springframework.version>5.3.33</org.springframework.version>
     <spring-security.version>5.8.11</spring-security.version>
@@ -26,6 +27,10 @@
     <org.hibernate.validator>6.2.4.Final</org.hibernate.validator>
     <thymeleaf.version>3.1.0.RELEASE</thymeleaf.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
+
+    <org.slf4j.version>1.7.5</org.slf4j.version>
+    <logback.version>1.1.2</logback.version>
+    <logback-ext-spring.version>0.1.1</logback-ext-spring.version>
 
     <junit.version>4.13.2</junit.version>
     <mockito.version>2.25.1</mockito.version>
@@ -56,26 +61,6 @@
         <artifactId>spring-security-web</artifactId>
         <version>${spring-security.version}</version>
       </dependency>
-
-
-      <!-- SLF4J API -->
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>2.0.13</version>
-      </dependency>
-      <!-- Logback como proveedor de SLF4J -->
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.5.6</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-core</artifactId>
-        <version>1.5.6</version>
-      </dependency>
-
 
 
       <dependency>
@@ -133,7 +118,6 @@
         <version>${org.springframework.version}</version>
         <scope>test</scope>
       </dependency>
-
 
 
       <dependency>
@@ -202,10 +186,39 @@
         <version>${thymeleaf.version}</version>
       </dependency>
 
+      <!--logs & security-->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${org.slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${org.slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.logback-extensions</groupId>
+        <artifactId>logback-ext-spring</artifactId>
+        <version>${logback-ext-spring.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
           
   <build>
+  <pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
@@ -220,6 +233,15 @@
           </webApp>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven-war-plugin.version}</version>
+          <configuration>
+            <packagingExcludes>**/logback-test.xml</packagingExcludes>
+          </configuration>
+      </plugin>
     </plugins>
+    </pluginManagement>
   </build>
 </project>
