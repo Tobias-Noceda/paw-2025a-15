@@ -82,20 +82,24 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
         if(insurancesIds == null || insurancesIds.isEmpty()) {
             doctorDetailDao.removeAllCoveragesForDoctorId(doctorId);
+            LOGGER.info("Removing all insurancess for doctorId: {}", doctorId);
             return;
         }
-
         List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
+        if(currentInsurances == null || currentInsurances.isEmpty()){
+            createDoctorCoverages(doctorId, insurancesIds);
+            LOGGER.info("Adding insurancess for doctorId: {}", doctorId);
+            return;
+        }
         List<Long> toRemove = new ArrayList<>();
         List<Long> newInsurances = new ArrayList<>(insurancesIds);
-        if(currentInsurances != null && currentInsurances.isEmpty()) {
-            for (Insurance currentInsurance : currentInsurances) {
-                if(insurancesIds.contains(currentInsurance.getId())) newInsurances.remove(currentInsurance.getId());
-                else toRemove.add(currentInsurance.getId());
-            }
-            doctorDetailDao.removeDoctorCoverages(doctorId, toRemove);
+        for (Insurance currentInsurance : currentInsurances) {
+            if(insurancesIds.contains(currentInsurance.getId())) newInsurances.remove(currentInsurance.getId());
+            else toRemove.add(currentInsurance.getId());
         }
+        doctorDetailDao.removeDoctorCoverages(doctorId, toRemove);
         createDoctorCoverages(doctorId, newInsurances);
+        LOGGER.info("Updating insurancess for doctorId: {}", doctorId);
     }
 
     @Transactional(readOnly = true)
