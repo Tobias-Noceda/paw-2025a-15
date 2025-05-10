@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.enums.LocaleEnum;
 
 
 @Component
@@ -44,8 +42,6 @@ public class PawUserDetailsService implements UserDetailsService {
                 authorities.add(new SimpleGrantedAuthority("ROLE_PATIENT"));
             }
         }
-
-        us.updateLocale(user.getId(), LocaleEnum.fromLocale(LocaleContextHolder.getLocale()));
 
         return new PawAuthUserDetails(user, authorities);
     }
