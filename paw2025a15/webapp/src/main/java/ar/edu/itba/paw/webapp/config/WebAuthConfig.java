@@ -90,7 +90,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/authFileDoctor/{doctorId}/{studyId}").hasRole("PATIENT")
                 .requestMatchers("/view-study/{studyId}")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
-                .requestMatchers("/upload-study/{patientId}") // TODO: change to /upload-study
+                .requestMatchers("/upload-study/{patientId}")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
                 // temporary
                 .requestMatchers("/**").permitAll()

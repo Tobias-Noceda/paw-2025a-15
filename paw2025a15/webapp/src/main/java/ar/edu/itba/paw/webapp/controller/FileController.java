@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.interfaces.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,9 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
@@ -32,8 +38,6 @@ import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.MediaTypeException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
-
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FileController {
@@ -112,7 +116,7 @@ public class FileController {
                 .body(content);
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/view-study/{id:\\d+}")//TODO necesita re filtrado por roles y permisos en auth esto
+    @RequestMapping(method=RequestMethod.GET, path="/view-study/{id:\\d+}")
     public @ResponseBody ResponseEntity<byte[]> getStudy(@PathVariable("id") long id){
         File f = ss.getStudyFile(id).orElseThrow(() -> new NoSuchElementException("Study not found with ID: " + id));
         

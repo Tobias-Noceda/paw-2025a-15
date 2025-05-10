@@ -17,7 +17,7 @@ public enum LocaleEnum {
     }
 
     public Locale toLocale() {
-        return new Locale(language, country);
+        return Locale.of(language, country);
     }
 
     public static LocaleEnum fromLocale(Locale locale) {
