@@ -132,7 +132,6 @@
                 <jsp:include page="components/doctorCard.jsp">
                   <jsp:param name="id" value="${doctor.id}" />
                   <jsp:param name="doctorName" value="${doctor.name}" />
-                  <jsp:param name="imageId" value="${doctor.imageId}" />
                   <jsp:param name="insurances" value="${insuranceNames}" />
                   <jsp:param name="specialty" value="${doctor.specialty}" />
                   <jsp:param name="weekdays" value="${doctor.weekdays}" />
@@ -166,7 +165,6 @@
                   <jsp:include page="components/patientCard.jsp">
                     <jsp:param name="id"          value="${patient.id}" />
                     <jsp:param name="patientName" value="${patient.name}" />
-                    <jsp:param name="imageId"     value="${patient.pictureId}" />
                     <jsp:param name="email"       value="${patient.email}" />
                     <jsp:param name="telephone"   value="${patient.telephone}" />
                   </jsp:include>

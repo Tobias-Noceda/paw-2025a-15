@@ -27,7 +27,7 @@
             <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
             <div class="doctor-infopack">
               <div class="doctor-image">
-                <img  src="<c:url value='/supersecret/user-profile-pic/${doctor.pictureId}'/>" alt="Doctor Image" />
+                <img  src="<c:url value='/supersecret/user-profile-pic/${doctor.id}'/>" alt="Doctor Image" />
               </div>
             </div>
             <p class="doctor-email"><c:out value="${doctor.email}"/></p>
