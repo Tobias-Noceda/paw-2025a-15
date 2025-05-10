@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -87,7 +85,7 @@ public class FileController {
         mediaType = switch (fileType) {
             case PNG -> MediaType.IMAGE_PNG;
             case JPEG -> MediaType.IMAGE_JPEG;
-            default -> throw new MediaTypeException("The profile picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de perfil de usuario
+            default -> throw new MediaTypeException("The profile picture must be an image type of file");
         };
 
         return ResponseEntity
@@ -107,7 +105,7 @@ public class FileController {
         mediaType = switch (fileType) {
             case PNG -> MediaType.IMAGE_PNG;
             case JPEG -> MediaType.IMAGE_JPEG;
-            default -> throw new MediaTypeException("The logo picture must be an image type of file");//TODO logging y constraints al modificar y crear imagenes de logo de insurance
+            default -> throw new MediaTypeException("The logo picture must be an image type of file");
         };
 
         return ResponseEntity
@@ -140,13 +138,12 @@ public class FileController {
 
 
     @RequestMapping(path = "/save-profile", method = RequestMethod.POST)
-    public ModelAndView saveProfileInfo(@AuthenticationPrincipal UserDetails userDetails,
-                    @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
-                    BindingResult result,
-                                        RedirectAttributes redirectAttrs
+    public ModelAndView saveProfileInfo(
+        @ModelAttribute("user_data") User user,
+        @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
+        BindingResult result,
+        RedirectAttributes redirectAttrs
     ) throws IOException {
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
-        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }

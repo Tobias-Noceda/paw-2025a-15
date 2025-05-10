@@ -77,7 +77,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
                 .requestMatchers("/patient/{patientId}")
                     .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
-                .requestMatchers("/login", "/register", "/forgot-password", "/changePassword/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
+                .requestMatchers("/login", "/register", "/forgot-password", "/change-password/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
                 .requestMatchers("/403").permitAll()
                 // appointments
                 .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")

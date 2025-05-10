@@ -9,7 +9,7 @@ public class PatientDetail {
     private final long patientId;
     private final LocalDate birthdate;
     private final BloodTypeEnum bloodType;
-    private final Double height; //TODO pasarlo a otro datatype, el punto y coma vana  causar dolores de cabeza
+    private final Double height;
     private final Double weight;
     private final Boolean smokes;
     private final Boolean drinks;

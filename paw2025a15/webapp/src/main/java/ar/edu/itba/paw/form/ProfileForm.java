@@ -11,7 +11,7 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import java.time.LocalDate;
 import java.util.List;
 
-public class ProfileForm {//TODO constraints en Strings por el largo del input, prob tmb una que prevenga sql injection
+public class ProfileForm {
     
     MultipartFile profileImage;
 

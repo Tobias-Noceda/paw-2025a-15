@@ -7,16 +7,12 @@ import ar.edu.itba.paw.models.Insurance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.form.ChangePasswordForm;
@@ -26,6 +22,7 @@ import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +106,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/change-password/{token}/{id}", method = RequestMethod.GET)
     public ModelAndView changePassword(
         @PathVariable("id") long id, @PathVariable("token") String token ,
         @ModelAttribute("passwordForm") ChangePasswordForm form
@@ -120,7 +117,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/changePassword/{token}/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/change-password/{token}/{id}", method = RequestMethod.POST)
     public ModelAndView changePassword(
         @ModelAttribute("passwordForm") final ChangePasswordForm form,
         @PathVariable("id") long id, @PathVariable("token") String token
@@ -138,26 +135,24 @@ public class UserController {
     
     @RequestMapping("/profile")
     public ModelAndView profile(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @ModelAttribute("user_data") User user,
             @ModelAttribute("profileForm") ProfileForm profileForm
     ) {
         ModelAndView mav = new ModelAndView("profileInfo");
-
-        User user = us.getUserByEmail(userDetails.getUsername()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (profileForm.getPhoneNumber() == null) { 
             profileForm.setPhoneNumber(user.getTelephone());
         }
 
-        mav.addObject("obrasSocialesItems", is.getAllInsurances());
-        mav.addObject("bloodTypes", BloodTypeEnum.values());
-        mav.addObject("landingForm", new LandingForm());
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
-            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
+            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElseThrow(() -> new NotFoundException("Patient details not found for user with id: " + user.getId())));
         } else {
             mav.addObject("patientDetails", null);
             profileForm.setInsurances(InsuranceToLong(dds.getDoctorInsurancesById(user.getId())));
         }
+        mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("bloodTypes", BloodTypeEnum.values());
+        mav.addObject("landingForm", new LandingForm());
 
         return mav;
     }

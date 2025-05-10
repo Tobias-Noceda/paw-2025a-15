@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import ar.edu.itba.paw.annotation.ValidArgPhone;
-//TODO capaz puede ser constraint directo como las otras?
+
 public class ArgPhoneValidator implements ConstraintValidator<ValidArgPhone, String> {
 
     @Override

@@ -15,8 +15,6 @@ import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Study;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -84,7 +82,7 @@ public class StudyController {
 
     @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.POST)
     public ModelAndView createStudy(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @ModelAttribute("user_data") User user,
             @PathVariable("patientId") int patientId,
             @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
             @ModelAttribute("landingForm") final LandingForm landingForm,
@@ -99,7 +97,6 @@ public class StudyController {
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm, landingForm);
         }
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
         
         if (user == null) {
             throw new UnauthorizedException("User not found");
@@ -119,15 +116,13 @@ public class StudyController {
 
     @RequestMapping("/studies")
     public ModelAndView patientProfile(
-        @AuthenticationPrincipal UserDetails userDetails,
+        @ModelAttribute("user_data") User user,
         @ModelAttribute("filterForm") final FileFilterForm filterForm,
         Locale locale
 
     ) {
         ModelAndView mav = new ModelAndView("studies");
 
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
-        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
@@ -142,12 +137,10 @@ public class StudyController {
     }
     @RequestMapping("/study-info/{studyId:\\d+}")
     public ModelAndView studyInfo(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @ModelAttribute("user_data") User user,
             @PathVariable("studyId") int studyId,
             Locale locale
     ) {
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
-        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }

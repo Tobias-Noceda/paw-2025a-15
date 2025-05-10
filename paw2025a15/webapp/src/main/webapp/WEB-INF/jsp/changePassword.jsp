@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="<c:url value='/css/login-form.css'/>">
 </head>
 <body>
-<c:url value="/changePassword/${token}/${id}" var="postPath"/>
+<c:url value="/change-password/${token}/${id}" var="postPath"/>
 
 <div class="page-container">
     <div class="login-card">

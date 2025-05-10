@@ -57,7 +57,7 @@ public class RegisterController {
 
     @RequestMapping("/register")
     public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale,  @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
-        final ModelAndView mav = new ModelAndView("doctorForm");
+        final ModelAndView mav = new ModelAndView("registryForm");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
@@ -99,7 +99,7 @@ public class RegisterController {
         }
 
         if (!isValid) {
-            final ModelAndView mav = new ModelAndView("doctorForm");
+            final ModelAndView mav = new ModelAndView("registryForm");
             mav.addObject("registerPatientForm", form);
             // Agregar los atributos usados por el formulario de médicos
             mav.addObject("registerMedicForm", new DoctorForm()); // si Spring necesita esto
@@ -163,7 +163,7 @@ public class RegisterController {
         if (isValid) {
             return new ModelAndView("redirect:/home");
         } else {
-            final ModelAndView mav = new ModelAndView("doctorForm");
+            final ModelAndView mav = new ModelAndView("registryForm");
             mav.addObject("registerMedicForm", form);
             mav.addObject("registerPatientForm", new PatientForm());
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
