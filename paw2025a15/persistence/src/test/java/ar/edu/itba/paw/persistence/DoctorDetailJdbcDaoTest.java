@@ -159,25 +159,39 @@ public class DoctorDetailJdbcDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
+    public void testRemoveDoctorCoverages(){
+        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
+        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
+        final long INSURANCE2_ID = TestData.DoctorCoverages.doctorCoverage2.getInsuranceId();
+        final List<Long> INSURANCES_IDS = List.of(INSURANCE_ID);
+
+        doctorDetailDao.removeDoctorCoverages(DOC_ID, INSURANCES_IDS);
+
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE_ID)));
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE2_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
+    public void testRemoveAllCoveragesForDoctorId(){
+        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
+
+        doctorDetailDao.removeAllCoveragesForDoctorId(DOC_ID);
+        
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d ", DOC_ID)));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
     public void testAddCoverageExistentDocCov(){
         final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
         final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
 
         Assert.assertThrows(DuplicateKeyException.class,()->{
             doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);});
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
-    public void testRemoveCoverageExistentDocCov(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
-
-        boolean result = doctorDetailDao.removeDoctorCoverage(DOC_ID, INSURANCE_ID);
-
-        Assert.assertTrue(result);
-        Assert.assertEquals(0, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE_ID)));
     }
 
     @Test

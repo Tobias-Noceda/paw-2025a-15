@@ -82,13 +82,20 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
         if(insurancesIds == null || insurancesIds.isEmpty()) {
             doctorDetailDao.removeAllCoveragesForDoctorId(doctorId);
-            LOGGER.info("Removing all insurancess for doctorId: {}", doctorId);
+            LOGGER.info("Removed all insurances for doctorId: {}", doctorId);
             return;
         }
         List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
         if(currentInsurances == null || currentInsurances.isEmpty()){
-            createDoctorCoverages(doctorId, insurancesIds);
-            LOGGER.info("Adding insurancess for doctorId: {}", doctorId);
+            int[] added = doctorDetailDao.addDoctorCoverages(doctorId, insurancesIds);
+            for (int i = 0; i < added.length; i++) {
+                if (added[i] > 0) {
+                    LOGGER.info("Added insuranceId: {} for doctorId: {}", insurancesIds.get(i), doctorId);
+                } else {
+                    LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", insurancesIds.get(i), doctorId, LocalDateTime.now());
+                    throw new RuntimeException("Failed to add insuranceId: " + insurancesIds.get(i) + "as doctor coverage for userId: " + doctorId);
+                }
+            }
             return;
         }
         List<Long> toRemove = new ArrayList<>();
@@ -98,8 +105,16 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
             else toRemove.add(currentInsurance.getId());
         }
         doctorDetailDao.removeDoctorCoverages(doctorId, toRemove);
-        createDoctorCoverages(doctorId, newInsurances);
-        LOGGER.info("Updating insurancess for doctorId: {}", doctorId);
+        int[] added = doctorDetailDao.addDoctorCoverages(doctorId, newInsurances);
+        for (int i = 0; i < added.length; i++) {
+            if (added[i] > 0) {
+                LOGGER.info("Added insuranceId: {} for doctorId: {}", newInsurances.get(i), doctorId);
+            } else {
+                LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", newInsurances.get(i), doctorId, LocalDateTime.now());
+                throw new RuntimeException("Failed to add insuranceId: " + newInsurances.get(i) + "as doctor coverage for userId: " + doctorId);
+            }
+        }
+        LOGGER.info("Updated insurances for doctorId: {}", doctorId);
     }
 
     @Transactional(readOnly = true)
