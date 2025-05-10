@@ -56,6 +56,17 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
     }
 
     @Override
+    public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        String sql = "INSERT INTO auth_doctors (doctor_id, patient_id, access_level) VALUES (?, ?, ?) ";
+
+        List<Object[]> batchArgs = accessLevels.stream()
+        .map(accessLevel -> new Object[]{doctorId, patientId, accessLevel.ordinal()})
+        .toList();
+
+        return jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
         return (List<DoctorView>) jdbcTemplate.query(
                 "SELECT DISTINCT dd.doctor_id, u.user_name, dd.doctor_specialty, u.picture_id FROM auth_doctors AS ad JOIN doctor_details AS dd ON ad.doctor_id = dd.doctor_id JOIN users AS u ON dd.doctor_id = u.user_id WHERE ad.patient_id = ?",
@@ -86,7 +97,7 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
     }
 
     @Override
-    public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {//TODO unauth all study access
+    public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {
         if(!hasAuthDoctor(patientId, doctorId)) return;
         jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ?", patientId, doctorId);
     }
@@ -98,8 +109,20 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
     }
 
     @Override
+    public int[] unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        String sql = "DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ? ";
+
+        List<Object[]> batchArgs = accessLevels.stream()
+        .map(accessLevel -> new Object[]{patientId, doctorId, accessLevel.ordinal()})
+        .toList();
+
+        return jdbcTemplate.batchUpdate(sql, batchArgs);
+    }
+
+    @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
         String sql = "SELECT DISTINCT access_level FROM auth_doctors WHERE doctor_id = ? AND patient_id = ?";
         return jdbcTemplate.query(sql, new Object[]{doctorId, patientId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum) -> AccessLevelEnum.fromInt(rs.getInt("access_level")));
     }
+    
 }

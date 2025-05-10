@@ -6,7 +6,6 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
 
-// TODO: Tal vez eliminar esto
 public interface InsuranceService {
     public Insurance create(String name, long pictureId);
 

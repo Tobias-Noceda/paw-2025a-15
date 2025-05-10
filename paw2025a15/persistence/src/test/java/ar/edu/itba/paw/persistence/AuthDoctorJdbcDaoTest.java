@@ -393,4 +393,43 @@ public class AuthDoctorJdbcDaoTest {
 
         Assert.assertTrue(foundAccessLevels.isEmpty());
     }
+
+    @Test
+    public void testAuthDoctorWithLevels(){
+        final long PATIENT_ID = TestData.AuthDoctors.authDoctor.getPatientId();
+        final long DOC_ID = TestData.AuthDoctors.authDoctor.getDoctorId();
+        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
+        final AccessLevelEnum ACCES_LEVEL2 = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
+        final List<AccessLevelEnum> ACCESS_LEVELS = List.of(ACCES_LEVEL, ACCES_LEVEL2);
+
+        int[] results = authDoctorDao.authDoctorWithLevels(PATIENT_ID, DOC_ID, ACCESS_LEVELS);
+
+        Assert.assertEquals(2, results.length);
+        Assert.assertEquals(1, results[0]);
+        Assert.assertEquals(1, results[1]);
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL.ordinal())));
+        Assert.assertEquals(1, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL2.ordinal())));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorDetails.sql", "classpath:doctorCoverages.sql", "classpath:doctorShifts.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testUnauthDoctorWithLevels(){
+        final long PATIENT_ID = TestData.AuthDoctors.authDoctor.getPatientId();
+        final long DOC_ID = TestData.AuthDoctors.authDoctor.getDoctorId();
+        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
+        final AccessLevelEnum ACCES_LEVEL2 = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
+        final List<AccessLevelEnum> ACCESS_LEVELS = List.of(ACCES_LEVEL, ACCES_LEVEL2);
+
+        int[] results = authDoctorDao.unauthDoctorForLevels(PATIENT_ID, DOC_ID, ACCESS_LEVELS);
+
+        Assert.assertEquals(2, results.length);
+        Assert.assertEquals(1, results[0]);
+        Assert.assertEquals(1, results[1]);
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL.ordinal())));
+        Assert.assertEquals(0, 
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL2.ordinal())));
+    }
 }
