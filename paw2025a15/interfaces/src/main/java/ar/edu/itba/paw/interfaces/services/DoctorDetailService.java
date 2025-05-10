@@ -20,6 +20,8 @@ public interface DoctorDetailService {
 
     public void createDoctorCoverages(long doctorId, List<Long> insurances);
 
+    public void updateDoctorCoverages(long doctorId, final List<Long> insurances);
+
     public List<Insurance> getDoctorInsurancesById(long doctorId);
 
     public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);

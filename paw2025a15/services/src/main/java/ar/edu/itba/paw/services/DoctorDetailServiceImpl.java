@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,6 +74,32 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
                 throw new RuntimeException("Failed to add insuranceId: " + insurances.get(i) + "as doctor coverage for userId: " + doctorId);
             }
         }
+    }
+
+    @Transactional
+    @Override
+    public void updateDoctorCoverages(long doctorId, final List<Long> insurancesIds) {
+        if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
+        if(insurancesIds == null || insurancesIds.isEmpty()) {
+            doctorDetailDao.removeAllCoveragesForDoctorId(doctorId);
+            LOGGER.info("Removing all insurancess for doctorId: {}", doctorId);
+            return;
+        }
+        List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
+        if(currentInsurances == null || currentInsurances.isEmpty()){
+            createDoctorCoverages(doctorId, insurancesIds);
+            LOGGER.info("Adding insurancess for doctorId: {}", doctorId);
+            return;
+        }
+        List<Long> toRemove = new ArrayList<>();
+        List<Long> newInsurances = new ArrayList<>(insurancesIds);
+        for (Insurance currentInsurance : currentInsurances) {
+            if(insurancesIds.contains(currentInsurance.getId())) newInsurances.remove(currentInsurance.getId());
+            else toRemove.add(currentInsurance.getId());
+        }
+        doctorDetailDao.removeDoctorCoverages(doctorId, toRemove);
+        createDoctorCoverages(doctorId, newInsurances);
+        LOGGER.info("Updating insurancess for doctorId: {}", doctorId);
     }
 
     @Transactional(readOnly = true)
