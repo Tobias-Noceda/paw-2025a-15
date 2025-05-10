@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
+import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
@@ -20,6 +21,9 @@ public class WebUserAuthDecision {
 
     @Autowired
     private AuthDoctorService ads;
+
+    @Autowired
+    private AuthStudiesService ass;
 
     public AuthorizationDecision isAuthDoctor(Authentication auth, long patientId) {
         User user = getAuthenticatedUser(auth);
@@ -57,7 +61,7 @@ public class WebUserAuthDecision {
 
         if(user.getId() == study.getUserId()) {
             return new AuthorizationDecision(true);
-        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(study.getUserId(), user.getId())) { // TODO: Actualizar a autorización por estudio
+        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
             return new AuthorizationDecision(true);
         }
 

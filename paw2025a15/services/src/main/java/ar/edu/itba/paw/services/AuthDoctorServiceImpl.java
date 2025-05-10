@@ -49,6 +49,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthDoctor(patientId, doctorId)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
+            ass.unauthAllStudiesForDoctorIdAndPatientId(patientId, doctorId);
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
         }
         else{
@@ -74,8 +75,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         if(accessLevels==null || accessLevels.isEmpty()) return;
         if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
-            LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
-            ass.unauthAllStudiesForDoctorIdAndPatientId(patientId, doctorId);
+            LOGGER.info("Removing all specific authorizations for doctor with id: {} for patient with id: {}", doctorId, patientId);
             return;
         }
         int[] results = authDoctorDao.unauthDoctorForLevels(patientId, doctorId, accessLevels);
