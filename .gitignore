@@ -50,3 +50,5 @@ Thumbs.db
 *.wmv
 
 *.session.sql
+
+*.bak

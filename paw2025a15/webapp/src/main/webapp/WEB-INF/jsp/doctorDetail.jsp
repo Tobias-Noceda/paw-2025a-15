@@ -24,25 +24,25 @@
             <spring:message code='doctorDetail.authorize.cancelButton'/>
           </c:set>
           <div class="">
-            <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+            <h2 class="doctor-name"><c:out value="${doctor.name}" escapeXml="true"/></h2>
             <div class="doctor-infopack">
               <div class="doctor-image">
                 <img  src="<c:url value='/supersecret/user-profile-pic/${doctor.id}'/>" alt="Doctor Image" />
               </div>
             </div>
-            <p class="doctor-email"><c:out value="${doctor.email}"/></p>
+            <p class="doctor-email"><c:out value="${doctor.email}" escapeXml="true"/></p>
 
 
             <div class="doctor-telephone-div">
               <p class="doctor-telephone-label"><spring:message code="patient.details.telephone.label"/></p>
-              <p class="doctor-telephone"><c:out value="${doctor.telephone}"/></p>
+              <p class="doctor-telephone"><c:out value="${doctor.telephone}" escapeXml="true"/></p>
             </div>
 
             <div class="doctor-insurances-div">
               <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
               <p class="doctor-insurances">
                 <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
-                  <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
+                  <c:out value="${insurance.name}" escapeXml="true"/><c:if test="${!status.last}">, </c:if>
                 </c:forEach>
               </p>
             </div>
@@ -52,11 +52,11 @@
             </div>
             <div class="doctor-address-div">
               <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
-              <p class="doctor-address"><c:out value="${doctorShifts[0].address}"/></p>
+              <p class="doctor-address"><c:out value="${doctorShifts[0].address}" escapeXml="true"/></p>
             </div>
             <div class="doctor-license-div">
               <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
-              <p class="doctor-license"><c:out value="${doctorDetail.licence}"/></p>
+              <p class="doctor-license"><c:out value="${doctorDetail.licence}" escapeXml="true"/></p>
             </div>
             <p class="section-title"><spring:message code="doctor.details.schedule.label"/></p>
             <div class="doctor-schedule">
@@ -88,7 +88,7 @@
                           onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
                           class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
                   >
-                    <c:out value="${buttonText}"/>
+                    <c:out value="${buttonText}" escapeXml="true"/>
                   </button>
                 </div>
               </div>
@@ -154,7 +154,7 @@
                         onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
                         class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
                 >
-                  <c:out value="${buttonText}"/>
+                  <c:out value="${buttonText}" escapeXml="true"/>
                 </button>
               </div>
             </c:if>
@@ -238,8 +238,8 @@
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
-                      <td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true"/></td>
-                      <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
+                      <td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true" escapeXml="true"/></td>
+                      <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true" escapeXml="true"/></td>
 
                       <td style="display: none;">
                         <form:form modelAttribute="takeTurnForm" action="${appointmentPath}" method="POST">

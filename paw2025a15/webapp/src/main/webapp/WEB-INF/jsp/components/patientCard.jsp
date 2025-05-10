@@ -16,7 +16,7 @@
     <!-- Info -->
     <div class="doctor-card__info">
       <h3 class="doctor-card__name">
-        <c:out value="${param.patientName}"/>
+        <c:out value="${param.patientName}" escapeXml="true" />
       </h3>
       <p class="patient-card__contacts">
         <strong>Email:</strong> ${param.email}

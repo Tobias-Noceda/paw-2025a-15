@@ -73,7 +73,7 @@
             <img src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
           </div>
           <div class="user-info">
-            <p class="user-name"><c:out value="${user_data.name}"/></p>
+            <p class="user-name"><c:out value="${user_data.name}" escapeXml="true"/></p>
             <p class="user-role"><spring:message code="role.${user_data.role}" /></p>
           </div>
         </button>
