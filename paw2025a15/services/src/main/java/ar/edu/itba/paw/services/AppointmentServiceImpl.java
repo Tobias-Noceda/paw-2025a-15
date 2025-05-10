@@ -56,7 +56,6 @@ public class AppointmentServiceImpl implements AppointmentService{
         User doctor = us.getUserById(shift.getDoctorId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctorId() + " does not exist!"));
         if(date==null || date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         
-        // TODO: cambiar a usar el enum de java.time en vez del nuestro para poder comparar
         if(date.getDayOfWeek().ordinal() != shift.getWeekday().ordinal()) throw new IllegalArgumentException("Shift must be on the same day of the week as the appointment date");
         
         getAppointmentsByShiftIdAndDate(shiftId, date).ifPresent(a -> {throw new AppointmentAlreadyTakenException("Shift already taken");});

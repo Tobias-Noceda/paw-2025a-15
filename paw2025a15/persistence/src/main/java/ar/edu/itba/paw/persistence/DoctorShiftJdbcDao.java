@@ -93,7 +93,7 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
                     generate_series(?::date, ?::date, interval '1 day') AS gs(date)
                 JOIN 
                     doctor_shifts ds
-                    ON EXTRACT(ISODOW FROM gs.date)::int = ds.shift_weekday
+                    ON (EXTRACT(ISODOW FROM gs.date)::int - 1) = ds.shift_weekday
                 WHERE 
                     ds.doctor_id = ?
                 ORDER BY gs.date, ds.shift_start_time
