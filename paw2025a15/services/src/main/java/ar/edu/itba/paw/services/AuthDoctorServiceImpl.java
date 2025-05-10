@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
+import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.DoctorView;
@@ -30,6 +31,9 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
 
     @Autowired
     private DoctorDetailService dds;
+
+    @Autowired
+    private AuthStudiesService ass;
 
     @Transactional(readOnly = true)
     @Override
@@ -65,6 +69,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
+            ass.unauthAllStudiesForDoctorIdAndPatientId(patientId, doctorId);
             return;
         }
         for (AccessLevelEnum accessLevel: accessLevels) {//TODO:batch en sql

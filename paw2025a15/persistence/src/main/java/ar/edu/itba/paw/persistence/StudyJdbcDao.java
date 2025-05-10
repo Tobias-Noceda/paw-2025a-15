@@ -138,10 +138,10 @@ public class StudyJdbcDao implements StudyDao{
         args.add(doctorId);
         args.add(patientId);
         List<Integer> types = new ArrayList<>();
-        types.add(java.sql.Types.BIGINT, java.sql.Types.BIGINT);
+        types.add(java.sql.Types.BIGINT);
+        types.add(java.sql.Types.BIGINT);
         if(type != null) {
             query.append(" AND s.study_type = ?");
-            System.out.println(type.ordinal());
             args.add(type.ordinal());
             types.add(java.sql.Types.INTEGER);
         }
@@ -156,23 +156,6 @@ public class StudyJdbcDao implements StudyDao{
             types.stream().mapToInt(i -> i).toArray(),
             ROW_MAPPER
         );
-    }
-
-    @Override
-    public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        String sql = "INSERT INTO auth_studies (doctor_id, study_id) VALUES (?, ?)";
-        return jdbcTemplate.update(sql, doctorId, studyId) == 1;
-    }
-
-    @Override
-    public boolean hasAuthStudy(long studyId, long doctorId) {
-        return jdbcTemplate.query("SELECT 1 FROM auth_studies WHERE study_id = ? AND doctor_id = ? LIMIT 1", new Object[]{studyId, doctorId}, new int[]{java.sql.Types.BIGINT, java.sql.Types.BIGINT}, (rs, rowNum)-> rs.next()).stream().findFirst().isPresent() ;
-    }
-
-    @Override
-    public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(!hasAuthStudy(studyId, doctorId)) return;
-        jdbcTemplate.update("DELETE FROM auth_studies WHERE study_id = ? AND doctor_id = ?", studyId, doctorId);
     }
 
 }

@@ -41,7 +41,7 @@ public class DoctorController {
     private AuthDoctorService ads;
 
     @Autowired
-    private StudyService ss;
+    private AuthStudiesService ass;
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
@@ -118,7 +118,7 @@ public class DoctorController {
             @PathVariable("doctorId") long doctorId,
             @PathVariable("studyId") long studyId
     ){
-        ss.toggleStudyForDoctorId(studyId, doctorId);
+        ass.toggleStudyForDoctorId(studyId, doctorId);
         return new ModelAndView("redirect:/study-info/" + studyId);
 
     }

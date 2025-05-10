@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
+import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -44,6 +45,9 @@ public class StudyServiceImpl implements StudyService{
     @Autowired
     private AuthDoctorService ads;
 
+    @Autowired
+    private AuthStudiesService ass;
+
     @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
@@ -58,6 +62,7 @@ public class StudyServiceImpl implements StudyService{
             throw new RuntimeException("Failed to create study for userId: " + userId + " with uploaderId: " + uploaderId + " and fileId: " + fileId );
         }
         LOGGER.info("Successfully created study for userId: {} with uploaderId: {} and fileId: {}", userId, uploaderId, fileId);
+        if(userId!=uploaderId) ass.authStudyForDoctorId(study.getId(), uploaderId);
         return study;
     }
 
@@ -73,6 +78,7 @@ public class StudyServiceImpl implements StudyService{
             throw new RuntimeException("Failed to create study for userId: " + userId + " with uploaderId: " + uploaderId + " and fileId: " + fileId );
         }
         LOGGER.info("Successfully created study for userId: {} with uploaderId: {} and fileId: {}", userId, uploaderId, fileId);
+        if(userId!=uploaderId) ass.authStudyForDoctorId(study.getId(), uploaderId);
         return study;
     }
 
@@ -114,40 +120,4 @@ public class StudyServiceImpl implements StudyService{
         return studyDao.getFilteredStudiesByPatientIdAndDoctorId(patientId, doctorId, type, mostRecent);
     }
 
-    @Transactional
-    @Override
-    public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        if(getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
-        if(hasAuthStudy(studyId, doctorId)) return true;
-        boolean result = studyDao.authStudyForDoctorId(studyId, doctorId);
-        if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
-        else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
-        return result;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean hasAuthStudy(long studyId, long doctorId) {
-        return studyDao.hasAuthStudy(studyId, doctorId);
-    }
-
-    @Transactional
-    @Override
-    public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
-        if(!hasAuthStudy(studyId, doctorId)) return;
-        studyDao.unauthStudyForDoctorId(studyId, doctorId);
-        LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
-    }
-
-    @Override
-    public void toggleStudyForDoctorId(long studyId, long doctorId) {
-        if(hasAuthStudy(studyId, doctorId)) {
-            unauthStudyForDoctorId(studyId, doctorId);
-        }else{
-            authStudyForDoctorId(studyId, doctorId);
-        }
-    }
 }

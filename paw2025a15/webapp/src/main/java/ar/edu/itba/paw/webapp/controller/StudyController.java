@@ -50,6 +50,9 @@ public class StudyController {
     private AuthDoctorService ads;
 
     @Autowired
+    private AuthStudiesService ass;
+
+    @Autowired
     private FileService fs;
 
     @Autowired
@@ -160,7 +163,7 @@ public class StudyController {
         // Crear un mapa para saber si cada doctor está autorizado a ver este estudio
         Map<Long, Boolean> authMap = new HashMap<>();
         for (DoctorView doctor : doctors) {
-            boolean hasAuth = ss.hasAuthStudy(studyId, doctor.getId());
+            boolean hasAuth = ass.hasAuthStudy(studyId, doctor.getId());
             authMap.put(doctor.getId(), hasAuth);
         }
 

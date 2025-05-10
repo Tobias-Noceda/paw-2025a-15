@@ -72,6 +72,7 @@ public class InsuranceServiceImpl implements InsuranceService{
         return insuranceDao.getAllInsurances();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<File> getInsurancePicture(long id) {
         Insurance insurance = insuranceDao.getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));

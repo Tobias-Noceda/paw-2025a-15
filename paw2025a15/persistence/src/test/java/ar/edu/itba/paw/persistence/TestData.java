@@ -42,6 +42,8 @@ public class TestData {
     public class Studies{
         public static final Study validStudyWithDate = new Study(1, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
         public static final Study validStudyWithoutDate = new Study(2, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study extraStudy = new Study(3, StudyTypeEnum.PRESCRIPTION, "simple image", 1, 1, 1, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study extraStudy2 = new Study(4, StudyTypeEnum.PRESCRIPTION, "simple image", 1, 1, 1, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
         public static final Study newStudyWithDate = new Study(3, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.now(), LocalDate.parse("2025-04-09"));
         public static final Study newStudyWithoutDate = new Study(3, StudyTypeEnum.OTHER, "simple image", 1, 1, 1, LocalDateTime.now(), LocalDate.now());
     }

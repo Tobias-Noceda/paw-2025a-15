@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
-import ar.edu.itba.paw.models.AuthDoctor;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
@@ -22,8 +21,6 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
 public class AuthDoctorJdbcDao implements AuthDoctorDao{
-
-    private static final RowMapper<AuthDoctor> ROW_MAPPER = (rs, rowNum) -> new AuthDoctor(rs.getLong("doctor_id"), rs.getLong("patient_id"), AccessLevelEnum.fromInt(rs.getInt("access_level")));
 
     private final RowMapper<DoctorView> DV_ROW_MAPPER = (rs, rowNum) -> {
         DoctorView doc = new DoctorView(
