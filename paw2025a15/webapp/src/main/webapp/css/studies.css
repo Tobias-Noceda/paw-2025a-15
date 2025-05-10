@@ -142,12 +142,12 @@
 }
 
 .studies-table .download-cell {
-    padding: 5px 7.5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px 15px;
     text-align: left;
     overflow: hidden;
-    width: 65px;
-    max-width: 65px;
-    min-width: 65px;
 }
 
 .studies-table .download-cell form {
@@ -198,9 +198,9 @@
 }
 
 .studies-last-column {
-    width: 85px;
-    min-width: 85px;
-    max-width: 85px;
+    width: 125px;
+    min-width: 125px;
+    max-width: 125px;
 }
 
 .studies-table-body::-webkit-scrollbar {
@@ -246,6 +246,32 @@
   
 .download-button:hover {
     background-color: #0056b3;
+}
+
+.view-button {
+    max-width: fit-content;
+    background-color: #2b962f;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    appearance: auto;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
+}
+  
+.view-button:hover {
+    background-color: #1e6b22;
 }
 
 .deauthorize-button {

@@ -89,12 +89,13 @@
               <table class="studies-table">
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
-                    <c:url value="/study-info/${study.id}" var="studyLink" />
+                    <c:url value="/view-study/${study.id}" var="studyLink" />
+                    <c:url value="/study-info/${study.id}" var="studyDetailLink" />
                     <c:set var="studyName">
                       <spring:message code="studyType.${study.type}"/>_${study.studyDate}
                     </c:set>
                     <tr class="study-row"
-                      onclick="window.location='${studyLink}'"
+                      onclick="window.location='${studyDetailLink}'"
                     >
                       <c:set var="studyDay">
                         <fmt:formatNumber value="${study.studyDate.dayOfMonth}" pattern="00" />
@@ -123,6 +124,16 @@
                         <spring:message code="dateFormat" arguments="${uploadDay},${uploadMonth},${uploadYear}"/>
                       </td>
                       <td class="download-cell">
+                        <a
+                          class="view-button"
+                          style="margin-right: 7px;"
+                          href="${studyLink}"
+                          onclick="event.stopPropagation();"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                          </svg>
+                        </a>
                         <a
                           class="download-button"
                           href="${studyLink}"
