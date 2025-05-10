@@ -116,7 +116,7 @@
                       <td class="text-cell">
                         <spring:message code="studyType.${study.type}"/>
                       </td>
-                      <td class="text-cell"><c:out value="${study.comment}"/></td>
+                      <td class="text-cell"><c:out value="${study.comment}" escapeXml="true"/></td>
                       <td class="text-cell">
                         <spring:message code="dateFormat" arguments="${studyDay},${studyMonth},${studyYear}"/>
                       </td>
@@ -200,7 +200,7 @@
 
                       <td class="text-cell">
 
-                        <c:out value="${doctor.name}"/>
+                        <c:out value="${doctor.name}" escapeXml="true"/>
 
                       </td>
 
@@ -221,7 +221,7 @@
                               class="deauthorize-button"
                               onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value);"
                             >
-                              <c:out value="${buttonText}"/>
+                              <c:out value="${buttonText}" escapeXml="true"/>
                             </button>
                           </form>
                         </td>

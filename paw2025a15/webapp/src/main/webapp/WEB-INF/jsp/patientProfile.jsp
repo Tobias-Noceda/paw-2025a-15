@@ -11,16 +11,16 @@
     <div class="page-container" style="display: flex; flex-direction: row;">
         <div class="doctor-card">
             <div class="doctor-info">
-              <h2 class="doctor-name"><c:out value="${patient.name}"/></h2>
+              <h2 class="doctor-name"><c:out value="${patient.name}" escapeXml="true"/></h2>
               <div class="doctor-image">
                 <img src="<c:url value='/resources/avatar.jpg'/>" alt="Patient Image" />
               </div>
-              <p class="doctor-email"><c:out value="${patient.email}"/></p>
+              <p class="doctor-email"><c:out value="${patient.email}" escapeXml="true"/></p>
               <div class="doctor-insurances-div">
                 <p class="doctor-insurances">
                   <c:if test="${patientInsurance != null}">
                       <p class="doctor-insurances-label"><spring:message code="patient.profile.insurance.label"/></p>
-                      <c:out value="${insurance.name}"/>
+                      <c:out value="${insurance.name}" escapeXml="true"/>
                   </c:if>
                 </p>
               </div>
@@ -45,10 +45,10 @@
               <tbody>
                 <c:forEach var="appointment" items="${patientFutureAppointments}">
                   <tr class="appointment-row">
-                    <td><c:out value="${appointment.doctorName}"/></td>
-                    <td><c:out value="${appointment.date}"/></td>
-                    <td><c:out value="${appointment.getStartToEndTime()}"/></td>
-                    <td><c:out value="${appointment.address}"/></td>
+                    <td><c:out value="${appointment.doctorName}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.date}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.address}" escapeXml="true"/></td>
                     <td>
                       <form action="/patientCancelAppointment/${patient.id}/${appointment.shiftId}/${appointment.date}" method="post" onsubmit="return confirm('¿Estás seguro que quieres cancelar esta cita?');">
                         <button type="submit">Cancelar</button>
@@ -70,10 +70,10 @@
               <tbody>
                 <c:forEach var="appointment" items="${patientOldAppointments}">
                   <tr class="appointment-row">
-                    <td><c:out value="${appointment.doctorName}"/></td>
-                    <td><c:out value="${appointment.date}"/></td>
-                    <td><c:out value="${appointment.getStartToEndTime()}"/></td>
-                    <td><c:out value="${appointment.address}"/></td>
+                    <td><c:out value="${appointment.doctorName}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.date}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.address}" escapeXml="true"/></td>
                   </tr>
                 </c:forEach>
               </tbody>
@@ -89,14 +89,14 @@
               </thead>
               <tbody>
                 <c:forEach var="study" items="${patientStudies}">
-                  <tr class="appointment-row" data-fileid="<c:out value='${study.fileId}'/>">
+                  <tr class="appointment-row" data-fileid="<c:out value='${study.fileId}' escapeXml="true"/>">
                     <c:set var="myStudyType">
                       <spring:message code="studyType.${study.type}"/>
                     </c:set>
-                    <td><c:out value="${myStudyType}"/></td>
-                    <td><c:out value="${study.comment}"/></td>
-                    <td><c:out value="${study.studyDate}"/></td>
-                    <td><c:out value="${study.uploadDate}"/></td><!--TODO: con internacionalizacion se le puede dar e formato preferido por idioma tmb-->
+                    <td><c:out value="${myStudyType}" escapeXml="true"/></td>
+                    <td><c:out value="${study.comment}" escapeXml="true"/></td>
+                    <td><c:out value="${study.studyDate}" escapeXml="true"/></td>
+                    <td><c:out value="${study.uploadDate}" escapeXml="true"/></td><!--TODO: con internacionalizacion se le puede dar e formato preferido por idioma tmb-->
                   </tr>
                 </c:forEach>
               </tbody>
@@ -111,8 +111,8 @@
               <tbody>
                 <c:forEach var="doctor" items="${patientAuthDoctors}">
                   <tr class="appointment-row">
-                    <td><c:out value="${doctor.name}"/></td>
-                    <td><c:out value="${doctor.specialty}"/></td>
+                    <td><c:out value="${doctor.name}" escapeXml="true"/></td>
+                    <td><c:out value="${doctor.specialty}" escapeXml="true"/></td>
                     <td>
                       <form action="/patientAuthDoctor/${patient.id}/${doctor.id}" method="post" onsubmit="return confirm('¿Estás seguro que quieres eliminar a este medico de la lista?');">
                         <button type="submit">Retirar</button>

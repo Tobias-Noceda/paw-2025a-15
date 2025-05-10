@@ -17,7 +17,7 @@
     <!-- Datos principales -->
     <div class="doctor-card__info">
       <h3 class="doctor-card__name">
-        <c:out value="${param.doctorName}"/>
+        <c:out value="${param.doctorName}" escapeXml="true" />
       </h3>
       <p class="doctor-card__specialty">
         <spring:message code="specialty.${param.specialty}"/>

@@ -21,7 +21,7 @@
     <!-- Panel izquierdo: Detalle del estudio (más angosto) -->
     <div class="patient-card" style="flex: 0.5;">
         <div class="patient-info">
-            <h2 class="patient-name"><c:out value="${study.comment}"/></h2>
+            <h2 class="patient-name"><c:out value="${study.comment}" escapeXml="true"/></h2>
 
             <!-- Tipo de estudio -->
             <div class="study-detail">
@@ -123,7 +123,7 @@
 
                             <tr class="doctor-row" onclick="window.location='${doctorUrl}'" style="cursor:pointer;">
                                 <td class="text-cell">
-                                    <c:out value="${doctor.name}"/>
+                                    <c:out value="${doctor.name}" escapeXml="true"/>
                                 </td>
                                 <td class="text-cell">
                                     <spring:message code="specialty.${doctor.specialty}"/>
@@ -137,7 +137,7 @@
                                                 class="${buttonClass}"
                                                 onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonLabel}', '${authCancelText}', this.name, this.value);"
                                         >
-                                            <c:out value="${buttonLabel}"/>
+                                            <c:out value="${buttonLabel}" escapeXml="true"/>
                                         </button>
                                     </form>
                                 </td>

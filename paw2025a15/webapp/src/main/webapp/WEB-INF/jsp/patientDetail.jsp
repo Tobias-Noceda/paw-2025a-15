@@ -15,7 +15,7 @@
     <div class="page-container" style="flex-direction: row;">
       <div class="patient-card">
         <div class="patient-info">
-          <h2 class="patient-name"><c:out value="${patient.name}"/></h2>
+          <h2 class="patient-name"><c:out value="${patient.name}" escapeXml="true"/></h2>
           <div class="doctor-infopack">
             <div class="patient-image">
               <img src="<c:url value='/supersecret/user-profile-pic/${patient.id}'/>" alt="Patient Image" />
@@ -30,11 +30,11 @@
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="patient-email-div">
             <p class="patient-email-label"><spring:message code="patient.details.email.label"/></p>
-            <p class="patient-email"><c:out value="${patient.email}"/></p>
+            <p class="patient-email"><c:out value="${patient.email}" escapeXml="true"/></p>
           </div>
           <div class="patient-telephone-div">
             <p class="patient-telephone-label"><spring:message code="patient.details.telephone.label"/></p>
-            <p class="patient-telephone"><c:out value="${patient.telephone}"/></p>
+            <p class="patient-telephone"><c:out value="${patient.telephone}" escapeXml="true"/></p>
           </div>
         </div>
         <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling-->
@@ -44,7 +44,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.age"/>:</p>
               <c:choose>
                 <c:when test="${patientDetails.age != null}">
-                    <c:out value="${patientDetails.age}" />
+                    <c:out value="${patientDetails.age}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -55,7 +55,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.bloodType"/>:</p>
               <c:choose>
                 <c:when test="${patientDetails.bloodType != null}">
-                    <c:out value="${patientDetails.bloodType.getName()}" />
+                    <c:out value="${patientDetails.bloodType.getName()}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -66,7 +66,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.height"/></p>
               <c:choose>
                 <c:when test="${patientDetails.height != null}">
-                    <c:out value="${patientDetails.height}" />
+                    <c:out value="${patientDetails.height}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -77,7 +77,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.weight"/></p>
               <c:choose>
                 <c:when test="${patientDetails.weight != null}">
-                    <c:out value="${patientDetails.weight}" />
+                    <c:out value="${patientDetails.weight}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -94,7 +94,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.smokes"/></p>
               <c:choose>
                 <c:when test="${patientDetails.smokes != null}">
-                    <c:out value="${patientDetails.smokes}" />
+                    <c:out value="${patientDetails.smokes}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -105,7 +105,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.drinks"/></p>
               <c:choose>
                 <c:when test="${patientDetails.drinks != null}">
-                    <c:out value="${patientDetails.drinks}" />
+                    <c:out value="${patientDetails.drinks}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -116,7 +116,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.diet"/></p>
               <c:choose>
                 <c:when test="${not empty patientDetails.diet}">
-                    <c:out value="${patientDetails.diet}" />
+                    <c:out value="${patientDetails.diet}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -133,7 +133,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.meds"/></p>
               <c:choose>
                 <c:when test="${not empty patientDetails.meds}">
-                    <c:out value="${patientDetails.meds}" />
+                    <c:out value="${patientDetails.meds}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -144,7 +144,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.conditions"/></p>
               <c:choose>
                 <c:when test="${not empty patientDetails.conditions}">
-                    <c:out value="${patientDetails.conditions}" />
+                    <c:out value="${patientDetails.conditions}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -155,7 +155,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.allergies"/></p>
               <c:choose>
                 <c:when test="${not empty patientDetails.allergies}">
-                    <c:out value="${patientDetails.allergies}" />
+                    <c:out value="${patientDetails.allergies}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -172,7 +172,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.hobbies"/></p>
               <c:choose>
                 <c:when test="${not empty patientDetails.hobbies}">
-                    <c:out value="${patientDetails.hobbies}" />
+                    <c:out value="${patientDetails.hobbies}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -183,7 +183,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.job"/></p>
               <c:choose>
                 <c:when test="${not empty patientDetails.job}">
-                    <c:out value="${patientDetails.job}" />
+                    <c:out value="${patientDetails.job}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -240,7 +240,7 @@
                       <td class="text-cell">
                         <spring:message code="studyType.${study.type}"/>
                       </td>
-                      <td class="text-cell"><c:out value="${study.comment}"/></td>
+                      <td class="text-cell"><c:out value="${study.comment}" escapeXml="true"/></td>
                       <td class="text-cell">
                         <spring:message code="dateFormat" arguments="${studyDay},${studyMonth},${studyYear}"/>
                       </td>

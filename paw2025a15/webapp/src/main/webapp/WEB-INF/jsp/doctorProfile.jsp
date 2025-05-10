@@ -11,17 +11,17 @@
     <div class="page-container" style="display: flex; flex-direction: row;">
         <div class="doctor-card">
             <div class="doctor-info">
-              <h2 class="doctor-name"><c:out value="${doctor.name}"/></h2>
+              <h2 class="doctor-name"><c:out value="${doctor.name}" escapeXml="true"/></h2>
               <div class="doctor-image">
                 <img src="<c:url value='/resources/avatar.jpg'/>" alt="Doctor Image" />
               </div>
-              <p class="doctor-email"><c:out value="${doctor.email}"/></p>
+              <p class="doctor-email"><c:out value="${doctor.email}" escapeXml="true"/></p>
               <div class="doctor-insurances-div">
                 <p class="doctor-insurances">
                   <c:if test="${doctorInsurances != null}">
                     <p class="doctor-insurances-label"><spring:message code="doctor.profile.insurance.label"/></p>
                     <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
-                        <c:out value="${insurance.name}"/><c:if test="${!status.last}">, </c:if>
+                        <c:out value="${insurance.name}" escapeXml="true"/><c:if test="${!status.last}">, </c:if>
                     </c:forEach>
                   </c:if>
                 </p>
@@ -42,10 +42,10 @@
               <tbody>
                 <c:forEach var="appointment" items="${doctorFutureAppointments}">
                   <tr class="appointment-row">
-                    <td><c:out value="${appointment.date}"/></td>
-                    <td><c:out value="${appointment.getStartToEndTime()}"/></td>
-                    <td><c:out value="${appointment.address}"/></td>
-                    <td><c:out value="${appointment.patientName}"/></td>
+                    <td><c:out value="${appointment.date}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.address}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.patientName}" escapeXml="true"/></td>
                     <td>
                       <form action="/doctorCancelAppointment/${doctor.id}/${appointment.shiftId}/${appointment.date}" method="post" onsubmit="return confirm('¿Estás seguro que quieres cancelar esta cita?');">
                         <button type="submit">Cancelar</button>
@@ -67,10 +67,10 @@
               <tbody>
                 <c:forEach var="appointment" items="${doctorOldAppointments}">
                   <tr class="appointment-row">
-                    <td><c:out value="${appointment.date}"/></td>
-                    <td><c:out value="${appointment.getStartToEndTime()}"/></td>
-                    <td><c:out value="${appointment.address}"/></td>
-                    <td><c:out value="${appointment.patientName}"/></td>
+                    <td><c:out value="${appointment.date}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.address}" escapeXml="true"/></td>
+                    <td><c:out value="${appointment.patientName}" escapeXml="true"/></td>
                   </tr>
                 </c:forEach>
               </tbody>
@@ -85,8 +85,8 @@
               <tbody>
                 <c:forEach var="patient" items="${doctorAuthPatients}">
                   <tr class="appointment-row">
-                    <td><c:out value="${patient.name}"/></td>
-                    <td><c:out value="${patient.email}"/></td>
+                    <td><c:out value="${patient.name}" escapeXml="true"/></td>
+                    <td><c:out value="${patient.email}" escapeXml="true"/></td>
                   </tr>
                 </c:forEach>
               </tbody>
