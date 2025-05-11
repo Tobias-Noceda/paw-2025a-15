@@ -44,8 +44,8 @@ public class InsuranceJdbcDao implements InsuranceDao{
     public void edit(long id, String name, long pictureId) {
         String sql = "UPDATE insurances SET insurance_name = ?, picture_id = ? WHERE insurance_id = ?";
         jdbcTemplate.update(sql,
-         new Object[] {name, pictureId, id},
-         new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
+        new Object[] {name, pictureId, id},
+        new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override

@@ -35,7 +35,7 @@ public class UserJdbcDao implements UserDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("users").usingGeneratedKeyColumns("user_id");
     }
 
-    @Override
+    @Override//TODO: addSanitize
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale) {
         final Map<String, Object> args = new HashMap<>();
         args.put("user_email", email);
@@ -58,7 +58,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<User> getUserByEmail(String email) {//TODO: addSanitize
         return jdbcTemplate.query("SELECT * FROM users WHERE user_email = ?", new Object[]  {email},
           new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
     }
@@ -115,18 +115,27 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public void changePasswordByID(long id, String password){
-        jdbcTemplate.update("UPDATE users SET user_password = ? WHERE user_id = ?", password, id);
+    public void changePasswordByID(long id, String password){//TODO: addSanitize
+        String query = "UPDATE users SET user_password = ? WHERE user_id = ?";
+        jdbcTemplate.update(query, 
+        new Object[] {password, id},
+        new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT});
     }
 
     @Override
-    public void editUser(long id, String name, String telephone, long pictureId) {
-        jdbcTemplate.update("UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?", name, pictureId, telephone, id);
+    public void editUser(long id, String name, String telephone, long pictureId) {//TODO: addSanitize
+        String query = "UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?";
+        jdbcTemplate.update(query,
+        new Object[] {name, pictureId, telephone, id},
+        new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.VARCHAR, java.sql.Types.BIGINT});
     }
 
     @Override
     public void updateLocale(long userId, LocaleEnum locale) {
-        jdbcTemplate.update("UPDATE users SET locale = ? WHERE user_id = ?", locale.ordinal(), userId);
+        String query = "UPDATE users SET locale = ? WHERE user_id = ?";
+        jdbcTemplate.update(query,
+        new Object[] {locale.ordinal(), userId},
+        new int[] {java.sql.Types.INTEGER, java.sql.Types.BIGINT});
     }
 
     private String sanitize(String name) {

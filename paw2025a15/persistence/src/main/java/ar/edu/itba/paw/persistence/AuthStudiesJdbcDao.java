@@ -42,12 +42,17 @@ public class AuthStudiesJdbcDao implements AuthStudiesDao{
     @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
         if(!hasAuthStudy(studyId, doctorId)) return;
-        jdbcTemplate.update("DELETE FROM auth_studies WHERE study_id = ? AND doctor_id = ?", studyId, doctorId);
+        String query = "DELETE FROM auth_studies WHERE study_id = ? AND doctor_id = ?";
+        jdbcTemplate.update(query,
+        new Object[] {studyId, doctorId},
+        new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override
     public void unauthAllStudiesForDoctorIdAndPatientId(long userId, long doctorId) {
         String query = "DELETE FROM auth_studies WHERE doctor_id = ? AND study_id IN (SELECT study_id FROM studies WHERE user_id = ?)";
-        jdbcTemplate.update(query, doctorId, userId);
+        jdbcTemplate.update(query,
+        new Object[] {doctorId, userId},
+        new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 }

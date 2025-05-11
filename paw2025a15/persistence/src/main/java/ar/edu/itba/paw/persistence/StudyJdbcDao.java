@@ -37,7 +37,7 @@ public class StudyJdbcDao implements StudyDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("studies").usingGeneratedKeyColumns("study_id");
     }
 
-    @Override
+    @Override//TODO: addSanitize
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDate studyDate) {
         final Map<String, Object> args = new HashMap<>();
         args.put("study_type", type.ordinal());
@@ -52,7 +52,7 @@ public class StudyJdbcDao implements StudyDao{
         return new Study(study_id.longValue(), type, comment, fileId, userId, uploaderId, uploadDate, studyDate);
     }
     
-    @Override
+    @Override//TODO: addSanitize
     public Study create(StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("study_type", type.ordinal());
@@ -69,12 +69,7 @@ public class StudyJdbcDao implements StudyDao{
 
     @Override
     public Optional<Study> findStudyById(long id) {
-        return jdbcTemplate.query(
-            """
-                SELECT *
-                FROM studies
-                WHERE study_id = ?
-            """,
+        return jdbcTemplate.query("SELECT * FROM studies WHERE study_id = ?",
             new Object[]  {id},
             new int[] {java.sql.Types.BIGINT},
             ROW_MAPPER

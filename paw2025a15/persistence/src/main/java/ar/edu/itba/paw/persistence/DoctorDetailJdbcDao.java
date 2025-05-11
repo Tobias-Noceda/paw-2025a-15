@@ -50,7 +50,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("doctor_details");
     }
 
-    @Override
+    @Override//TODO: addSanitize
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
@@ -69,7 +69,9 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
     @Override
     public void addDoctorCoverage(long doctorId, long insuranceId) {
         String sql = "INSERT INTO doctor_coverages (doctor_id, insurance_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, doctorId, insuranceId);
+        jdbcTemplate.update(sql,
+        new Object[] {doctorId, insuranceId},
+        new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override
@@ -80,13 +82,13 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         .map(insuranceId -> new Object[]{doctorId, insuranceId})
         .toList();
 
-        return jdbcTemplate.batchUpdate(sql, batchArgs);
+        return jdbcTemplate.batchUpdate(sql, batchArgs, new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override
     public void removeAllCoveragesForDoctorId(long doctorId) {
         String sql = "DELETE FROM doctor_coverages WHERE doctor_id = ?";
-        jdbcTemplate.update(sql, doctorId);
+        jdbcTemplate.update(sql, new Object[] {doctorId}, new int[] {java.sql.Types.BIGINT});
     }
     
     @Override
@@ -95,7 +97,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         List<Object[]> batchArgs = toRemove.stream()
             .map(insuranceId -> new Object[]{doctorId, insuranceId})
             .toList();
-        jdbcTemplate.batchUpdate(sql, batchArgs);
+        jdbcTemplate.batchUpdate(sql, batchArgs, new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override
