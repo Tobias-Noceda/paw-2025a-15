@@ -1,8 +1,13 @@
 package ar.edu.itba.paw.form;
 
+import ar.edu.itba.paw.form.constraints.PastDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 public class PatientForm {
     @NotEmpty(message = "{form.name.notEmpty}")
@@ -23,6 +28,28 @@ public class PatientForm {
     @NotEmpty(message = "{form.phoneNumber.notEmpty}")
     @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
+
+    @Positive
+    private Double height;
+
+    @Positive
+    private Double weight;
+
+    @PastDate
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthDate;
+
+    public Double getHeight() { return height; }
+
+    public void setHeight(Double height) { this.height = height; }
+
+    public Double getWeight() { return weight; }
+
+    public void setWeight(Double weight) { this.weight = weight; }
+
+    public LocalDate getBirthDate() { return birthDate; }
+
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
 
     public String getPhoneNumber() {
         return phoneNumber;
