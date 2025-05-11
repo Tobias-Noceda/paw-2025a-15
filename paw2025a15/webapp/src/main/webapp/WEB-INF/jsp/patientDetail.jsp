@@ -196,6 +196,50 @@
       </div>
       <div class="study-list-container">
         <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
+        <c:url value="/patient/${patient.id}" var="patientStudiesUrl"/>
+        <form:form modelAttribute="filterForm"
+                   action="${patientStudiesUrl}"
+                   method="get">
+          <div class="field-container" style="display: flex; flex-direction: column; gap: 12px;">
+
+            <!-- Tipo de estudio -->
+            <div>
+              <form:label path="type" class="field-label">
+                <spring:message code="studies.filter.label"/>
+              </form:label>
+              <form:select path="type" class="input-field">
+                <form:option value="">
+                  <spring:message code="studies.all"/>
+                </form:option>
+                <form:options items="${studyTypeSelectItems}"
+                              itemLabel="label"
+                              itemValue="value"/>
+              </form:select>
+            </div>
+
+            <!-- Orden -->
+            <div>
+              <form:label path="mostRecent" class="field-label">
+                <spring:message code="studies.order.label"/>
+              </form:label>
+              <form:select path="mostRecent" class="input-field">
+                <form:option value="true">
+                  <spring:message code="studies.order.mostRecent"/>
+                </form:option>
+                <form:option value="false">
+                  <spring:message code="studies.order.leastRecent"/>
+                </form:option>
+              </form:select>
+            </div>
+
+            <div class="filter-button-div">
+              <button type="submit" class="filter-button">
+                <spring:message code="studies.apply"/>
+              </button>
+            </div>
+          </div>
+        </form:form>
+
         <div class="studies-table-header">
             <table class="studies-table">
               <thead>
