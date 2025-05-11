@@ -84,14 +84,14 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                pds.createPatient(
+                User newUser = pds.createPatient(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-
+                pds.updatePatientDetails(newUser.getId(), form.getBirthDate(),null, form.getHeight(), form.getWeight(), null, null , null, null, null, null, null, null);
                 loginUser(form.getEmail(), form.getPassword());
                 return new ModelAndView("redirect:/");
             } catch (Exception e) {

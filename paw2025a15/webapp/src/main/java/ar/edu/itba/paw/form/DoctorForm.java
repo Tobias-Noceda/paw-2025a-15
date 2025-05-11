@@ -45,8 +45,6 @@ public class DoctorForm {
     @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
-    @NotEmpty(message = "{form.doctorLicense.notEmpty}")
-    @Size(min = 1, max = 50, message = "{form.doctorLicense.size}")
     @Pattern(regexp = "^([0-9]{2})\\.[0-9]{1,5}$", message = "{form.doctorLicense.invalidFormat}")
     private String doctorLicense;
 

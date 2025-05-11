@@ -58,8 +58,47 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.phone"/></label>
-          <form:input path="phoneNumber" type="text" cssClass="login-input"/>
+          <form:input path="phoneNumber" type="number" cssClass="login-input" onkeydown="blockInvalidPhoneKeys(event)"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
+        </div>
+
+        <div class="field-container">
+          <form:label cssClass="field-label" path="birthDate"><spring:message code="form.birthDate"/></form:label>
+          <form:input
+                  cssClass="login-input"
+                  id="birthDate"
+                  path="birthDate"
+                  type="date" />
+          <form:errors
+                  path="birthDate"
+                  cssClass="sf-error"
+                  element="div" />
+        </div>
+
+        <div class="field-container">
+          <form:label cssClass="field-label" path="height"><spring:message code="profileInfo.height"/></form:label>
+          <input id="patient-height"
+                 name="height"
+                 type="text"
+                 maxlength="9"
+                 pattern="^\d{1,6}([.]\d{1,2})?$"
+                 class="login-input"
+                 oninput="validateDecimal(this)"
+                 onkeydown="return blockInvalidKeys(event)"
+                 onpaste="return blockNegativePaste(event)"/>
+        </div>
+
+        <div class="field-container">
+          <form:label cssClass="field-label" path="weight"><spring:message code="profileInfo.weight"/></form:label>
+          <input id="patient-weight"
+                 name="weight"
+                 type="text"
+                 maxlength="9"
+                 pattern="^\d{1,6}([.]\d{1,2})?$"
+                 class="login-input"
+                 oninput="validateDecimal(this)"
+                 onkeydown="return blockInvalidKeys(event)"
+                 onpaste="return blockNegativePaste(event)"/>
         </div>
 
         <div class="field-container">
@@ -137,13 +176,13 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.phone"/></label>
-          <form:input path="phoneNumber" type="text" cssClass="login-input"/>
+          <form:input path="phoneNumber" type="number" cssClass="login-input" onkeydown="blockInvalidPhoneKeys(event)"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.doctorLicense"/></label>
-          <form:input path="doctorLicense" type="text" cssClass="login-input" required="true" maxlength="50"/>
+          <form:input path="doctorLicense" type="text" cssClass="login-input" maxlength="50"/>
           <form:errors path="doctorLicense" cssClass="error-box" element="div"/>
         </div>
 
@@ -248,6 +287,44 @@
     } else {
       f.type = 'password';
       i.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+  }
+
+  function blockInvalidKeys(event) {
+    const invalidChars = ['e', 'E', '-', '+'];
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
+  function blockInvalidPhoneKeys(event) {
+    const invalidChars = ['e', 'E', '-', '+', '.'];
+    if (invalidChars.includes(event.key)) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
+  function blockNegativePaste(event) {
+    const paste = (event.clipboardData || window.clipboardData).getData('text');
+    if (paste.includes('-') || paste.includes('+')) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
+  function validateDecimal(input) {
+    const value = input.value.replace(',', '.'); // reemplaza coma por punto
+    const regex = /^\d{0,6}(\.\d{0,2})?$/;
+
+    if (!regex.test(value)) {
+      input.value = value.slice(0, -1);
+    } else {
+      input.value = value; // actualiza con punto si venía con coma
     }
   }
 </script>
