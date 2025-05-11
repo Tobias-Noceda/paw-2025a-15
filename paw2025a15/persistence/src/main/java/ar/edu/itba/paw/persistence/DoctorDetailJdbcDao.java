@@ -50,7 +50,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("doctor_details");
     }
 
-    @Override//TODO: addSanitize
+    @Override
     public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);

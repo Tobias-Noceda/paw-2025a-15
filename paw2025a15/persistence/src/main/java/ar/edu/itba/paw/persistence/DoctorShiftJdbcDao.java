@@ -36,7 +36,7 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("doctor_shifts").usingGeneratedKeyColumns("shift_id");
     }
 
-    @Override//TODO: addSanitize
+    @Override
     public DoctorShift create(long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime) {
         final Map<String, Object> args = new HashMap<>();
         args.put("doctor_id", doctorId);
@@ -48,7 +48,7 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
         return new DoctorShift(shift_id.longValue(), doctorId, weekday, address, startTime, endTime);
     }
 
-    @Override//TODO: addSanitize
+    @Override
     public int[] batchCreate(List<DoctorShift> shifts) {
         String sql = "INSERT INTO doctor_shifts (doctor_id, shift_weekday, shift_address, shift_start_time, shift_end_time) VALUES (?, ?, ?, ?, ?)";
 

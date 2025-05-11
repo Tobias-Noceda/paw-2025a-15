@@ -35,7 +35,7 @@ public class UserJdbcDao implements UserDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("users").usingGeneratedKeyColumns("user_id");
     }
 
-    @Override//TODO: addSanitize
+    @Override
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocaleEnum locale) {
         final Map<String, Object> args = new HashMap<>();
         args.put("user_email", email);
@@ -58,7 +58,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public Optional<User> getUserByEmail(String email) {//TODO: addSanitize
+    public Optional<User> getUserByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM users WHERE user_email = ?", new Object[]  {email},
           new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
     }
@@ -115,7 +115,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public void changePasswordByID(long id, String password){//TODO: addSanitize
+    public void changePasswordByID(long id, String password){
         String query = "UPDATE users SET user_password = ? WHERE user_id = ?";
         jdbcTemplate.update(query, 
         new Object[] {password, id},
@@ -123,7 +123,7 @@ public class UserJdbcDao implements UserDao{
     }
 
     @Override
-    public void editUser(long id, String name, String telephone, long pictureId) {//TODO: addSanitize
+    public void editUser(long id, String name, String telephone, long pictureId) {
         String query = "UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?";
         jdbcTemplate.update(query,
         new Object[] {name, pictureId, telephone, id},

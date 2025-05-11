@@ -40,7 +40,7 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate).withTableName("patient_details");
     }
 
-    @Override//TODO: addSanitize
+    @Override
     public PatientDetail create(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
@@ -68,7 +68,7 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
             new int[] {java.sql.Types.BIGINT}, ROW_MAPPER).stream().findFirst();
     }
 
-    @Override//TODO: addSanitize
+    @Override
     public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight,
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
