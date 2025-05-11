@@ -27,7 +27,7 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 
 @Service
-public class DoctorDetailServiceImpl implements DoctorDetailService{
+public class DoctorDetailServiceImpl implements DoctorDetailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorDetailServiceImpl.class);
 
@@ -39,18 +39,23 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Transactional
     @Override
-    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, LocaleEnum locale) {
+    public User createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, LocaleEnum locale) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         User doc = us.create(email, password, name, telephone, UserRoleEnum.DOCTOR, locale);
         long doctorId = doc.getId();
-        DoctorDetail dd = doctorDetailDao.create(doctorId, licence, specialty);
-        if(dd == null){
-            LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
-            throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
+        try {
+            DoctorDetail dd = doctorDetailDao.create(doctorId, doctorLicense, specialty);
+            if(dd == null){
+                LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
+                throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
+            }
+            LOGGER.info("Successfully created doctor details for userId: {}", doctorId);
+            LOGGER.info("Successfully created doctor user with email: {}", email);
+            return doc;
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Failed to create doctor details for userId: {} due to duplicate doctorLicense: {} at {}", doctorId, doctorLicense, LocalDateTime.now());
+            throw new AlreadyExistsException("Doctor with license: " + doctorLicense + " already exists!");
         }
-        LOGGER.info("Successfully created doctor details for userId: {}", doctorId);
-        LOGGER.info("Successfully created doctor user with email: {}", email);
-        return doc;
     }
 
     @Transactional(readOnly = true)
@@ -126,7 +131,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy,page, pageSize);
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
     }
 
     @Transactional(readOnly = true)
@@ -134,5 +139,4 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
         return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
-    
 }

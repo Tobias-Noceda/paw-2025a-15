@@ -52,14 +52,14 @@ public class DoctorDetailJdbcDaoTest {
     @Test
     public void testCreate(){
         final long DOC_ID = TestData.DoctorDetails.doctorDetail.getDoctorId();
-        final String LICENCE = TestData.DoctorDetails.doctorDetail.getLicence();
+        final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
         final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
 
         DoctorDetail doctorDetail = doctorDetailDao.create(DOC_ID, LICENCE, SPECIALTY);
 
         Assert.assertNotNull(doctorDetail);
         Assert.assertEquals(DOC_ID, doctorDetail.getDoctorId());
-        Assert.assertEquals(LICENCE, doctorDetail.getLicence());
+        Assert.assertEquals(LICENCE, doctorDetail.getDoctorLicense());
         Assert.assertEquals(SPECIALTY, doctorDetail.getSpecialty());
         Assert.assertEquals(1, 
                             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_details", String.format("doctor_id = %d", DOC_ID)));
@@ -70,7 +70,7 @@ public class DoctorDetailJdbcDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorDetails.sql"})
     public void testCreateExistentDetail(){
         final long DOC_ID = TestData.DoctorDetails.doctorDetail.getDoctorId();
-        final String LICENCE = TestData.DoctorDetails.doctorDetail.getLicence();
+        final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
         final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
 
         Assert.assertThrows(DuplicateKeyException.class,()->{

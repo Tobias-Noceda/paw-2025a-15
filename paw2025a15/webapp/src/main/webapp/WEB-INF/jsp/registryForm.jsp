@@ -142,6 +142,12 @@
         </div>
 
         <div class="field-container">
+          <label class="field-label"><spring:message code="doctorForm.doctorLicense"/></label>
+          <form:input path="doctorLicense" type="text" cssClass="login-input" required="true" maxlength="50"/>
+          <form:errors path="doctorLicense" cssClass="error-box" element="div"/>
+        </div>
+
+        <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.specialty"/></label>
           <form:select path="specialty" cssClass="login-select">
             <form:options items="${specialtySelectItems}" itemValue="value" itemLabel="label"/>
@@ -215,7 +221,7 @@
 <script>
   function switchForm(type) {
     state = type;
-    localStorage.setItem("formState", type); // Guardamos en localStorage
+    localStorage.setItem("formState", type);
 
     document.getElementById('patientSection').style.display = type === 'patient' ? 'block' : 'none';
     document.getElementById('medicSection').style.display = type === 'medic' ? 'block' : 'none';
@@ -226,7 +232,7 @@
   }
 
   window.onload = function () {
-    const savedState = localStorage.getItem("formState"); // Leemos de localStorage
+    const savedState = localStorage.getItem("formState");
     if (savedState === 'medic' || savedState === 'patient') {
       state = savedState;
     }
@@ -245,7 +251,6 @@
     }
   }
 </script>
-
 
 </body>
 </html>
