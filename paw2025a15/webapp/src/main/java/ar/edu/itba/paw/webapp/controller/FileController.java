@@ -2,12 +2,15 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +63,8 @@ public class FileController {
 
     @Autowired
     private DoctorDetailService dds;
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping(path = "/supersecret/files/logo", method = RequestMethod.GET)
     public ResponseEntity<byte[]> getIconForm() throws IOException {
@@ -142,8 +147,8 @@ public class FileController {
         @ModelAttribute("user_data") User user,
         @Valid @ModelAttribute("profileForm") ProfileForm profileForm,
         BindingResult result,
-        RedirectAttributes redirectAttrs
-    ) throws IOException {
+        RedirectAttributes redirectAttrs,
+        Locale locale) throws IOException {
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
@@ -154,6 +159,7 @@ public class FileController {
             mav.addObject("profileForm", profileForm);
             mav.addObject("bloodTypes", BloodTypeEnum.values());
             mav.addObject("landingForm", new LandingForm());
+            mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource, locale));
             
             if(user.getRole().equals(UserRoleEnum.PATIENT)) {
                 mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElse(null));
@@ -169,6 +175,7 @@ public class FileController {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),f.getId());
         }else {
             us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
+            us.updateLocale(user.getId(),profileForm.getMailLanguage());
         }
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );

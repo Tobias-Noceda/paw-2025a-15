@@ -81,6 +81,10 @@
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 
+        <div class="field-container full-width">
+          <form:label path="mailLanguage"><spring:message code="profile.email.lang.label"/></form:label>
+          <form:select path="mailLanguage" cssClass="input-field" items="${locales}" itemLabel="label" itemValue="value"/>
+        </div>
 
         <c:if test="${patientDetails == null}">
 
