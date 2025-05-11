@@ -90,6 +90,7 @@ public class RegisterController {
                         form.getPhoneNumber(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
+
                 loginUser(form.getEmail(), form.getPassword());
                 return new ModelAndView("redirect:/");
             } catch (Exception e) {
