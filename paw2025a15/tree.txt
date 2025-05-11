@@ -152,7 +152,6 @@
 │       │                       ├── Insurance.class
 │       │                       ├── PatientCoverage.class
 │       │                       ├── PatientDetail.class
-│       │                       ├── PatientView.class
 │       │                       ├── Schedule.class
 │       │                       ├── Study.class
 │       │                       └── User.class
@@ -577,13 +576,10 @@
         │   │               │   ├── CreateStudyForm.class
         │   │               │   ├── DoctorForm.class
         │   │               │   ├── FileFilterForm.class
-        │   │               │   ├── FilterForm.class
-        │   │               │   ├── LabForm.class
         │   │               │   ├── LandingForm.class
         │   │               │   ├── PatientForm.class
         │   │               │   ├── ProfileForm.class
         │   │               │   ├── RecoverForm.class
-        │   │               │   ├── SearchForm.class
         │   │               │   ├── ShiftsWeekForm.class
         │   │               │   └── TakeTurnForm.class
         │   │               ├── validator
@@ -600,7 +596,6 @@
         │   │                   │   ├── WebAuthConfig.class
         │   │                   │   └── WebConfig.class
         │   │                   └── controller
-        │   │                       ├── AdminController.class
         │   │                       ├── AppointmentController$1.class
         │   │                       ├── AppointmentController.class
         │   │                       ├── DoctorController.class
@@ -609,7 +604,6 @@
         │   │                       ├── FileController$1.class
         │   │                       ├── FileController.class
         │   │                       ├── GeneralController.class
-        │   │                       ├── LabController.class
         │   │                       ├── LogedUserControllerAdvice.class
         │   │                       ├── LoginController.class
         │   │                       ├── PatientController.class
@@ -629,11 +623,31 @@
         │   └── logback.xml
         ├── generated-sources
         │   └── annotations
-        └── maven-status
-            └── maven-compiler-plugin
-                └── compile
-                    └── default-compile
-                        ├── createdFiles.lst
-                        └── inputFiles.lst
+        ├── maven-status
+        │   └── maven-compiler-plugin
+        │       └── compile
+        │           └── default-compile
+        │               ├── createdFiles.lst
+        │               └── inputFiles.lst
+        └── tmp
+            └── jsp
+                └── org
+                    └── apache
+                        └── jsp
+                            └── WEB_002dINF
+                                └── jsp
+                                    ├── appointments_jsp.class
+                                    ├── appointments_jsp.java
+                                    ├── components
+                                    │   ├── doctorCard_jsp.class
+                                    │   ├── doctorCard_jsp.java
+                                    │   ├── header_jsp.class
+                                    │   └── header_jsp.java
+                                    ├── index_jsp.class
+                                    ├── index_jsp.java
+                                    ├── login_jsp.class
+                                    ├── login_jsp.java
+                                    ├── profileInfo_jsp.class
+                                    └── profileInfo_jsp.java
 
-191 directories, 446 files
+199 directories, 452 files
