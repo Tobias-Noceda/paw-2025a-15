@@ -63,7 +63,7 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
         .map(accessLevel -> new Object[]{doctorId, patientId, accessLevel.ordinal()})
         .toList();
 
-        return jdbcTemplate.batchUpdate(sql, batchArgs);
+        return jdbcTemplate.batchUpdate(sql, batchArgs, new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.INTEGER});
     }
 
     @Override
@@ -99,12 +99,20 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
     @Override
     public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {
         if(!hasAuthDoctor(patientId, doctorId)) return;
-        jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ?", patientId, doctorId);
+        String query = "DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ?";
+        jdbcTemplate.update(query, 
+        new Object[] {patientId, doctorId},
+        new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override
     public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        if(accessLevel!=AccessLevelEnum.VIEW_BASIC) jdbcTemplate.update("DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ?", patientId, doctorId, accessLevel.ordinal());
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC){
+            String query = "DELETE FROM auth_doctors WHERE patient_id = ? AND doctor_id = ? AND access_level = ?";
+            jdbcTemplate.update(query,
+            new Object[] {patientId, doctorId, accessLevel.ordinal()},
+            new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.INTEGER});
+        }
         else unauthDoctorAllAccessLevels(patientId, doctorId);
     }
 
@@ -116,7 +124,8 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
         .map(accessLevel -> new Object[]{patientId, doctorId, accessLevel.ordinal()})
         .toList();
 
-        return jdbcTemplate.batchUpdate(sql, batchArgs);
+        return jdbcTemplate.batchUpdate(sql, batchArgs, 
+        new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.INTEGER});
     }
 
     @Override

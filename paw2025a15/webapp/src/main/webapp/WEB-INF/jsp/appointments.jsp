@@ -213,78 +213,43 @@
           <div class="no-appointments-container">
             <h4 class="no-appointments-text"><spring:message code="appointments.taken.empty"/></h4>
           </div>
-        </c:if>
-      </div>
-    </div>
-    <div class="appointment-list-container">
-      <div class="doctor-free-header">
-        <h3 class="table-title"><spring:message code="appointments.free"></spring:message></h3>
-        <c:url value="/appointments" var="getPath"/>
-        <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
-          <form:hidden path="index" />
-          <button
-                  type="submit"
-                  name="action"
-                  value="previous"
-                  class="navigation-button"
-                  <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
-          >
-            <spring:message code="doctorDetail.previousWeek"/>
-          </button>
-          <div class="selected-month">
-            <c:set var="month">
-              <spring:message code="month.${shiftsWeekForm.month}"/>
-            </c:set>
-            <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
-          </div>
-          <button
-                  type="submit"
-                  name="action"
-                  value="next"
-                  class="navigation-button"
-                  <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
-          >
-            <spring:message code="doctorDetail.nextWeek"/>
-          </button>
-        </form:form>
-      </div>
-      <div class="appointment-table-container">
-        <div class="appointments-table-header">
-          <table class="appointments-table">
-            <thead>
-            <tr>
-              <th><spring:message code="appointmentTable.weekdayColumn.title"></spring:message></th>
-              <th><spring:message code="appointmentTable.monthdayColumn.title"></spring:message></th>
-              <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
-              <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
-            </tr>
-            </thead>
-          </table>
-        </div>
-        <c:if test="${not empty doctorFreeAppointments}">
-          <div class="appointments-table-body">
-            <table class="appointments-table">
-              <tbody>
-              <c:forEach var="appointment" items="${doctorFreeAppointments}">
-                <tr class="appointment-row">
-                  <td class="text-cell"><spring:message code="weekday.${appointment.date.dayOfWeek}"></spring:message></td>
-                  <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" escapeXml="true"/></td>
-                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
-                  <td class="cancel-cell">
-                    <c:set var="removeConfirmationMessage">
-                      <spring:message code="appointments.removeConfirm" arguments="${appointment.getStartToEndTime()}"/>
-                    </c:set>
-                    <c:set var="secondaryText">
-                      <spring:message code="appointments.remove.second"/>
-                    </c:set>
-                    <c:set var="removeText">
-                      <spring:message code="appointments.remove"/>
-                    </c:set>
-                    <c:set var="cancelRemoveText">
-                      <spring:message code="appointments.dismiss"/>
-                    </c:set>
-                    <c:url var="removeUrl" value="/removeAppointment" />
-                    <form:form
+          <div class="appointment-table-container">
+            <div class="appointments-table-header">
+              <table class="appointments-table">
+                <thead>
+                  <tr>
+                    <th><spring:message code="appointmentTable.weekdayColumn.title"></spring:message></th>
+                    <th><spring:message code="appointmentTable.monthdayColumn.title"></spring:message></th>
+                    <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
+                    <th class="last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <c:if test="${not empty doctorFreeAppointments}">
+              <div class="appointments-table-body">
+                <table class="appointments-table">
+                  <tbody>
+                    <c:forEach var="appointment" items="${doctorFreeAppointments}">
+                      <tr class="appointment-row">
+                        <td class="text-cell"><spring:message code="weekday.${appointment.date.dayOfWeek}"></spring:message></td>
+                        <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" escapeXml="true"/></td>
+                        <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
+                        <td class="cancel-cell">
+                          <c:set var="removeConfirmationMessage">
+                            <spring:message code="appointments.removeConfirm" arguments="${appointment.getStartToEndTime()}"/>
+                          </c:set>
+                          <c:set var="secondaryText">
+                            <spring:message code="appointments.remove.second"/>
+                          </c:set>
+                          <c:set var="removeText">
+                            <spring:message code="appointments.remove"/>
+                          </c:set>
+                          <c:set var="cancelRemoveText">
+                            <spring:message code="appointments.dismiss"/>
+                          </c:set>
+                          <c:url var="removeUrl" value="/removeAppointment" />
+                          <form:form
                             modelAttribute="takeTurnForm"
                             action="${removeUrl}"
                             method="post"

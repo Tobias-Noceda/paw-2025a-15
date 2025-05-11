@@ -116,17 +116,26 @@ public class UserJdbcDao implements UserDao{
 
     @Override
     public void changePasswordByID(long id, String password){
-        jdbcTemplate.update("UPDATE users SET user_password = ? WHERE user_id = ?", password, id);
+        String query = "UPDATE users SET user_password = ? WHERE user_id = ?";
+        jdbcTemplate.update(query, 
+        new Object[] {password, id},
+        new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT});
     }
 
     @Override
     public void editUser(long id, String name, String telephone, long pictureId) {
-        jdbcTemplate.update("UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?", name, pictureId, telephone, id);
+        String query = "UPDATE users SET user_name = ?, picture_id = ?, user_telephone = ? WHERE user_id = ?";
+        jdbcTemplate.update(query,
+        new Object[] {name, pictureId, telephone, id},
+        new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.VARCHAR, java.sql.Types.BIGINT});
     }
 
     @Override
     public void updateLocale(long userId, LocaleEnum locale) {
-        jdbcTemplate.update("UPDATE users SET locale = ? WHERE user_id = ?", locale.ordinal(), userId);
+        String query = "UPDATE users SET locale = ? WHERE user_id = ?";
+        jdbcTemplate.update(query,
+        new Object[] {locale.ordinal(), userId},
+        new int[] {java.sql.Types.INTEGER, java.sql.Types.BIGINT});
     }
 
     private String sanitize(String name) {

@@ -69,12 +69,7 @@ public class StudyJdbcDao implements StudyDao{
 
     @Override
     public Optional<Study> findStudyById(long id) {
-        return jdbcTemplate.query(
-            """
-                SELECT *
-                FROM studies
-                WHERE study_id = ?
-            """,
+        return jdbcTemplate.query("SELECT * FROM studies WHERE study_id = ?",
             new Object[]  {id},
             new int[] {java.sql.Types.BIGINT},
             ROW_MAPPER
