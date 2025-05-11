@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,8 +44,7 @@ public class EmailServiceImpl implements EmailService{
 
     private final String emailFromString = "caretracehealth@gmail.com";
 
-    private final String baseURL = "http://localhost:8080/";
-    //private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
+    private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
 
     private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, Locale locale) throws MessagingException{
         Context context = new Context(locale);
@@ -139,7 +137,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description, LocalDateTime dateTime) {
+    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description) {
         Map<String, Object> templateModel;
         templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
@@ -153,7 +151,7 @@ public class EmailServiceImpl implements EmailService{
         fileName.append("Study_")
             .append(patient.getName().replace(" ", "-"))
             .append("_")
-            .append(dateTime.toString().replace(":", "-"))
+            .append(study.getUploadDate().toString().replace(":", "-"))
             .append(".")
             .append(file.getType().getName().split("/")[1]);
 
@@ -292,7 +290,6 @@ public class EmailServiceImpl implements EmailService{
         //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
 
         String recoveryLink = baseURL + "change-password/" + token + "/" + user.getId();
-        System.out.println("Recovery link: " + recoveryLink);
         templateModel.put("recoveryLink", recoveryLink);
 
         Locale locale = user.getLocale().toLocale();

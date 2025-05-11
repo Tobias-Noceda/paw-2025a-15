@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.time.LocalDateTime;
 import java.util.Locale;
 
 import ar.edu.itba.paw.models.Appointment;
@@ -15,7 +14,7 @@ public interface EmailService {
     
     public void sendPatientTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
 
-    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description, LocalDateTime dateTime);
+    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description);
 
     public void sendDoctorCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
 

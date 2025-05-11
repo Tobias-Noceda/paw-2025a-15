@@ -60,9 +60,10 @@ public class StudyServiceImpl implements StudyService{
     @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, File file, long userId, long uploaderId, LocalDate studyDate) {
-        User patient = us.getUserById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + "does not exist!"));
         if(pds.getDetailByPatientId(userId).isEmpty()) throw new NotFoundException("Patient with id: " + userId + " does not exist!");
+        User patient = us.getUserById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " does not exist!"));
         if(userId!=uploaderId && (dds.getDetailByDoctorId(uploaderId).isEmpty() || !ads.hasAuthDoctor(userId, uploaderId))) throw new UnauthorizedException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
+        if(fs.findById(file.getId()).isEmpty()) throw new NotFoundException("File not found with ID: " + file.getId());
         Study study;
         if(studyDate == null) study = studyDao.create(type, comment, file.getId(), userId, uploaderId);
         else study = studyDao.create(type, comment, file.getId(), userId, uploaderId, studyDate);   
@@ -72,29 +73,29 @@ public class StudyServiceImpl implements StudyService{
         }
         LOGGER.info("Successfully created study for userId: {} with uploaderId: {} and fileId: {}", userId, uploaderId, file.getId());
         if(userId!=uploaderId) {
-            User doctor = us.getUserById(uploaderId).orElseThrow(() -> new NotFoundException("Doctor with id: " + uploaderId + " does not exist!"));
-            es.sendRecievedStudyEmail(patient, doctor, file, study, comment, LocalDateTime.now());
+            User doctor = us.getUserById(uploaderId).orElseThrow(() -> new NotFoundException("User with id: " + uploaderId + " does not exist!"));
+            es.sendRecievedStudyEmail(patient, doctor, file, study, comment);
+            ass.authStudyForDoctorId(study.getId(), uploaderId);
         }
-        if(userId!=uploaderId) ass.authStudyForDoctorId(study.getId(), uploaderId);
         return study;
     }
 
     @Transactional
     @Override
     public Study create(StudyTypeEnum type, String comment, File file, long userId, long uploaderId) {
-        User patient = us.getUserById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + "does not exist!"));
         if(pds.getDetailByPatientId(userId).isEmpty()) throw new NotFoundException("Patient with id: " + userId + " does not exist!");
+        User patient = us.getUserById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " does not exist!"));
         if(userId!=uploaderId && (dds.getDetailByDoctorId(uploaderId).isEmpty()  || !ads.hasAuthDoctor(userId, uploaderId))) throw new UnauthorizedException("Uploader with id: " + uploaderId + " does not exist or isnt able to upload!");
+        if(fs.findById(file.getId()).isEmpty()) throw new NotFoundException("File not found with ID: " + file.getId());
         Study study = studyDao.create(type, comment, file.getId(), userId, uploaderId);   
         if(study == null){
             LOGGER.error("Failed to create study for userId: {} with uploaderId: {} and fileId: {} at {}", userId, uploaderId, file.getId(), LocalDateTime.now());
             throw new RuntimeException("Failed to create study for userId: " + userId + " with uploaderId: " + uploaderId + " and fileId: " + file.getId() );
         }
         LOGGER.info("Successfully created study for userId: {} with uploaderId: {} and fileId: {}", userId, uploaderId, file.getId());
-
         if(userId!=uploaderId) {
-            User doctor = us.getUserById(uploaderId).orElseThrow(() -> new NotFoundException("Doctor with id: " + uploaderId + " does not exist!"));
-            es.sendRecievedStudyEmail(patient, doctor, file, study, comment, LocalDateTime.now());
+            User doctor = us.getUserById(uploaderId).orElseThrow(() -> new NotFoundException("User with id: " + uploaderId + " does not exist!"));
+            es.sendRecievedStudyEmail(patient, doctor, file, study, comment);
             ass.authStudyForDoctorId(study.getId(), uploaderId);
         }
         return study;
