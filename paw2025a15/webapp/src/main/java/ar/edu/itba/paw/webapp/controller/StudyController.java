@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -10,9 +9,6 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.Study;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -26,7 +22,14 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.form.CreateStudyForm;
 import ar.edu.itba.paw.form.FileFilterForm;
 import ar.edu.itba.paw.form.LandingForm;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
+import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
+import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
@@ -52,9 +55,6 @@ public class StudyController {
 
     @Autowired
     private FileService fs;
-
-    @Autowired
-    private EmailService es;
 
     @Autowired
     private MessageSource messageSource;
@@ -88,12 +88,6 @@ public class StudyController {
             @ModelAttribute("landingForm") final LandingForm landingForm,
             BindingResult errors
     ) throws IOException{
-        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
-
-        if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
-            throw new NotFoundException("Patient not found");
-        }
-
         if (errors.hasErrors()) {
             return createStudyForm(patientId, createStudyForm, landingForm);
         }
@@ -102,12 +96,11 @@ public class StudyController {
             throw new UnauthorizedException("User not found");
         }
 
-        File f = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        ss.create(createStudyForm.getType(), createStudyForm.getComment(), f.getId(), patientId, user.getId(), createStudyForm.getDate());
+        File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
+        ss.create(createStudyForm.getType(), createStudyForm.getComment(), file, patientId, user.getId(), createStudyForm.getDate());
 
 
         if(patientId != user.getId()) {
-            es.sendRecievedStudyEmail(patient, user, f, createStudyForm.getComment(), LocalDateTime.now());
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {
             return new ModelAndView("redirect:/studies");
