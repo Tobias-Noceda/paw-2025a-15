@@ -34,7 +34,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     private static final Logger LOGGER = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
     @Autowired
-    private  EmailService es;
+    private EmailService es;
 
     @Autowired
     private UserService us;
@@ -142,8 +142,6 @@ public class AppointmentServiceImpl implements AppointmentService{
         LOGGER.info("Removed appointments before " + date + " cleared. At " + LocalDateTime.now().toLocalTime());
     }
 
-    //DEFAULT (8AM todos los dias) 0 0 8 * * ?
-    //cada 10s : */10 * * * * *
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 8 * * ?", zone = "America/Argentina/Buenos_Aires")
     public void rememberTomorrowAppointments() {

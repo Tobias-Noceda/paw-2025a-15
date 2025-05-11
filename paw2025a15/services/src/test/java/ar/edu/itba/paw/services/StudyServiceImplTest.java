@@ -18,6 +18,7 @@ import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.PatientDetail;
@@ -86,7 +87,7 @@ public class StudyServiceImplTest {
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID), Mockito.eq(STUDY_DATE))).thenReturn(STUDY_WITH_DATE);
         Mockito.when(ass.authStudyForDoctorId(STUDY_FILE_ID, DOC_ID)).thenReturn(true);
 
-        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
+        Study study = ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE);
 
         Assert.assertNotNull(study);
         Assert.assertEquals(STUDY_WITH_DATE, study);
@@ -101,7 +102,7 @@ public class StudyServiceImplTest {
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(STUDY_WITHOUT_DATE);
         Mockito.when(ass.authStudyForDoctorId(STUDY_FILE_ID, DOC_ID)).thenReturn(true);
 
-        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID);
+        Study study = ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID);
 
         Assert.assertNotNull(study);
         Assert.assertEquals(STUDY_WITHOUT_DATE, study);
@@ -113,7 +114,7 @@ public class StudyServiceImplTest {
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_DATE))).thenReturn(STUDY_WITH_DATE);
 
-        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_USER_ID, STUDY_DATE);
+        Study study = ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_USER_ID, STUDY_DATE);
 
         Assert.assertNotNull(study);
         Assert.assertEquals(STUDY_WITH_DATE, study);
@@ -125,7 +126,7 @@ public class StudyServiceImplTest {
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_USER_ID))).thenReturn(STUDY_WITHOUT_DATE);
 
-        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_USER_ID);
+        Study study = ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_USER_ID);
 
         Assert.assertNotNull(study);
         Assert.assertEquals(STUDY_WITHOUT_DATE, study);
@@ -140,7 +141,7 @@ public class StudyServiceImplTest {
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID), Mockito.eq(STUDY_DATE))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
         );
     }
 
@@ -153,7 +154,7 @@ public class StudyServiceImplTest {
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID)
         );
     }
 
@@ -162,7 +163,7 @@ public class StudyServiceImplTest {
         Mockito.when(pds.getDetailByPatientId(Mockito.eq(STUDY_USER_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
         );
     }
 
@@ -172,7 +173,7 @@ public class StudyServiceImplTest {
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(UnauthorizedException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
         );
     }
 
@@ -183,7 +184,7 @@ public class StudyServiceImplTest {
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(false);
 
         Assert.assertThrows(UnauthorizedException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
         );
     }
 
@@ -195,7 +196,7 @@ public class StudyServiceImplTest {
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_DATE)
         );
     }
 
@@ -203,7 +204,7 @@ public class StudyServiceImplTest {
     public void testCreateWithoutStudyDateNonexistentUser(){
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID)
         );
     }
 
@@ -213,7 +214,7 @@ public class StudyServiceImplTest {
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(UnauthorizedException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID)
         );
     }
 
@@ -224,7 +225,7 @@ public class StudyServiceImplTest {
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(false);
 
         Assert.assertThrows(UnauthorizedException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID)
         );
     }
 
@@ -236,7 +237,7 @@ public class StudyServiceImplTest {
         Mockito.when(fs.findById(Mockito.eq(STUDY_FILE_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID)
+            ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID)
         );
     }
 
@@ -249,7 +250,7 @@ public class StudyServiceImplTest {
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE_ID), Mockito.eq(STUDY_USER_ID), Mockito.eq(STUDY_UPLOADER_ID))).thenReturn(STUDY_WITHOUT_DATE);
         Mockito.when(ass.authStudyForDoctorId(STUDY_FILE_ID, DOC_ID)).thenReturn(true);
 
-        Study study = ss.create(STUDYTYPE, COMMENT, STUDY_FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, null);
+        Study study = ss.create(STUDYTYPE, COMMENT, FILE, STUDY_USER_ID, STUDY_UPLOADER_ID, null);
 
         Assert.assertNotNull(study);
         Assert.assertEquals(STUDY_WITHOUT_DATE, study);

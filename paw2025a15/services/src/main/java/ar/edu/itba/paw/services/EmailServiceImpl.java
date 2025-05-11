@@ -26,6 +26,7 @@ import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
 
 @Service
@@ -138,15 +139,15 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendRecievedStudyEmail(User patient, User doctor, File file, String description, LocalDateTime dateTime) {
-        Map<String, Object> templateModel = new HashMap<>();
+    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description, LocalDateTime dateTime) {
+        Map<String, Object> templateModel;
+        templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
-        // TODO: replace with real watch file link
-        templateModel.put("watchLink", baseURL);
+        templateModel.put("studyLink", baseURL + "view-study/" + study.getId());
         
         StringBuilder fileName = new StringBuilder();
         fileName.append("Study_")
@@ -354,7 +355,4 @@ public class EmailServiceImpl implements EmailService{
             LOGGER.error("Error sending doctor reminder email to {}: {}", doctor.getEmail(), e.getMessage(), e);
         }
     }
-
-
-
 }

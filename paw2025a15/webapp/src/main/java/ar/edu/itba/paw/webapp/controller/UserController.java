@@ -1,9 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Insurance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,16 @@ import ar.edu.itba.paw.form.ChangePasswordForm;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.RecoverForm;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class UserController {
