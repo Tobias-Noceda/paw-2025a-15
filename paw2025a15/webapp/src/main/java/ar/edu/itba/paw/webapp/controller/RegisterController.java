@@ -29,6 +29,7 @@ import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
@@ -45,10 +46,10 @@ public class RegisterController {
 
     @Autowired
     private DoctorDetailService dds;
-    
+
     @Autowired
     private DoctorShiftService dss;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -56,7 +57,7 @@ public class RegisterController {
     private AuthenticationManager authenticationManager;
 
     @RequestMapping("/register")
-    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale,  @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
+    public ModelAndView medico(@ModelAttribute("registerMedicForm") final DoctorForm form, Locale locale, @ModelAttribute("registerPatientForm") final PatientForm patientForm) {
         final ModelAndView mav = new ModelAndView("registryForm");
         mav.addObject("doctor", form);
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
@@ -65,7 +66,7 @@ public class RegisterController {
         mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
         return mav;
     }
-    
+
     @RequestMapping(value = "/createPatient", method = RequestMethod.POST)
     public ModelAndView registerForm(
             @Valid @ModelAttribute("registerPatientForm") final PatientForm form,
@@ -83,14 +84,14 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                pds.createPatient(
+                User newUser = pds.createPatient(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-
+                pds.updatePatientDetails(newUser.getId(), form.getBirthDate(),null, form.getHeight(), form.getWeight(), null, null , null, null, null, null, null, null);
                 loginUser(form.getEmail(), form.getPassword());
                 return new ModelAndView("redirect:/");
             } catch (Exception e) {
@@ -102,8 +103,7 @@ public class RegisterController {
         if (!isValid) {
             final ModelAndView mav = new ModelAndView("registryForm");
             mav.addObject("registerPatientForm", form);
-            // Agregar los atributos usados por el formulario de médicos
-            mav.addObject("registerMedicForm", new DoctorForm()); // si Spring necesita esto
+            mav.addObject("registerMedicForm", new DoctorForm());
             mav.addObject("obrasSocialesItems", is.getAllInsurances());
             mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, Locale.getDefault()));
             mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, Locale.getDefault()));
@@ -135,13 +135,12 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                // Crear el médico
                 User doc = dds.createDoctor(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
-                        "med-licence",
+                        form.getDoctorLicense(),
                         form.getSpecialty(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
@@ -155,6 +154,14 @@ public class RegisterController {
                         form.getAmount()
                 );
                 loginUser(form.getEmail(), form.getPassword());
+            } catch (AlreadyExistsException e) {
+                if (e.getMessage().contains("Doctor with license")) {
+                    errors.rejectValue("doctorLicense", "error.doctorLicenseExists");
+                    isValid = false;
+                } else {
+                    errors.reject("error.registerDoctorFailed");
+                    isValid = false;
+                }
             } catch (Exception e) {
                 errors.reject("error.registerDoctorFailed");
                 isValid = false;
@@ -179,7 +186,7 @@ public class RegisterController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime start = LocalTime.parse(startTime, formatter);
         LocalTime end = LocalTime.parse(endTime, formatter);
-        
+
         return start.isBefore(end);
     }
 

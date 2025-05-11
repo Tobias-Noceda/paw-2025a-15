@@ -238,8 +238,8 @@
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
-                      <td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true" escapeXml="true"/></td>
-                      <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true" escapeXml="true"/></td>
+                      <td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true"/></td>
+                      <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
 
                       <td style="display: none;">
                         <form:form modelAttribute="takeTurnForm" action="${appointmentPath}" method="POST">

@@ -113,16 +113,13 @@
         <c:if test="${patientDetails != null}">
           <form:hidden path="insurances" value=""/>
           <div class="field-container">
-            <!-- label -->
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
-            <!-- input date -->
             <form:input
                     value="${patientDetails.birthdate}"
                     cssClass="input-field"
                     id="birthDate"
                     path="birthDate"
                     type="date" />
-            <!-- errores -->
             <form:errors
                     path="birthDate"
                     cssClass="sf-error"

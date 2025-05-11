@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.models.Schedule;
@@ -43,6 +44,9 @@ public class DoctorForm {
     @NotEmpty(message = "{form.phoneNumber.notEmpty}")
     @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
+
+    @Pattern(regexp = "^([0-9]{2})\\.[0-9]{1,5}$", message = "{form.doctorLicense.invalidFormat}")
+    private String doctorLicense;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -124,13 +128,19 @@ public class DoctorForm {
         this.email = email;
     }
 
-    public int getAmount(){
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount){
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
+    public String getDoctorLicense() {
+        return doctorLicense;
+    }
 
+    public void setDoctorLicense(String doctorLicense) {
+        this.doctorLicense = doctorLicense;
+    }
 }

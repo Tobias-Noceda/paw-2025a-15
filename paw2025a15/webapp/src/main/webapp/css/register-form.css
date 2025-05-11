@@ -337,11 +337,9 @@ body {
 
 .weekday-btn {
     position: relative;
-    /* inline-block para auto-ajustar al tamaño de la “píldora” */
     display: inline-block;
 }
 
-/* El checkbox real: invisible pero operativo y encima de todo */
 .weekday-btn > .weekday-checkbox {
     position: absolute;
     top:    0;
@@ -372,14 +370,12 @@ body {
             color var(--transition);
 }
 
-/* Estado “checked” */
 .weekday-btn > .weekday-checkbox:checked + .weekday-label {
     background-color: var(--clr-primary);
     border-color: var(--clr-primary);
     color: var(--clr-card);
 }
 
-/* Hover visual extra */
 .weekday-btn:hover > .weekday-label {
     background-color: var(--clr-primary-hover);
     border-color: var(--clr-primary-hover);
@@ -437,3 +433,4 @@ body {
     border-color: var(--clr-primary-hover);
     color: var(--clr-card);
 }
+
