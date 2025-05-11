@@ -73,9 +73,11 @@ public class PatientDetailJdbcDao implements PatientDetailDao{
             Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet,
             String hobbies, String job) {
         String query = "UPDATE patient_details SET patient_birthdate = ?, patient_blood_type = ?, patient_height = ?, patient_weight = ?, patient_smokes = ?, patient_drinks = ?, patient_meds = ?, patient_conditions = ?, patient_allergies = ?, patient_diet = ?, patient_hobbies = ?, patient_job = ? WHERE patient_id = ?";
-        jdbcTemplate.update(query, birthdate, 
+        jdbcTemplate.update(query, 
+        new Object[] {birthdate, 
             bloodType != null ? bloodType.ordinal() : null, 
-            height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job, patientId);
+            height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job, patientId},
+        new int[] {java.sql.Types.DATE, java.sql.Types.INTEGER, java.sql.Types.NUMERIC, java.sql.Types.NUMERIC, java.sql.Types.BOOLEAN, java.sql.Types.BOOLEAN, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.BIGINT});
     }
     
 }

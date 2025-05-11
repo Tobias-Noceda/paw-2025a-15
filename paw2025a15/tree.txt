@@ -1,0 +1,653 @@
+.
+├── interfaces
+│   ├── pom.xml
+│   ├── src
+│   │   └── main
+│   │       └── java
+│   │           └── ar
+│   │               └── edu
+│   │                   └── itba
+│   │                       └── paw
+│   │                           └── interfaces
+│   │                               ├── persistence
+│   │                               │   ├── AppointmentDao.java
+│   │                               │   ├── AuthDoctorDao.java
+│   │                               │   ├── AuthStudiesDao.java
+│   │                               │   ├── DoctorDetailDao.java
+│   │                               │   ├── DoctorShiftDao.java
+│   │                               │   ├── FileDao.java
+│   │                               │   ├── InsuranceDao.java
+│   │                               │   ├── PatientDetailDao.java
+│   │                               │   ├── StudyDao.java
+│   │                               │   └── UserDao.java
+│   │                               └── services
+│   │                                   ├── AppointmentService.java
+│   │                                   ├── AuthDoctorService.java
+│   │                                   ├── AuthStudiesService.java
+│   │                                   ├── DoctorDetailService.java
+│   │                                   ├── DoctorShiftService.java
+│   │                                   ├── EmailService.java
+│   │                                   ├── FileService.java
+│   │                                   ├── InsuranceService.java
+│   │                                   ├── PatientDetailService.java
+│   │                                   ├── StudyService.java
+│   │                                   └── UserService.java
+│   └── target
+│       ├── classes
+│       │   └── ar
+│       │       └── edu
+│       │           └── itba
+│       │               └── paw
+│       │                   └── interfaces
+│       │                       ├── persistence
+│       │                       │   ├── AppointmentDao.class
+│       │                       │   ├── AuthDoctorDao.class
+│       │                       │   ├── AuthStudiesDao.class
+│       │                       │   ├── DoctorDetailDao.class
+│       │                       │   ├── DoctorShiftDao.class
+│       │                       │   ├── FileDao.class
+│       │                       │   ├── InsuranceDao.class
+│       │                       │   ├── PatientDetailDao.class
+│       │                       │   ├── StudyDao.class
+│       │                       │   └── UserDao.class
+│       │                       └── services
+│       │                           ├── AppointmentService.class
+│       │                           ├── AuthDoctorService.class
+│       │                           ├── AuthStudiesService.class
+│       │                           ├── DoctorDetailService.class
+│       │                           ├── DoctorShiftService.class
+│       │                           ├── EmailService.class
+│       │                           ├── FileService.class
+│       │                           ├── InsuranceService.class
+│       │                           ├── PatientDetailService.class
+│       │                           ├── StudyService.class
+│       │                           └── UserService.class
+│       ├── generated-sources
+│       │   └── annotations
+│       └── maven-status
+│           └── maven-compiler-plugin
+│               └── compile
+│                   └── default-compile
+│                       ├── createdFiles.lst
+│                       └── inputFiles.lst
+├── models
+│   ├── pom.xml
+│   ├── src
+│   │   └── main
+│   │       └── java
+│   │           └── ar
+│   │               └── edu
+│   │                   └── itba
+│   │                       └── paw
+│   │                           └── models
+│   │                               ├── AppointmentData.java
+│   │                               ├── Appointment.java
+│   │                               ├── AuthDoctor.java
+│   │                               ├── AuthStudy.java
+│   │                               ├── AvailableTurn.java
+│   │                               ├── DoctorCoverage.java
+│   │                               ├── DoctorDetail.java
+│   │                               ├── DoctorShift.java
+│   │                               ├── DoctorView.java
+│   │                               ├── enums
+│   │                               │   ├── AccessLevelEnum.java
+│   │                               │   ├── BloodTypeEnum.java
+│   │                               │   ├── DoctorOrderEnum.java
+│   │                               │   ├── FileTypeEnum.java
+│   │                               │   ├── LocaleEnum.java
+│   │                               │   ├── MonthEnum.java
+│   │                               │   ├── SpecialtyEnum.java
+│   │                               │   ├── StudyTypeEnum.java
+│   │                               │   ├── UserRoleEnum.java
+│   │                               │   └── WeekdayEnum.java
+│   │                               ├── exceptions
+│   │                               │   ├── AlreadyExistsException.java
+│   │                               │   ├── AppointmentAlreadyTakenException.java
+│   │                               │   ├── FormErrorException.java
+│   │                               │   ├── MediaTypeException.java
+│   │                               │   ├── NotFoundException.java
+│   │                               │   └── UnauthorizedException.java
+│   │                               ├── File.java
+│   │                               ├── Insurance.java
+│   │                               ├── PatientCoverage.java
+│   │                               ├── PatientDetail.java
+│   │                               ├── Schedule.java
+│   │                               ├── Study.java
+│   │                               └── User.java
+│   └── target
+│       ├── classes
+│       │   └── ar
+│       │       └── edu
+│       │           └── itba
+│       │               └── paw
+│       │                   └── models
+│       │                       ├── Appointment.class
+│       │                       ├── AppointmentData.class
+│       │                       ├── AuthDoctor.class
+│       │                       ├── AuthStudy.class
+│       │                       ├── AvailableTurn.class
+│       │                       ├── DoctorCoverage.class
+│       │                       ├── DoctorDetail.class
+│       │                       ├── DoctorShift.class
+│       │                       ├── DoctorView.class
+│       │                       ├── enums
+│       │                       │   ├── AccessLevelEnum.class
+│       │                       │   ├── BloodTypeEnum.class
+│       │                       │   ├── DoctorOrderEnum.class
+│       │                       │   ├── FileTypeEnum.class
+│       │                       │   ├── LocaleEnum.class
+│       │                       │   ├── MonthEnum.class
+│       │                       │   ├── SpecialtyEnum.class
+│       │                       │   ├── StudyTypeEnum.class
+│       │                       │   ├── UserRoleEnum.class
+│       │                       │   └── WeekdayEnum.class
+│       │                       ├── exceptions
+│       │                       │   ├── AlreadyExistsException.class
+│       │                       │   ├── AppointmentAlreadyTakenException.class
+│       │                       │   ├── FormErrorException.class
+│       │                       │   ├── MediaTypeException.class
+│       │                       │   ├── NotFoundException.class
+│       │                       │   └── UnauthorizedException.class
+│       │                       ├── File.class
+│       │                       ├── Insurance.class
+│       │                       ├── PatientCoverage.class
+│       │                       ├── PatientDetail.class
+│       │                       ├── Schedule.class
+│       │                       ├── Study.class
+│       │                       └── User.class
+│       ├── generated-sources
+│       │   └── annotations
+│       └── maven-status
+│           └── maven-compiler-plugin
+│               └── compile
+│                   └── default-compile
+│                       ├── createdFiles.lst
+│                       └── inputFiles.lst
+├── persistence
+│   ├── pom.xml
+│   ├── src
+│   │   ├── main
+│   │   │   ├── java
+│   │   │   │   └── ar
+│   │   │   │       └── edu
+│   │   │   │           └── itba
+│   │   │   │               └── paw
+│   │   │   │                   └── persistence
+│   │   │   │                       ├── AppointmentJdbcDao.java
+│   │   │   │                       ├── AuthDoctorJdbcDao.java
+│   │   │   │                       ├── AuthStudiesJdbcDao.java
+│   │   │   │                       ├── DoctorDetailJdbcDao.java
+│   │   │   │                       ├── DoctorShiftJdbcDao.java
+│   │   │   │                       ├── FileJdbcDao.java
+│   │   │   │                       ├── InsuranceJdbcDao.java
+│   │   │   │                       ├── PatientDetailJdbcDao.java
+│   │   │   │                       ├── StudyJdbcDao.java
+│   │   │   │                       └── UserJdbcDao.java
+│   │   │   └── resources
+│   │   │       ├── oldSchema.sql
+│   │   │       └── schema.sql
+│   │   └── test
+│   │       ├── java
+│   │       │   └── ar
+│   │       │       └── edu
+│   │       │           └── itba
+│   │       │               └── paw
+│   │       │                   └── persistence
+│   │       │                       ├── AppointmentsJdbcDaoTest.java
+│   │       │                       ├── AuthDoctorJdbcDaoTest.java
+│   │       │                       ├── AuthStudiesJdbcDaoTest.java
+│   │       │                       ├── config
+│   │       │                       │   └── TestConfig.java
+│   │       │                       ├── DoctorDetailJdbcDaoTest.java
+│   │       │                       ├── DoctorShiftJdbcDaoTest.java
+│   │       │                       ├── FileJdbcDaoTest.java
+│   │       │                       ├── InsuranceJdbcDaoTest.java
+│   │       │                       ├── PatientDetailJdbcDaoTest.java
+│   │       │                       ├── StudyJdbcDaoTest.java
+│   │       │                       ├── TestData.java
+│   │       │                       └── UserJdbcDaoTest.java
+│   │       └── resources
+│   │           ├── appointments.sql
+│   │           ├── authDoctors-SocialLevel.sql
+│   │           ├── authDoctors.sql
+│   │           ├── authStudies.sql
+│   │           ├── doctorCoverages.sql
+│   │           ├── doctorDetails.sql
+│   │           ├── doctorShifts.sql
+│   │           ├── extraStudies.sql
+│   │           ├── hsqldb.sql
+│   │           ├── images.sql
+│   │           ├── insurances.sql
+│   │           ├── oldAppointments.sql
+│   │           ├── patientDetails-allNull.sql
+│   │           ├── patientDetails-notNull.sql
+│   │           ├── patientDetails.sql
+│   │           ├── pgsql.sql
+│   │           ├── removedAppointments.sql
+│   │           ├── studies.sql
+│   │           └── users.sql
+│   └── target
+│       ├── classes
+│       │   ├── ar
+│       │   │   └── edu
+│       │   │       └── itba
+│       │   │           └── paw
+│       │   │               └── persistence
+│       │   │                   ├── AppointmentJdbcDao.class
+│       │   │                   ├── AuthDoctorJdbcDao.class
+│       │   │                   ├── AuthStudiesJdbcDao.class
+│       │   │                   ├── DoctorDetailJdbcDao$1.class
+│       │   │                   ├── DoctorDetailJdbcDao.class
+│       │   │                   ├── DoctorShiftJdbcDao.class
+│       │   │                   ├── FileJdbcDao.class
+│       │   │                   ├── InsuranceJdbcDao.class
+│       │   │                   ├── PatientDetailJdbcDao.class
+│       │   │                   ├── StudyJdbcDao.class
+│       │   │                   └── UserJdbcDao.class
+│       │   ├── oldSchema.sql
+│       │   └── schema.sql
+│       ├── generated-sources
+│       │   └── annotations
+│       ├── generated-test-sources
+│       │   └── test-annotations
+│       ├── maven-status
+│       │   └── maven-compiler-plugin
+│       │       ├── compile
+│       │       │   └── default-compile
+│       │       │       ├── createdFiles.lst
+│       │       │       └── inputFiles.lst
+│       │       └── testCompile
+│       │           └── default-testCompile
+│       │               ├── createdFiles.lst
+│       │               └── inputFiles.lst
+│       └── test-classes
+│           ├── appointments.sql
+│           ├── ar
+│           │   └── edu
+│           │       └── itba
+│           │           └── paw
+│           │               └── persistence
+│           │                   ├── AppointmentsJdbcDaoTest.class
+│           │                   ├── AuthDoctorJdbcDaoTest.class
+│           │                   ├── AuthStudiesJdbcDaoTest.class
+│           │                   ├── config
+│           │                   │   └── TestConfig.class
+│           │                   ├── DoctorDetailJdbcDaoTest.class
+│           │                   ├── DoctorShiftJdbcDaoTest.class
+│           │                   ├── FileJdbcDaoTest.class
+│           │                   ├── InsuranceJdbcDaoTest.class
+│           │                   ├── PatientDetailJdbcDaoTest.class
+│           │                   ├── StudyJdbcDaoTest.class
+│           │                   ├── TestData$Appointments.class
+│           │                   ├── TestData$AuthDoctors.class
+│           │                   ├── TestData$DoctorCoverages.class
+│           │                   ├── TestData$DoctorDetails.class
+│           │                   ├── TestData$DoctorShifts.class
+│           │                   ├── TestData$Images.class
+│           │                   ├── TestData$Insurances.class
+│           │                   ├── TestData$PatientDetails.class
+│           │                   ├── TestData$Studies.class
+│           │                   ├── TestData$Users.class
+│           │                   ├── TestData.class
+│           │                   └── UserJdbcDaoTest.class
+│           ├── authDoctors-SocialLevel.sql
+│           ├── authDoctors.sql
+│           ├── authStudies.sql
+│           ├── doctorCoverages.sql
+│           ├── doctorDetails.sql
+│           ├── doctorShifts.sql
+│           ├── extraStudies.sql
+│           ├── hsqldb.sql
+│           ├── images.sql
+│           ├── insurances.sql
+│           ├── oldAppointments.sql
+│           ├── patientDetails-allNull.sql
+│           ├── patientDetails-notNull.sql
+│           ├── patientDetails.sql
+│           ├── pgsql.sql
+│           ├── removedAppointments.sql
+│           ├── studies.sql
+│           └── users.sql
+├── pom.xml
+├── services
+│   ├── pom.xml
+│   ├── src
+│   │   ├── main
+│   │   │   ├── java
+│   │   │   │   └── ar
+│   │   │   │       └── edu
+│   │   │   │           └── itba
+│   │   │   │               └── paw
+│   │   │   │                   └── services
+│   │   │   │                       ├── AppointmentServiceImpl.java
+│   │   │   │                       ├── AuthDoctorServiceImpl.java
+│   │   │   │                       ├── AuthStudiesServiceImpl.java
+│   │   │   │                       ├── DoctorDetailServiceImpl.java
+│   │   │   │                       ├── DoctorShiftServiceImpl.java
+│   │   │   │                       ├── EmailServiceImpl.java
+│   │   │   │                       ├── FileServiceImpl.java
+│   │   │   │                       ├── InsuranceServiceImpl.java
+│   │   │   │                       ├── PatientDetailServiceImpl.java
+│   │   │   │                       ├── StudyServiceImpl.java
+│   │   │   │                       └── UserServiceImpl.java
+│   │   │   └── resources
+│   │   │       ├── email_templates
+│   │   │       │   ├── doctorAppointmentConfirmationTemplate.html
+│   │   │       │   ├── doctorAppointmentReminderTemplate.html
+│   │   │       │   ├── doctorCancelledAppointmentConfirmationTemplate.html
+│   │   │       │   ├── doctorCancelledAppointmentTemplate.html
+│   │   │       │   ├── passwordRecoveryTemplate.html
+│   │   │       │   ├── patientAppointmentConfirmationTemplate.html
+│   │   │       │   ├── patientAppointmentReminderTemplate.html
+│   │   │       │   ├── patientCancelledAppointmentConfirmationTemplate.html
+│   │   │       │   ├── patientCancelledAppointmentTemplate.html
+│   │   │       │   └── recievedStudyTemplate.html
+│   │   │       └── i18n
+│   │   │           ├── email_messages_en.properties
+│   │   │           ├── email_messages_en_US.properties
+│   │   │           ├── email_messages_es_AR.properties
+│   │   │           ├── email_messages_es.properties
+│   │   │           ├── email_messages_es_US.properties
+│   │   │           └── email_messages.properties
+│   │   └── test
+│   │       └── java
+│   │           └── ar
+│   │               └── edu
+│   │                   └── itba
+│   │                       └── paw
+│   │                           └── services
+│   │                               ├── AppointmentServiceImplTest.java
+│   │                               ├── AuthDoctorServiceImplTest.java
+│   │                               ├── AuthStudiesServiceImplTest.java
+│   │                               ├── DoctorDetailServiceImplTest.java
+│   │                               ├── DoctorShiftServiceImplTest.java
+│   │                               ├── InsuranceServiceImplTest.java
+│   │                               ├── PatientDetailServiceImplTest.java
+│   │                               ├── StudyServiceImplTest.java
+│   │                               └── UserServiceImplTest.java
+│   └── target
+│       ├── classes
+│       │   ├── ar
+│       │   │   └── edu
+│       │   │       └── itba
+│       │   │           └── paw
+│       │   │               └── services
+│       │   │                   ├── AppointmentServiceImpl.class
+│       │   │                   ├── AuthDoctorServiceImpl.class
+│       │   │                   ├── AuthStudiesServiceImpl.class
+│       │   │                   ├── DoctorDetailServiceImpl.class
+│       │   │                   ├── DoctorShiftServiceImpl.class
+│       │   │                   ├── EmailServiceImpl.class
+│       │   │                   ├── FileServiceImpl.class
+│       │   │                   ├── InsuranceServiceImpl.class
+│       │   │                   ├── PatientDetailServiceImpl.class
+│       │   │                   ├── StudyServiceImpl.class
+│       │   │                   └── UserServiceImpl.class
+│       │   ├── email_templates
+│       │   │   ├── doctorAppointmentConfirmationTemplate.html
+│       │   │   ├── doctorAppointmentReminderTemplate.html
+│       │   │   ├── doctorCancelledAppointmentConfirmationTemplate.html
+│       │   │   ├── doctorCancelledAppointmentTemplate.html
+│       │   │   ├── passwordRecoveryTemplate.html
+│       │   │   ├── patientAppointmentConfirmationTemplate.html
+│       │   │   ├── patientAppointmentReminderTemplate.html
+│       │   │   ├── patientCancelledAppointmentConfirmationTemplate.html
+│       │   │   ├── patientCancelledAppointmentTemplate.html
+│       │   │   └── recievedStudyTemplate.html
+│       │   └── i18n
+│       │       ├── email_messages_en.properties
+│       │       ├── email_messages_en_US.properties
+│       │       ├── email_messages_es_AR.properties
+│       │       ├── email_messages_es.properties
+│       │       ├── email_messages_es_US.properties
+│       │       └── email_messages.properties
+│       ├── generated-sources
+│       │   └── annotations
+│       ├── generated-test-sources
+│       │   └── test-annotations
+│       ├── maven-status
+│       │   └── maven-compiler-plugin
+│       │       ├── compile
+│       │       │   └── default-compile
+│       │       │       ├── createdFiles.lst
+│       │       │       └── inputFiles.lst
+│       │       └── testCompile
+│       │           └── default-testCompile
+│       │               ├── createdFiles.lst
+│       │               └── inputFiles.lst
+│       └── test-classes
+│           └── ar
+│               └── edu
+│                   └── itba
+│                       └── paw
+│                           └── services
+│                               ├── AppointmentServiceImplTest.class
+│                               ├── AuthDoctorServiceImplTest.class
+│                               ├── AuthStudiesServiceImplTest.class
+│                               ├── DoctorDetailServiceImplTest.class
+│                               ├── DoctorShiftServiceImplTest.class
+│                               ├── InsuranceServiceImplTest.class
+│                               ├── PatientDetailServiceImplTest.class
+│                               ├── StudyServiceImplTest.class
+│                               └── UserServiceImplTest.class
+├── tree.txt
+└── webapp
+    ├── pom.xml
+    ├── src
+    │   └── main
+    │       ├── java
+    │       │   └── ar
+    │       │       └── edu
+    │       │           └── itba
+    │       │               └── paw
+    │       │                   ├── annotation
+    │       │                   │   └── ValidArgPhone.java
+    │       │                   ├── form
+    │       │                   │   ├── AppointmentForm.java
+    │       │                   │   ├── ChangePasswordForm.java
+    │       │                   │   ├── constraints
+    │       │                   │   │   ├── AvailableTurn.java
+    │       │                   │   │   ├── AvailableTurnValidator.java
+    │       │                   │   │   ├── IsValidLandingForm.java
+    │       │                   │   │   ├── LandingFormValidator.java
+    │       │                   │   │   ├── PastDate.java
+    │       │                   │   │   └── PastDateValidator.java
+    │       │                   │   ├── CreateStudyForm.java
+    │       │                   │   ├── DoctorForm.java
+    │       │                   │   ├── FileFilterForm.java
+    │       │                   │   ├── LandingForm.java
+    │       │                   │   ├── PatientForm.java
+    │       │                   │   ├── ProfileForm.java
+    │       │                   │   ├── RecoverForm.java
+    │       │                   │   ├── ShiftsWeekForm.java
+    │       │                   │   └── TakeTurnForm.java
+    │       │                   ├── validator
+    │       │                   │   └── ArgPhoneValidator.java
+    │       │                   └── webapp
+    │       │                       ├── auth
+    │       │                       │   ├── CustomAuthenticationFailureHandler.java
+    │       │                       │   ├── PawAuthUserDetails.java
+    │       │                       │   ├── PawUserDetailsService.java
+    │       │                       │   └── WebUserAuthDecision.java
+    │       │                       ├── config
+    │       │                       │   ├── WebAuthConfig.java
+    │       │                       │   └── WebConfig.java
+    │       │                       └── controller
+    │       │                           ├── AppointmentController.java
+    │       │                           ├── DoctorController.java
+    │       │                           ├── ErrorControllerAdvice.java
+    │       │                           ├── ErrorController.java
+    │       │                           ├── FileController.java
+    │       │                           ├── GeneralController.java
+    │       │                           ├── LogedUserControllerAdvice.java
+    │       │                           ├── LoginController.java
+    │       │                           ├── PatientController.java
+    │       │                           ├── RegisterController.java
+    │       │                           ├── StudyController.java
+    │       │                           ├── UserController.java
+    │       │                           └── Util
+    │       │                               └── SelectItem.java
+    │       ├── resources
+    │       │   ├── i18n
+    │       │   │   ├── messages_en.properties
+    │       │   │   ├── messages_en_US.properties
+    │       │   │   ├── messages_es_AR.properties
+    │       │   │   ├── messages_es.properties
+    │       │   │   ├── messages_es_US.properties
+    │       │   │   └── messages.properties
+    │       │   ├── logback-test.xml
+    │       │   └── logback.xml
+    │       └── webapp
+    │           ├── css
+    │           │   ├── appointments.css
+    │           │   ├── base.css
+    │           │   ├── doctor-detail.css
+    │           │   ├── doctor-form.css
+    │           │   ├── file-charge.css
+    │           │   ├── landing-page.css
+    │           │   ├── login-form.css
+    │           │   ├── main.css
+    │           │   ├── patient-detail.css
+    │           │   ├── profile-info.css
+    │           │   ├── register-form.css
+    │           │   ├── studies.css
+    │           │   └── study-form.css
+    │           ├── favicon
+    │           │   └── favicon.ico
+    │           ├── js
+    │           │   ├── authConfirmationModal.js
+    │           │   ├── confirmDialogModal.js
+    │           │   └── turnConfirmationModal.js
+    │           ├── resources
+    │           │   ├── avatar.jpg
+    │           │   ├── errorImage.png
+    │           │   ├── icono2.png
+    │           │   └── icono.jpg
+    │           └── WEB-INF
+    │               ├── jsp
+    │               │   ├── admin
+    │               │   │   └── index.jsp
+    │               │   ├── appointments.jsp
+    │               │   ├── changePassword.jsp
+    │               │   ├── components
+    │               │   │   ├── confirmDialog.jsp
+    │               │   │   ├── doctorCard.jsp
+    │               │   │   ├── header.jsp
+    │               │   │   └── patientCard.jsp
+    │               │   ├── createStudy.jsp
+    │               │   ├── doctorDetail.jsp
+    │               │   ├── errorPages
+    │               │   │   ├── 400.jsp
+    │               │   │   ├── 401.jsp
+    │               │   │   ├── 403.jsp
+    │               │   │   ├── 404.jsp
+    │               │   │   ├── 405.jsp
+    │               │   │   ├── 408.jsp
+    │               │   │   ├── 415.jsp
+    │               │   │   ├── 500.jsp
+    │               │   │   └── genericError.jsp
+    │               │   ├── forgotPassword.jsp
+    │               │   ├── index.jsp
+    │               │   ├── login.jsp
+    │               │   ├── patientDetail.jsp
+    │               │   ├── profileInfo.jsp
+    │               │   ├── registryForm.jsp
+    │               │   ├── studies.jsp
+    │               │   └── studyInfo.jsp
+    │               └── web.xml
+    └── target
+        ├── classes
+        │   ├── ar
+        │   │   └── edu
+        │   │       └── itba
+        │   │           └── paw
+        │   │               ├── annotation
+        │   │               │   └── ValidArgPhone.class
+        │   │               ├── form
+        │   │               │   ├── AppointmentForm.class
+        │   │               │   ├── ChangePasswordForm.class
+        │   │               │   ├── constraints
+        │   │               │   │   ├── AvailableTurn.class
+        │   │               │   │   ├── AvailableTurnValidator.class
+        │   │               │   │   ├── IsValidLandingForm.class
+        │   │               │   │   ├── LandingFormValidator.class
+        │   │               │   │   ├── PastDate.class
+        │   │               │   │   └── PastDateValidator.class
+        │   │               │   ├── CreateStudyForm.class
+        │   │               │   ├── DoctorForm.class
+        │   │               │   ├── FileFilterForm.class
+        │   │               │   ├── LandingForm.class
+        │   │               │   ├── PatientForm.class
+        │   │               │   ├── ProfileForm.class
+        │   │               │   ├── RecoverForm.class
+        │   │               │   ├── ShiftsWeekForm.class
+        │   │               │   └── TakeTurnForm.class
+        │   │               ├── validator
+        │   │               │   └── ArgPhoneValidator.class
+        │   │               └── webapp
+        │   │                   ├── auth
+        │   │                   │   ├── CustomAuthenticationFailureHandler.class
+        │   │                   │   ├── PawAuthUserDetails.class
+        │   │                   │   ├── PawUserDetailsService$1.class
+        │   │                   │   ├── PawUserDetailsService.class
+        │   │                   │   └── WebUserAuthDecision.class
+        │   │                   ├── config
+        │   │                   │   ├── WebAuthConfig$DecisionExceptionHandler.class
+        │   │                   │   ├── WebAuthConfig.class
+        │   │                   │   └── WebConfig.class
+        │   │                   └── controller
+        │   │                       ├── AppointmentController$1.class
+        │   │                       ├── AppointmentController.class
+        │   │                       ├── DoctorController.class
+        │   │                       ├── ErrorControllerAdvice.class
+        │   │                       ├── ErrorController.class
+        │   │                       ├── FileController$1.class
+        │   │                       ├── FileController.class
+        │   │                       ├── GeneralController.class
+        │   │                       ├── LogedUserControllerAdvice.class
+        │   │                       ├── LoginController.class
+        │   │                       ├── PatientController.class
+        │   │                       ├── RegisterController.class
+        │   │                       ├── StudyController.class
+        │   │                       ├── UserController.class
+        │   │                       └── Util
+        │   │                           └── SelectItem.class
+        │   ├── i18n
+        │   │   ├── messages_en.properties
+        │   │   ├── messages_en_US.properties
+        │   │   ├── messages_es_AR.properties
+        │   │   ├── messages_es.properties
+        │   │   ├── messages_es_US.properties
+        │   │   └── messages.properties
+        │   ├── logback-test.xml
+        │   └── logback.xml
+        ├── generated-sources
+        │   └── annotations
+        ├── maven-status
+        │   └── maven-compiler-plugin
+        │       └── compile
+        │           └── default-compile
+        │               ├── createdFiles.lst
+        │               └── inputFiles.lst
+        └── tmp
+            └── jsp
+                └── org
+                    └── apache
+                        └── jsp
+                            └── WEB_002dINF
+                                └── jsp
+                                    ├── appointments_jsp.class
+                                    ├── appointments_jsp.java
+                                    ├── components
+                                    │   ├── doctorCard_jsp.class
+                                    │   ├── doctorCard_jsp.java
+                                    │   ├── header_jsp.class
+                                    │   └── header_jsp.java
+                                    ├── index_jsp.class
+                                    ├── index_jsp.java
+                                    ├── login_jsp.class
+                                    ├── login_jsp.java
+                                    ├── profileInfo_jsp.class
+                                    └── profileInfo_jsp.java
+
+199 directories, 452 files

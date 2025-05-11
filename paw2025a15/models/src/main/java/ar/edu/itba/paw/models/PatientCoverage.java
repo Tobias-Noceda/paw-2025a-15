@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.models;
 
-public class PatientCoverage {//TODO if not used, remove
+public class PatientCoverage {
     private final long patientId;
     private final long insuranceId;
 

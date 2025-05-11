@@ -1,8 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.form.FileFilterForm;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,8 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
+import java.util.Locale;
+
 @Controller
 public class PatientController {
 
@@ -36,11 +39,16 @@ public class PatientController {
     @Autowired
     private AuthDoctorService ads;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/patient/{patientId:\\d+}")
     public ModelAndView patient(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @ModelAttribute("user_data") User user,
             @PathVariable("patientId") int patientId,
-            @ModelAttribute("registerPatientForm") final PatientForm form
+            @ModelAttribute("registerPatientForm") final PatientForm form,
+            @ModelAttribute("filterForm") final FileFilterForm filterForm,
+            Locale locale
     ) {
         User patient = us.getUserById(patientId)
             .orElseThrow(() -> new NotFoundException("Patient not found"));
@@ -51,19 +59,17 @@ public class PatientController {
 
         final ModelAndView mav = new ModelAndView("patientDetail");
         
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
-        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
 
+        mav.addObject("patientDetails", pds.getDetailByPatientId(patientId).orElseThrow(() -> new NotFoundException("Patient details not found for user with id: " + patientId)));
         mav.addObject("patient", patient);
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(patientId, user.getId()));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
-        mav.addObject("patientStudies", ss.getStudiesByPatientIdAndDoctorId(patientId,user.getId()));
-        mav.addObject("patientDetails", pds.getDetailByPatientId(patientId).get());//TODO: conceptualmente no se puede hacer un get directo de un optional, hay q cambiarlo
-
+        mav.addObject("patientStudies", ss.getFilteredStudies(patientId, filterForm.getType(),filterForm.getMostRecent()));
+        mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         return mav;
     }
 }

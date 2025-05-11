@@ -19,9 +19,6 @@ public interface DoctorDetailDao {
 
     public int[] addDoctorCoverages(long doctorId, List<Long> insurancesIds);
 
-    @Deprecated
-    public boolean removeDoctorCoverage(long doctorId, long insuranceId);
-
     public void removeAllCoveragesForDoctorId(long doctorId);
     
     public void removeDoctorCoverages(long doctorId, List<Long> toRemove);

@@ -93,6 +93,39 @@ public class DoctorDetailServiceImplTest {
     }
 
     @Test
+    public void testUpdateDoctorCoveragesNonexistentDoctor(){
+        Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dds.updateDoctorCoverages(DOC_ID, INSURANCES)
+        );
+    }
+
+    @Test
+    public void testUpdateDoctorCoveragesDaoAddFailureWhenCurrentNull(){
+        int[] badResults = {1,0};
+        Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
+        Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
+        Mockito.when(doctorDetailDaoMock.addDoctorCoverages(Mockito.anyLong(), Mockito.anyList())).thenReturn(badResults);
+
+        Assert.assertThrows(RuntimeException.class, () -> 
+            dds.updateDoctorCoverages(DOC_ID, INSURANCES)
+        );
+    }
+
+    @Test
+    public void testUpdateDoctorCoveragesDaoAddFailureExistingCurrent(){
+        int[] badResults = {1,0};
+        Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
+        Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(List.of(INSURANCE));
+        Mockito.when(doctorDetailDaoMock.addDoctorCoverages(Mockito.anyLong(), Mockito.anyList())).thenReturn(badResults);
+
+        Assert.assertThrows(RuntimeException.class, () -> 
+            dds.updateDoctorCoverages(DOC_ID, INSURANCES)
+        );
+    }
+
+    @Test
     public void testCreateDoctorCoveragesNonexistentDoc(){
         Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 

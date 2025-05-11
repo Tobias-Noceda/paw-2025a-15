@@ -5,8 +5,6 @@ import java.util.Locale;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +43,7 @@ public class DoctorController {
 
     @RequestMapping("/doctors/{id:\\d+}")
     public ModelAndView doctorProfile(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @ModelAttribute("user_data") User user,
             @PathVariable("id") long id,
             @RequestParam(value = "action", required = false) String action,
             @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
@@ -56,8 +54,6 @@ public class DoctorController {
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
-        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
@@ -86,7 +82,7 @@ public class DoctorController {
 
     @RequestMapping(value = "/patientAuthDoctor/{doctorId:\\d+}", method = RequestMethod.POST)
     public ModelAndView authUnauthDoctor(
-        @AuthenticationPrincipal UserDetails userDetails,
+        @ModelAttribute("user_data") User user,
         @PathVariable("doctorId") long doctorId,
         @RequestHeader(value = "Referer", required = false) String referer, 
         @RequestParam("action") String action, 
@@ -94,8 +90,6 @@ public class DoctorController {
     ) {
         dds.getDetailByDoctorId(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
 
-        User user = us.getUserByEmail(userDetails.getUsername()).orElse(null);
-        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }

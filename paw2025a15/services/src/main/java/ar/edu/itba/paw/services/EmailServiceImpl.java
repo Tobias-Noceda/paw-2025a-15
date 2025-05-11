@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +25,7 @@ import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.DoctorShift;
 import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
 
 @Service
@@ -44,8 +44,7 @@ public class EmailServiceImpl implements EmailService{
 
     private final String emailFromString = "caretracehealth@gmail.com";
 
-    private final String baseURL = "http://localhost:8080/";
-    //private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
+    private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
 
     private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, Locale locale) throws MessagingException{
         Context context = new Context(locale);
@@ -138,21 +137,21 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendRecievedStudyEmail(User patient, User doctor, File file, String description, LocalDateTime dateTime) {
-        Map<String, Object> templateModel = new HashMap<>();
+    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description) {
+        Map<String, Object> templateModel;
+        templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
-        // TODO: replace with real watch file link
-        templateModel.put("watchLink", baseURL);
+        templateModel.put("studyLink", baseURL + "view-study/" + study.getId());
         
         StringBuilder fileName = new StringBuilder();
         fileName.append("Study_")
             .append(patient.getName().replace(" ", "-"))
             .append("_")
-            .append(dateTime.toString().replace(":", "-"))
+            .append(study.getUploadDate().toString().replace(":", "-"))
             .append(".")
             .append(file.getType().getName().split("/")[1]);
 
@@ -290,8 +289,7 @@ public class EmailServiceImpl implements EmailService{
         String token = UUID.randomUUID().toString(); // o algo más complejo
         //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
 
-        String recoveryLink = baseURL + "changePassword/" + token + "/" + user.getId();
-        System.out.println("Recovery link: " + recoveryLink);
+        String recoveryLink = baseURL + "change-password/" + token + "/" + user.getId();
         templateModel.put("recoveryLink", recoveryLink);
 
         Locale locale = user.getLocale().toLocale();
@@ -354,7 +352,4 @@ public class EmailServiceImpl implements EmailService{
             LOGGER.error("Error sending doctor reminder email to {}: {}", doctor.getEmail(), e.getMessage(), e);
         }
     }
-
-
-
 }

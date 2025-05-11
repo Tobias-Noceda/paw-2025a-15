@@ -27,7 +27,7 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 
 @Service
-public class DoctorDetailServiceImpl implements DoctorDetailService{
+public class DoctorDetailServiceImpl implements DoctorDetailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoctorDetailServiceImpl.class);
 
@@ -39,18 +39,23 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
 
     @Transactional
     @Override
-    public User createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, LocaleEnum locale) {
+    public User createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, LocaleEnum locale) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         User doc = us.create(email, password, name, telephone, UserRoleEnum.DOCTOR, locale);
         long doctorId = doc.getId();
-        DoctorDetail dd = doctorDetailDao.create(doctorId, licence, specialty);
-        if(dd == null){
-            LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
-            throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
+        try {
+            DoctorDetail dd = doctorDetailDao.create(doctorId, doctorLicense, specialty);
+            if(dd == null){
+                LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
+                throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
+            }
+            LOGGER.info("Successfully created doctor details for userId: {}", doctorId);
+            LOGGER.info("Successfully created doctor user with email: {}", email);
+            return doc;
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Failed to create doctor details for userId: {} due to duplicate doctorLicense: {} at {}", doctorId, doctorLicense, LocalDateTime.now());
+            throw new AlreadyExistsException("Doctor with license: " + doctorLicense + " already exists!");
         }
-        LOGGER.info("Successfully created doctor details for userId: {}", doctorId);
-        LOGGER.info("Successfully created doctor user with email: {}", email);
-        return doc;
     }
 
     @Transactional(readOnly = true)
@@ -82,13 +87,20 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
         if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
         if(insurancesIds == null || insurancesIds.isEmpty()) {
             doctorDetailDao.removeAllCoveragesForDoctorId(doctorId);
-            LOGGER.info("Removing all insurancess for doctorId: {}", doctorId);
+            LOGGER.info("Removed all insurances for doctorId: {}", doctorId);
             return;
         }
         List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
         if(currentInsurances == null || currentInsurances.isEmpty()){
-            createDoctorCoverages(doctorId, insurancesIds);
-            LOGGER.info("Adding insurancess for doctorId: {}", doctorId);
+            int[] added = doctorDetailDao.addDoctorCoverages(doctorId, insurancesIds);
+            for (int i = 0; i < added.length; i++) {
+                if (added[i] > 0) {
+                    LOGGER.info("Added insuranceId: {} for doctorId: {}", insurancesIds.get(i), doctorId);
+                } else {
+                    LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", insurancesIds.get(i), doctorId, LocalDateTime.now());
+                    throw new RuntimeException("Failed to add insuranceId: " + insurancesIds.get(i) + "as doctor coverage for userId: " + doctorId);
+                }
+            }
             return;
         }
         List<Long> toRemove = new ArrayList<>();
@@ -98,8 +110,16 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
             else toRemove.add(currentInsurance.getId());
         }
         doctorDetailDao.removeDoctorCoverages(doctorId, toRemove);
-        createDoctorCoverages(doctorId, newInsurances);
-        LOGGER.info("Updating insurancess for doctorId: {}", doctorId);
+        int[] added = doctorDetailDao.addDoctorCoverages(doctorId, newInsurances);
+        for (int i = 0; i < added.length; i++) {
+            if (added[i] > 0) {
+                LOGGER.info("Added insuranceId: {} for doctorId: {}", newInsurances.get(i), doctorId);
+            } else {
+                LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", newInsurances.get(i), doctorId, LocalDateTime.now());
+                throw new RuntimeException("Failed to add insuranceId: " + newInsurances.get(i) + "as doctor coverage for userId: " + doctorId);
+            }
+        }
+        LOGGER.info("Updated insurances for doctorId: {}", doctorId);
     }
 
     @Transactional(readOnly = true)
@@ -111,7 +131,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     @Transactional(readOnly = true)
     @Override
     public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy,page, pageSize);
+        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
     }
 
     @Transactional(readOnly = true)
@@ -119,5 +139,4 @@ public class DoctorDetailServiceImpl implements DoctorDetailService{
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
         return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
-    
 }

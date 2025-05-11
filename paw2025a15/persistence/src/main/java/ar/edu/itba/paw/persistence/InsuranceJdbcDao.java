@@ -40,12 +40,12 @@ public class InsuranceJdbcDao implements InsuranceDao{
         return new Insurance(insurance_id.longValue(), name, pictureId);
     }
 
-    @Override//TODO este tytpe check tiene que estar en todas las querys, si no es aca hay otros archivos donde no esta
+    @Override
     public void edit(long id, String name, long pictureId) {
         String sql = "UPDATE insurances SET insurance_name = ?, picture_id = ? WHERE insurance_id = ?";
         jdbcTemplate.update(sql,
-         new Object[] {name, pictureId, id},
-         new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
+        new Object[] {name, pictureId, id},
+        new int[] {java.sql.Types.VARCHAR, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
     }
 
     @Override
@@ -61,9 +61,8 @@ public class InsuranceJdbcDao implements InsuranceDao{
     }
 
     @Override
-    public Optional<Insurance> getInsuranceByName(String name) {//TODO: prevent sql inject via testing string
-            return jdbcTemplate.query("SELECT * FROM insurances WHERE insurance_name = ?", new Object[]  {name},
-              new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
-        }
-    
+    public Optional<Insurance> getInsuranceByName(String name) {
+        return jdbcTemplate.query("SELECT * FROM insurances WHERE insurance_name = ?", new Object[]  {name},
+            new int[] {java.sql.Types.VARCHAR}, ROW_MAPPER).stream().findFirst();
+    }
 }
