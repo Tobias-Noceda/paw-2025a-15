@@ -47,7 +47,7 @@ public class DoctorForm {
 
     @NotEmpty(message = "{form.doctorLicense.notEmpty}")
     @Size(min = 1, max = 50, message = "{form.doctorLicense.size}")
-    @Pattern(regexp = "^(MP|MN)\\s\\d{4}$", message = "{form.doctorLicense.invalidFormat}")
+    @Pattern(regexp = "^([0-9]{2})\\.[0-9]{1,5}$", message = "{form.doctorLicense.invalidFormat}")
     private String doctorLicense;
 
     public String getPhoneNumber() {
