@@ -268,7 +268,7 @@
                     <c:forEach var="appointment" items="${doctorFreeAppointments}">
                       <tr class="appointment-row">
                         <td class="text-cell"><spring:message code="weekday.${appointment.date.dayOfWeek}"></spring:message></td>
-                        <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" escapeXml="true" escapeXml="true"/></td>
+                        <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" escapeXml="true"/></td>
                         <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
                         <td class="cancel-cell">
                           <c:set var="removeConfirmationMessage">
