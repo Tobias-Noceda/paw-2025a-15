@@ -23,7 +23,7 @@
             <spring:message code="patient.details.upload.label"/>
           </a>
         </div>
-      <c:url value="/studies" var="studiesUrl"/>
+        <c:url value="/studies" var="studiesUrl"/>
       <form:form modelAttribute="filterForm"
                  action="${studiesUrl}"
                  method="get"
@@ -67,6 +67,7 @@
         </div>
 
       </form:form>
+        <p class="info-text"><spring:message code="studies.info.clickToManage"/></p>
 
 
 
@@ -159,7 +160,8 @@
         </div>
       </div>
       <div class="study-list-container">
-        <h3 class="table-title"><spring:message code="studies.authorizedDoctors"></spring:message></h3>
+        <h3 class="table-title"><spring:message code="studies.myDoctors"></spring:message></h3>
+        <p class="info-text"><spring:message code="studies.info.clickDoctorToManage"/></p>
         <div class="study-table-container">
           <div class="studies-table-header">
             <table class="studies-table">
@@ -219,7 +221,7 @@
                               name="action"
                               value="toggle"
                               class="deauthorize-button"
-                              onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value);"
+                              onclick="event.stopPropagation(); confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value);"
                             >
                               <c:out value="${buttonText}" escapeXml="true"/>
                             </button>
