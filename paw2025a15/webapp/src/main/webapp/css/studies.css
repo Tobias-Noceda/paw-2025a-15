@@ -234,6 +234,9 @@
     appearance: auto;
     text-rendering: auto;
     letter-spacing: normal;
+    text-decoration: none;
+    margin-right: 7px;
+    text-decoration: none;
     word-spacing: normal;
     line-height: normal;
     text-transform: none;
@@ -245,10 +248,14 @@
 }
   
 .download-button:hover {
+    margin-right: 7px;
+    text-decoration: none;
     background-color: #0056b3;
 }
 
 .view-button {
+    margin-right: 7px;
+    text-decoration: none;
     max-width: fit-content;
     background-color: #2b962f;
     color: white;
@@ -271,8 +278,11 @@
 }
   
 .view-button:hover {
+    margin-right: 7px;
+    text-decoration: none;
     background-color: #1e6b22;
 }
+
 
 .deauthorize-button {
     margin: 0 5px;
@@ -398,6 +408,12 @@
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.info-text {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
 }
 
 

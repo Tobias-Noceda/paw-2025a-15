@@ -81,6 +81,10 @@
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 
+        <div class="field-container full-width">
+          <form:label path="mailLanguage"><spring:message code="profile.email.lang.label"/></form:label>
+          <form:select path="mailLanguage" cssClass="input-field filter-select" items="${locales}" itemLabel="label" itemValue="value"/>
+        </div>
 
         <c:if test="${patientDetails == null}">
 
@@ -130,7 +134,7 @@
             <form:label path="bloodType"><spring:message code="profileInfo.bloodType"/></form:label>
             <select id="patient-blood-type"
                     name="bloodType"
-                    class="input-field">
+                    class="input-field filter-select">
               <option value=""><spring:message code="profileInfo.bloodType.select"/></option>
               <c:forEach var="bloodType" items="${bloodTypes}">
                 <option value="${bloodType.name()}"
@@ -177,7 +181,7 @@
       <div class="field-grid">
         <div class="field-container">
           <form:label path="smokes"><spring:message code="profileInfo.smokes"/></form:label>
-          <select id="patient-smokes" name="smokes" class="input-field">
+          <select id="patient-smokes" name="smokes" class="input-field filter-select">
             <option value="" <c:if test="${patientDetails.smokes == null}">selected</c:if>>
               <spring:message code="profileInfo.select"/>
             </option>
@@ -192,7 +196,7 @@
 
         <div class="field-container">
           <form:label path="drinks"><spring:message code="profileInfo.drinks"/></form:label>
-          <select id="patient-drinks" name="drinks" class="input-field">
+          <select id="patient-drinks" name="drinks" class="input-field filter-select">
             <option value="" <c:if test="${patientDetails.drinks == null}">selected</c:if>>
               <spring:message code="profileInfo.select"/>
             </option>

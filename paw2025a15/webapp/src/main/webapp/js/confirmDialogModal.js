@@ -45,3 +45,18 @@ function submitPendingForm() {
     closeConfirmDialog();
   }
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  const dialog = document.getElementById('customConfirmDialog');
+
+  // 3) Forzar el polyfill aunque detecte soporte nativo parcial
+
+  if (window.dialogPolyfill) {
+
+    dialogPolyfill.registerDialog(dialog);
+
+  }
+
+});

@@ -57,12 +57,8 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao {
         args.put("doctor_id", doctorId);
         args.put("doctor_licence", doctorLicense);
         args.put("doctor_specialty", specialty.ordinal());
-        try {
-            jdbcInsert.execute(args);
-            return new DoctorDetail(doctorId, doctorLicense, specialty);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("El número de matrícula ya está en uso.", e);
-        }
+        jdbcInsert.execute(args);
+        return new DoctorDetail(doctorId, doctorLicense, specialty);
     }
 
     @Override

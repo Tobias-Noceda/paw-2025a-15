@@ -68,7 +68,7 @@ public class PatientController {
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(patientId, user.getId()));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
-        mav.addObject("patientStudies", ss.getFilteredStudies(patientId, filterForm.getType(),filterForm.getMostRecent()));
+        mav.addObject("patientStudies", ss.getFilteredStudiesByPatientIdAndDoctorId(patientId, user.getId(),filterForm.getType(),filterForm.getMostRecent()));
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         return mav;
     }

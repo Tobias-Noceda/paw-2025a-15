@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.*;
 import org.springframework.context.MessageSource;
-
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public class SelectItem {
 
@@ -87,5 +83,15 @@ public class SelectItem {
             studyTypes.add(new SelectItem(order.name(), ms.getMessage("landing.order." + order.name(), null, locale)));
         }
         return studyTypes;
+    }
+
+    public static List<SelectItem> getLocalesSelectItems(MessageSource ms, Locale locale) {
+        final List<SelectItem> locales = new ArrayList<>();
+        for(LocaleEnum localeElement : LocaleEnum.values()) {
+            locales.add(
+                    new SelectItem(localeElement.name(), ms.getMessage("locale." + localeElement.name(), null, locale))
+            );
+        }
+        return locales;
     }
 }

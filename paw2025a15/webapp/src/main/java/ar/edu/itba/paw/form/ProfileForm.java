@@ -3,6 +3,7 @@ package ar.edu.itba.paw.form;
 import javax.validation.constraints.*;
 
 import ar.edu.itba.paw.form.constraints.PastDate;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +59,16 @@ public class ProfileForm {
 
     @NotNull(message = "{form.insurances.notNull}")
     private List<Long> insurances;
+
+    private LocaleEnum mailLanguage;
+
+    public LocaleEnum getMailLanguage() {
+        return mailLanguage;
+    }
+
+    public void setMailLanguage(LocaleEnum mailLanguage) {
+        this.mailLanguage = mailLanguage;
+    }
 
     public LocalDate getBirthDate() {
         return birthDate;

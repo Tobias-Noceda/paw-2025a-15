@@ -2,12 +2,15 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -46,6 +49,8 @@ public class UserController {
 
     @Autowired
     private DoctorDetailService dds;
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping("/login")
     public ModelAndView login() {
@@ -135,13 +140,20 @@ public class UserController {
     @RequestMapping("/profile")
     public ModelAndView profile(
             @ModelAttribute("user_data") User user,
-            @ModelAttribute("profileForm") ProfileForm profileForm
-    ) {
+            @ModelAttribute("profileForm") ProfileForm profileForm,
+            Locale locale) {
         ModelAndView mav = new ModelAndView("profileInfo");
+
 
         if (profileForm.getPhoneNumber() == null) { 
             profileForm.setPhoneNumber(user.getTelephone());
         }
+        if(profileForm.getMailLanguage() == null) {
+            profileForm.setMailLanguage(user.getLocale());
+        }
+
+
+
 
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElseThrow(() -> new NotFoundException("Patient details not found for user with id: " + user.getId())));
@@ -151,6 +163,7 @@ public class UserController {
         }
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
+        mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
         mav.addObject("landingForm", new LandingForm());
 
         return mav;
