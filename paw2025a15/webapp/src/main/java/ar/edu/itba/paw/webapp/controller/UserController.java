@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +137,7 @@ public class UserController {
         us.changePasswordByID(id, form.getPassword());
         return mav;
     }
-    
+
     @RequestMapping("/profile")
     public ModelAndView profile(
             @ModelAttribute("user_data") User user,
@@ -144,23 +145,22 @@ public class UserController {
             Locale locale) {
         ModelAndView mav = new ModelAndView("profileInfo");
 
-
-        if (profileForm.getPhoneNumber() == null) { 
+        if (profileForm.getPhoneNumber() == null) {
             profileForm.setPhoneNumber(user.getTelephone());
         }
-        if(profileForm.getMailLanguage() == null) {
+        if (profileForm.getMailLanguage() == null) {
             profileForm.setMailLanguage(user.getLocale());
         }
 
-
-
-
-        if(user.getRole().equals(UserRoleEnum.PATIENT)) {
+        if (user.getRole().equals(UserRoleEnum.PATIENT)) {
             mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElseThrow(() -> new NotFoundException("Patient details not found for user with id: " + user.getId())));
-        } else {
+        } else if (user.getRole().equals(UserRoleEnum.DOCTOR)) {
             mav.addObject("patientDetails", null);
             profileForm.setInsurances(InsuranceToLong(dds.getDoctorInsurancesById(user.getId())));
+            DoctorDetail doctorDetail = dds.getDetailByDoctorId(user.getId()).orElseThrow(() -> new NotFoundException("Doctor details not found for user with id: " + user.getId()));
+            mav.addObject("doctorDetail", doctorDetail);
         }
+
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
