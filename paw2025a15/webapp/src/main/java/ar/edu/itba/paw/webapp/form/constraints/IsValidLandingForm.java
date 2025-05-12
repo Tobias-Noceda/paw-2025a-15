@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.form.constraints;
+package ar.edu.itba.paw.webapp.form.constraints;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,10 +9,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.FIELD })
-@Constraint(validatedBy = { EmailNonexistentInUsersValidator.class })
-public @interface EmailNonexistentInUsers {
-    String message() default "{error.emailExists}";
+@Target({ElementType.TYPE})
+@Constraint(validatedBy = {LandingFormValidator.class})
+public @interface IsValidLandingForm {
+    String message() default "{landingForm.errorMessage}";
 
     Class<?>[] groups() default {};
 

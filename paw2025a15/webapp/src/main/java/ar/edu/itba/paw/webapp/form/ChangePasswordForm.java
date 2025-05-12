@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.form;
+package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.Size;
 

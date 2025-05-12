@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.ChangePasswordForm;
-import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.webapp.form.ChangePasswordForm;
+import ar.edu.itba.paw.webapp.form.RecoverForm;
 
 @Controller
 public class LoginController {

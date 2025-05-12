@@ -9,6 +9,9 @@ import javax.validation.Valid;
 
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+import ar.edu.itba.paw.webapp.form.LandingForm;
+import ar.edu.itba.paw.webapp.form.ProfileForm;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ar.edu.itba.paw.form.LandingForm;
-import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;

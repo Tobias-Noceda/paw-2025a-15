@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.CreateStudyForm;
-import ar.edu.itba.paw.form.FileFilterForm;
-import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.FileService;
@@ -37,6 +34,9 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+import ar.edu.itba.paw.webapp.form.CreateStudyForm;
+import ar.edu.itba.paw.webapp.form.FileFilterForm;
+import ar.edu.itba.paw.webapp.form.LandingForm;
 
 @Controller
 public class StudyController {

@@ -1,8 +1,9 @@
-package ar.edu.itba.paw.form;
+package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.annotation.ValidArgPhone;
-import ar.edu.itba.paw.form.constraints.PastDate;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
+import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;

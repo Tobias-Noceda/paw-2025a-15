@@ -1,7 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.form.FileFilterForm;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+import ar.edu.itba.paw.webapp.form.FileFilterForm;
+import ar.edu.itba.paw.webapp.form.LandingForm;
+import ar.edu.itba.paw.webapp.form.PatientForm;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -10,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.LandingForm;
-import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;

@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.form;
+package ar.edu.itba.paw.webapp.form;
 
 import java.time.LocalDate;
 
@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import ar.edu.itba.paw.form.constraints.PastDate;
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 public class CreateStudyForm {

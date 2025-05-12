@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.annotation;
+package ar.edu.itba.paw.webapp.form.constraints;
 
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-
-import ar.edu.itba.paw.validator.ArgPhoneValidator;
 
 @Documented
 @Constraint(validatedBy = ArgPhoneValidator.class)

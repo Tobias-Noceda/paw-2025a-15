@@ -1,11 +1,11 @@
-package ar.edu.itba.paw.form.constraints;
+package ar.edu.itba.paw.webapp.form.constraints;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ar.edu.itba.paw.form.TakeTurnForm;
+import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 
 public class AvailableTurnValidator implements ConstraintValidator<AvailableTurn, TakeTurnForm>{
