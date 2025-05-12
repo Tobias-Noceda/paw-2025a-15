@@ -87,6 +87,7 @@
                  oninput="validateDecimal(this)"
                  onkeydown="return blockInvalidKeys(event)"
                  onpaste="return blockNegativePaste(event)"/>
+          <form:errors path="height" cssClass="error-box" element="div" />
         </div>
 
         <div class="field-container">
@@ -100,6 +101,7 @@
                  oninput="validateDecimal(this)"
                  onkeydown="return blockInvalidKeys(event)"
                  onpaste="return blockNegativePaste(event)"/>
+          <form:errors path="weight" cssClass="error-box" element="div" />
         </div>
 
         <div class="field-container">
