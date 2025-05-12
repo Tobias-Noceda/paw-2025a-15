@@ -477,3 +477,39 @@ dialog {
     backdrop-filter: blur(2px);
 
 }
+
+
+/* --------------------------------------------------
+   1) Fallback para centrar el dialog en Safari/WebKit
+---------------------------------------------------*/
+.confirmation-dialog[open] {
+    position: fixed;
+    top:    0;
+    left:   0;
+    right:  0;
+    bottom: 0;
+    margin: auto;             /* centrado vertical+horizontal */
+    max-width: 90%;           /* opcional: adaptarlo a tu diseño */
+    width: 35rem;             /* ancho fijo o % si lo prefieres */
+    max-height: 90vh;         /* que no se desborde */
+    overflow: auto;           /* scroll si el contenido es muy alto */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border: none;
+    border-radius: 8px;
+    background: #fff;
+    padding: 1.5rem;
+}
+
+/* --------------------------------------------------
+   2) Backdrop semitransparente para navegadores sin ::backdrop
+---------------------------------------------------*/
+.confirmation-dialog::backdrop {
+    background: rgba(0,0,0,0.3);
+}
+/* En caso de que ::backdrop no funcione,
+   el polyfill inyectará un <div> detrás automáticamente */
+
+/* — Opcional: ocultar overflow del body cuando se abra — */
+body.dialog-opened {
+    overflow: hidden;
+}

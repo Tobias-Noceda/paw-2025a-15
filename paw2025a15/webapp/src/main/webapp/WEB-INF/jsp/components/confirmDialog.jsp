@@ -4,6 +4,10 @@
 <html>
 <head>
   <meta charset="UTF-8"/>
+  <link rel="stylesheet" href="https://unpkg.com/dialog-polyfill/dist/dialog-polyfill.css" />
+
+  <script src="https://unpkg.com/dialog-polyfill/dist/dialog-polyfill.js"></script>
+
   <link rel="stylesheet" href="<c:url value="/css/main.css"/>"/>
 </head>
 <body>
