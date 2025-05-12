@@ -371,6 +371,19 @@
     line-height: 1.3;
 }
 
+
+.doctor-license-div {
+    margin: 10px 0;
+}
+.doctor-license-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.doctor-license {
+    margin: 0;
+}
+
+
 /* Aprovecha el selector existente para el schedule */
 .doctor-detail-card .doctor-schedule-title {
     /* si no quieres renombrar en el JSP, reaplica los estilos: */
