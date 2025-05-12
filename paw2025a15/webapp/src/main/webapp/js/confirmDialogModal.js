@@ -1,4 +1,3 @@
-
 let pendingForm = null;
 
 function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {

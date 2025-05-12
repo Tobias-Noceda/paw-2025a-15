@@ -62,7 +62,7 @@ public class InsuranceJdbcDaoTest {
         final String NEW_NAME = TestData.Insurances.newInsurance.getName();
         final long NEW_PICTURE_ID = TestData.Images.validImage2.getId();
 
-        insuranceDao.edit(INSURANCE_ID, NEW_NAME, NEW_PICTURE_ID);;
+        insuranceDao.edit(INSURANCE_ID, NEW_NAME, NEW_PICTURE_ID);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d AND insurance_name = '%s' AND picture_id = %d", INSURANCE_ID, NAME, PICTURE_ID)));
@@ -76,7 +76,7 @@ public class InsuranceJdbcDaoTest {
         final String NEW_NAME = TestData.Insurances.newInsurance.getName();
         final long NEW_PICTURE_ID = TestData.Images.validImage2.getId();
 
-        insuranceDao.edit(INSURANCE_ID, NEW_NAME, NEW_PICTURE_ID);;
+        insuranceDao.edit(INSURANCE_ID, NEW_NAME, NEW_PICTURE_ID);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d", INSURANCE_ID)));
@@ -89,7 +89,7 @@ public class InsuranceJdbcDaoTest {
         final long PICTURE_ID = TestData.Insurances.validInsurance.getPictureId();
         final String NEW_NAME = TestData.Insurances.newInsurance.getName();
 
-        insuranceDao.edit(INSURANCE_ID, NEW_NAME, PICTURE_ID);;
+        insuranceDao.edit(INSURANCE_ID, NEW_NAME, PICTURE_ID);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d AND insurance_name = '%s' AND picture_id = %d", INSURANCE_ID, NAME, PICTURE_ID)));
@@ -104,7 +104,7 @@ public class InsuranceJdbcDaoTest {
         final long PICTURE_ID = TestData.Insurances.validInsurance.getPictureId();
         final long NEW_PICTURE_ID = TestData.Images.validImage2.getId();
 
-        insuranceDao.edit(INSURANCE_ID, NAME, NEW_PICTURE_ID);;
+        insuranceDao.edit(INSURANCE_ID, NAME, NEW_PICTURE_ID);
 
         Assert.assertEquals(0, 
             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "insurances", String.format("insurance_id = %d AND insurance_name = '%s' AND picture_id = %d", INSURANCE_ID, NAME, PICTURE_ID)));

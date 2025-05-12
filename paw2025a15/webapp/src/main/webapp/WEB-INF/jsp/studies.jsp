@@ -212,10 +212,18 @@
                 </td>
                 <td class="deauthorize-cell">
                   <c:url value="/patientAuthDoctor/${doctor.id}" var="deauthDoctorUrl" />
-                  <form action="${deauthDoctorUrl}" method="post" onsubmit="event.stopPropagation();">
-                    <!-- campo oculto con la acción -->
-                    <input type="hidden" name="action" value="toggle"/>
-                    <button type="submit" class="deauthorize-button">
+                  <form
+                    id="deauthDoctor_${doctor.id}"
+                    action="${deauthDoctorUrl}"
+                    method="post"
+                  >
+                    <button
+                      type="button"
+                      name="action"
+                      value="toggle"
+                      class="deauthorize-button"
+                      onclick="event.stopPropagation(); confirmDeauthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value, ${doctor.id});"
+                    >
                       <c:out value="${buttonText}" escapeXml="true"/>
                     </button>
                   </form>
@@ -236,7 +244,7 @@
 </div>
 
 <%@include file="components/confirmDialog.jsp" %>
-<script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
+<script src="<c:url value='/js/deauthConfirmationModal.js'/>"></script>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
 
 </body>

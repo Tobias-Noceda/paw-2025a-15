@@ -311,7 +311,7 @@ public class AuthDoctorJdbcDaoTest {
         final long DOC_ID = TestData.AuthDoctors.authDoctor.getDoctorId();
         final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
 
-        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);;
+        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
 
         Assert.assertEquals(0, 
                             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL.ordinal())));
@@ -324,7 +324,7 @@ public class AuthDoctorJdbcDaoTest {
         final long DOC_ID = TestData.AuthDoctors.authDoctor.getDoctorId();
         final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
 
-        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);;
+        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
 
         Assert.assertEquals(0, 
                             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL.ordinal())));
@@ -339,7 +339,7 @@ public class AuthDoctorJdbcDaoTest {
         final long DOC_ID = TestData.AuthDoctors.authDoctor.getDoctorId();
         final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
 
-        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);;
+        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
 
         Assert.assertEquals(0, 
                             JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d", DOC_ID, PATIENT_ID)));
