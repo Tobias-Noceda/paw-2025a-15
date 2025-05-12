@@ -240,7 +240,7 @@ public class DoctorDetailJdbcDaoTest {
 
         Assert.assertEquals(1, result);
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("shift_weekday = %d AND doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", WEEKDAY.ordinal(), DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("shift_weekday = %d AND doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", WEEKDAY.ordinal(), DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
     }
 
     @Test
@@ -285,7 +285,7 @@ public class DoctorDetailJdbcDaoTest {
 
         Assert.assertEquals(1, result);
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("shift_weekday = %d AND doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_coverages.insurance_id = %d)", WEEKDAY.ordinal(), DOC_NAME, INSURANCE.getId())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("shift_weekday = %d AND doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_coverages.insurance_id = %d)", WEEKDAY.ordinal(), DOC_NAME, INSURANCE.getId())));
     }
 
     @Test
@@ -300,7 +300,7 @@ public class DoctorDetailJdbcDaoTest {
 
         Assert.assertEquals(1, result);
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("shift_weekday = %d AND doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_details.doctor_specialty = %d)", WEEKDAY.ordinal(), DOC_NAME, DOC_SPECIALTY.ordinal())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("shift_weekday = %d AND doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d)", WEEKDAY.ordinal(), DOC_NAME, DOC_SPECIALTY.ordinal())));
     }
 
     @Test
@@ -315,7 +315,7 @@ public class DoctorDetailJdbcDaoTest {
 
         Assert.assertEquals(1, result);
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
     }
 
     @Test
@@ -336,7 +336,7 @@ public class DoctorDetailJdbcDaoTest {
         Assert.assertEquals(1, results.size());
         Assert.assertEquals(DOC, results.get(0));
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
     }
 
     @Test
@@ -395,7 +395,7 @@ public class DoctorDetailJdbcDaoTest {
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
     }
 
     @Test
@@ -412,6 +412,6 @@ public class DoctorDetailJdbcDaoTest {
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
         Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE users.user_name LIKE '%s' AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
+        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
     }
 }

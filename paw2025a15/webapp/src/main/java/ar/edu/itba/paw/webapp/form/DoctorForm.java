@@ -51,7 +51,7 @@ public class DoctorForm {
     private String phoneNumber;
 
 
-    @Pattern(regexp = "^\\d{1,10}$", message = "{form.doctorLicense.invalidFormat}")
+    @Pattern(regexp = "^\\d{1,15}$", message = "{form.doctorLicense.invalidFormat}")
     private String doctorLicense;
 
     public String getPhoneNumber() {

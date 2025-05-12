@@ -37,10 +37,12 @@
         <label for="file">
           <spring:message code="uploadStudies.fileLabel"/>:
         </label>
-        <input id="file"
+        <form:input id="file"
                type="file"
-               name="file"
-               accept=".png,.jpg,.jpeg,.pdf" />
+               path="file"
+               accept=".png,.jpg,.jpeg,.pdf"
+        />
+        <form:errors path="file" cssClass="sf-error"/>
       </div>
 
       <!-- Type -->
@@ -51,18 +53,25 @@
         <form:select id="type" cssClass="filter-select" path="type">
           <form:options
                   items="${studyTypeSelectItems}"
-                  itemValue="name"
-                  itemLabel="displayName" />
+                  itemLabel="label"
+                  itemValue="value"/>
         </form:select>
         <form:errors path="type" cssClass="sf-error"/>
       </div>
 
+      <c:if test="${createStudyForm.date == null}">
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("date").value = "${today}";
+          });
+        </script>
+      </c:if>
       <!-- Date -->
       <div class="sf-field">
         <label for="date">
           <spring:message code="createStudy.date"/>:
         </label>
-        <form:input id="date" value="${today}" type="date" path="date"/>
+        <form:input id="date" type="date" path="date"/>
         <form:errors path="date" cssClass="sf-error"/>
       </div>
 
