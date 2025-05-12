@@ -52,7 +52,7 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.email"/></label>
-          <form:input path="email" type="email" cssClass="login-input"/>
+          <form:input path="email" type="text" cssClass="login-input"/>
           <form:errors path="email" cssClass="error-box" element="div"/>
         </div>
 
@@ -71,7 +71,7 @@
                   type="date" />
           <form:errors
                   path="birthDate"
-                  cssClass="sf-error"
+                  cssClass="error-box"
                   element="div" />
         </div>
 
@@ -148,7 +148,7 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.email"/></label>
-          <form:input path="email" type="email" cssClass="login-input"/>
+          <form:input path="email" type="text" cssClass="login-input"/>
           <form:errors path="email" cssClass="error-box" element="div"/>
         </div>
 

@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.form.constraints;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -19,7 +19,7 @@ public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule
             schedule.getStartTime() == null || schedule.getEndTime() == null) {
             return false;
         }
-        else if(!LocalDateTime.parse(schedule.getStartTime()).isBefore(LocalDateTime.parse(schedule.getEndTime()))){
+        else if(!LocalTime.parse(schedule.getStartTime()).isBefore(LocalTime.parse(schedule.getEndTime()))){
             return false;
         }
         return true;
