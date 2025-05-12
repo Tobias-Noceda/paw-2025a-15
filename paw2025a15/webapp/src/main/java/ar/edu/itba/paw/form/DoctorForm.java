@@ -9,6 +9,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.annotation.ValidArgPhone;
+import ar.edu.itba.paw.form.constraints.EmailNonexistentInUsers;
+import ar.edu.itba.paw.form.constraints.FieldMatch;
+import ar.edu.itba.paw.form.constraints.ValidSchedule;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import org.springframework.format.annotation.NumberFormat;
