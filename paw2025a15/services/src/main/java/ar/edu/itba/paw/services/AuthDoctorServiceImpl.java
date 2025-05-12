@@ -101,17 +101,21 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         if(pds.getDetailByPatientId(patientId).isEmpty()) throw new NotFoundException("Patient with id: " + patientId + " does not exist!");
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         List<AccessLevelEnum> toRemove;
+        List<AccessLevelEnum> toAdd = new ArrayList<>(accessLevels);
         if(accessLevels==null || accessLevels.isEmpty()){
             toRemove = getAuthAccessLevelEnums(patientId, doctorId);
             toRemove.remove(AccessLevelEnum.VIEW_BASIC);
         } else {
             toRemove = new ArrayList<>();
             for (AccessLevelEnum currentAccessLevel : getAuthAccessLevelEnums(patientId, doctorId)) {
-                if(currentAccessLevel!=AccessLevelEnum.VIEW_BASIC && !accessLevels.contains(currentAccessLevel)) toRemove.add(currentAccessLevel);
+                if(currentAccessLevel!=AccessLevelEnum.VIEW_BASIC && !accessLevels.contains(currentAccessLevel))
+                    toRemove.add(currentAccessLevel);
+                else
+                    toAdd.remove(currentAccessLevel);
             }
         }
         unauthDoctorWithLevels(patientId, doctorId, toRemove);
-        authDoctorWithLevels(patientId, doctorId, accessLevels);
+        authDoctorWithLevels(patientId, doctorId, toAdd);
         LOGGER.info("Updated authorizations of doctor with id: {} for patient with id: {}", doctorId, patientId);
     }
 
