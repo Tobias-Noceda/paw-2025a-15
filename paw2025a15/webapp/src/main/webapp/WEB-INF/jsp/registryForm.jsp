@@ -58,7 +58,7 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.phone"/></label>
-          <form:input path="phoneNumber" type="number" cssClass="login-input" onkeydown="blockInvalidPhoneKeys(event)"/>
+          <form:input path="phoneNumber" type="text" cssClass="login-input"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 
@@ -176,7 +176,7 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.phone"/></label>
-          <form:input path="phoneNumber" type="number" cssClass="login-input" onkeydown="blockInvalidPhoneKeys(event)"/>
+          <form:input path="phoneNumber" type="text" cssClass="login-input"/>
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 

@@ -73,11 +73,10 @@
         <div class="field-container full-width">
           <form:label path="phoneNumber"><spring:message code="profile.phone.label"/></form:label>
           <form:input path="phoneNumber"
-                      type="number"
+                      type="text"
                       cssClass="input-field"
                       value="${user_data.telephone}"
-                      onkeydown="return blockInvalidPhoneKeys(event)"
-                      onpaste="return blockNegativePaste(event)"/>
+                     />
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 

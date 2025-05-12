@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import ar.edu.itba.paw.annotation.ValidArgPhone;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
@@ -40,8 +41,7 @@ public class DoctorForm {
 
     private int amount;
 
-    @NotEmpty(message = "{form.phoneNumber.notEmpty}")
-    @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
+    @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
     @Pattern(regexp = "^([0-9]{2})\\.[0-9]{1,5}$", message = "{form.doctorLicense.invalidFormat}")

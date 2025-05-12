@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.form;
 
+import ar.edu.itba.paw.annotation.ValidArgPhone;
 import ar.edu.itba.paw.form.constraints.PastDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,8 +26,7 @@ public class PatientForm {
     @Email(message = "{form.email.invalid}")
     private String email;
 
-    @NotEmpty(message = "{form.phoneNumber.notEmpty}")
-    @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
+    @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
     @Positive

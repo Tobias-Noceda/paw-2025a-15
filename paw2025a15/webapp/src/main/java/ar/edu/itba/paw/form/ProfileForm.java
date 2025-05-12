@@ -2,6 +2,7 @@ package ar.edu.itba.paw.form;
 
 import javax.validation.constraints.*;
 
+import ar.edu.itba.paw.annotation.ValidArgPhone;
 import ar.edu.itba.paw.form.constraints.PastDate;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,8 +17,8 @@ public class ProfileForm {
     
     MultipartFile profileImage;
 
-    @Size(min = 5, max = 15, message = "{form.phoneNumber.invalid}")
-    String phoneNumber;
+    @ValidArgPhone(message = "{form.phoneNumber.invalid}")
+    private String phoneNumber;
 
     @Positive
     @Max(value = 140, message = "{form.age.invalid}")
