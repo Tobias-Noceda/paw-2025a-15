@@ -24,7 +24,7 @@ public interface EmailService {
 
     public void sendPatientCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift);
 
-    public void sendPasswordResetEmail(User user);
+    public void sendPasswordResetEmail(User user, String token);
 
     public void sendPatientAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale);
     

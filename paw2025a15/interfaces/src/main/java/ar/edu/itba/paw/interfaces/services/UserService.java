@@ -27,4 +27,6 @@ public interface UserService {
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 
     public void changePasswordByID(long id, String password);
+
+    public void askPasswordRecover(String email);
 }

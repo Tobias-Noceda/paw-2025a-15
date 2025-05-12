@@ -4,7 +4,6 @@ import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Locale;
-import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -280,21 +279,17 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendPasswordResetEmail(User user) {
+    public void sendPasswordResetEmail(User user, String token) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("userName", user.getName());
-
-        String token = UUID.randomUUID().toString(); // o algo más complejo
-        //passwordRecoveryTokenService.saveTokenForUser(user.getId(), token); // persistir en DB con expiración opcional
 
         String recoveryLink = baseURL + "change-password/" + token + "/" + user.getId();
         templateModel.put("recoveryLink", recoveryLink);
 
         Locale locale = user.getLocale().toLocale();
         String subject = messageSource.getMessage("passwordReset.subject", null, locale);
-
 
         try {
             sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "passwordRecoveryTemplate", locale);

@@ -21,7 +21,6 @@ import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
 import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -41,9 +40,6 @@ public class UserController {
 
     @Autowired
     private PatientDetailService pds;
-
-    @Autowired
-    private EmailService es;
 
     @Autowired
     private InsuranceService is;
@@ -84,8 +80,7 @@ public class UserController {
         }
 
         try {
-            User user = us.getUserByEmail(form.getEmail()).orElseThrow(() -> new IllegalArgumentException("No such email"));
-            es.sendPasswordResetEmail(user);
+            us.askPasswordRecover(form.getEmail());
             LOGGER.info("Password reset email sent to: {}", form.getEmail());
             mav = new ModelAndView("forgotPassword");
             mav.addObject("successMessage", "linkSent");

@@ -38,7 +38,7 @@
             <!-- Mensaje de error general -->
             <c:if test="${not empty errorMessage}">
                 <div class="error-box">
-                    <spring:message code="changePassword.error.${errorMessage}"/>
+                    <c:out value="${errorMessage}" escapeXml="true"/>
                 </div>
             </c:if>
 

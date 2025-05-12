@@ -99,7 +99,6 @@ public class StudyController {
         File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         ss.create(createStudyForm.getType(), createStudyForm.getComment(), file, patientId, user.getId(), createStudyForm.getDate());
 
-
         if(patientId != user.getId()) {
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {

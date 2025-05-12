@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
@@ -28,6 +30,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private EmailService es;
 
     @Autowired
     private FileService fs;
@@ -86,6 +91,13 @@ public class UserServiceImpl implements UserService {
         if(getUserById(id).isEmpty()) throw new NotFoundException("User with id: " + id + " does not exist!");
         userDao.changePasswordByID(id, passwordEncoder.encode(password));
         LOGGER.info("Changed password for user with id: {}", id);
+    }
+
+    @Override
+    public void askPasswordRecover(String email) {
+        User user = getUserByEmail(email).orElseThrow(() -> new NotFoundException("User with email: " + email + " does not exist!"));
+        es.sendPasswordResetEmail(user, UUID.randomUUID().toString());
+        LOGGER.info("Password recovery requested for user with email: {}", email);
     }
 
     @Transactional
