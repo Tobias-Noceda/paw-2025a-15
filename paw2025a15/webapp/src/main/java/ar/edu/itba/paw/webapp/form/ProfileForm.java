@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 import ar.edu.itba.paw.webapp.form.constraints.ValidProfileImage;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,10 +34,10 @@ public class ProfileForm {
 
     private BloodTypeEnum bloodType;
 
-    @Positive
+    @Range(min = 0, max = 3, message = "{form.height.invalid}")
     private Double height;
 
-    @Positive
+    @Range(min = 0, max = 300, message = "{form.weight.invalid}")
     private Double weight;
 
     private Boolean smokes;
