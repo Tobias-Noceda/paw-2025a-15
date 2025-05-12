@@ -79,7 +79,7 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ");
+            query.append(" AND LOWER(u.user_name) LIKE ? ");
             params.add("%" + sanitize(name) + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -106,7 +106,7 @@ public class UserJdbcDao implements UserDao{
         params.add(doctorId);
         types.add(java.sql.Types.BIGINT);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ");
+            query.append(" AND LOWER(u.user_name) LIKE ? ");
             params.add("%" + sanitize(name) + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -144,6 +144,7 @@ public class UserJdbcDao implements UserDao{
                 .replace("\\", "\\\\\\")
                 .replace("%", "\\\\%")
                 .replace("_", "\\\\_")
-                .trim();
+                .trim()
+                .toLowerCase();
     }
 }
