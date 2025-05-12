@@ -96,6 +96,12 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
                     ON (EXTRACT(ISODOW FROM gs.date)::int - 1) = ds.shift_weekday
                 WHERE 
                     ds.doctor_id = ?
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM appointments a
+                        WHERE a.shift_id = ds.shift_id
+                        AND a.appointment_date = gs.date
+                    )
                 ORDER BY gs.date, ds.shift_start_time
             """,
             new Object[]  {startDate, endDate, doctorId},
