@@ -437,3 +437,43 @@ body.dialog-opened > *:not(dialog) {
 dialog {
     pointer-events: auto;
 }
+
+
+.confirmation-dialog {
+
+    position: fixed;            /* lo saca del flujo normal */
+
+    top: 50%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 35vw;               /* ancho relativo al viewport */
+
+    max-width: 90vw;           /* no desborda en pantallas pequeñas */
+
+    padding: 1.5em;
+
+    background: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+    z-index: 2000;             /* siempre encima de todo */
+
+}
+
+
+/* Solo funciona si usas showModal() */
+
+.confirmation-dialog::backdrop {
+
+    background: rgba(0,0,0,0.5);
+
+    backdrop-filter: blur(2px);
+
+}
