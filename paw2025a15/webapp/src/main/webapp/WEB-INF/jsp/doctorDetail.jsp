@@ -86,7 +86,7 @@
                           name="action"
                           value="toggle"
                           onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
-                          class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
+                          class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-update-button'}"
                   >
                     <c:out value="${buttonText}" escapeXml="true"/>
                   </button>
@@ -152,7 +152,7 @@
                         name="action"
                         value="toggle"
                         onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
-                        class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-auth-button'}"
+                        class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-update-button'}"
                 >
                   <c:out value="${buttonText}" escapeXml="true"/>
                 </button>
