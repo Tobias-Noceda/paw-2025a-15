@@ -213,17 +213,57 @@ body {
     text-align: left;
     margin-bottom: 24px;
 }
+
+
+
+
+/* ——————————————————————————————————
+   Estilo unificado para <select> en todos los navegadores,
+   incluidos Safari e IE/Edge
+   —————————————————————————————————— */
 .login-select {
-    padding: 12px;
+    /* tu estilo habitual */
+    width: 100%;
+    padding: 12px 14px;
     font-size: 1rem;
+    color: var(--clr-text);
+    background-color: #fff;
     border: 1px solid #d0d5dd;
     border-radius: var(--radius);
     transition: border-color var(--transition);
+
+    /* 1) quitar estilos nativos */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* 2) flecha personalizada a la derecha */
+    background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 20 20' fill='black' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414L10 13.414 5.293 8.707a1 1 0 010-1.414z' clip-rule='evenodd'/></svg>") no-repeat center;
+
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 12px;
 }
+
+
+/* 3) ocultar flecha nativa de IE/Edge */
+.login-select::-ms-expand {
+    display: none;
+}
+
+
+/* foco y hover igual que antes */
+.login-select:hover {
+    border-color: #a0a0a0;
+}
+
+
 .login-select:focus {
     outline: none;
     border-color: var(--clr-primary);
 }
+
+
 
 /* ─── Ocultar secciones por defecto ───────────── */
 .registration-section {
