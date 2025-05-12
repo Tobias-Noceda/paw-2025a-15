@@ -5,7 +5,6 @@ import ar.edu.itba.paw.models.exceptions.MediaTypeException;
 public enum FileTypeEnum {
 
     PNG("image/png"),
-    JPG("image/jpg"),
     JPEG("image/jpeg"),
     PDF("application/pdf");
 
