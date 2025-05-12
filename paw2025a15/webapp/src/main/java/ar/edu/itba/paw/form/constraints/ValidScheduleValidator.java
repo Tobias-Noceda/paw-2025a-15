@@ -8,13 +8,11 @@ import javax.validation.ConstraintValidatorContext;
 import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.models.Schedule;
 
-public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule, DoctorForm> {
+public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule, Schedule> {
 
     @Override
-    public boolean isValid(DoctorForm form, ConstraintValidatorContext context) {
-        if (form.getSchedules() == null) return false;
-
-        Schedule schedule = form.getSchedules();
+    public boolean isValid(Schedule schedule, ConstraintValidatorContext context) {
+        if (schedule == null) return false;
 
         if(schedule.getWeekday() == null || schedule.getWeekday().isEmpty() || 
             schedule.getStartTime() != null || schedule.getEndTime() != null) {

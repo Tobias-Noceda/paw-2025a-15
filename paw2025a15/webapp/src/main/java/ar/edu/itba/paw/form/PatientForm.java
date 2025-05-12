@@ -25,7 +25,6 @@ public class PatientForm {
     @Email(message = "{form.email.invalid}")
     private String email;
 
-    @NotEmpty(message = "{form.phoneNumber.notEmpty}")
     @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 

@@ -14,7 +14,6 @@ import ar.edu.itba.paw.form.constraints.ValidSchedule;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
-@ValidSchedule
 @FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class DoctorForm {
     @NotEmpty(message = "{form.name.notEmpty}")
@@ -34,6 +33,7 @@ public class DoctorForm {
     private List<Long> ObrasSociales;
 
     @NotNull(message = "{form.schedules.notNull}")
+    @ValidSchedule
     private Schedule schedules;
 
     @NotEmpty(message = "{form.address.notEmpty}")
@@ -46,7 +46,6 @@ public class DoctorForm {
 
     private int amount;
 
-    @NotEmpty(message = "{form.phoneNumber.notEmpty}")
     @Size(min=8, max=15, message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
