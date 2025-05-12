@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.util.NoSuchElementException;
 
 import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,12 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.exceptions.MediaTypeException;
 
 @Controller
 public class FileController {
@@ -55,17 +56,10 @@ public class FileController {
         
         byte[] content = f.getContent();
         FileTypeEnum fileType = f.getType();
-        
-        MediaType mediaType;
-        mediaType = switch (fileType) {
-            case PNG -> MediaType.IMAGE_PNG;
-            case JPEG -> MediaType.IMAGE_JPEG;
-            default -> throw new MediaTypeException("The profile picture must be an image type of file");
-        };
 
         return ResponseEntity
                 .ok()
-                .contentType(mediaType)
+                .contentType(MediaType.valueOf(fileType.getName()))
                 .body(content);
     }
 
@@ -75,17 +69,10 @@ public class FileController {
         
         byte[] content = f.getContent();
         FileTypeEnum fileType = f.getType();
-        
-        MediaType mediaType;
-        mediaType = switch (fileType) {
-            case PNG -> MediaType.IMAGE_PNG;
-            case JPEG -> MediaType.IMAGE_JPEG;
-            default -> throw new MediaTypeException("The logo picture must be an image type of file");
-        };
 
         return ResponseEntity
                 .ok()
-                .contentType(mediaType)
+                .contentType(MediaType.valueOf(fileType.getName()))
                 .body(content);
     }
 
@@ -95,28 +82,11 @@ public class FileController {
         
         byte[] content = f.getContent();
         FileTypeEnum fileType = f.getType();
-        
-        MediaType mediaType;
-        mediaType = switch (fileType) {
-            case PNG -> MediaType.IMAGE_PNG;
-            case JPEG -> MediaType.IMAGE_JPEG;
-            case PDF -> MediaType.APPLICATION_PDF;
-            default -> MediaType.APPLICATION_OCTET_STREAM;
-        };
 
         return ResponseEntity
                 .ok()
-                .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"file_" + id + getExtension(fileType) + "\"")
+                .contentType(MediaType.valueOf(fileType.getName()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"file_" + id + fileType.getExtension() + "\"")
                 .body(content);
-    }
-
-    private String getExtension(FileTypeEnum mediaType) {
-        return switch (mediaType) {
-            case PNG -> ".png";
-            case JPEG -> ".jpg";
-            case PDF -> ".pdf";
-            default -> "";
-        };
     }
 }

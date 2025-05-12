@@ -5,7 +5,9 @@ import javax.validation.constraints.*;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
+import ar.edu.itba.paw.webapp.form.constraints.ValidProfileImage;
 
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 public class ProfileForm {
     
+    @ValidProfileImage
     MultipartFile profileImage;
 
     @ValidArgPhone(message = "{form.phoneNumber.invalid}")
@@ -31,10 +34,10 @@ public class ProfileForm {
 
     private BloodTypeEnum bloodType;
 
-    @Positive
+    @Range(min = 0, max = 3, message = "{form.height.invalid}")
     private Double height;
 
-    @Positive
+    @Range(min = 0, max = 300, message = "{form.weight.invalid}")
     private Double weight;
 
     private Boolean smokes;
