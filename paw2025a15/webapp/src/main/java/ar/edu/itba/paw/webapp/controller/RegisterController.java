@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -26,17 +25,12 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 
 @Controller
 public class RegisterController {
-
-    @Autowired
-    private UserService us;
 
     @Autowired
     private InsuranceService is;
@@ -160,14 +154,6 @@ public class RegisterController {
             mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
             return mav;
         }
-    }
-
-    private static boolean isRangeValid(String startTime, String endTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime start = LocalTime.parse(startTime, formatter);
-        LocalTime end = LocalTime.parse(endTime, formatter);
-
-        return start.isBefore(end);
     }
 
     private void loginUser(String email, String password) {
