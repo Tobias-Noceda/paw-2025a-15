@@ -68,4 +68,13 @@ public class ErrorControllerAdvice {
     public ModelAndView handle415Exception() {
         return new ModelAndView("errorPages/415");
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({
+        Exception.class,
+        RuntimeException.class
+    })
+    public ModelAndView handle500Exception() {
+        return new ModelAndView("errorPages/500");
+    }
 }
