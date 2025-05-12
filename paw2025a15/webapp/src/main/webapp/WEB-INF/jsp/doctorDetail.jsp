@@ -274,7 +274,7 @@
     <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
-    <script src="<c:url value='/js/main.js'/>"></script>
     <script src="<c:url value='/js/doctorDetailNav.js'/>"></script>
+
   </body>
 </html>

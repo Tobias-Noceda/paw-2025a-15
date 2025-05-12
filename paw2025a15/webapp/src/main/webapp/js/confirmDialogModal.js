@@ -1,3 +1,4 @@
+
 let pendingForm = null;
 
 function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
@@ -9,7 +10,6 @@ function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   const okBtn  = document.getElementById('confirmButton');
   const noBtn  = document.getElementById('cancelButton');
 
-  // 1) Rellenar textos
   msgEl.textContent = message;
   if (!secondaryMessage) {
     secEl.style.display = 'none';
@@ -20,24 +20,21 @@ function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   okBtn.textContent = accept;
   noBtn.textContent = cancel;
 
-  // 2) Marcar body como “dialog abierto” para bloquear eventos fondo
   document.body.classList.add('dialog-opened');
 
-  // 3) Abrir el modal con un tick de retraso (para que el click original no se propague)
   setTimeout(() => {
     dialog.showModal();
   }, 0);
 
-  return false;  // evita submits accidentales
+  return false;
 }
+
 
 function closeConfirmDialog() {
   const dialog = document.getElementById('customConfirmDialog');
   dialog.close();
-  pendingForm = null;
-  // quitar el bloqueo de fondo
-  document.body.classList.remove('dialog-opened');
 }
+
 
 function submitPendingForm() {
   if (pendingForm) {
@@ -46,17 +43,17 @@ function submitPendingForm() {
   }
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
-
   const dialog = document.getElementById('customConfirmDialog');
 
-  // 3) Forzar el polyfill aunque detecte soporte nativo parcial
-
   if (window.dialogPolyfill) {
-
     dialogPolyfill.registerDialog(dialog);
-
   }
 
+  // Listener para el evento 'close'
+  dialog.addEventListener('close', () => {
+    pendingForm = null;
+    document.body.classList.remove('dialog-opened');
+  });
 });
+

@@ -1,3 +1,4 @@
+
 function confirmAuthDoctor(message, secondaryMessage, accept, cancel, name, value) {
     const form = document.getElementById('authDoctorForm');
 
@@ -8,7 +9,7 @@ function confirmAuthDoctor(message, secondaryMessage, accept, cancel, name, valu
         actionInput.name = 'action';
         form.appendChild(actionInput);
     }
-    actionInput.value = value; 
+    actionInput.value = value;
 
     const event = new Event('submit', { cancelable: true });
     if (form.dispatchEvent(event)) {
