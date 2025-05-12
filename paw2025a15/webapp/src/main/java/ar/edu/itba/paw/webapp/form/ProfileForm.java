@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
+import ar.edu.itba.paw.webapp.form.constraints.ValidProfileImage;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class ProfileForm {
     
+    @ValidProfileImage
     MultipartFile profileImage;
 
     @ValidArgPhone(message = "{form.phoneNumber.invalid}")

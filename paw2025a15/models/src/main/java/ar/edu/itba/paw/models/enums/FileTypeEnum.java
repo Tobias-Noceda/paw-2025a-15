@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.exceptions.MediaTypeException;
 public enum FileTypeEnum {
 
     PNG("image/png"),
+    JPG("image/jpg"),
     JPEG("image/jpeg"),
     PDF("application/pdf");
 
@@ -16,6 +17,10 @@ public enum FileTypeEnum {
 
     public String getName(){
         return name;
+    }
+
+    public String getExtension() {
+        return "." + name.substring(name.indexOf("/") + 1);
     }
 
     public static FileTypeEnum fromInt(int num){

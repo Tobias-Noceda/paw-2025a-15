@@ -42,30 +42,33 @@
              method="post"
              enctype="multipart/form-data"
              class="profile-form">
-
     <!-- Cabecera -->
-    <div class="card profile-header">
-      <div class="profile-image">
-        <div class="edit-image-wrapper">
-          <img id="prof-image" src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
-          <button class="edit-button" type="button" onclick="handleImageChange()">
-            ✏️
-          </button>
-          <input type="file"
-                 id="fileInput"
-                 name="profileImage"
-                 class="hidden-file-input"
-                 accept=".png, .jpg, .jpeg"
-                 onchange="handleImageChange(event)"/>
+    <div class="image-header" style="display: flex; flex-direction: column; align-items: left;">
+      <div class="card profile-header">
+        <div class="profile-image">
+          <div class="edit-image-wrapper">
+            <img id="prof-image" src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
+            <button class="edit-button" type="button" onclick="handleImageChange()">
+              ✏️
+            </button>
+            <input type="file"
+                  id="fileInput"
+                  name="profileImage"
+                  class="hidden-file-input"
+                  accept=".png, .jpg, .jpeg"
+                  onchange="handleImageChange(event)"/>
+
+          </div>
         </div>
-      </div>
-      <div class="profile-info-block">
-        <p class="name"><c:out value="${user_data.name}" escapeXml="true"/></p>
-        <p class="email"><c:out value="${user_data.email}" escapeXml="true"/></p>
-        <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user_data.role}"/></p>
-        <c:if test="${user_data.role == 'DOCTOR'}">
-          <p class="role"><spring:message code="doctor.details.license.label"/> <c:out value="${doctorDetail.doctorLicense}" escapeXml="true"/></p>
-        </c:if>
+        <div class="profile-info-block">
+          <p class="name"><c:out value="${user_data.name}" escapeXml="true"/></p>
+          <p class="email"><c:out value="${user_data.email}" escapeXml="true"/></p>
+          <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user_data.role}"/></p>
+          <c:if test="${user_data.role == 'DOCTOR'}">
+            <p class="role"><spring:message code="doctor.details.license.label"/> <c:out value="${doctorDetail.doctorLicense}" escapeXml="true"/></p>
+          </c:if>
+        </div>
+        <form:errors path="profileImage" cssClass="error-box"/>
       </div>
     </div>
 
