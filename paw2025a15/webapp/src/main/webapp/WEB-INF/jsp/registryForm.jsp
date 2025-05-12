@@ -254,6 +254,8 @@
         </button>
       </form:form>
 
+    </div>
+
       <div class="extra-links">
         <p>
           <a href="${login}" class="link-primary">
@@ -261,8 +263,6 @@
           </a>
         </p>
       </div>
-    </div>
-
   </div>
 </div>
 
