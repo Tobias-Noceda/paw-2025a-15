@@ -60,25 +60,36 @@
         <div class="action-buttons">
             <c:url value="/view-study/${study.id}" var="studyLink" />
 
-            <a
-                    class="view-button"
-                    style="margin-right: 7px;"
-                    href="${studyLink}"
-                    onclick="event.stopPropagation();"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
-                </svg>
+            <a href="${studyLink}"
+               target="_blank"
+               onclick="event.stopPropagation();">
+                <button
+                        class="view-button"
+
+
+                >
+                    <spring:message code="study.view"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                              d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                    </svg>
+                </button>
             </a>
-            <a
-                    class="download-button"
-                    href="${studyLink}"
-                    download="${studyName}"
-                    onclick="event.stopPropagation();"
+
+            <a                     href="${studyLink}"
+                                   download="${studyName}"
+                                   onclick="event.stopPropagation();"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12 16a1 1 0 0 1-.7-.29l-4-4a1 1 0 0 1 1.41-1.41L11 12.59V4a1 1 0 0 1 2 0v8.59l2.29-2.29a1 1 0 0 1 1.41 1.41l-4 4a1 1 0 0 1-.7.29zM19 14a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3a1 1 0 0 0-2 0v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3a1 1 0 0 0-1-1z"/>
-                </svg>
+                <button
+                    class="download-button"
+
+            >
+                    <spring:message code="study.download"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                              d="M12 16a1 1 0 0 1-.7-.29l-4-4a1 1 0 0 1 1.41-1.41L11 12.59V4a1 1 0 0 1 2 0v8.59l2.29-2.29a1 1 0 0 1 1.41 1.41l-4 4a1 1 0 0 1-.7.29zM19 14a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3a1 1 0 0 0-2 0v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3a1 1 0 0 0-1-1z"/>
+                    </svg>
+                </button>
             </a>
         </div>
     </div>
