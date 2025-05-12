@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import ar.edu.itba.paw.form.constraints.AvailableTurn;
 
-@AvailableTurn
+@AvailableTurn(message = "{doctorDetail.nextWeek}")
 public class TakeTurnForm {
     @NotNull
     private int shiftId;
@@ -16,6 +16,16 @@ public class TakeTurnForm {
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
+
+    private Long doctorId;
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
+    }
 
     public int getShiftId() {
         return shiftId;

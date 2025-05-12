@@ -22,6 +22,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AppointmentController {
@@ -99,32 +100,36 @@ public class AppointmentController {
     public ModelAndView takeAppointment(
         @ModelAttribute("user_data") User user,
         @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
-        final BindingResult errors
+        final BindingResult errors,
+        RedirectAttributes redirectAttributes
     ) {
-        if(errors.hasErrors()) {
-            throw new FormErrorException("Error in appointment form: " + errors.getFieldErrors().toString());
+        //throw new FormErrorException("Error in appointment form: " + errors.getFieldErrors().toString());
+        if(!errors.hasErrors()) {
+            if (user == null) {
+                throw new UnauthorizedException("User not found");
+            }
+            try {
+                as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
+            } catch (Exception e) {
+                throw new FormErrorException("Error in appointment form: " + e.getMessage());
+            }
+            return new ModelAndView("redirect:/appointments");
+        } else {
+            redirectAttributes.addFlashAttribute("takeTurnErrors", errors);
+            return new ModelAndView("redirect:/doctors/" + form.getDoctorId());
         }
-
-        if (user == null) {
-            throw new UnauthorizedException("User not found");
-        }
-        try {
-            as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
-        } catch (Exception e) {
-            throw new FormErrorException("Error in appointment form: " + e.getMessage());
-        }
-
-        return new ModelAndView("redirect:/appointments");
     }
 
     @RequestMapping(value = "/removeAppointment", method = RequestMethod.POST)
     public ModelAndView removeAppointment(
         @ModelAttribute("user_data") User user,
         @Valid @ModelAttribute("takeTurnForm") final TakeTurnForm form,
-        final BindingResult errors
+        final BindingResult errors,
+        RedirectAttributes redirectAttributes
     ) {
         if (errors.hasErrors()) {
-            throw new FormErrorException("Error in takeTurn form: " + errors.getFieldErrors().toString());
+            redirectAttributes.addFlashAttribute("removeError", errors);
+            return new ModelAndView("redirect:/appointments");
         }
 
         if (user == null) {

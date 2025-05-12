@@ -199,6 +199,11 @@
     </div>
     <div class="appointment-list-container">
       <h3 class="table-title"><spring:message code="appointments.free"/></h3>
+      <c:if test="${not empty removeError}">
+        <div class="error-box">
+          <spring:message code="doctor.details.takenTurn"></spring:message>
+        </div>
+      </c:if>
       <div class="appointment-table-container">
         <div class="appointments-table-header">
           <table class="appointments-table">
