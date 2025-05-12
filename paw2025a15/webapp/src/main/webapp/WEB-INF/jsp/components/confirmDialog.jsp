@@ -28,7 +28,5 @@
     ></button>
   </form>
 </dialog>
-<script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
-<script src="<c:url value='/js/buttonControl.js'/>"></script>
 
 </html>

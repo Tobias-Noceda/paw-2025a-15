@@ -242,9 +242,9 @@
         </div>
       </div>
     </div>
-    <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
 
     <%@include file="components/confirmDialog.jsp" %>
+    <script src="<c:url value='/js/main.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
 
   </body>
