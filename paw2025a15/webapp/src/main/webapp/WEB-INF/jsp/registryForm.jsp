@@ -77,8 +77,8 @@
 
         <div class="field-container">
           <form:label cssClass="field-label" path="height"><spring:message code="profileInfo.height"/></form:label>
-          <input id="patient-height"
-                 name="height"
+          <form:input id="patient-height"
+                 path="height"
                  type="text"
                  maxlength="9"
                  pattern="^\d{1,6}([.]\d{1,2})?$"
@@ -90,8 +90,8 @@
 
         <div class="field-container">
           <form:label cssClass="field-label" path="weight"><spring:message code="profileInfo.weight"/></form:label>
-          <input id="patient-weight"
-                 name="weight"
+          <form:input id="patient-weight"
+                 path="weight"
                  type="text"
                  maxlength="9"
                  pattern="^\d{1,6}([.]\d{1,2})?$"
