@@ -17,6 +17,7 @@
 
 <c:url value="/createPatient" var="patientPost"/>
 <c:url value="/createMedic"   var="medicPost"/>
+<c:url value="/login" var="login"/>
 
 <div class="page-container">
   <div class="login-card">
@@ -126,6 +127,7 @@
         <button type="submit" class="btn-primary">
           <spring:message code="doctorForm.registerButton"/>
         </button>
+
       </form:form>
     </div>
 
@@ -249,6 +251,14 @@
           <spring:message code="doctorForm.registerButton"/>
         </button>
       </form:form>
+
+      <div class="extra-links">
+        <p>
+          <a href="${login}" class="link-primary">
+            <spring:message code="register.back"/>
+          </a>
+        </p>
+      </div>
     </div>
 
   </div>

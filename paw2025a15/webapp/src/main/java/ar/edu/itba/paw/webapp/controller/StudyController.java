@@ -29,7 +29,6 @@ import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Study;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -62,9 +61,11 @@ public class StudyController {
     @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
         @PathVariable("patientId") int patientId,
+        @ModelAttribute("landingForm") final LandingForm landingForm,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
-        @ModelAttribute("landingForm") final LandingForm landingForm
-        ){
+        BindingResult errors,
+        Locale locale
+    ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
@@ -74,8 +75,7 @@ public class StudyController {
         ModelAndView mav = new ModelAndView("createStudy");
         mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
-        mav.addObject("patientId", patientId);
-        mav.addObject("studyTypeSelectItems", StudyTypeEnum.values());
+        mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
 
         return mav;
     }
@@ -84,16 +84,14 @@ public class StudyController {
     public ModelAndView createStudy(
             @ModelAttribute("user_data") User user,
             @PathVariable("patientId") int patientId,
-            @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
             @ModelAttribute("landingForm") final LandingForm landingForm,
-            BindingResult errors
-    ) throws IOException{
+            @Valid @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
+            BindingResult errors,
+            Locale locale
+    ) throws IOException {
         if (errors.hasErrors()) {
-            return createStudyForm(patientId, createStudyForm, landingForm);
-        }
-        
-        if (user == null) {
-            throw new UnauthorizedException("User not found");
+            System.out.println("Errors: " + errors);
+            return createStudyForm(patientId, landingForm, createStudyForm, errors, locale);
         }
 
         File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));

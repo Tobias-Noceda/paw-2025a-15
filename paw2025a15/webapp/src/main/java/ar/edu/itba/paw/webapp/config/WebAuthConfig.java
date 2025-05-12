@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,6 +43,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private WebUserAuthDecision ad;
+
+    @Autowired
+    private Environment env;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -105,7 +109,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .rememberMe(me -> me
                 .rememberMeParameter("remember-me")
                 .userDetailsService(userDetailsService)
-                .key("mysupersecretketthatnobodyknowsabout")
+                .key(env.getProperty("security.rememberme.key"))
                 .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
             )
             .logout(logout -> logout
