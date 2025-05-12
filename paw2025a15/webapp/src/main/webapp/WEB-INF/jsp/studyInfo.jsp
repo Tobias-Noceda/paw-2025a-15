@@ -171,5 +171,6 @@
 
 <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
 <%@include file="components/confirmDialog.jsp" %>
+<script src="<c:url value='/js/buttonControl.js'/>"></script>
 </body>
 </html>

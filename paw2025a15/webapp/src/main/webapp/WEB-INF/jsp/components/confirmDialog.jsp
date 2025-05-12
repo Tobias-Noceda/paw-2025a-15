@@ -2,15 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
-<head>
   <meta charset="UTF-8"/>
   <link rel="stylesheet" href="https://unpkg.com/dialog-polyfill/dist/dialog-polyfill.css" />
 
   <script src="https://unpkg.com/dialog-polyfill/dist/dialog-polyfill.js"></script>
 
   <link rel="stylesheet" href="<c:url value="/css/main.css"/>"/>
-</head>
-<body>
+
 <dialog class="confirmation-dialog" id="customConfirmDialog">
   <h3 id="confirmDialogMessage"></h3>
   <p id="confirmDialogSecondText" class="confirm-dialog-second-text"></p>
@@ -31,5 +29,6 @@
   </form>
 </dialog>
 <script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
-</body>
+<script src="<c:url value='/js/buttonControl.js'/>"></script>
+
 </html>

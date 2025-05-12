@@ -266,5 +266,7 @@
 
     <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
+    <script src="<c:url value='/js/buttonControl.js'/>"></script>
+
   </body>
 </html>

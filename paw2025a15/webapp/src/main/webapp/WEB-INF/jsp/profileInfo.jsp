@@ -351,4 +351,6 @@
 
 
 </script>
+<script src="<c:url value='/js/buttonControl.js'/>"></script>
+
 </body>
