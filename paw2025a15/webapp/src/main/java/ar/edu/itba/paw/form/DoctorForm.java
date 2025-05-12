@@ -8,9 +8,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import ar.edu.itba.paw.form.constraints.EmailNonexistentInUsers;
+import ar.edu.itba.paw.form.constraints.FieldMatch;
+import ar.edu.itba.paw.form.constraints.ValidSchedule;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
+@ValidSchedule
+@FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class DoctorForm {
     @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
@@ -36,6 +41,7 @@ public class DoctorForm {
 
     @NotEmpty(message = "{form.email.notEmpty}")
     @Email(message = "{form.email.invalid}")
+    @EmailNonexistentInUsers
     private String email;
 
     private int amount;
