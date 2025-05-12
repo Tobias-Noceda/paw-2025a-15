@@ -13,7 +13,7 @@ public class ProfileImageValidator implements ConstraintValidator<ValidProfileIm
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context){
         if (file == null || file.isEmpty() || file.getSize() == 0) {
-            return false;
+            return true;
         }
 
         String contentType = file.getContentType();
