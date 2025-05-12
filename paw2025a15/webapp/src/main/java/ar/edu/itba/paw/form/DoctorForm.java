@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 import ar.edu.itba.paw.annotation.ValidArgPhone;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import org.springframework.format.annotation.NumberFormat;
 
 public class DoctorForm {
     @NotEmpty(message = "{form.name.notEmpty}")
@@ -44,7 +45,8 @@ public class DoctorForm {
     @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
-    @Pattern(regexp = "^([0-9]{2})\\.[0-9]{1,5}$", message = "{form.doctorLicense.invalidFormat}")
+
+    @Pattern(regexp = "^\\d{1,10}$", message = "{form.doctorLicense.invalidFormat}")
     private String doctorLicense;
 
     public String getPhoneNumber() {
