@@ -59,7 +59,6 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao {
         args.put("doctor_specialty", specialty.ordinal());
         jdbcInsert.execute(args);
         return new DoctorDetail(doctorId, doctorLicense, specialty);
-
     }
 
     @Override
