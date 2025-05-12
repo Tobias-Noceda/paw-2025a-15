@@ -20,6 +20,7 @@
 <body>
 
 <c:url value="/login" var="loginUrl" />
+<c:url value="/" var="home"/>
 <c:url value="/register" var="registerUrl" />
 <c:url value="/forgot-password" var="forgotPasswordUrl" />
 
@@ -95,6 +96,11 @@
           <spring:message code="login.noAccount"/>
           <a href="${registerUrl}" class="link-primary">
             <spring:message code="login.register"/>
+          </a>
+        </p>
+        <p>
+          <a href="${home}" class="link-primary">
+            <spring:message code="login.back"/>
           </a>
         </p>
       </div>
