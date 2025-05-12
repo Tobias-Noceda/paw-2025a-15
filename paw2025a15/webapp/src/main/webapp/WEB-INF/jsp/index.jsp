@@ -176,9 +176,6 @@
                 <p class="subtitle">
                   <spring:message code="landing.noPatients"/>
                 </p>
-                <a href="<c:url value='/'/>" class="no-doctors-button">
-                  <spring:message code="landing.noDoctors.button" />
-                </a>
               </div>
             </c:otherwise>
           </c:choose>

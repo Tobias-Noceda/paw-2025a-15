@@ -144,7 +144,9 @@ public class RegisterController {
                         form.getSpecialty(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                dds.createDoctorCoverages(doc.getId(), form.getObrasSociales());
+                if(form.getObrasSociales()!=null) {
+                    dds.createDoctorCoverages(doc.getId(), form.getObrasSociales());
+                }
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),

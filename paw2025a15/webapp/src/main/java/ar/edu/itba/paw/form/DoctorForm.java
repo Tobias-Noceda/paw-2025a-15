@@ -26,7 +26,6 @@ public class DoctorForm {
     @NotNull(message = "{form.specialty.notNull}")
     private SpecialtyEnum specialty;
 
-    @NotNull(message = "{form.insurances.notNull}")
     private List<Long> ObrasSociales;
 
     @NotNull(message = "{form.schedules.notNull}")
