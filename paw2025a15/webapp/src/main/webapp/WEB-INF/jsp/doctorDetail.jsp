@@ -54,6 +54,10 @@
               <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
               <p class="doctor-address"><c:out value="${doctorShifts[0].address}" escapeXml="true"/></p>
             </div>
+            <div class="doctor-license-div">
+              <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
+              <p class="doctor-license"><c:out value="${doctorDetail.doctorLicense}" escapeXml="true"/></p>
+            </div>
             <p class="section-title"><spring:message code="doctor.details.schedule.label"/></p>
             <div class="doctor-schedule">
               <ul>
