@@ -140,13 +140,13 @@
                                     <spring:message code="specialty.${doctor.specialty}"/>
                                 </td>
                                 <td class="deauthorize-cell">
-                                    <form action="${updateAuthUrl}" method="post">
+                                    <form action="${updateAuthUrl}" method="post" id="toggleAuth_${doctor.id}">
                                         <button
-                                                type="submit"
-                                                name="action"
-                                                value="toggle"
-                                                class="${buttonClass}"
-                                                onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonLabel}', '${authCancelText}', this.name, this.value);"
+                                            type="submit"
+                                            name="action"
+                                            value="toggle"
+                                            class="${buttonClass}"
+                                            onclick="event.stopPropagation(); confirmToggleAuthDoctor('${confirmationText}', null, '${buttonLabel}', '${authCancelText}', this.name, this.value, ${doctor.id});"
                                         >
                                             <c:out value="${buttonLabel}" escapeXml="true"/>
                                         </button>
@@ -171,7 +171,7 @@
 
 
 <%@include file="components/confirmDialog.jsp" %>
-<script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
+<script src="<c:url value='/js/studyAuthModal.js'/>"></script>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
 </body>
 </html>
