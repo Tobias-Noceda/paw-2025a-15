@@ -14,7 +14,6 @@ import ar.edu.itba.paw.form.constraints.FieldMatch;
 import ar.edu.itba.paw.form.constraints.ValidSchedule;
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import org.springframework.format.annotation.NumberFormat;
 
 @FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class DoctorForm {

@@ -173,9 +173,12 @@
             </c:when>
             <c:otherwise>
               <div class="no-data-message">
-                <p class="subtitle">
-                  <spring:message code="landing.noPatients"/>
-                </p>
+                <p class="subtitle"><spring:message code="landing.noPatients"/></p>
+                <c:if test="${landingForm.query != null && landingForm.query != ''}">
+                  <a href="<c:url value='/'/>" class="no-doctors-button">
+                    <spring:message code="landing.noDoctors.button" />
+                  </a>
+                </c:if>
               </div>
             </c:otherwise>
           </c:choose>
