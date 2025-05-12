@@ -161,4 +161,14 @@ public class RegisterController {
         Authentication auth = authenticationManager.authenticate(authReq);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
+
+    @RequestMapping(value = "/createPatient" , method = RequestMethod.GET)
+    public ModelAndView registerPatientGet() {
+        return new ModelAndView("redirect:/register");
+    }
+
+    @RequestMapping(value = "/createMedic" , method = RequestMethod.GET)
+    public ModelAndView registerMedicGet() {
+        return new ModelAndView("redirect:/register");
+    }
 }
