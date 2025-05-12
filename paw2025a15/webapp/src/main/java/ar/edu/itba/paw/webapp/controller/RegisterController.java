@@ -76,12 +76,6 @@ public class RegisterController {
 
         if (errors.hasErrors()) {
             isValid = false;
-        } else if (!form.getPassword().equals(form.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "error.passwordMismatch");
-            isValid = false;
-        } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists");
-            isValid = false;
         } else {
             try {
                 User newUser = pds.createPatient(
@@ -124,15 +118,6 @@ public class RegisterController {
 
         if (errors.hasErrors()) {
             isValid = false;
-        } else if (!form.getPassword().equals(form.getConfirmPassword())) {
-            errors.rejectValue("confirmPassword", "error.passwordMismatch");
-            isValid = false;
-        } else if (us.getUserByEmail(form.getEmail()).isPresent()) {
-            errors.rejectValue("email", "error.emailExists");
-            isValid = false;
-        } else if (!isRangeValid(form.getSchedules().getStartTime(), form.getSchedules().getEndTime())) {
-            errors.rejectValue("schedules.endTime","error.invalidRange");
-            isValid = false;
         } else {
             try {
                 User doc = dds.createDoctor(
@@ -156,14 +141,7 @@ public class RegisterController {
                         form.getAmount()
                 );
                 loginUser(form.getEmail(), form.getPassword());
-            } catch (AlreadyExistsException e) {
-                if (e.getMessage().contains("Doctor with license")) {
-                    errors.rejectValue("doctorLicense", "error.doctorLicenseExists");
-                    isValid = false;
-                } else {
-                    errors.reject("error.registerDoctorFailed");
-                    isValid = false;
-                }
+
             } catch (Exception e) {
                 errors.reject("error.registerDoctorFailed");
                 isValid = false;

@@ -13,6 +13,7 @@ import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import org.springframework.format.annotation.NumberFormat;
 
+@FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class DoctorForm {
     @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
@@ -31,6 +32,7 @@ public class DoctorForm {
     private List<Long> ObrasSociales;
 
     @NotNull(message = "{form.schedules.notNull}")
+    @ValidSchedule
     private Schedule schedules;
 
     @NotEmpty(message = "{form.address.notEmpty}")
@@ -38,6 +40,7 @@ public class DoctorForm {
 
     @NotEmpty(message = "{form.email.notEmpty}")
     @Email(message = "{form.email.invalid}")
+    @EmailNonexistentInUsers
     private String email;
 
     private int amount;

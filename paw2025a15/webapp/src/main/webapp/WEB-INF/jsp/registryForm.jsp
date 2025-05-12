@@ -222,21 +222,18 @@
               </div>
             </c:forEach>
           </div>
-          <form:errors path="schedules.weekday" cssClass="error-box" element="div"/>
         </div>
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.schedules.startTime"/></label>
           <form:select path="schedules.startTime" cssClass="login-select" items="${hoursSelectItems}" itemLabel="label" itemValue="value"/>
-          <form:errors path="schedules.startTime" cssClass="error-box" element="div"/>
         </div>
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.schedules.endTime"/></label>
           <form:select path="schedules.endTime" cssClass="login-select" items="${hoursSelectItems}" itemLabel="label" itemValue="value"/>
-          <form:errors path="schedules.endTime" cssClass="error-box" element="div"/>
         </div>
-
+        <form:errors path="schedules" cssClass="error-box" element="div"/>
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.amount"/></label>
           <form:select path="amount" cssClass="login-select">
