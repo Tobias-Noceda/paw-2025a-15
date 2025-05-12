@@ -51,4 +51,6 @@ Thumbs.db
 
 *.session.sql
 
+.mvn
+
 *.bak
