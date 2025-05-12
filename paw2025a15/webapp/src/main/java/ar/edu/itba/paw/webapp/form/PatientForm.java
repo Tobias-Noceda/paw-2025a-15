@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.constraints.FieldMatch;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
+@FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class PatientForm {
     @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
