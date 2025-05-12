@@ -128,6 +128,7 @@
                         <a
                           class="view-button"
                           style="margin-right: 7px;"
+                          target="_blank"
                           href="${studyLink}"
                           onclick="event.stopPropagation();"
                         >
