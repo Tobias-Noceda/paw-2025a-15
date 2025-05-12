@@ -127,6 +127,7 @@ public class StudyController {
         
         return mav;
     }
+
     @RequestMapping("/study-info/{studyId:\\d+}")
     public ModelAndView studyInfo(
             @ModelAttribute("user_data") User user,
@@ -159,6 +160,4 @@ public class StudyController {
         mav.addObject("user", user);
         return mav;
     }
-
-
 }

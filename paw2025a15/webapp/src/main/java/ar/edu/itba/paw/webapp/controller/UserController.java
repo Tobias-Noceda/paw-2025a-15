@@ -16,16 +16,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ar.edu.itba.paw.form.ChangePasswordForm;
 import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.form.ProfileForm;
-import ar.edu.itba.paw.form.RecoverForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
@@ -38,7 +35,6 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
-import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @Controller
 public class UserController {
@@ -63,91 +59,6 @@ public class UserController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping("/login")
-    public ModelAndView login() {
-        return new ModelAndView("login");
-    }
-
-    @RequestMapping(value = "/forgot-password", method = RequestMethod.GET)
-    public ModelAndView forgotPassword(@ModelAttribute("recoverPass") RecoverForm form) {
-        ModelAndView mav = new ModelAndView("forgotPassword");
-        return mav;
-    }
-
-    @RequestMapping(value = "/recover-password", method = RequestMethod.GET)
-    public ModelAndView showRecoverPasswordPage() {
-        ModelAndView mav = new ModelAndView("forgotPassword");
-        mav.addObject("successMessage", "checkEmail");
-        return mav;
-    }
-
-    @RequestMapping(value = "/recover-password", method = RequestMethod.POST)
-    public ModelAndView recoverPassword(
-            @Valid @ModelAttribute("recoverPass") RecoverForm form,
-            BindingResult result
-    ) {
-        LOGGER.debug("Processing password recovery for email: {}", form.getEmail());
-        ModelAndView mav;
-
-        // Si hay errores de validación, volver a la página forgotPassword
-        if (result.hasErrors()) {
-            LOGGER.debug("Validation errors found for email: {}", form.getEmail());
-            return new ModelAndView("forgotPassword");
-        }
-
-        try {
-            us.askPasswordRecover(form.getEmail());
-            LOGGER.info("Password reset email sent to: {}", form.getEmail());
-            mav = new ModelAndView("forgotPassword");
-            mav.addObject("successMessage", "linkSent");
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("No user found with email: {}", form.getEmail());
-            mav = new ModelAndView("forgotPassword");
-            mav.addObject("errorMessage", "emailNotFound");
-            mav.addObject("recoverPass", form);
-        } catch (Exception e) {
-            LOGGER.error("Error sending password reset email: {}", e.getMessage());
-            mav = new ModelAndView("forgotPassword");
-            mav.addObject("errorMessage", "processingError");
-            mav.addObject("recoverPass", form);
-        }
-
-        return mav;
-    }
-    
-    @RequestMapping("/logout")
-    public ModelAndView logout() {
-        return new ModelAndView("redirect:/");
-    }
-
-
-    @RequestMapping(value = "/change-password/{token}/{id}", method = RequestMethod.GET)
-    public ModelAndView changePassword(
-        @PathVariable("id") long id, @PathVariable("token") String token ,
-        @ModelAttribute("passwordForm") ChangePasswordForm form
-    ){
-        ModelAndView mav = new ModelAndView("changePassword");
-
-        return mav;
-    }
-
-
-    @RequestMapping(value = "/change-password/{token}/{id}", method = RequestMethod.POST)
-    public ModelAndView changePassword(
-        @ModelAttribute("passwordForm") final ChangePasswordForm form,
-        @PathVariable("id") long id, @PathVariable("token") String token
-    ){
-        if(!form.getPassword().equals(form.getRepeatPassword())){
-            //volver a pedirle al usuario
-            ModelAndView mav = new ModelAndView("changePassword");
-            mav.addObject("errorMessage", "Las contraseñas no coinciden");
-            return mav;
-        }
-        ModelAndView mav = new ModelAndView("login");
-        us.changePasswordByID(id, form.getPassword());
-        return mav;
-    }
-
     @RequestMapping(path = "/profile", method = RequestMethod.POST)
     public ModelAndView saveProfileInfo(
         @ModelAttribute("user_data") User user,
@@ -156,29 +67,30 @@ public class UserController {
         RedirectAttributes redirectAttrs,
         Locale locale
     ) throws IOException {
-        if (user == null) {
-            throw new UnauthorizedException("User not found");
-        }
 
         if (result.hasErrors()) {
             return profile(user, profileForm, result, locale);
         }
 
+        long pictureId;
         if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
             File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
-            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(), f.getId());
+            pictureId = f.getId();
+            LOGGER.info("Updating profile picture for user with id: {}", user.getId());
         }else {
-            us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(),user.getPictureId());
-            us.updateLocale(user.getId(),profileForm.getMailLanguage());
+            pictureId = user.getPictureId();
         }
+        us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(), pictureId);
+        us.updateLocale(user.getId(), profileForm.getMailLanguage());
+        
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {
             pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
         } else {
             dds.updateDoctorCoverages(user.getId(), profileForm.getInsurances());
         }
-        redirectAttrs.addFlashAttribute("updateSuccessMessage",
-
-                "✅ Your profile has been updated!");
+        LOGGER.info("User with id: {} updated!", user.getId());
+        
+        redirectAttrs.addFlashAttribute("updateSuccessMessage","✅ Your profile has been updated!");
 
         return new ModelAndView("redirect:/profile");
     }
@@ -223,5 +135,4 @@ public class UserController {
         }
         return insurancesLong;
     }
-
 }
