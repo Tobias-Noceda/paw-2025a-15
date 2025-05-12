@@ -124,7 +124,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao {
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
 
         if (name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ");
+            query.append(" AND LOWER(u.user_name) LIKE ? ");
             params.add("%" + sanitize(name) + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -183,7 +183,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao {
         List<Integer> types = new ArrayList<>();
         addFiltersToQuery(query, params, types, specialty, insurance, weekday);
         if(name != null && !name.trim().isEmpty()) {
-            query.append(" AND u.user_name LIKE ? ");
+            query.append(" AND LOWER(u.user_name) LIKE ? ");
             params.add("%" + sanitize(name) + "%");
             types.add(java.sql.Types.VARCHAR);
         }
@@ -220,6 +220,7 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao {
                 .replace("\\", "\\\\\\")
                 .replace("%", "\\\\%")
                 .replace("_", "\\\\_")
-                .trim();
+                .trim()
+                .toLowerCase();
     }
 }

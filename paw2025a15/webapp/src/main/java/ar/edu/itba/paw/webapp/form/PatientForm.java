@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.constraints.FieldMatch;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
@@ -7,10 +9,10 @@ import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
+@FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class PatientForm {
     @NotEmpty(message = "{form.name.notEmpty}")
     private String name;
@@ -30,10 +32,11 @@ public class PatientForm {
     @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
-    @Positive
+
+    @Range(min = 0, max = 3, message = "{form.height.invalid}")
     private Double height;
 
-    @Positive
+    @Range(min = 0, max = 300, message = "{form.weight.invalid}")
     private Double weight;
 
     @PastDate

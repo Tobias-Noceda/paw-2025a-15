@@ -1,6 +1,5 @@
-
-function confirmAuthDoctor(message, secondaryMessage, accept, cancel, name, value) {
-    const form = document.getElementById('authDoctorForm');
+function confirmDeauthDoctor(message, secondaryMessage, accept, cancel, name, value, id) {
+    const form = document.getElementById('deauthDoctor_' + id);
 
     let actionInput = form.querySelector('input[name="${name}"]');
     if (!actionInput) {

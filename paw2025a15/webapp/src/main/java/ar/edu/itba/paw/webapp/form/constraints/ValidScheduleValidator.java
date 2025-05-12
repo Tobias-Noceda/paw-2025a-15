@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.form.constraints;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -11,16 +11,17 @@ public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule
 
     @Override
     public boolean isValid(Schedule schedule, ConstraintValidatorContext context) {
-        if (schedule == null) return false;
-
-        if(schedule.getWeekday() == null || schedule.getWeekday().isEmpty() || 
-            schedule.getStartTime() != null || schedule.getEndTime() != null) {
+        if (schedule == null) {
             return false;
         }
-        else if(LocalDateTime.parse(schedule.getStartTime()).isBefore(LocalDateTime.parse(schedule.getEndTime()))){
-            return true;
-        }
 
-        return false;
+        if(schedule.getWeekday() == null || schedule.getWeekday().isEmpty() || 
+            schedule.getStartTime() == null || schedule.getEndTime() == null) {
+            return false;
+        }
+        else if(!LocalTime.parse(schedule.getStartTime()).isBefore(LocalTime.parse(schedule.getEndTime()))){
+            return false;
+        }
+        return true;
     }
 }

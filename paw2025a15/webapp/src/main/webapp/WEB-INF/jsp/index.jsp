@@ -284,10 +284,6 @@
         document.querySelectorAll('.options-list').forEach(o => o.classList.remove('show'));
       });
 
-      document.querySelectorAll('.options-list').forEach(o => {
-        if (o !== optionsList) o.classList.remove('show');
-      });
-
       window.addEventListener("scroll", () => {
         document.querySelectorAll('.options-list').forEach(o => {
           list.classList.remove('show');

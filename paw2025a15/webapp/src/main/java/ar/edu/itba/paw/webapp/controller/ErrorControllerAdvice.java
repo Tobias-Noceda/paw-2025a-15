@@ -11,7 +11,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.FormErrorException;
+import ar.edu.itba.paw.models.exceptions.MediaTypeException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @ControllerAdvice
 public class ErrorControllerAdvice {

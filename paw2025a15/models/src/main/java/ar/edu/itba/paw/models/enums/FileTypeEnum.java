@@ -18,6 +18,10 @@ public enum FileTypeEnum {
         return name;
     }
 
+    public String getExtension() {
+        return "." + name.substring(name.indexOf("/") + 1);
+    }
+
     public static FileTypeEnum fromInt(int num){
         FileTypeEnum[] values = FileTypeEnum.values();
         if (num >= 0 && num < values.length){

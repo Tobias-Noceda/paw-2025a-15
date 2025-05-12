@@ -7,6 +7,7 @@
 
   <script src="https://unpkg.com/dialog-polyfill/dist/dialog-polyfill.js"></script>
 
+
   <link rel="stylesheet" href="<c:url value="/css/main.css"/>"/>
 
 <dialog class="confirmation-dialog" id="customConfirmDialog">
@@ -28,7 +29,6 @@
     ></button>
   </form>
 </dialog>
-<script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
-<script src="<c:url value='/js/buttonControl.js'/>"></script>
+  <script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
 
 </html>

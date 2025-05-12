@@ -17,6 +17,7 @@
 
 <c:url value="/createPatient" var="patientPost"/>
 <c:url value="/createMedic"   var="medicPost"/>
+<c:url value="/login" var="login"/>
 
 <div class="page-container">
   <div class="login-card">
@@ -52,7 +53,7 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.email"/></label>
-          <form:input path="email" type="email" cssClass="login-input"/>
+          <form:input path="email" type="text" cssClass="login-input"/>
           <form:errors path="email" cssClass="error-box" element="div"/>
         </div>
 
@@ -71,14 +72,14 @@
                   type="date" />
           <form:errors
                   path="birthDate"
-                  cssClass="sf-error"
+                  cssClass="error-box"
                   element="div" />
         </div>
 
         <div class="field-container">
           <form:label cssClass="field-label" path="height"><spring:message code="profileInfo.height"/></form:label>
-          <input id="patient-height"
-                 name="height"
+          <form:input id="patient-height"
+                 path="height"
                  type="text"
                  maxlength="9"
                  pattern="^\d{1,6}([.]\d{1,2})?$"
@@ -86,12 +87,13 @@
                  oninput="validateDecimal(this)"
                  onkeydown="return blockInvalidKeys(event)"
                  onpaste="return blockNegativePaste(event)"/>
+          <form:errors path="height" cssClass="error-box" element="div" />
         </div>
 
         <div class="field-container">
           <form:label cssClass="field-label" path="weight"><spring:message code="profileInfo.weight"/></form:label>
-          <input id="patient-weight"
-                 name="weight"
+          <form:input id="patient-weight"
+                 path="weight"
                  type="text"
                  maxlength="9"
                  pattern="^\d{1,6}([.]\d{1,2})?$"
@@ -99,6 +101,7 @@
                  oninput="validateDecimal(this)"
                  onkeydown="return blockInvalidKeys(event)"
                  onpaste="return blockNegativePaste(event)"/>
+          <form:errors path="weight" cssClass="error-box" element="div" />
         </div>
 
         <div class="field-container">
@@ -126,6 +129,7 @@
         <button type="submit" class="btn-primary">
           <spring:message code="doctorForm.registerButton"/>
         </button>
+
       </form:form>
     </div>
 
@@ -148,7 +152,7 @@
 
         <div class="field-container">
           <label class="field-label"><spring:message code="doctorForm.email"/></label>
-          <form:input path="email" type="email" cssClass="login-input"/>
+          <form:input path="email" type="text" cssClass="login-input"/>
           <form:errors path="email" cssClass="error-box" element="div"/>
         </div>
 
@@ -249,8 +253,16 @@
           <spring:message code="doctorForm.registerButton"/>
         </button>
       </form:form>
+
     </div>
 
+      <div class="extra-links">
+        <p>
+          <a href="${login}" class="link-primary">
+            <spring:message code="register.back"/>
+          </a>
+        </p>
+      </div>
   </div>
 </div>
 

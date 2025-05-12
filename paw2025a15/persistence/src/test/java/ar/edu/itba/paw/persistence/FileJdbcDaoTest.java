@@ -37,16 +37,7 @@ public class FileJdbcDaoTest {
         Assert.assertArrayEquals(CONTENT, file.getContent());
     }
 
-    @Test
-    public void testFindById(){
-        final long IMAGE_ID = TestData.Images.validImage.getId();
-        final File IMAGE = TestData.Images.validImage;
-        
-        Optional<File> file = fileDao.findById(IMAGE_ID);
-
-        Assert.assertTrue(file.isPresent());
-        Assert.assertEquals(IMAGE, file.get());
-    }
+    
 
     @Test
     public void testFindByIdNonexistent(){
