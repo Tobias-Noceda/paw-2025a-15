@@ -164,12 +164,11 @@
       <div class="appointment-list-container" style="max-height: fit-content; position: sticky; top: 87px;">
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
         <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
-          <form:hidden path="index" />
+          <form:hidden path="index" id="indexField" />
           <button
-            type="submit"
-            name="action"
-            value="previous"
+            type="button"
             class="navigation-button"
+            onclick="submitFormWithAction('previous')"
             <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
           >
             <spring:message code="doctorDetail.previousWeek"/>
@@ -181,10 +180,9 @@
             <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
           </div>
           <button
-            type="submit"
-            name="action"
-            value="next"
+            type="button"
             class="navigation-button"
+            onclick="submitFormWithAction('next')"
             <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
           >
             <spring:message code="doctorDetail.nextWeek"/>
@@ -219,13 +217,12 @@
                     <c:set var="formattedDay">
                       <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
                     </c:set>
-                    <c:set var="formattedMonth">
-                      <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
+                    <c:set var="monthName">
+                      <spring:message code="month.${appointment.date.month}" />
                     </c:set>
-                    <c:set var="formattedYear" value="${appointment.date.year}" />
 
                     <c:set var="confirmMessage">
-                      <spring:message code="takeAppointment.confirmationMessage" arguments="${formattedDay}, ${formattedMonth}, ${formattedYear}, ${appointment.startTime}, ${doctor.name}" htmlEscape="true"/>
+                      <spring:message code="takeAppointment.confirmationMessage" arguments="${formattedDay}, ${monthName}, ${appointment.startTime}, ${doctor.name}" htmlEscape="true"/>
                     </c:set>
 
                     <c:set var="secondText">
@@ -277,6 +274,6 @@
     <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
-
+    <script src="<c:url value='/js/doctorDetailNav.js'/>"></script>
   </body>
 </html>

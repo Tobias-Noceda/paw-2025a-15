@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
             form
 
-                .querySelectorAll('button[type=submit], input[type=submit]')
+                .querySelectorAll('button[type=submit], button[type=button], input[type=submit]')
 
                 .forEach(function(btn){
 
