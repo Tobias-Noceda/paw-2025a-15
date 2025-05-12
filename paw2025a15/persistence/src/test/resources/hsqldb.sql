@@ -41,7 +41,7 @@ CREATE TABLE studies (
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE patient_coverages (--TODO-check que el userId sea de un patient y insurance existente
+CREATE TABLE patient_coverages (
     patient_id BIGINT PRIMARY KEY,
     insurance_id BIGINT NOT NULL,
 
@@ -49,7 +49,7 @@ CREATE TABLE patient_coverages (--TODO-check que el userId sea de un patient y i
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
 
-CREATE TABLE doctor_coverages (--TODO-check que el userId sea de un doctor y insurance existente
+CREATE TABLE doctor_coverages (
     doctor_id BIGINT NOT NULL,
     insurance_id BIGINT NOT NULL,
 
@@ -58,7 +58,7 @@ CREATE TABLE doctor_coverages (--TODO-check que el userId sea de un doctor y ins
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
 
-CREATE TABLE doctor_shifts (--TODO-check que el userId sea de un doctor
+CREATE TABLE doctor_shifts (
     shift_id SERIAL PRIMARY KEY,
     doctor_id BIGINT NOT NULL,
     shift_weekday INT NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE doctor_shifts (--TODO-check que el userId sea de un doctor
     CONSTRAINT valid_time_range CHECK (shift_start_time < shift_end_time)
 );
 
-CREATE TABLE appointments (--TODO-check que el userId sea de un patient
+CREATE TABLE appointments (
     shift_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
     appointment_date DATE NOT NULL,
@@ -83,16 +83,16 @@ CREATE TABLE appointments (--TODO-check que el userId sea de un patient
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE doctor_details (--TODO-check que el userId sea de un doctor 
+CREATE TABLE doctor_details ( 
     doctor_id BIGINT NOT NULL,
-    doctor_licence VARCHAR(50) NOT NULL,
+    doctor_licence VARCHAR(50) UNIQUE NOT NULL,
     doctor_specialty INT NOT NULL,
 
-    PRIMARY KEY(doctor_id, doctor_specialty),--TODO si no vamos a permitir mas de una specialty eliminar (ya lo asumimos al tener getDetailByDoctorId no mas y otras cosas)
+    PRIMARY KEY(doctor_id),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE patient_details (--TODO-check que el userId sea de un patient
+CREATE TABLE patient_details (
     patient_id BIGINT NOT NULL,
     patient_birthdate DATE,
     patient_blood_type INT,
@@ -111,7 +111,7 @@ CREATE TABLE patient_details (--TODO-check que el userId sea de un patient
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE auth_doctors (--TODO-check que el userId sea de un patient y el de doctor de doctor
+CREATE TABLE auth_doctors (
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
     access_level INT NOT NULL DEFAULT 0,
@@ -121,7 +121,7 @@ CREATE TABLE auth_doctors (--TODO-check que el userId sea de un patient y el de 
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE auth_studies (--TODO-check que el userId sea de undoctor y que el study exista
+CREATE TABLE auth_studies (
     doctor_id BIGINT NOT NULL,
     study_id BIGINT NOT NULL,
 

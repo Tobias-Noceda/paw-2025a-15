@@ -161,6 +161,11 @@ CREATE TABLE IF NOT EXISTS doctor_details (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
+--ALTER TABLE doctor_details DROP CONSTRAINT doctor_details_pkey;
+--ALTER TABLE doctor_details ADD PRIMARY KEY (doctor_id);
+--UPDATE doctor_details SET doctor_licence = CONCAT(doctor_licence, '_', doctor_id) WHERE doctor_licence = 'med-licence';
+--ALTER TABLE doctor_details ADD CONSTRAINT unique_doctor_licence UNIQUE (doctor_licence);
+
 CREATE TABLE IF NOT EXISTS patient_details (
     patient_id BIGINT NOT NULL,
     patient_age INT,
