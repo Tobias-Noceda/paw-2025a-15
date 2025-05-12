@@ -13,15 +13,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.AppointmentForm;
-import ar.edu.itba.paw.form.LandingForm;
-import ar.edu.itba.paw.form.ShiftsWeekForm;
-import ar.edu.itba.paw.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.LandingForm;
+import ar.edu.itba.paw.webapp.form.ShiftsWeekForm;
+import ar.edu.itba.paw.webapp.form.TakeTurnForm;
+
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller

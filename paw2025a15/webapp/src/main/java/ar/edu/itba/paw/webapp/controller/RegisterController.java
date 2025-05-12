@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.DoctorForm;
-import ar.edu.itba.paw.form.PatientForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
@@ -28,6 +26,8 @@ import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+import ar.edu.itba.paw.webapp.form.DoctorForm;
+import ar.edu.itba.paw.webapp.form.PatientForm;
 
 @Controller
 public class RegisterController {

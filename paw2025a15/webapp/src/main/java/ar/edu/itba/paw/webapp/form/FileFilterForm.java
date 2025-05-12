@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.form;
+package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 

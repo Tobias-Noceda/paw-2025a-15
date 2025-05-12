@@ -7,8 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.form.LandingForm;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -25,8 +22,8 @@ import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
-import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+import ar.edu.itba.paw.webapp.form.LandingForm;
 
 
 @Controller
@@ -48,6 +45,7 @@ public class GeneralController {
 
     @RequestMapping(value = {"/home", "/home/", "/"}, method = RequestMethod.GET)
     public ModelAndView index (
+        @ModelAttribute("user_data") User user,
         @Valid @ModelAttribute("landingForm") final LandingForm landingForm,
         final BindingResult errors,
         @RequestParam(defaultValue = "1") int page,
@@ -57,13 +55,6 @@ public class GeneralController {
             return new ModelAndView("redirect:/home");
         }
         final ModelAndView mav = new ModelAndView("index");
-        
-        Authentication session = SecurityContextHolder.getContext().getAuthentication();
-        if (session == null) {
-            throw new UnauthorizedException("User not logged in");
-        }
-        
-        User user = us.getUserByEmail(session.getName()).orElse(null);
 
         int totalLength;
         

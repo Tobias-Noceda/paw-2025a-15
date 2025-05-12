@@ -1,10 +1,11 @@
-package ar.edu.itba.paw.form;
+package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.*;
 
-import ar.edu.itba.paw.annotation.ValidArgPhone;
-import ar.edu.itba.paw.form.constraints.PastDate;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
+import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,11 +1,10 @@
-package ar.edu.itba.paw.form.constraints;
+package ar.edu.itba.paw.webapp.form.constraints;
 
 import java.time.LocalDateTime;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import ar.edu.itba.paw.form.DoctorForm;
 import ar.edu.itba.paw.models.Schedule;
 
 public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule, Schedule> {

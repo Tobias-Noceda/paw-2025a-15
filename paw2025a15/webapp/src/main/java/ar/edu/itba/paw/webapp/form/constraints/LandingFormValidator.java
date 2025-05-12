@@ -1,9 +1,9 @@
-package ar.edu.itba.paw.form.constraints;
+package ar.edu.itba.paw.webapp.form.constraints;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import ar.edu.itba.paw.form.LandingForm;
+import ar.edu.itba.paw.webapp.form.LandingForm;
 
 public class LandingFormValidator implements ConstraintValidator<IsValidLandingForm, LandingForm>{
 

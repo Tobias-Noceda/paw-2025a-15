@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.form;
+package ar.edu.itba.paw.webapp.form;
 
 import java.time.LocalDate;
 
@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import ar.edu.itba.paw.form.constraints.AvailableTurn;
+import ar.edu.itba.paw.webapp.form.constraints.AvailableTurn;
 
 @AvailableTurn(message = "{doctorDetail.nextWeek}")
 public class TakeTurnForm {
