@@ -142,12 +142,12 @@
 }
 
 .studies-table .download-cell {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     padding: 5px 15px;
     text-align: left;
     overflow: hidden;
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
 }
 
 .studies-table .download-cell form {
