@@ -35,7 +35,7 @@
 
 <jsp:include page="components/header.jsp"/>
 
-<c:url value='/save-profile' var="saveProfileUrl"/>
+<c:url value='/profile' var="saveProfileUrl"/>
 <div class="page-container">
   <form:form modelAttribute="profileForm"
              action="${saveProfileUrl}"
@@ -78,8 +78,7 @@
           <form:input path="phoneNumber"
                       type="text"
                       cssClass="input-field"
-                      value="${user_data.telephone}"
-                     />
+          />
           <form:errors path="phoneNumber" cssClass="error-box" element="div"/>
         </div>
 
