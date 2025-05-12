@@ -8,12 +8,14 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
+import ar.edu.itba.paw.webapp.form.constraints.ValidStudyFile;
 
 public class CreateStudyForm {
 
     @NotNull(message = "${uploadStudies.file.errorMessage}")
+    @ValidStudyFile
     private MultipartFile file;
 
     @NotNull(message = "${uploadStudies.type.errorMessage}")

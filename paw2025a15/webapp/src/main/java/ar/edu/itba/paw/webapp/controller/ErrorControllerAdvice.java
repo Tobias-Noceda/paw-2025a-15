@@ -11,7 +11,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import ar.edu.itba.paw.models.exceptions.*;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.FormErrorException;
+import ar.edu.itba.paw.models.exceptions.MediaTypeException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @ControllerAdvice
 public class ErrorControllerAdvice {
@@ -62,14 +67,5 @@ public class ErrorControllerAdvice {
     @ExceptionHandler(MediaTypeException.class)
     public ModelAndView handle415Exception() {
         return new ModelAndView("errorPages/415");
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({
-        Exception.class,
-        RuntimeException.class
-    })
-    public ModelAndView handle500Exception() {
-        return new ModelAndView("errorPages/500");
     }
 }
