@@ -10,6 +10,7 @@
     <spring:message code="uploadStudies.title" arguments="${patient.name}" />
   </title>
   <link rel="stylesheet" href="<c:url value='/css/main.css'/>" />
+
   <link rel="stylesheet" href="<c:url value='/css/file-charge.css'/>" />
   <!-- cargamos sólo nuestro CSS de estudio -->
   <link rel="stylesheet" href="<c:url value='/css/study-form.css'/>" />
@@ -47,7 +48,7 @@
         <label for="type">
           <spring:message code="createStudy.type"/>:
         </label>
-        <form:select id="type" path="type">
+        <form:select id="type" cssClass="filter-select" path="type">
           <form:options
                   items="${studyTypeSelectItems}"
                   itemValue="name"
@@ -78,6 +79,8 @@
       </button>
     </form:form>
   </div>
-</div>
+</div
+<script src="<c:url value='/js/buttonControl.js'/>"></script>
+
 </body>
 </html>
