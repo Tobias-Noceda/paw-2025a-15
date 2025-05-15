@@ -141,7 +141,11 @@
       <artifactId>hibernate-validator</artifactId>
     </dependency>
 
-
+    <!--hibernate-->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

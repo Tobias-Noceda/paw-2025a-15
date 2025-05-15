@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +24,13 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.lang.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -166,5 +172,33 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setPackagesToScan("ar.edu.itba.model");
+        factoryBean.setDataSource(dataSource());
+
+        final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        factoryBean.setJpaVendorAdapter(vendorAdapter);
+
+        final Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.dialect",
+                "org.hibernate.dialect.PostgreSQL92Dialect");
+
+        // Si ponen esto en prod, hay tabla!!!
+        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("format_sql", "true");
+        factoryBean.setJpaProperties(properties);
+
+        return factoryBean;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
 }

@@ -21,7 +21,6 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
-@Repository
 public class UserJdbcDao implements UserDao{
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("user_email"), rs.getString("user_password"), rs.getString("user_name"), rs.getString("user_telephone"), UserRoleEnum.fromInt(rs.getInt("user_role")), rs.getLong("picture_id"), rs.getDate("create_date").toLocalDate(), LocaleEnum.fromInt(rs.getInt("locale")));
    

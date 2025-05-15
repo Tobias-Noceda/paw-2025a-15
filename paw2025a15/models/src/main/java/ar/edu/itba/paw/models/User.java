@@ -5,13 +5,26 @@ import java.time.LocalDate;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
 
-    private final long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
+    @SequenceGenerator(sequenceName = "users_user_id_seq", name = "users_user_id_seq", allocationSize = 1)
+    @Column(name = "user_id")
+    private Long id;
+    @Column(name = "user_email", length = 100, unique = true, nullable = false)
     private final String email;
+    @Column(name = "user_password", length = 100, nullable = false)
     private final String password;
+    @Column(name = "user_name", length = 100, nullable = false)
     private final String name;
+    @Column(name = "user_telephone", length = 20, nullable = false)
     private final String telephone;
+    @Column(name = "user_role")
     private final UserRoleEnum role;
     private final long pictureId;
     private final LocalDate createDate;
@@ -29,6 +42,18 @@ public class User {
         this.locale = locale;
     }
 
+    public User(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocalDate createDate, LocaleEnum locale) {
+        this. email = email;
+        this.password = password;
+        this.name= name;
+        this.telephone = telephone;
+        this.role = role;
+        this.pictureId = pictureId;
+        this.createDate = createDate;
+        this.locale = locale;
+    }
+
+    @Deprecated
     public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocalDate createDate, LocaleEnum locale) {
         this.id = id;
         this. email = email;
@@ -41,7 +66,7 @@ public class User {
         this.locale = locale;
     }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 
@@ -76,6 +101,8 @@ public class User {
     public LocaleEnum getLocale(){
         return locale;
     }
+
+
 
     @Override
     public boolean equals(Object other){
