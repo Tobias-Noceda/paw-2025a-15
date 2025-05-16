@@ -42,7 +42,4 @@ public class UserHibernateDao implements UserDao {
     public void changePasswordByID(long id, String password){
 
     }
-
-
-
 }

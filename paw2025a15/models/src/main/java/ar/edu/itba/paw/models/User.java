@@ -26,8 +26,11 @@ public class User {
     private final String telephone;
     @Column(name = "user_role")
     private final UserRoleEnum role;
+    @Column(name = "picture_id")
     private final long pictureId;
+    @Column(name = "create_date")
     private final LocalDate createDate;
+    @Column(name = "locale")
     private final LocaleEnum locale;
 
     public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, LocalDate createDate, LocaleEnum locale) {
