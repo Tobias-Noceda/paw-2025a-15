@@ -1,8 +1,18 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "insurances")
 public class Insurance {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "insurances_insurance_id_seq")
+    @SequenceGenerator(sequenceName = "insurances_insurance_id_seq", name = "insurances_insurance_id_seq", allocationSize = 1)
+    @Column( name = "insurance_id")
     private final long id;
+    @Column( name = "insurance_name")
     private String name;
+    @Column( name = "picture_id")
     private long pictureId;
 
     public Insurance(long id, String name, long pictureId){

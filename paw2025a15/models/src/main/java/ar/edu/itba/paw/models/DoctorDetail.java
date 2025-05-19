@@ -2,9 +2,18 @@ package ar.edu.itba.paw.models;
 
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table( name = "doctor_details")
 public class DoctorDetail {
+    @Column(name = "doctor_id")
     private final long doctorId;
+    @Column(name = "doctor_licence")
     private final String doctorLicense;
+    @Column( name = "doctor_specialty")
     private final SpecialtyEnum specialty;
 
     public DoctorDetail(long doctorId, String doctorLicense, SpecialtyEnum specialty) {

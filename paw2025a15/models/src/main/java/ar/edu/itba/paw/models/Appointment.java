@@ -1,10 +1,19 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "appointments")
 public class Appointment {
+    @Column( name =  "shift_id")
     private final long shiftId;
+    @Column( name =  "patient_id")
     private final long patientId;
+    @Column( name =  "appointment_date")
     private final LocalDate date;
 
     public Appointment(long shiftId, long patientId, LocalDate date){

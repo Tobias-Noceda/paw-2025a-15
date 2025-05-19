@@ -5,19 +5,39 @@ import java.time.Period;
 
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "patient_details")
 public class PatientDetail {
+    @Column( name = "patient_id")
     private final long patientId;
+    @Column( name = "patient_birthdate")
     private final LocalDate birthdate;
+    @Column( name = "patient_blood_type")
     private final BloodTypeEnum bloodType;
+    @Column( name = "patient_height")
     private final Double height;
+    @Column( name = "patient_weight")
     private final Double weight;
+    @Column( name = "patient_smokes")
     private final Boolean smokes;
+    @Column( name = "patient_drinks")
     private final Boolean drinks;
+    @Column( name = "patient_meds", length = 250)
     private final String meds;
+    @Column( name = "patient_conditions", length = 250)
     private final String conditions;
+    @Column( name = "patient_allergies", length = 250)
     private final String allergies;
+    @Column( name = "patient_diet", length = 100)
     private final String diet;
+    @Column( name = "patient_hobbies", length = 100)
     private final String hobbies;
+    @Column( name = "patient_job", length = 50)
     private final String job;
 
     public PatientDetail(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight, 

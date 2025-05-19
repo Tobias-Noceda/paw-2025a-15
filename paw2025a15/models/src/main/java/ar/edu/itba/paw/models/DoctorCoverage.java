@@ -1,7 +1,16 @@
 package ar.edu.itba.paw.models;
 
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "doctor_coverages")
 public class DoctorCoverage {
+    @Column(name = "doctor_id")
     private final long doctorId;
+    @Column(name = "insurance_id")
     private final long insuranceId;
 
     public DoctorCoverage(long doctorId, long insuranceId){

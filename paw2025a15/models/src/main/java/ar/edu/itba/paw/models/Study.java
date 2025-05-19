@@ -5,15 +5,29 @@ import java.time.LocalDateTime;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
-public class Study {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "studies")
+public class Study {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "studies_study_id_seq")
+    @SequenceGenerator(sequenceName = "studies_study_id_seq", name = "studies_study_id_seq", allocationSize = 1)
+    @Column( name = "study_id")
     private final long id;
+    @Column( name = "study_type")
     private final StudyTypeEnum type;
+    @Column( name = "study_comment", length = 100)
     private final String comment;
+    @Column( name = "file_id")
     private final long fileId;
+    @Column (name = "user_id")
     private final long userId;
+    @Column (name = "uploader_id")
     private final long uploaderId;
+    @Column (name = "upload_date")
     private final LocalDateTime uploadDate;
+    @Column( name = "study_date")
     private final LocalDate studyDate;
 
     public Study(long id, StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate){

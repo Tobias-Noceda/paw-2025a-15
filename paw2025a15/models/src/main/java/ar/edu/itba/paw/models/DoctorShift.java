@@ -4,12 +4,24 @@ import java.time.LocalTime;
 
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "doctor_shifts")
 public class DoctorShift {
+    @Column(name = "shift_id")
     private final long id;
+    @Column(name = "doctor_id")
     private final long doctorId;
+    @Column(name = "shift_weekday")
     private final WeekdayEnum weekday;
+    @Column(name = "shift_address")
     private final String address;
+    @Column(name = "shift_start_time")
     private final LocalTime startTime;
+    @Column(name = "shift_end_time")
     private final LocalTime endTime;
 
     public DoctorShift(long id, long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime){

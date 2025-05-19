@@ -4,10 +4,19 @@ import java.util.Arrays;
 
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 
-public class File {
+import javax.persistence.*;
 
+@Entity
+@Table(name = "files")
+public class File{
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "files_file_id_seq")
+    @SequenceGenerator(sequenceName = "files_file_id_seq", name = "files_file_id_seq", allocationSize = 1)
+    @Column( name = "file_id")
     private final long id;
+    @Column(name = "file_content")
     private final byte[] content;
+    @Column( name = "file_type")
     private final FileTypeEnum type;
 
     public File(long id, byte[] content, FileTypeEnum type){
