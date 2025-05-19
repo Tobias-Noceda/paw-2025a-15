@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,3 +92,4 @@ public class TestData {
         public static final AuthDoctor authDoctorSocialLevel = new AuthDoctor(2, 1, AccessLevelEnum.VIEW_SOCIAL);
     }
 }
+*/

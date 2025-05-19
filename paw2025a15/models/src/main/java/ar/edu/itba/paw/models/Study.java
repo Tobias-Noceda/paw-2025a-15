@@ -14,29 +14,39 @@ public class Study {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "studies_study_id_seq")
     @SequenceGenerator(sequenceName = "studies_study_id_seq", name = "studies_study_id_seq", allocationSize = 1)
     @Column( name = "study_id")
-    private final long id;
-    @Column( name = "study_type")
-    private final StudyTypeEnum type;
-    @Column( name = "study_comment", length = 100)
-    private final String comment;
-    @Column( name = "file_id")
-    private final long fileId;
-    @Column (name = "user_id")
-    private final long userId;
-    @Column (name = "uploader_id")
-    private final long uploaderId;
-    @Column (name = "upload_date")
-    private final LocalDateTime uploadDate;
-    @Column( name = "study_date")
-    private final LocalDate studyDate;
+    private long id;
 
-    public Study(long id, StudyTypeEnum type, String comment, long fileId, long userId, long uploaderId, LocalDateTime uploadDate, LocalDate studyDate){
-        this.id = id;
+    @Enumerated
+    @Column( name = "study_type", nullable = false)
+    private StudyTypeEnum type;
+
+    @Column( name = "study_comment", length = 100)
+    private String comment;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false)
+    private File file;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "uploader_id", referencedColumnName = "user_id", nullable = false)
+    private User uploader;
+
+    @Column (name = "upload_date", nullable = false)
+    private LocalDateTime uploadDate;
+
+    @Column( name = "study_date", nullable = false)
+    private LocalDate studyDate;
+
+    public Study(StudyTypeEnum type, String comment, File file, User user, User uploader, LocalDateTime uploadDate, LocalDate studyDate){
         this.type = type;
         this.comment = comment;
-        this.fileId = fileId;
-        this.userId = userId;
-        this.uploaderId = uploaderId;
+        this.file = file;
+        this.user = user;
+        this.uploader = uploader;
         this.uploadDate = uploadDate;
         this.studyDate = studyDate;
     }
@@ -53,16 +63,16 @@ public class Study {
         return comment;
     }
 
-    public long getFileId(){
-        return fileId;
+    public File getFile(){
+        return file;
     }
 
-    public long getUserId(){
-        return userId;
+    public User getUser(){
+        return user;
     }
 
-    public long getUploaderId(){
-        return uploaderId;
+    public User getUploader(){
+        return uploader;
     }
 
     public LocalDateTime getUploadDate(){
@@ -82,8 +92,8 @@ public class Study {
         Study o = (Study) other;
 
         return (this.id==o.id) && (this.type.equals(o.type))
-        && (this.comment.equals(o.comment)) && (this.fileId==o.fileId)
-        && (this.userId==o.userId) && (this.uploaderId==o.uploaderId)
+        && (this.comment.equals(o.comment)) && (this.file.equals(o.file))
+        && (this.user.equals(o.user)) && (this.uploader.equals(o.uploader))
         && (this.uploadDate.equals(o.uploadDate)) && (this.studyDate.equals(o.studyDate));
     }
 
@@ -92,9 +102,9 @@ public class Study {
         int result = Long.hashCode(id);
         result = 31 * result + type.hashCode();
         result = 31 * result + comment.hashCode();
-        result = 31 * result + Long.hashCode(fileId);
-        result = 31 * result + Long.hashCode(userId);
-        result = 31 * result + Long.hashCode(uploaderId);
+        result = 31 * result + file.hashCode();
+        result = 31 * result + user.hashCode();
+        result = 31 * result + uploader.hashCode();
         result = 31 * result + uploadDate.hashCode();
         result = 31 * result + studyDate.hashCode();
         return result;
@@ -106,9 +116,9 @@ public class Study {
             "id=" + id +
             ", type=" + type +
             ", comment=" + comment +
-            ", fileId=" + fileId +
-            ", userId=" + userId +
-            ", uploaderId=" + uploaderId +
+            ", file=" + file +
+            ", user=" + user +
+            ", uploader=" + uploader +
             ", uploadDate=" + uploadDate +
             ", studyDate=" + studyDate +
             '}';

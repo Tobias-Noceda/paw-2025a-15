@@ -12,7 +12,7 @@ public interface UserService {
 
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale);
 
-    public void editUser(long id, String name, String telephone, long pictureId);
+    public void editUser(long id, String name, String telephone, File picture);
 
     public void updateLocale(long userId, LocaleEnum locale);
 

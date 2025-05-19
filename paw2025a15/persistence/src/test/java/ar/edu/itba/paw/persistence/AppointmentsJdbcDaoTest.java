@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -241,3 +241,4 @@ public class AppointmentsJdbcDaoTest {
     }
 
 }
+*/

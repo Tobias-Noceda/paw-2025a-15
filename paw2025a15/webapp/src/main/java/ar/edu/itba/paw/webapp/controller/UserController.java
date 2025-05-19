@@ -73,15 +73,15 @@ public class UserController {
             return profile(user, profileForm, result, locale);
         }
 
-        long pictureId;
+        File picture;
         if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
             File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
-            pictureId = f.getId();
+            picture = f;
             LOGGER.info("Updating profile picture for user with id: {}", user.getId());
         }else {
-            pictureId = user.getPictureId();
+            picture = user.getPicture();
         }
-        us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(), pictureId);
+        us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(), picture);
         us.updateLocale(user.getId(), profileForm.getMailLanguage());
         
         if(user.getRole().equals(UserRoleEnum.PATIENT)) {

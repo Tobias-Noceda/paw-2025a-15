@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     public Optional<File> getUserPicture(long id) {
         User user = getUserById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist!"));
 
-        return fs.findById(user.getPictureId());
+        return fs.findById(user.getPicture().getId());//TODO:changed when migrating jpa, check later
     }
 
     @Transactional(readOnly = true)
@@ -102,10 +102,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void editUser(long id, String name, String telephone, long pictureId) {
+    public void editUser(long id, String name, String telephone, File picture) {
         if(getUserById(id).isEmpty()) throw new NotFoundException("User with id: " + id + " does not exist!");
-        if(fs.findById(pictureId).isEmpty()) throw new NotFoundException("Picture with id: " + pictureId + " does not exist!");
-        userDao.editUser(id, name, telephone, pictureId);
+        if(fs.findById(picture.getId()).isEmpty()) throw new NotFoundException("Picture with id: " + picture.getId() + " does not exist!");
+        userDao.editUser(id, name, telephone, picture);
         LOGGER.info("Edited user information for user with id: {}", id);
     }
 

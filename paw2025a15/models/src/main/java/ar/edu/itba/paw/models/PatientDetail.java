@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity

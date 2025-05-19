@@ -2,7 +2,6 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.Table;
 import java.time.LocalDate;
 

@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -8,7 +10,10 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = "user_email")}
+)
 public class User {
 
     @Id
@@ -16,23 +21,35 @@ public class User {
     @SequenceGenerator(sequenceName = "users_user_id_seq", name = "users_user_id_seq", allocationSize = 1)
     @Column(name = "user_id")
     private Long id;
-    @Column(name = "user_email", length = 100, unique = true, nullable = false)
-    private final String email;
-    @Column(name = "user_password", length = 100, nullable = false)
-    private final String password;
-    @Column(name = "user_name", length = 100, nullable = false)
-    private final String name;
-    @Column(name = "user_telephone", length = 20, nullable = false)
-    private final String telephone;
-    @Column(name = "user_role")
-    private final UserRoleEnum role;
-    @Column(name = "picture_id")
-    private final long pictureId;
-    @Column(name = "create_date")
-    private final LocalDate createDate;
-    @Column(name = "locale")
-    private final LocaleEnum locale;
 
+    @Column(name = "user_email", length = 100, unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "user_password", length = 100, nullable = false)
+    private String password;
+
+    @Column(name = "user_name", length = 100, nullable = false)
+    private String name;
+
+    @Column(name = "user_telephone", length = 20, nullable = false)
+    private String telephone;
+
+    @Enumerated
+    @Column(name = "user_role", nullable = false)
+    private UserRoleEnum role;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "picture_id", referencedColumnName = "file_id", nullable = false)
+    private File picture;
+
+    @Column(name = "create_date", nullable = false)
+    private LocalDate createDate;
+
+    @Enumerated
+    @Column(name = "locale", nullable = false)
+    private LocaleEnum locale;
+
+    @Deprecated
     public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, LocalDate createDate, LocaleEnum locale) {
         this.id = id;
         this. email = email;
@@ -45,26 +62,26 @@ public class User {
         this.locale = locale;
     }
 
-    public User(String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocalDate createDate, LocaleEnum locale) {
+    public User(String email, String password, String name, String telephone, UserRoleEnum role, File picture, LocalDate createDate, LocaleEnum locale) {
         this. email = email;
         this.password = password;
         this.name= name;
         this.telephone = telephone;
         this.role = role;
-        this.pictureId = pictureId;
+        this.picture = picture;
         this.createDate = createDate;
         this.locale = locale;
     }
 
     @Deprecated
-    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, long pictureId, LocalDate createDate, LocaleEnum locale) {
+    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, File picture, LocalDate createDate, LocaleEnum locale) {
         this.id = id;
         this. email = email;
         this.password = password;
         this.name= name;
         this.telephone = telephone;
         this.role = role;
-        this.pictureId = pictureId;
+        this.picture = picture;
         this.createDate = createDate;
         this.locale = locale;
     }
@@ -81,20 +98,36 @@ public class User {
         return name;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public String getPassword(){
         return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
     }
 
     public String getTelephone(){
         return telephone;
     }
 
+    public void setTelephone(String telephone){
+        this.telephone = telephone;
+    }
+
     public UserRoleEnum getRole(){
         return role;
     }
 
-    public long getPictureId(){
-        return pictureId;
+    public File getPicture(){
+        return picture;
+    }
+
+    public void setPicture(File picture){
+        this.picture = picture;
     }
 
     public LocalDate getCreateDate(){
@@ -105,7 +138,9 @@ public class User {
         return locale;
     }
 
-
+    public void setLocale(LocaleEnum locale){
+        this.locale = locale;
+    }
 
     @Override
     public boolean equals(Object other){
@@ -118,7 +153,7 @@ public class User {
         return (this.id==o.id) && (this.name.equals(o.name)) 
         && (this.email.equals(o.email)) && (this.password.equals(o.password))
         && (this.telephone.equals(o.telephone)) && (this.role.equals(o.role))
-        && (this.pictureId == o.pictureId) && (this.createDate.equals(o.createDate))
+        && (this.picture.equals(o.picture)) && (this.createDate.equals(o.createDate))
         && (this.locale.equals(o.locale));
     }
 
@@ -130,7 +165,7 @@ public class User {
         result = 31 * result + password.hashCode();
         result = 31 * result + telephone.hashCode();
         result = 31 * result + role.hashCode();
-        result = 31 * result + Long.hashCode(pictureId);
+        result = 31 * result + picture.hashCode();
         result = 31 * result + createDate.hashCode();
         result = 31 * result + locale.hashCode();
         return result;
@@ -145,7 +180,7 @@ public class User {
             ", password=" + password +
             ", telephone=" + telephone +
             ", role=" + role +
-            ", pictureId=" + pictureId +
+            ", picture=" + picture +
             ", createDate=" + createDate +
             ", locale=" + locale +
             '}';

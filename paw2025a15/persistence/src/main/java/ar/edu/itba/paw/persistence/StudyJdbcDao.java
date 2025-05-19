@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -153,4 +153,4 @@ public class StudyJdbcDao implements StudyDao{
         );
     }
 
-}
+}*/

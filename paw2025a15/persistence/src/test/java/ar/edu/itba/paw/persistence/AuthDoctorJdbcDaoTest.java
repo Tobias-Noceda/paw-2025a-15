@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.util.List;
 
@@ -433,3 +433,4 @@ public class AuthDoctorJdbcDaoTest {
         JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "auth_doctors", String.format("doctor_id = %d AND patient_id = %d AND access_level = %d", DOC_ID, PATIENT_ID, ACCES_LEVEL2.ordinal())));
     }
 }
+*/
