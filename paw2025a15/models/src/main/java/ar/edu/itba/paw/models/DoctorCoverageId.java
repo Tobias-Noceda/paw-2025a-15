@@ -9,10 +9,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class DoctorCoverageId implements Serializable{
     @Column(name = "doctor_id")
-    private Long doctorId;
+    private long doctorId;
 
     @Column(name = "insurance_id")
-    private Long insuranceId;
+    private long insuranceId;
 
     public DoctorCoverageId(){
         //just for hibernate;

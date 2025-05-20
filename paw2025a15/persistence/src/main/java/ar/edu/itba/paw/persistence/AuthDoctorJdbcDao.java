@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.util.HashMap;
 import java.util.List;
@@ -135,3 +135,4 @@ public class AuthDoctorJdbcDao implements AuthDoctorDao{
     }
     
 }
+*/

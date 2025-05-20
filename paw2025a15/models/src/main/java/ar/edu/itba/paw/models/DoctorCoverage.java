@@ -21,6 +21,10 @@ public class DoctorCoverage {
     @JoinColumn(name = "insurance_id", referencedColumnName = "insurance_id", nullable = false)
     private Insurance insurance;
 
+    public DoctorCoverage(){
+        //just for hibernate
+    }
+
     public DoctorCoverage(User doctor, Insurance insurance){
         this.id = new DoctorCoverageId(doctor.getId(), insurance.getId());
         this.doctor = doctor;
