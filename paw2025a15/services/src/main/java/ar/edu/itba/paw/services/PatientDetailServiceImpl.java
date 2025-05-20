@@ -42,7 +42,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
             throw new RuntimeException("Failed to create user for email: " + email);
         }
         long patientId = patient.getId();
-        PatientDetail pd = patientDetailDao.create(patient.getId(), null, null, null, null, null, null, null, null, null, null, null, null);
+        PatientDetail pd = patientDetailDao.create(patient, null, null, null, null, null, null, null, null, null, null, null, null);
         if(pd == null){
             LOGGER.error("Failed to create patient details for userId: {} at {}", patientId, LocalDateTime.now());
             throw new RuntimeException("Failed to create patient details for userId: " + patientId);

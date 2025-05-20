@@ -1,29 +1,42 @@
 package ar.edu.itba.paw.models;
 
-
-import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "doctor_coverages")
 public class DoctorCoverage {
-    @Column(name = "doctor_id")
-    private final long doctorId;
-    @Column(name = "insurance_id")
-    private final long insuranceId;
+    @EmbeddedId
+    private DoctorCoverageId id;
 
-    public DoctorCoverage(long doctorId, long insuranceId){
-        this.doctorId = doctorId;
-        this.insuranceId = insuranceId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
+    private User doctor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "insurance_id", referencedColumnName = "insurance_id", nullable = false)
+    private Insurance insurance;
+
+    public DoctorCoverage(User doctor, Insurance insurance){
+        this.id = new DoctorCoverageId(doctor.getId(), insurance.getId());
+        this.doctor = doctor;
+        this.insurance = insurance;
     }
 
-    public long getDoctorId(){
-        return doctorId;
+    public DoctorCoverageId getDoctorCoverageId(){
+        return id;
     }
 
-    public long getInsuranceId(){
-        return insuranceId;
+    public User getDoctor(){
+        return doctor;
+    }
+
+    public Insurance getInsurance(){
+        return insurance;
     }
 
     @Override
@@ -34,21 +47,21 @@ public class DoctorCoverage {
 
         DoctorCoverage o = (DoctorCoverage) other;
 
-        return (this.doctorId==o.doctorId) && (this.insuranceId==o.insuranceId);
+        return (this.doctor.equals(o.doctor)) && (this.insurance.equals(o.insurance));
     }
 
     @Override
     public int hashCode() {
-        int result = Long.hashCode(doctorId);
-        result = 31 * result + Long.hashCode(insuranceId);
+        int result = doctor.hashCode();
+        result = 31 * result + insurance.hashCode();
         return result;
     }
 
     @Override
     public String toString(){
-        return "File{" +
-            "doctorId=" + doctorId +
-            "," + "insuranceId=" + insuranceId +
+        return "DoctorCoverage{" +
+            "doctor=" + doctor +
+            "," + "insurance=" + insurance +
             '}';
     }
 }

@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -223,4 +223,4 @@ public class DoctorDetailJdbcDao implements DoctorDetailDao {
                 .trim()
                 .toLowerCase();
     }
-}
+}*/

@@ -18,12 +18,12 @@ public class Study {
 
     @Enumerated
     @Column( name = "study_type", nullable = false)
-    private StudyTypeEnum type;
+    private StudyTypeEnum type = StudyTypeEnum.fromInt(0);
 
     @Column( name = "study_comment", length = 100)
     private String comment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false)
     private File file;
 
@@ -40,6 +40,10 @@ public class Study {
 
     @Column( name = "study_date", nullable = false)
     private LocalDate studyDate;
+
+    public Study(){
+        //just for hibernate
+    }
 
     public Study(StudyTypeEnum type, String comment, File file, User user, User uploader, LocalDateTime uploadDate, LocalDate studyDate){
         this.type = type;

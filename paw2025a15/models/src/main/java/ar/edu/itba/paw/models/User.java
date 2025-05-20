@@ -49,6 +49,10 @@ public class User {
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
 
+    public User(){
+        //just for hibernate;
+    }
+
     @Deprecated
     public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, LocalDate createDate, LocaleEnum locale) {
         this.id = id;
