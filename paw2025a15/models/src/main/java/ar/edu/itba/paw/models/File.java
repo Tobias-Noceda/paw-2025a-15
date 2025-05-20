@@ -18,7 +18,7 @@ public class File{
     @Column(name = "file_content", nullable = false)
     private byte[] content;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column( name = "file_type", nullable = false)
     private FileTypeEnum type;
 

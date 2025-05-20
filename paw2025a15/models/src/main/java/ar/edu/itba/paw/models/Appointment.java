@@ -1,18 +1,21 @@
 package ar.edu.itba.paw.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "appointments")
 public class Appointment {
-    @Column( name =  "shift_id")
+
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "shift_id", referencedColumnName = "shift_id", nullable = false)
     private final long shiftId;
-    @Column( name =  "patient_id")
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private final long patientId;
-    @Column( name =  "appointment_date")
+
+    @Column( name =  "appointment_date", nullable = false)
     private final LocalDate date;
 
     public Appointment(long shiftId, long patientId, LocalDate date){

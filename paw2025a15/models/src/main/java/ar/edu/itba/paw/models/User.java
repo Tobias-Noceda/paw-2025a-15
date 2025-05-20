@@ -34,7 +34,7 @@ public class User {
     @Column(name = "user_telephone", length = 20, nullable = false)
     private String telephone;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
     private UserRoleEnum role;
 
@@ -48,6 +48,22 @@ public class User {
     @Enumerated
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
+
+    //Opcional
+    //Patient appointments
+    @OneToMany(orphanRemoval = true, mappedBy = "patientId")
+    @Column(insertable = true, updatable = true)
+    private List<Appointment> appointments;
+
+    //Doctor coverages
+    @OneToMany(orphanRemoval = true, mappedBy = "doctorId")
+    @Column(insertable = true, updatable = true)
+    private List<DoctorCoverage> doctorCoverages;
+
+    //Doctor detail
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "doctor_id")
+    private DoctorDetail doctorDetail;
 
     public User(){
         //just for hibernate;
@@ -190,4 +206,15 @@ public class User {
             '}';
     }
 
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public List<DoctorCoverage> getDoctorCoverages() {
+        return doctorCoverages;
+    }
+
+    public DoctorDetail getDoctorDetail() {
+        return doctorDetail;
+    }
 }

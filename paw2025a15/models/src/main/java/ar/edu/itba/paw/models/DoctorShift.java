@@ -4,16 +4,16 @@ import java.time.LocalTime;
 
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "doctor_shifts")
 public class DoctorShift {
     @Column(name = "shift_id")
     private final long id;
-    @Column(name = "doctor_id")
+
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private final long doctorId;
     @Column(name = "shift_weekday")
     private final WeekdayEnum weekday;
