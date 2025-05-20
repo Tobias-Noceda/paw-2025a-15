@@ -32,10 +32,10 @@ public class InsuranceServiceImpl implements InsuranceService{
 
     @Transactional
     @Override
-    public Insurance create(String name, long pictureId) {
+    public Insurance create(String name, File picture) {
         if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
-        if(fs.findById(pictureId).isEmpty()) throw new NotFoundException("Logo with id: " + pictureId + " does not exist!");
-        Insurance insurance = insuranceDao.create(name, pictureId);
+        if(fs.findById(picture.getId()).isEmpty()) throw new NotFoundException("Logo with id: " + picture.getId() + " does not exist!");
+        Insurance insurance = insuranceDao.create(name, picture);
         if(insurance == null){
             LOGGER.error("Failed to create insurance: {} at {}", name, LocalDateTime.now());
             throw new RuntimeException("Failed to create insurance: " + name);
@@ -46,11 +46,11 @@ public class InsuranceServiceImpl implements InsuranceService{
 
     @Transactional
     @Override
-    public void edit(long id, String name, long pictureId) {
+    public void edit(long id, String name, File picture) {
         if(getInsuranceById(id).isEmpty()) throw new NotFoundException("Insurance with id: " + id + " does not exist!");
         if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
-        if(fs.findById(pictureId).isEmpty()) throw new NotFoundException("Logo with id: " + pictureId + " does not exists!");
-        insuranceDao.edit(id, name, pictureId);
+        if(fs.findById(picture.getId()).isEmpty()) throw new NotFoundException("Logo with id: " + picture.getId() + " does not exists!");
+        insuranceDao.edit(id, name, picture);
         LOGGER.info("Edited insurance information for insurance with id: {}", id);
     }
 
@@ -77,6 +77,6 @@ public class InsuranceServiceImpl implements InsuranceService{
     public Optional<File> getInsurancePicture(long id) {
         Insurance insurance = insuranceDao.getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
 
-        return fs.findById(insurance.getPictureId());
+        return fs.findById(insurance.getPicture().getId());//TODO:changed when migrating jpa, check later
     }
 }

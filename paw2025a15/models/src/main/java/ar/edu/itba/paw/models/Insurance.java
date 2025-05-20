@@ -3,22 +3,31 @@ package ar.edu.itba.paw.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "insurances")
+@Table(name = "insurances",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = "insurance_name")}
+)
 public class Insurance {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "insurances_insurance_id_seq")
     @SequenceGenerator(sequenceName = "insurances_insurance_id_seq", name = "insurances_insurance_id_seq", allocationSize = 1)
     @Column( name = "insurance_id")
-    private final long id;
-    @Column( name = "insurance_name")
-    private String name;
-    @Column( name = "picture_id")
-    private long pictureId;
+    private long id;
 
-    public Insurance(long id, String name, long pictureId){
-        this.id = id;
+    @Column( name = "insurance_name", nullable = false)
+    private String name;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "picture_id", referencedColumnName = "file_id", nullable = false)
+    private File picture;
+
+    public Insurance(){
+        //just for hibernate
+    }
+
+    public Insurance(String name, File picture){
         this.name = name;
-        this.pictureId = pictureId;
+        this.picture = picture;
     }
 
     public long getId(){
@@ -29,12 +38,12 @@ public class Insurance {
         return name;
     }
 
-    public long getPictureId(){
-        return pictureId;
+    public File getPicture(){
+        return picture;
     }
 
-    public void setPictureId(long pictureId){
-        this.pictureId = pictureId;
+    public void setPicture(File picture){
+        this.picture = picture;
     }
 
     public void setName(String name){
@@ -46,7 +55,7 @@ public class Insurance {
         return "Insurance{" +
             "id=" + id +
             ", name=" + name +
-            ", pictureId=" + pictureId +
+            ", picture=" + picture +
             '}';
     }
 
@@ -58,14 +67,14 @@ public class Insurance {
 
         Insurance o = (Insurance) other;
 
-        return (this.id==o.id) && (this.name.equals(o.name)) && (this.pictureId == o.pictureId);
+        return (this.id==o.id) && (this.name.equals(o.name)) && (this.picture.equals(o.picture));
     }
 
     @Override
     public int hashCode() {
         int result = Long.hashCode(id);
         result = 31 * result + name.hashCode();
-        result = 31 * result + Long.hashCode(pictureId);
+        result = 31 * result + picture.hashCode();
         return result;
     }
 }

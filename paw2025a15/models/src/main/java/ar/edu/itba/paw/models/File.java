@@ -13,15 +13,21 @@ public class File{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "files_file_id_seq")
     @SequenceGenerator(sequenceName = "files_file_id_seq", name = "files_file_id_seq", allocationSize = 1)
     @Column( name = "file_id")
-    private final long id;
-    @Column(name = "file_content")
-    private final byte[] content;
-    @Column( name = "file_type")
-    private final FileTypeEnum type;
+    private long id;
 
-    public File(long id, byte[] content, FileTypeEnum type){
+    @Column(name = "file_content", nullable = false)
+    private byte[] content;
+
+    @Enumerated
+    @Column( name = "file_type", nullable = false)
+    private FileTypeEnum type;
+
+    public File(){
+        //just for hibernate
+    }
+
+    public File(byte[] content, FileTypeEnum type){
         this.content = content;
-        this.id = id;
         this.type = type;
     }
 
