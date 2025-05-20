@@ -65,9 +65,8 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public void removeAllCoveragesForDoctorId(long doctorId) {
-        
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeAllCoveragesForDoctorId'");
+        String q = "delete from DoctorCoverage as dc where dc.doctor.id = :doctorId";
+        em.createQuery(q).setParameter("doctorId", doctorId).executeUpdate();
     }
 
     @Override
