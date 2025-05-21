@@ -76,14 +76,29 @@ public class UserJpaDao implements UserDao {
     public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         if(page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchAuthPatientsPageByDoctorIdAndName'");
+        TypedQuery<User> query = em.createQuery(
+                "select distinct ad.patient from AuthDoctor as ad where ad.doctor.id = :doctorId ", User.class);
+        query.setParameter("doctorId", doctorId);
+        if(name != null && !name.trim().isEmpty()) {
+            query = em.createQuery("select distinct ad.patient from AuthDoctor as ad where ad.doctor.id = :doctorId AND LOWER(ad.patient.name) LIKE :userName ", User.class);
+            query.setParameter("doctorId", doctorId);
+            query.setParameter("userName","%" + sanitize(name) + "%");
+        }
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
     }
 
     @Override
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchAuthPatientsCountByDoctorIdAndName'");
+        TypedQuery<Integer> query = em.createQuery(" select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor.id = :doctorId ", Integer.class);
+        query.setParameter("doctorId", doctorId);
+        if(name != null && !name.trim().isEmpty()) {
+            query = em.createQuery(" select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor.id = :doctorId AND LOWER(ad.patient.name) LIKE :userName", Integer.class);
+            query.setParameter("doctorId", doctorId);
+            query.setParameter("userName","%" + sanitize(name) + "%");
+        }
+        return query.getSingleResult();
     }
 
     private String sanitize(String name) {
