@@ -13,6 +13,8 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,14 +73,19 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public void removeDoctorCoverages(long doctorId, List<Long> toRemove) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeDoctorCoverages'");
+        //TODO: BATCH
+        for(Long id : toRemove){
+            em.createQuery("delete from DoctorCoverage as dc where dc.doctor.id = :doctorId and dc.insurance.id = :insuranceId").setParameter("doctorId", doctorId).setParameter("insuranceId", toRemove.get(0)).executeUpdate();
+        }
     }
+
+
 
     @Override
     public List<Insurance> getDoctorInsurancesById(long doctorId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDoctorInsurancesById'");
+        TypedQuery<Insurance> query = em.createQuery("from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
+        query.setParameter("doctorId", doctorId);
+        return query.getResultList();
     }
 
     @Override
@@ -91,8 +98,41 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
             WeekdayEnum weekday) {
+//
+//        TypedQuery<Integer> query = em.createQuery("select count(*) from DoctorDetail as dd", Integer.class);
+//
+//        List<Object> params = new ArrayList<>();
+//        List<Integer> types = new ArrayList<>();
+//        addFiltersToQuery(query, params, types, specialty, insurance, weekday);
+//        if(name != null && !name.trim().isEmpty()) {
+//            query.append(" AND LOWER(u.user_name) LIKE ? ");
+//            params.add("%" + sanitize(name) + "%");
+//            types.add(java.sql.Types.VARCHAR);
+//        }
+
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalDoctorsByParams'");
+        throw new UnsupportedOperationException("Unimplemented method 'getDoctorsPageByParams'");
+
     }
-    
+
+
+    private void addFiltersToQuery(StringBuilder query, List<Object> params, List<Integer> types, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
+        if(specialty != null){
+            query.append(" AND dd.doctor_specialty = ? ");
+            params.add(specialty.ordinal());
+            types.add(java.sql.Types.INTEGER);
+        }
+        if(insurance != null){
+            query.append(" AND u.user_id IN (SELECT dc.doctor_id FROM doctor_coverages AS dc WHERE dc.insurance_id = ?)");
+            params.add(insurance.getId());
+            types.add(java.sql.Types.BIGINT);
+        }
+        if(weekday != null){
+            query.append(" AND u.user_id IN (SELECT ds.doctor_id FROM doctor_shifts AS ds WHERE ds.shift_weekday = ?) ");
+            params.add(weekday.ordinal());
+            types.add(java.sql.Types.INTEGER);
+        }
+    }
+
+
 }
