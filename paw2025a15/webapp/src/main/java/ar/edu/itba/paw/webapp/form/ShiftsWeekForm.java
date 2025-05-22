@@ -1,11 +1,22 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import javax.validation.constraints.Future;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
 
 public class ShiftsWeekForm {
     private final Month month;
     private final int weekOfMonth;
+    @Future
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
+    private LocalDate today;
     public int index = 0;
 
     public ShiftsWeekForm() {
@@ -18,6 +29,7 @@ public class ShiftsWeekForm {
             case 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 -> 3;
             default -> -1;
         };
+        this.today = LocalDate.now().plusDays(1);
     }
 
     public void setIndex(int index) {
@@ -86,10 +98,18 @@ public class ShiftsWeekForm {
         return LocalDate.now().plusMonths((weekOfMonth + index) / 4).withDayOfMonth(getFirstDayOfWeek());
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
         return "ShiftsMonthForm{" +
-                "month=" + month +
+                "date=" + date +
                 '}';
     }
 }

@@ -514,3 +514,38 @@ body {
     outline: none;
     border-color: var(--clr-primary);
 }
+
+
+.field-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-container.full-width {
+    grid-column: 1 / -1;
+}
+
+.field-container label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--sf-clr-text);
+}
+
+.input-field {
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    transition: border-color var(--transition);
+    resize:none;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.flex-container > div {
+
+    align-content: center;
+    padding: 20px;
+}

@@ -7,6 +7,7 @@ function submitFormWithAction(actionValue) {
         document.getElementById('indexField').value = previusIndex - 1;
     } else if(previusIndex !== 10 && actionValue === 'next') {
         document.getElementById('indexField').value = previusIndex + 1;
+    }else if(actionValue === 'other'){
     }
     document.querySelector('.week-navigator-div').submit();
 }

@@ -165,28 +165,39 @@
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
         <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
           <form:hidden path="index" id="indexField" />
-          <button
-            type="button"
-            class="navigation-button"
-            onclick="submitFormWithAction('previous')"
-            <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
-          >
-            <spring:message code="doctorDetail.previousWeek"/>
-          </button>
-          <div class="selected-month">
+          <div class="flex-container">
+            <div>
+              <button
+                      type="button"
+                      class="navigation-button"
+                      onclick="submitFormWithAction('previous')"
+                      <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.previousWeek"/>
+              </button>
+            </div>
+          <!--<div class="selected-month">
             <c:set var="month">
               <spring:message code="month.${shiftsWeekForm.month}"/>
             </c:set>
             <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
+          </div>-->
+
+            <div>
+              <form:input cssClass="input-field" type="date" value="${today}" min="${today}" path="date" onchange="submitFormWithAction('other')"/>
+            </div>
+
+            <div>
+              <button
+                      type="button"
+                      class="navigation-button"
+                      onclick="submitFormWithAction('next')"
+                      <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.nextWeek"/>
+              </button>
+            </div>
           </div>
-          <button
-            type="button"
-            class="navigation-button"
-            onclick="submitFormWithAction('next')"
-            <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
-          >
-            <spring:message code="doctorDetail.nextWeek"/>
-          </button>
         </form:form>
 
         <c:if test="${not empty takeTurnErrors}">
