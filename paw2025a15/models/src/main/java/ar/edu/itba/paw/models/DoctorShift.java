@@ -7,26 +7,42 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "doctor_shifts")
+@Table(name = "doctor_shifts",
+        uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_start_time"}),
+        @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_end_time"})
+    }
+)
 public class DoctorShift {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_shifts_shift_id_seq")
+    @SequenceGenerator(sequenceName = "doctor_shifts_shift_id_seq", name = "doctor_shifts_shift_id_seq", allocationSize = 1)
     @Column(name = "shift_id")
-    private final long id;
+    private long id;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
-    private final long doctorId;
-    @Column(name = "shift_weekday")
-    private final WeekdayEnum weekday;
-    @Column(name = "shift_address")
-    private final String address;
-    @Column(name = "shift_start_time")
-    private final LocalTime startTime;
-    @Column(name = "shift_end_time")
-    private final LocalTime endTime;
+    private User doctor;
 
-    public DoctorShift(long id, long doctorId, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime){
-        this.id = id;
-        this.doctorId = doctorId;
+    @Enumerated
+    @Column(name = "shift_weekday", nullable = false)
+    private WeekdayEnum weekday;
+
+    @Column(name = "shift_address", length = 50, nullable = false)
+    private String address;
+
+    @Column(name = "shift_start_time", nullable = false)
+    private LocalTime startTime;
+
+    @Column(name = "shift_end_time", nullable = false)
+    private LocalTime endTime;
+
+    public DoctorShift(){
+        //just for hibernate
+    }
+
+    public DoctorShift(User doctor, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime){
+        this.doctor = doctor;
         this.weekday = weekday;
         this.address = address;
         this.startTime = startTime;
@@ -37,8 +53,8 @@ public class DoctorShift {
         return id;
     }
 
-    public long getDoctorId(){
-        return doctorId;
+    public User getDoctor(){
+        return doctor;
     }
 
     public WeekdayEnum getWeekday(){
@@ -65,7 +81,7 @@ public class DoctorShift {
 
         DoctorShift o = (DoctorShift) other;
 
-        return (this.id==o.id) && (this.doctorId==o.doctorId)
+        return (this.id==o.id) && (this.doctor.equals(o.doctor))
         && (this.weekday.equals(o.weekday)) && (this.address.equals(o.address))
         && (this.startTime.equals(o.startTime)) && (this.endTime.equals(o.endTime));
     }
@@ -73,7 +89,7 @@ public class DoctorShift {
     @Override
     public int hashCode() {
         int result = Long.hashCode(id);
-        result = 31 * result + Long.hashCode(doctorId);
+        result = 31 * result + doctor.hashCode();
         result = 31 * result + weekday.hashCode();
         result = 31 * result + address.hashCode();
         result = 31 * result + startTime.hashCode();
@@ -85,7 +101,7 @@ public class DoctorShift {
     public String toString(){
         return "DoctorShift{" +
             "id=" + id +
-            "," + "doctorId=" + doctorId +
+            "," + "doctor=" + doctor +
             "," + "weekday=" + weekday +
             "," + "address=" + address +
             "," + "startTime=" + startTime +

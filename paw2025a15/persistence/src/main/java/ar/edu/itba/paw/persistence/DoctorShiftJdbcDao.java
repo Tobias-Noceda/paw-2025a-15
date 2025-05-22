@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -118,3 +118,4 @@ public class DoctorShiftJdbcDao implements DoctorShiftDao{
           new int[] {java.sql.Types.BIGINT, java.sql.Types.INTEGER, java.sql.Types.TIME, java.sql.Types.DATE}, ROW_MAPPER);
     }
 }
+*/

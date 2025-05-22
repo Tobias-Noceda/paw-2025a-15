@@ -26,7 +26,7 @@ public class AuthDoctor {
     private User patient;
 
     @Enumerated
-    @Column( name = "access_level")
+    @Column( name = "access_level", nullable = false)
     private AccessLevelEnum accessLevel;
 
     public AuthDoctor(){

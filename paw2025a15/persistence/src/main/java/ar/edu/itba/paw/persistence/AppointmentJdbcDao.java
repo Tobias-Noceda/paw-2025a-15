@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -107,3 +107,4 @@ public class AppointmentJdbcDao implements AppointmentDao{
         );
     }
 }
+*/

@@ -3,15 +3,12 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
 import ar.edu.itba.paw.models.AuthDoctor;
 import ar.edu.itba.paw.models.AuthDoctorId;
-import ar.edu.itba.paw.models.AuthStudy;
-import ar.edu.itba.paw.models.AuthStudyId;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository

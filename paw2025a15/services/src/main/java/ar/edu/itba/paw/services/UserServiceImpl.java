@@ -44,7 +44,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale){
         if(getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
-        User user = userDao.create(email, passwordEncoder.encode(password), name, telephone, role, 1, locale); // PictureId por defecto
+        File defaultPic = fs.findById(1).orElseThrow(()-> new NotFoundException("Default picture not found!"));
+        User user = userDao.create(email, passwordEncoder.encode(password), name, telephone, role, defaultPic, locale); // PictureId por defecto
         if(user == null){
             LOGGER.error("Failed to create user for email: {} at {}", email, LocalDateTime.now()); 
             throw new RuntimeException("Failed to create user for email: " + email);

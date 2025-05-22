@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.models;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -69,33 +68,7 @@ public class User {
         //just for hibernate;
     }
 
-    @Deprecated
-    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, LocalDate createDate, LocaleEnum locale) {
-        this.id = id;
-        this. email = email;
-        this.password = password;
-        this.name= name;
-        this.telephone = telephone;
-        this.role = role;
-        this.pictureId = 1;
-        this.createDate = createDate;
-        this.locale = locale;
-    }
-
     public User(String email, String password, String name, String telephone, UserRoleEnum role, File picture, LocalDate createDate, LocaleEnum locale) {
-        this. email = email;
-        this.password = password;
-        this.name= name;
-        this.telephone = telephone;
-        this.role = role;
-        this.picture = picture;
-        this.createDate = createDate;
-        this.locale = locale;
-    }
-
-    @Deprecated
-    public User(long id, String email, String password, String name, String telephone, UserRoleEnum role, File picture, LocalDate createDate, LocaleEnum locale) {
-        this.id = id;
         this. email = email;
         this.password = password;
         this.name= name;

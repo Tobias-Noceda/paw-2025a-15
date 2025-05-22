@@ -11,6 +11,9 @@ import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Study;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
@@ -30,13 +33,17 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Autowired
     private DoctorDetailService dds;
 
+    @Autowired
+    private UserService us;
+
     @Transactional
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        if(ss.getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
+        Study study = ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));//TODO:check change for hibernate
+        User doctor = us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthStudy(studyId, doctorId)) return true;
-        boolean result = authStudiesDao.authStudyForDoctorId(studyId, doctorId);
+        boolean result = authStudiesDao.authStudyForDoctorId(study, doctor);
         if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
         else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
         return result;

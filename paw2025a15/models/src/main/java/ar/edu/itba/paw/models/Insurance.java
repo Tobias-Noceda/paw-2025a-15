@@ -14,7 +14,7 @@ public class Insurance {
     @Column( name = "insurance_id")
     private long id;
 
-    @Column( name = "insurance_name", nullable = false)
+    @Column( name = "insurance_name", length = 100, nullable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)

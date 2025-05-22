@@ -23,7 +23,7 @@ public class DoctorDetail {
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
-    @Column(name = "doctor_licence", nullable = false)
+    @Column(name = "doctor_licence", length = 50 ,nullable = false)
     private String doctorLicense;
 
     @Enumerated

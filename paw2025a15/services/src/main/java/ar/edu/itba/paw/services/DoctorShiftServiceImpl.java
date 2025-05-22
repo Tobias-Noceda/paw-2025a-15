@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -34,17 +36,21 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Autowired
     private DoctorDetailService dds;
 
+    @Autowired
+    private UserService us;
+
     @Transactional
     @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
         if(!startTime.isBefore(endTime)) throw new IllegalArgumentException("Start time of a shift must be before the end time");
+        User doctor = us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:changed for hibernate check
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         long amount =  Duration.between(startTime,endTime).toMinutes()/slot;
         //long slot = Duration.between(startTime, endTime).toMinutes() / amount;
         List<DoctorShift> shifts = new ArrayList<>();
         for (WeekdayEnum weekday : weekdays) {
             for (int i = 1; i <= amount; i++) {
-                shifts.add(new DoctorShift(i, doctorId, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i)));
+                shifts.add(new DoctorShift(doctor, weekday, address, startTime.plusMinutes(slot * (i-1)), startTime.plusMinutes(slot * i)));
             }
         }
         int[] results = doctorShiftDao.batchCreate(shifts);
@@ -80,7 +86,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
             end = shifts.get(i);
             // Si es el mismo día y el turno actual termina cuando el próximo empieza
             if(current.getWeekday() == end.getWeekday() && current.getEndTime().equals(end.getStartTime())) {
-                current = new DoctorShift(current.getId(), current.getDoctorId(), current.getWeekday(), current.getAddress(), current.getStartTime(), end.getEndTime());
+                current = new DoctorShift(current.getDoctor(), current.getWeekday(), current.getAddress(), current.getStartTime(), end.getEndTime());
             } else {
                 toReturn.add(current);
                 if(i < shifts.size()) {
@@ -89,7 +95,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
             }
         }
         // Agregar el último turno
-        toReturn.add(new DoctorShift(current.getId(), current.getDoctorId(), current.getWeekday(), current.getAddress(), current.getStartTime(), current.getEndTime()));
+        toReturn.add(new DoctorShift(current.getDoctor(), current.getWeekday(), current.getAddress(), current.getStartTime(), current.getEndTime()));
 
         return toReturn;
     }

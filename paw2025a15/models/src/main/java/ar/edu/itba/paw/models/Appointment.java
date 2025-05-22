@@ -6,30 +6,41 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "appointments")
 public class Appointment {
+    @EmbeddedId
+    private AppointmentId id;
 
     @OneToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "shift_id", referencedColumnName = "shift_id", nullable = false)
-    private final long shiftId;
+    private DoctorShift shift;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
-    private final long patientId;
+    private User patient;
 
     @Column( name =  "appointment_date", nullable = false)
-    private final LocalDate date;
+    private LocalDate date;
 
-    public Appointment(long shiftId, long patientId, LocalDate date){
-        this.shiftId = shiftId;
-        this.patientId = patientId;
+    public Appointment(){
+        //just for hibernate
+    }
+
+    public Appointment(DoctorShift shift, User patient, LocalDate date){
+        this.shift = shift;
+        this.patient = patient;
         this.date = date;
+        this.id = new AppointmentId(shift.getId(), date);
     }
 
-    public long getShiftId(){
-        return shiftId;
+    public AppointmentId getAppointmentId(){
+        return id;
     }
 
-    public long getPatientId(){
-        return patientId;
+    public DoctorShift getShift(){
+        return shift;
+    }
+
+    public User getPatient(){
+        return patient;
     }
 
     public LocalDate getDate(){
@@ -56,14 +67,16 @@ public class Appointment {
 
         Appointment o = (Appointment) other;
 
-        return (this.shiftId==o.shiftId) && (this.patientId==o.patientId)
+        return (this.id.equals(o.id)) &&
+        (this.shift.equals(o.shift)) && (this.patient.equals(o.patient))
         && (this.date.equals(o.date));
     }
 
     @Override
     public int hashCode() {
-        int result = Long.hashCode(shiftId);
-        result = 31 * result + Long.hashCode(patientId);
+        int result = id.hashCode();
+        result = 31 * result + shift.hashCode();
+        result = 31 * result + patient.hashCode();
         result = 31 * result + date.hashCode();
         return result;
     }
@@ -71,8 +84,9 @@ public class Appointment {
     @Override
     public String toString(){
         return "Appointment{" +
-            "shiftId=" + shiftId +
-            "," + "patientId=" + patientId +
+            "id=" + id +
+            "," + "shift=" + shift +
+            "," + "patient=" + patient +
             "," + "date=" + date +
             '}';
     }
