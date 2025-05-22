@@ -6,9 +6,11 @@ import java.util.Optional;
 
 import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentData;
+import ar.edu.itba.paw.models.DoctorShift;
+import ar.edu.itba.paw.models.User;
 
 public interface AppointmentDao {
-    public Appointment addAppointment(long shiftId, long patientId, LocalDate date);
+    public Appointment addAppointment(DoctorShift shift, User patient, LocalDate date);
 
     public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);
 

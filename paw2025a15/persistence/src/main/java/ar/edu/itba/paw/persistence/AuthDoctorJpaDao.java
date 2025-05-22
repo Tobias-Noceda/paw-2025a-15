@@ -54,8 +54,8 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'unauthDoctorByAccessLevel'");
+        AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel));
+        if(ad != null) em.remove(ad);
     }
 
     @Override
