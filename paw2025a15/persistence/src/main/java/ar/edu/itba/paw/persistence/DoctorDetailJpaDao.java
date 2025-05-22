@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.models.DoctorCoverage;
+import ar.edu.itba.paw.models.DoctorCoverageId;
 import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.Insurance;
@@ -72,13 +73,17 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public void removeDoctorCoverages(long doctorId, List<Long> toRemove) {
-        //TODO: BATCH
-        for(Long id : toRemove){
-            em.createQuery("delete from DoctorCoverage as dc where dc.doctor.id = :doctorId and dc.insurance.id = :insuranceId").setParameter("doctorId", doctorId).setParameter("insuranceId", toRemove.get(0)).executeUpdate();
+        User doctor = em.find(User.class, doctorId);
+        if(doctor==null) return;
+        for (int i = 0; i < toRemove.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
+            DoctorCoverage dc = em.find(DoctorCoverage.class, new DoctorCoverageId(doctorId, toRemove.get(i)));
+            if(dc!=null) em.remove(dc);
+            if (i % 50 == 0) {
+                em.flush();
+                em.clear();
+            }
         }
     }
-
-
 
     @Override
     public List<Insurance> getDoctorInsurancesById(long doctorId) {

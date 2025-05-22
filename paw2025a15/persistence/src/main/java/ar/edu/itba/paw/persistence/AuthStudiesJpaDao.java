@@ -39,6 +39,7 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
 
     @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
+        if(!hasAuthStudy(studyId, doctorId)) return;
         AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId));
         em.remove(as);
     }

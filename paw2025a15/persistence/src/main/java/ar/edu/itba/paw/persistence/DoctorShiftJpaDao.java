@@ -32,8 +32,22 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public int[] batchCreate(List<DoctorShift> shifts) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'batchCreate'");
+        int[] results = new int[shifts.size()];
+        for (int i = 0; i < shifts.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
+            try{
+                DoctorShift shift = shifts.get(i);
+                em.persist(shift);
+                results[i] = 1;
+                if (i % 50 == 0) {
+                    em.flush();
+                    em.clear();
+                }
+            }
+            catch(Exception e){
+                results[i] = 0;
+            }
+        }
+        return results;
     }
 
     @Override
@@ -43,7 +57,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public List<DoctorShift> getShiftsByDoctorId(long doctorId) {
-        TypedQuery<DoctorShift> query = em.createQuery("from DoctorShift as ds where ds.id.doctorId := doctorId",DoctorShift.class);
+        TypedQuery<DoctorShift> query = em.createQuery("from DoctorShift as ds where ds.id.doctorId = :doctorId",DoctorShift.class);
         query.setParameter("doctorId", doctorId);
         return query.getResultList();
     }
@@ -51,8 +65,24 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate,
             LocalDate endDate) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAvailableTurnsByDoctorIdBetweenDates'");
+        String query = "SELECT NEW AvailableTurn(gs.date, ds.id, ds.weekday, ds.startTime, ds.endTime, ds.address) " +
+                    "FROM DoctorShift ds, " +
+                    "FUNCTION('generate_series', :startDate, :endDate, INTERVAL '1 day') gs(date) " +
+                    "WHERE ds.doctor.id = :doctorId " +
+                    "AND (FUNCTION('EXTRACT', 'ISODOW', gs.date) - 1) = ds.weekday " +
+                    "AND (gs.date + ds.startTime) >= CURRENT_TIMESTAMP " +
+                    "AND NOT EXISTS ( " +
+                    "   SELECT 1 FROM Appointment a " +
+                    "   WHERE a.shift.id = ds.id " +
+                    "   AND a.date = gs.date " +
+                    ") " +
+                    "ORDER BY gs.date, ds.startTime";
+
+        return em.createQuery(query, AvailableTurn.class)
+                            .setParameter("doctorId", doctorId)
+                            .setParameter("startDate", startDate)
+                            .setParameter("endDate", endDate)
+                            .getResultList();
     }
 
     @Override

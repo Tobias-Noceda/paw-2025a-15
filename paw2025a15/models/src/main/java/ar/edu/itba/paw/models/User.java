@@ -48,7 +48,7 @@ public class User {
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
 
-    //Opcional
+    //Opcional TODO: esto esta raro capaz cambia si hacemos lo de herencia porque asi como esta es re antiintuitivo
     //Patient appointments
     @OneToMany(orphanRemoval = true, mappedBy = "patientId")
     @Column(insertable = true, updatable = true)

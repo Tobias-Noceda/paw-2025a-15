@@ -8,7 +8,9 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+
 import java.util.List;
 
 @Repository
@@ -19,14 +21,29 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthDoctorsByPatientId'");
+        String query = "SELECT NEW DoctorView(dd.doctor.id, u.name, dd.specialty, u.picture.id) " +
+                  "FROM AuthDoctor ad " +
+                  "JOIN User u ON ad.doctor.id = u.id " +
+                  "JOIN DoctorDetail dd ON dd.doctorId = u.id " +
+                  "WHERE ad.patient.id = :patientId";
+
+        return em.createQuery(query, DoctorView.class)
+                        .setParameter("patientId", id)
+                        .getResultList();
     }
 
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hasAuthDoctor'");
+        try{
+            em.createQuery("from AuthDoctor as ad where ad.id.doctorId = :doctorId and ad.id.patientId = :patientId LIMIT 1",AuthDoctor.class)
+            .setParameter("doctorId", doctorId)
+            .setParameter("patientId", patientId)
+            .getSingleResult();
+            return true;
+        }
+        catch (NoResultException e) {
+            return false;
+        }
     }
 
     @Override
@@ -36,38 +53,88 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public void authDoctor(User patient, User doctor, AccessLevelEnum accessLevel) {
+        if(hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), accessLevel)) return;
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), AccessLevelEnum.VIEW_BASIC)) authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
         final AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevel);
         em.persist(ad);
     }
 
     @Override
     public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'authDoctorWithLevels'");
+        User doctor = em.find(User.class, doctorId);
+        User patient = em.find(User.class, patientId);
+        if(doctor==null || patient==null) return new int[0];
+        int[] results = new int[accessLevels.size()];
+        for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
+            try{
+                AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevels.get(i));
+                em.persist(ad);
+                results[i] = 1;
+                if (i % 50 == 0) {
+                    em.flush();
+                    em.clear();
+                }
+            }
+            catch(Exception e){
+                results[i] = 0;
+            }
+        }
+        return results;
     }
 
     @Override
     public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'unauthDoctorAllAccessLevels'");
+        if(!hasAuthDoctor(patientId, doctorId)) return;
+        em.createQuery("DELETE FROM AuthDoctor ad WHERE ad.patient.id = :patientId AND ad.doctor.id = :doctorId")
+            .setParameter("patientId", patientId)
+            .setParameter("doctorId", doctorId)
+            .executeUpdate();
     }
 
     @Override
     public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel));
-        if(ad != null) em.remove(ad);
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC){
+            AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel));
+            if(ad != null) em.remove(ad);
+        }
+        else unauthDoctorAllAccessLevels(patientId, doctorId);
     }
 
     @Override
     public int[] unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'unauthDoctorForLevels'");
+        User doctor = em.find(User.class, doctorId);
+        User patient = em.find(User.class, patientId);
+        if(doctor==null || patient==null) return new int[0];
+        int[] results = new int[accessLevels.size()];
+        for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
+            try{
+                AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevels.get(i)));
+                if(ad!=null){
+                    em.remove(ad);
+                    results[i] = 1;
+                    if (i % 50 == 0) {
+                        em.flush();
+                        em.clear();
+                    }
+                }
+                else results[i] = 0;
+            }
+            catch(Exception e){
+                results[i] = 0;
+            }
+        }
+        return results;
     }
 
     @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthAccessLevelEnums'");
+        String query = "SELECT DISTINCT ad.accessLevel FROM AuthDoctor ad " +
+                        "WHERE ad.doctor.id = :doctorId AND ad.patient.id = :patientId";
+
+        return em.createQuery(query, AccessLevelEnum.class)
+                            .setParameter("doctorId", doctorId)
+                            .setParameter("patientId", patientId)
+                            .getResultList();
     }
     
 }

@@ -46,7 +46,7 @@ public class StudyJpaDao implements StudyDao {
             return query.getResultList();
         }
     @Override
-    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {
+    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
         String q = "from Study as s where s.user.id = :id and s.file.type = :type "
                 + (mostRecent ? "order by s.date desc" : "order by s.date asc");
 
