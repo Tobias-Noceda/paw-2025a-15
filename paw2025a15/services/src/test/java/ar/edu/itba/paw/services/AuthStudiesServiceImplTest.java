@@ -1,4 +1,4 @@
-/*package ar.edu.itba.paw.services;
+package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,34 +16,56 @@ import ar.edu.itba.paw.interfaces.persistence.AuthStudiesDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.PatientDetail;
 import ar.edu.itba.paw.models.Study;
+import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthStudiesServiceImplTest {
 
-    private static final long FILE_ID = 1L;
+    private static final byte[] FILE_CONTENT = "Image".getBytes();
+    private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
+    private static final File FILE = new File(FILE_CONTENT, FILETYPE);
     
-    private static final long PATIENT_ID = 1L;
-    private static final PatientDetail PATIENT_DETAIL = new PatientDetail(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null);
-
-    private static final long DOC_ID = 2L;
+    private static final long DOC_ID = 1L;
+    private static final String DOC_EMAIL = "sabrina@example.com";
+    private static final String DOC_NAME = "sabrina";
+    private static final String DOC_PASSWORD = "shortandsweet";
+    private static final String DOC_TELEPHONE = "1144445555";
+    private static final UserRoleEnum DOC_ROLE = UserRoleEnum.DOCTOR;
+    private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
+    private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
+    private static User DOC = new User(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, FILE, DOC_CREATE_DATE, DOC_LOCALE);
     private static final String DOC_LICENCE = "med-licence";
     private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
-    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC_ID, DOC_LICENCE, DOC_SPECIALTY);
+    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC, DOC_LICENCE, DOC_SPECIALTY);
+
+    private static final long PATIENT_ID = 1L;
+    private static final String PATIENT_EMAIL = "grace@example.com";
+    private static final String PATIENT_NAME = "grace";
+    private static final String PATIENT_PASSWORD = "goodgraces";
+    private static final String PATIENT_TELEPHONE = "1144445555";
+    private static final UserRoleEnum PATIENT_ROLE = UserRoleEnum.PATIENT;
+    private static final LocaleEnum PATIENT_LOCALE = LocaleEnum.ES_AR;
+    private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
+    private static final User PATIENT = new User(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, FILE, PATIENT_CREATE_DATE, PATIENT_LOCALE);
+    private static final PatientDetail PATIENT_DETAIL = new PatientDetail(PATIENT, null, null, null, null, null, null, null, null, null, null, null, null);
 
     private static final long STUDY_ID = 1L;
     private static final StudyTypeEnum STUDYTYPE = StudyTypeEnum.OTHER;
     private static final String COMMENT = "comment";
-    private static final long STUDY_USER_ID = PATIENT_ID;
-    private static final long STUDY_UPLOADER_ID = DOC_ID;
     private static final LocalDateTime STUDY_UPLOAD_TIME = LocalDateTime.now();
     private static final LocalDate STUDY_DATE = LocalDate.parse("2025-04-09");
-    private static final Study STUDY_WITH_DATE = new Study(STUDY_ID, STUDYTYPE, COMMENT, FILE_ID, STUDY_USER_ID, STUDY_UPLOADER_ID, STUDY_UPLOAD_TIME, STUDY_DATE);
+    private static final Study STUDY_WITH_DATE = new Study(STUDYTYPE, COMMENT, FILE, PATIENT, DOC, STUDY_UPLOAD_TIME, STUDY_DATE);
     
     @InjectMocks
     private AuthStudiesServiceImpl ass;
@@ -60,12 +82,16 @@ public class AuthStudiesServiceImplTest {
     @Mock
     private DoctorDetailService dds;
 
+    @Mock
+    private UserService us;
+
     @Test
     public void testAuthStudyForDoctorId() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
-        Mockito.when(authStudyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
+        Mockito.when(authStudyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(true);
 
         boolean result = ass.authStudyForDoctorId(STUDY_ID, DOC_ID);
 
@@ -75,9 +101,10 @@ public class AuthStudiesServiceImplTest {
     @Test
     public void testAuthStudyForDoctorIdFailure() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
-        Mockito.when(authStudyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
+        Mockito.when(authStudyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(false);
 
         boolean result = ass.authStudyForDoctorId(STUDY_ID, DOC_ID);
 
@@ -87,6 +114,7 @@ public class AuthStudiesServiceImplTest {
     @Test
     public void testAuthStudyForDoctorIdAlreadyAuth() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
@@ -107,6 +135,7 @@ public class AuthStudiesServiceImplTest {
     @Test
     public void testAuthStudyForDoctorIdNonexistentDoc() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
+        Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
@@ -171,4 +200,3 @@ public class AuthStudiesServiceImplTest {
         );
     }
 }
-*/

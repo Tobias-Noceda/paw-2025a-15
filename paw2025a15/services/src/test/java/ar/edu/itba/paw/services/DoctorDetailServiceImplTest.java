@@ -1,4 +1,4 @@
-/*package ar.edu.itba.paw.services;
+package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -16,8 +16,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.File;
 import ar.edu.itba.paw.models.Insurance;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -26,6 +28,13 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DoctorDetailServiceImplTest {
+
+    private static final byte[] FILE_CONTENT = "Image".getBytes();
+    private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
+    private static final File FILE = new File(FILE_CONTENT, FILETYPE);
+
+    private static final byte[] FILE_CONTENT2 = "Image2".getBytes();
+    private static final File FILE2 = new File(FILE_CONTENT2, FILETYPE);
     
     private static final long DOC_ID = 1L;
     private static final String DOC_EMAIL = "sabrina@example.com";
@@ -35,19 +44,17 @@ public class DoctorDetailServiceImplTest {
     private static final UserRoleEnum DOC_ROLE = UserRoleEnum.DOCTOR;
     private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
-    private static final User DOC = new User(DOC_ID, DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, DOC_CREATE_DATE, DOC_LOCALE);
+    private static User DOC = new User(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, FILE, DOC_CREATE_DATE, DOC_LOCALE);
     private static final String DOC_LICENCE = "med-licence";
     private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
-    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC_ID, DOC_LICENCE, DOC_SPECIALTY);
+    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC, DOC_LICENCE, DOC_SPECIALTY);
 
     private static final long INSURANCE_ID = 1L;
     private static final long INSURANCE2_ID = 1L;
-    private static final long INSURANCE_PIC_ID = 1L;
-    private static final long INSURANCE_PIC2_ID = 2L;
     private static final String INSURANCE_NAME = "OSDE";
     private static final String INSURANCE_NAME2 = "Galeno";
-    private static final Insurance INSURANCE = new Insurance(INSURANCE_ID, INSURANCE_NAME, INSURANCE_PIC_ID);
-    private static final Insurance INSURANCE2 = new Insurance(INSURANCE2_ID, INSURANCE_NAME2, INSURANCE_PIC2_ID);
+    private static final Insurance INSURANCE = new Insurance(INSURANCE_NAME, FILE);
+    private static final Insurance INSURANCE2 = new Insurance(INSURANCE_NAME2, FILE2);
     private static final List<Long> INSURANCES = List.of(INSURANCE_ID, INSURANCE2_ID);
     private static final List<Insurance> INSURANCESLIST = List.of(INSURANCE, INSURANCE2);
 
@@ -62,9 +69,10 @@ public class DoctorDetailServiceImplTest {
 
     @Test
     public void testCreateDoctor(){
+        DOC.setId(DOC_ID);
         Mockito.when(us.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(us.create(Mockito.eq(DOC_EMAIL), Mockito.eq(DOC_PASSWORD), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(DOC_ROLE), Mockito.eq(DOC_LOCALE))).thenReturn(DOC);
-        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC_ID), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(DOC_DETAIL);
+        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(DOC_DETAIL);
 
         User user = dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE);
 
@@ -83,9 +91,10 @@ public class DoctorDetailServiceImplTest {
 
     @Test
     public void testCreateDoctorDDFailure(){
+        DOC.setId(DOC_ID);
         Mockito.when(us.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(us.create(Mockito.eq(DOC_EMAIL), Mockito.eq(DOC_PASSWORD), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(DOC_ROLE), Mockito.eq(DOC_LOCALE))).thenReturn(DOC);
-        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC_ID), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(null);
+        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
         dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)
@@ -156,4 +165,3 @@ public class DoctorDetailServiceImplTest {
         );
     }
 }
-*/
