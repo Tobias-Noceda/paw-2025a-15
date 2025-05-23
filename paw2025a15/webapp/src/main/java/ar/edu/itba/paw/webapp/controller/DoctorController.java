@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -59,15 +60,18 @@ public class DoctorController {
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
-
-        if (action != null) {
-            if ("previous".equals(action)) {
-                shiftsWeekForm.decrementIndex();
-            } else if ("next".equals(action)) {
-                shiftsWeekForm.incrementIndex();
+        System.out.println(action);
+        if (shiftsWeekForm.getAction() != null) {
+            if ("previous".equals(shiftsWeekForm.getAction())) {
+                shiftsWeekForm.decrementDate();
+            } else if ("next".equals(shiftsWeekForm.getAction())) {
+                shiftsWeekForm.incrementDate();
             }
+        }else{
+            shiftsWeekForm.setDate(LocalDate.now());
         }
-        
+
+        mav.addObject("today", LocalDate.now());
         mav.addObject("doctorDetail", detail);
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(user.getId(), id));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());

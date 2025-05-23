@@ -16,8 +16,16 @@ public class ShiftsWeekForm {
     @Future
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
-    private LocalDate today;
+    private String action;
     public int index = 0;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public ShiftsWeekForm() {
         this.month = LocalDate.now().getMonth();
@@ -29,7 +37,6 @@ public class ShiftsWeekForm {
             case 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 -> 3;
             default -> -1;
         };
-        this.today = LocalDate.now().plusDays(1);
     }
 
     public void setIndex(int index) {
@@ -69,7 +76,7 @@ public class ShiftsWeekForm {
     }
 
     public boolean hasPrevious() {
-        return index > 0;
+        return LocalDate.now().isBefore(date);
     }
 
     public boolean hasNext() {
@@ -111,5 +118,13 @@ public class ShiftsWeekForm {
         return "ShiftsMonthForm{" +
                 "date=" + date +
                 '}';
+    }
+
+    public void decrementDate() {
+        date = date.minusDays(1);
+    }
+
+    public void incrementDate() {
+        date = date.plusDays(1);
     }
 }
