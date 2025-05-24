@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
-import ar.edu.itba.paw.models.DoctorCoverage;
-import ar.edu.itba.paw.models.DoctorCoverageId;
-import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.DoctorCoverage;
+import ar.edu.itba.paw.models.entities.DoctorCoverageId;
+import ar.edu.itba.paw.models.entities.DoctorDetail;
+import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;

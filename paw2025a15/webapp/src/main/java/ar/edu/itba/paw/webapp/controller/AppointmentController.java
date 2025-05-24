@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;

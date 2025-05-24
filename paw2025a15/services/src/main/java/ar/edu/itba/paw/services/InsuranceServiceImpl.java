@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.interfaces.persistence.InsuranceDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 

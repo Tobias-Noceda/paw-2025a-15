@@ -1,23 +1,26 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
-@Entity
+//@Entity
 @Table(name = "auth_studies")
 public class AuthStudy {
     @EmbeddedId
     private AuthStudyId id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("doctorId") 
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("studyId") 
     @JoinColumn(name = "study_id", referencedColumnName = "study_id", nullable = false)
     private Study study;
 
@@ -35,12 +38,26 @@ public class AuthStudy {
         return id;
     }
 
+    public void setAuthStudyId(AuthStudyId id){
+        this.id = id;
+    }
+
     public User getDoctor(){
         return doctor;
     }
 
+    public void setDoctor(User doctor){
+        this.doctor = doctor;
+        this.id.setDoctorId(doctor.getId());
+    }
+
     public Study getStudy(){
         return study;
+    }
+
+    public void setStudy(Study study){
+        this.study = study;
+        this.id.setStudyId(study.getId());
     }
 
     @Override

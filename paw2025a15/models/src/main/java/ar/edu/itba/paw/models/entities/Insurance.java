@@ -1,8 +1,8 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
 @Table(name = "insurances",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "insurance_name")}
@@ -32,6 +32,10 @@ public class Insurance {
 
     public long getId(){
         return id;
+    }
+
+    public void setId(long id){
+        this.id = id;
     }
 
     public String getName(){

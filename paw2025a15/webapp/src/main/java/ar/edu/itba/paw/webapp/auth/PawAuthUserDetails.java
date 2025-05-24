@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.User;
 
 public class PawAuthUserDetails extends org.springframework.security.core.userdetails.User {
 

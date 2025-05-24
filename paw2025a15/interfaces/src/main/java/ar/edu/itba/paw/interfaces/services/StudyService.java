@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.Study;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 public interface StudyService {

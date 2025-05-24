@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -9,6 +9,8 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class AppointmentId implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     @Column(name = "shift_id")
     private long shiftId;
 
@@ -28,7 +30,7 @@ public class AppointmentId implements Serializable{
         return shiftId;
     }
 
-    public void setDoctorId(long shiftId){
+    public void setShiftId(long shiftId){
         this.shiftId = shiftId;
     }
 
@@ -36,7 +38,7 @@ public class AppointmentId implements Serializable{
         return date;
     }
 
-    public void setInsuranceId(LocalDate date){
+    public void setDate(LocalDate date){
         this.date = date;
     }
 
@@ -45,7 +47,7 @@ public class AppointmentId implements Serializable{
         if (this == o) return true;
         if (!(o instanceof AppointmentId)) return false;
         AppointmentId that = (AppointmentId) o;
-        return Objects.equals(shiftId, that.shiftId) && Objects.equals(date, that.date);
+        return (shiftId == that.shiftId) && Objects.equals(date, that.date);
     }
 
     @Override

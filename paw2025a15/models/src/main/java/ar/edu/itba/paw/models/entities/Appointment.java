@@ -1,24 +1,23 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import javax.persistence.*;
+
 import java.time.LocalDate;
 
-@Entity
+//@Entity
 @Table(name = "appointments")
 public class Appointment {
     @EmbeddedId
     private AppointmentId id;
 
     @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @MapsId("shiftId") 
     @JoinColumn(name = "shift_id", referencedColumnName = "shift_id", nullable = false)
     private DoctorShift shift;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private User patient;
-
-    @Column( name =  "appointment_date", nullable = false)
-    private LocalDate date;
 
     public Appointment(){
         //just for hibernate
@@ -27,7 +26,6 @@ public class Appointment {
     public Appointment(DoctorShift shift, User patient, LocalDate date){
         this.shift = shift;
         this.patient = patient;
-        this.date = date;
         this.id = new AppointmentId(shift.getId(), date);
     }
 
@@ -35,28 +33,45 @@ public class Appointment {
         return id;
     }
 
+    public void setAppointmentId(AppointmentId id){
+        this.id = id;
+    }
+
     public DoctorShift getShift(){
         return shift;
+    }
+
+    public void setShift(DoctorShift shift){
+        this.shift = shift;
+        this.id.setShiftId(shift.getId());
     }
 
     public User getPatient(){
         return patient;
     }
 
+    public void setPatient(User patient){
+        this.patient = patient;
+    }
+
     public LocalDate getDate(){
-        return date;
+        return id.getDate();
+    }
+
+    public void setDate(LocalDate date){
+        this.id.setDate(date);
     }
 
     public String getDateNumber(){
-        return String.format("%d", date.getDayOfMonth());
+        return String.format("%d", getDate().getDayOfMonth());
     }
 
     public String getDateMonthNumber() {
-        return date.getMonth().toString();
+        return getDate().getMonth().toString();
     }
 
     public String getDateYearNumber() {
-        return String.format("%d", date.getYear());
+        return String.format("%d", getDate().getYear());
     }
 
     @Override
@@ -68,8 +83,7 @@ public class Appointment {
         Appointment o = (Appointment) other;
 
         return (this.id.equals(o.id)) &&
-        (this.shift.equals(o.shift)) && (this.patient.equals(o.patient))
-        && (this.date.equals(o.date));
+        (this.shift.equals(o.shift)) && (this.patient.equals(o.patient));
     }
 
     @Override
@@ -77,7 +91,6 @@ public class Appointment {
         int result = id.hashCode();
         result = 31 * result + shift.hashCode();
         result = 31 * result + patient.hashCode();
-        result = 31 * result + date.hashCode();
         return result;
     }
 
@@ -87,7 +100,6 @@ public class Appointment {
             "id=" + id +
             "," + "shift=" + shift +
             "," + "patient=" + patient +
-            "," + "date=" + date +
             '}';
     }
 }

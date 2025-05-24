@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -8,6 +8,8 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class AuthStudyId implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     @Column(name = "doctor_id")
     private long doctorId;
 
@@ -44,7 +46,7 @@ public class AuthStudyId implements Serializable{
         if (this == o) return true;
         if (!(o instanceof AuthStudyId)) return false;
         AuthStudyId that = (AuthStudyId) o;
-        return Objects.equals(doctorId, that.doctorId) && Objects.equals(studyId, that.studyId);
+        return (doctorId == that.doctorId) && (studyId == that.studyId);
     }
 
     @Override

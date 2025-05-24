@@ -3,8 +3,8 @@ package ar.edu.itba.paw.interfaces.services;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 
 public interface InsuranceService {
     public Insurance create(String name, File picture);

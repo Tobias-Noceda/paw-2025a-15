@@ -12,8 +12,8 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service

@@ -1,23 +1,26 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
 @Embeddable
 public class AuthDoctorId implements Serializable{
+    private static final long serialVersionUID = 1L;
+    
     @Column(name = "doctor_id")
     private long doctorId;
 
     @Column(name = "patient_id")
     private long patientId;
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "access_level")
     private AccessLevelEnum accessLevel;
 
@@ -60,8 +63,8 @@ public class AuthDoctorId implements Serializable{
         if (this == o) return true;
         if (!(o instanceof AuthDoctorId)) return false;
         AuthDoctorId that = (AuthDoctorId) o;
-        return Objects.equals(doctorId, that.doctorId) && Objects.equals(patientId, that.patientId)
-        && Objects.equals(accessLevel, that.accessLevel);
+        return (doctorId == that.doctorId) && (patientId == that.patientId)
+        && (accessLevel.ordinal() == that.accessLevel.ordinal());
     }
 
     @Override

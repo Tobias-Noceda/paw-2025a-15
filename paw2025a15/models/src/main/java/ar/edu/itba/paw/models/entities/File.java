@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.util.Arrays;
 
@@ -18,7 +18,7 @@ public class File{
     @Column(name = "file_content", nullable = false)
     private byte[] content;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column( name = "file_type", nullable = false)
     private FileTypeEnum type;
 
@@ -35,12 +35,24 @@ public class File{
         return content;
     }
 
+    public void setContent(byte[] content){
+        this.content = content;
+    }
+
     public long getId(){
         return id;
     }
 
+    public void setId(long id){
+        this.id = id;
+    }
+
     public FileTypeEnum getType(){
         return type;
+    }
+
+    public void setType(FileTypeEnum type){
+        this.type = type;
     }
 
     @Override
@@ -67,7 +79,7 @@ public class File{
         return "File{" +
             "id=" + id +
             ", type=" + type +
-            ", content=" + content +
+            ", content=" + Arrays.toString(content) +
             '}';
     }
 }

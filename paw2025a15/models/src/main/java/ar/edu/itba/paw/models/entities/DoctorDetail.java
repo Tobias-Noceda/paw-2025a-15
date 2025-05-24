@@ -1,32 +1,37 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-@Entity
+//@Entity
 @Table( name = "doctor_details",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "doctor_licence")}
 )
 public class DoctorDetail {
     @Id
+    private Long doctorId;
+
     @OneToOne(fetch = FetchType.EAGER)
+    @MapsId
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
     @Column(name = "doctor_licence", length = 50 ,nullable = false)
     private String doctorLicense;
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     @Column( name = "doctor_specialty", nullable = false)
     private SpecialtyEnum specialty;
 
@@ -35,21 +40,43 @@ public class DoctorDetail {
     }
 
     public DoctorDetail(User doctor, String doctorLicense, SpecialtyEnum specialty) {
+        this.doctorId = doctor.getId();
         this.doctor = doctor;
         this.doctorLicense = doctorLicense;
         this.specialty = specialty;
+    }
+
+    public Long getDoctorId(){
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId){
+        this.doctorId = doctorId;
     }
 
     public User getDoctor() {
         return doctor;
     }
 
+    public void setDoctor(User doctor){
+        this.doctor = doctor;
+        this.doctorId = doctor.getId();
+    }
+
     public String getDoctorLicense() {
         return doctorLicense;
     }
 
+    public void setDoctorLicense(String doctorLicense){
+        this.doctorLicense = doctorLicense;
+    }
+
     public SpecialtyEnum getSpecialty() {
         return specialty;
+    }
+
+    public void setSpecialty(SpecialtyEnum specialty){
+        this.specialty = specialty;
     }
 
     @Override

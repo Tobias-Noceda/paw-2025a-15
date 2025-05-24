@@ -2,16 +2,21 @@ package ar.edu.itba.paw.models;
 
 import java.util.List;
 
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public class DoctorView {
-    private final long id;
-    private final String name;
-    private final SpecialtyEnum specialty;
-    private final long imageId;
-    private final List<WeekdayEnum> weekdays;
-    private final List<Insurance> insurances;
+    private long id;
+    private String name;
+    private SpecialtyEnum specialty;
+    private long imageId;
+    private List<WeekdayEnum> weekdays;
+    private List<Insurance> insurances;
+
+    public DoctorView(){
+        //just for hibernate
+    }
 
     public DoctorView(long id, String name, SpecialtyEnum specialty, long imageId, List<Insurance> insurances, List<WeekdayEnum> weekdays){
         this.id = id;

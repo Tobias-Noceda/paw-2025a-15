@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.models.DoctorDetail;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import ar.edu.itba.paw.webapp.form.LandingForm;
 import ar.edu.itba.paw.webapp.form.ProfileForm;
@@ -29,9 +28,10 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.Insurance;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.DoctorDetail;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;

@@ -2,7 +2,7 @@ package ar.edu.itba.paw.interfaces.services;
 
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.File;
+import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 
 public interface FileService {

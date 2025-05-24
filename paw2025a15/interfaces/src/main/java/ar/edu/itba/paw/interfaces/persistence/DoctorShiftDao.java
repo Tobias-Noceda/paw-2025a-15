@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.AvailableTurn;
-import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorShiftDao {

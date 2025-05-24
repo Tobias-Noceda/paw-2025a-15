@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
-import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.entities.User;
 
 public interface AuthStudiesDao {
 

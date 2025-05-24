@@ -2,8 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.models.AvailableTurn;
-import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 import org.springframework.stereotype.Repository;

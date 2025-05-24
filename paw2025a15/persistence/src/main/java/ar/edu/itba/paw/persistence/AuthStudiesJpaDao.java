@@ -1,9 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.AuthStudy;
-import ar.edu.itba.paw.models.AuthStudyId;
-import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.AuthStudy;
+import ar.edu.itba.paw.models.entities.AuthStudyId;
+import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.entities.User;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

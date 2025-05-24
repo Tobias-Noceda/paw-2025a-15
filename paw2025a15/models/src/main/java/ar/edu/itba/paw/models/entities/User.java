@@ -1,14 +1,13 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
 @Table(name = "users",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "user_email")}
@@ -33,7 +32,7 @@ public class User {
     @Column(name = "user_telephone", length = 20, nullable = false)
     private String telephone;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "user_role", nullable = false)
     private UserRoleEnum role;
 
@@ -44,10 +43,11 @@ public class User {
     @Column(name = "create_date", nullable = false)
     private LocalDate createDate;
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
 
+    /*
     //Opcional TODO: esto esta raro capaz cambia si hacemos lo de herencia porque asi como esta es re antiintuitivo
     //Patient appointments
     @OneToMany(orphanRemoval = true, mappedBy = "patientId")
@@ -63,6 +63,7 @@ public class User {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "doctor_id")
     private DoctorDetail doctorDetail;
+    */
 
     public User(){
         //just for hibernate;
@@ -89,6 +90,10 @@ public class User {
 
     public String getEmail(){
         return email;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
     }
 
     public String getName(){
@@ -119,6 +124,10 @@ public class User {
         return role;
     }
 
+    public void setRole(UserRoleEnum role){
+        this.role = role;
+    }
+
     public File getPicture(){
         return picture;
     }
@@ -129,6 +138,10 @@ public class User {
 
     public LocalDate getCreateDate(){
         return createDate;
+    }
+
+    public void setCreateDate(LocalDate createDate){
+        this.createDate = createDate;
     }
 
     public LocaleEnum getLocale(){
@@ -183,6 +196,7 @@ public class User {
             '}';
     }
 
+    /*
     public List<Appointment> getAppointments() {
         return appointments;
     }
@@ -194,4 +208,5 @@ public class User {
     public DoctorDetail getDoctorDetail() {
         return doctorDetail;
     }
+        */
 }

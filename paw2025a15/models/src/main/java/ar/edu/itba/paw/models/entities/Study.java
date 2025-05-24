@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
 @Table(name = "studies")
 public class Study {
     @Id
@@ -16,14 +16,14 @@ public class Study {
     @Column( name = "study_id")
     private long id;
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     @Column( name = "study_type", nullable = false)
     private StudyTypeEnum type = StudyTypeEnum.fromInt(0);
 
     @Column( name = "study_comment", length = 100)
     private String comment;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false)
     private File file;
 
@@ -59,32 +59,64 @@ public class Study {
         return id;
     }
 
+    public void setId(long id){
+        this.id = id;
+    }
+
     public StudyTypeEnum getType(){
         return type;
+    }
+
+    public void setType(StudyTypeEnum type){
+        this.type = type;
     }
 
     public String getComment(){
         return comment;
     }
 
+    public void setComment(String comment){
+        this.comment = comment;
+    }
+
     public File getFile(){
         return file;
+    }
+
+    public void setFile(File file){
+        this.file = file;
     }
 
     public User getUser(){
         return user;
     }
 
+    public void setUser(User user){
+        this.user = user;
+    }
+
     public User getUploader(){
         return uploader;
+    }
+
+    public void setUploader(User uploader){
+        this.uploader = uploader;
     }
 
     public LocalDateTime getUploadDate(){
         return uploadDate;
     }
 
+    public void setUploadDate(LocalDateTime uploadDate){
+        this.uploadDate = uploadDate;
+    }
+
     public LocalDate getStudyDate(){
         return studyDate;
+    }
+
+    public void setStudyDate(LocalDate studyDate){
+        this.studyDate = studyDate;
     }
 
     @Override

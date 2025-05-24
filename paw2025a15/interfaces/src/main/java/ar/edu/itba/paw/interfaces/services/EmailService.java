@@ -2,11 +2,11 @@ package ar.edu.itba.paw.interfaces.services;
 
 import java.util.Locale;
 
-import ar.edu.itba.paw.models.Appointment;
-import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.File;
-import ar.edu.itba.paw.models.Study;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.Appointment;
+import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.entities.User;
 
 public interface EmailService {
 

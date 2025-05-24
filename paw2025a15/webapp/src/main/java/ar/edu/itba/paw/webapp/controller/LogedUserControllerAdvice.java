@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.User;
 
 @ControllerAdvice
 public class LogedUserControllerAdvice {

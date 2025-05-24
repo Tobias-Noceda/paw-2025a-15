@@ -4,15 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class AppointmentData {
-    private final long shiftId;
-    private final long patientId;
-    private final String patientName;
-    private final long doctorId;
-    private final String doctorName;
-    private final LocalDate date;
-    private final LocalTime startTime;
-    private final LocalTime endTime;
-    private final String address;
+    private long shiftId;
+    private long patientId;
+    private String patientName;
+    private long doctorId;
+    private String doctorName;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String address;
+
+    public AppointmentData(){
+        //just for hibernate
+    }
 
     public AppointmentData(long shiftId, long patientId, String patientName, long doctorId, String doctorName, LocalDate date, LocalTime startTime, LocalTime endTime, String address){
         this.shiftId = shiftId;

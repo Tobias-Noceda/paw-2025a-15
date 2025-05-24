@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentData;
-import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.Appointment;
+import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.User;
 
 public interface AppointmentDao {
     public Appointment addAppointment(DoctorShift shift, User patient, LocalDate date);

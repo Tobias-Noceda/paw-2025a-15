@@ -17,7 +17,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 

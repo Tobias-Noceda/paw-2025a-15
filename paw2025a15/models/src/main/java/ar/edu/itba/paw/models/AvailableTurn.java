@@ -4,11 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class AvailableTurn {
-    private final LocalDate date;
-    private final LocalTime startTime;
-    private final LocalTime endTime;
-    private final String address;
-    private final long shiftId;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String address;
+    private long shiftId;
+
+    public AvailableTurn(){
+        //just for hibernate
+    }
     
     public AvailableTurn(LocalDate date, LocalTime startTime, LocalTime endTime, String address, long shiftId) {
         this.date = date;

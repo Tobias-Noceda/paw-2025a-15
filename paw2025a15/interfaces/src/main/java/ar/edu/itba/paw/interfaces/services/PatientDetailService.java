@@ -3,8 +3,8 @@ package ar.edu.itba.paw.interfaces.services;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.PatientDetail;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.PatientDetail;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 

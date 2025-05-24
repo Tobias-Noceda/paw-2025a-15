@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalTime;
 
@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
 @Table(name = "doctor_shifts",
         uniqueConstraints = {
         @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_start_time"}),
@@ -24,7 +24,7 @@ public class DoctorShift {
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "shift_weekday", nullable = false)
     private WeekdayEnum weekday;
 
@@ -61,20 +61,40 @@ public class DoctorShift {
         return doctor;
     }
 
+    public void setDoctor(User doctor){
+        this.doctor = doctor;
+    }
+
     public WeekdayEnum getWeekday(){
         return weekday;
+    }
+
+    public void setWeekday(WeekdayEnum weekday){
+        this.weekday = weekday;
     }
 
     public String getAddress(){
         return address;
     }
 
+    public void setAddress(String address){
+        this.address = address;
+    }
+
     public LocalTime getStartTime() {
         return startTime;
     }
 
+    public void setStartTime(LocalTime startTime){
+        this.startTime = startTime;
+    }
+
     public LocalTime getEndTime() {
         return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime){
+        this.endTime = endTime;
     }
 
     @Override

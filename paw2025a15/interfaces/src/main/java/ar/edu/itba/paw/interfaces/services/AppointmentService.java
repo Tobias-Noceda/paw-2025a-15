@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentData;
+import ar.edu.itba.paw.models.entities.Appointment;
 
 public interface AppointmentService {
     public Appointment addAppointment(long shiftId, long patientId, LocalDate date);

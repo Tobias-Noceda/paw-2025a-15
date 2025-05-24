@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -7,25 +7,30 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Entity
+//@Entity
 @Table(name = "patient_details")
 public class PatientDetail {
     @Id
+    private Long patientId;
+
     @OneToOne(fetch = FetchType.EAGER)
+    @MapsId
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private User patient;
 
     @Column( name = "patient_birthdate")
     private LocalDate birthdate;
 
-    @Enumerated
+    @Enumerated(EnumType.ORDINAL)
     @Column( name = "patient_blood_type")
     private BloodTypeEnum bloodType;
 
@@ -65,6 +70,7 @@ public class PatientDetail {
 
     public PatientDetail(User patient, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight, 
     Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet, String hobbies, String job) {
+        this.patientId = patient.getId();
         this.patient = patient;
         this.birthdate = birthdate;
         this.bloodType = bloodType;
@@ -80,8 +86,21 @@ public class PatientDetail {
         this.job = job;
     }
 
+    public Long getPatientId(){
+        return patientId;
+    }
+
+    public void setPatientId(Long patientId){
+        this.patientId = patientId;
+    }
+
     public User getPatient() {
         return patient;
+    }
+
+    public void setPatient(User patient){
+        this.patient = patient;
+        this.patientId = patient.getId();
     }
 
     public LocalDate getBirthdate() {

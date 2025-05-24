@@ -1,23 +1,26 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
-@Entity
+//@Entity
 @Table(name = "doctor_coverages")
 public class DoctorCoverage {
     @EmbeddedId
     private DoctorCoverageId id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("doctorId") 
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("insuranceId") 
     @JoinColumn(name = "insurance_id", referencedColumnName = "insurance_id", nullable = false)
     private Insurance insurance;
 
@@ -35,12 +38,26 @@ public class DoctorCoverage {
         return id;
     }
 
+    public void setDoctorCoverageId(DoctorCoverageId id){
+        this.id = id;
+    }
+
     public User getDoctor(){
         return doctor;
     }
 
+    public void setDoctor(User doctor){
+        this.doctor = doctor;
+        this.id.setDoctorId(doctor.getId());
+    }
+
     public Insurance getInsurance(){
         return insurance;
+    }
+
+    public void setInsurance(Insurance insurance){
+        this.insurance = insurance;
+        this.id.setInsuranceId(insurance.getId());
     }
 
     @Override

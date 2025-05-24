@@ -23,7 +23,7 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import ar.edu.itba.paw.webapp.form.DoctorForm;

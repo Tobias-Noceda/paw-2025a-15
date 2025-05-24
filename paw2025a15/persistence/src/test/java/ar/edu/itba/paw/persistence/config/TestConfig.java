@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.persistence.config;
 
+import java.util.Properties;
+
 import javax.sql.DataSource;
+import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +14,12 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.jdbc.support.JdbcTransactionManager;
-import org.springframework.transaction.TransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 
 @ComponentScan({ "ar.edu.itba.paw.persistence" })
 @Configuration
@@ -37,25 +43,43 @@ public class TestConfig {
     }
 
     @Bean
-     public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
-         final DataSourceInitializer dsi = new DataSourceInitializer();
-         dsi.setDataSource(ds);
-         dsi.setDatabasePopulator(databasePopulator());
+    public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
+        final DataSourceInitializer dsi = new DataSourceInitializer();
+        dsi.setDataSource(ds);
+        dsi.setDatabasePopulator(databasePopulator());
  
-         return dsi;
-     }
+        return dsi;
+    }
  
-     private DatabasePopulator databasePopulator() {
-         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-         populator.addScript(pgsql);
-         populator.addScript(schemaSql);
+    private DatabasePopulator databasePopulator() {
+        final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(pgsql);
+        populator.addScript(schemaSql);
  
-         return populator;
-     }
+        return populator;
+    }
 
-     @Bean
-    public TransactionManager transactionManager(DataSource ds){
-        return new JdbcTransactionManager(ds);
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean mef = new LocalContainerEntityManagerFactoryBean();
+        mef.setPackagesToScan("ar.edu.itba.paw.models.entities");
+        mef.setDataSource(dataSource());
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        mef.setJpaVendorAdapter(vendorAdapter);
+
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
+
+        mef.setJpaProperties(properties);
+
+        return mef;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
 
 }

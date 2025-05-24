@@ -12,6 +12,10 @@ public class Schedule {
     private String address;
     private int shiftCount;
 
+    public Schedule(){
+        //just for hibernate
+    }
+
     public List<WeekdayEnum> getWeekday() {
         return weekday;
     }

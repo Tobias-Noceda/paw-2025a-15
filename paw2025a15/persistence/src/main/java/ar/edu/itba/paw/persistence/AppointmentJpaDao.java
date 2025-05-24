@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.models.Appointment;
 import ar.edu.itba.paw.models.AppointmentData;
-import ar.edu.itba.paw.models.AppointmentId;
-import ar.edu.itba.paw.models.DoctorShift;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.Appointment;
+import ar.edu.itba.paw.models.entities.AppointmentId;
+import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.User;
 
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;

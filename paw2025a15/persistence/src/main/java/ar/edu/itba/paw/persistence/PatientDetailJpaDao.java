@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
-import ar.edu.itba.paw.models.PatientDetail;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.entities.PatientDetail;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;

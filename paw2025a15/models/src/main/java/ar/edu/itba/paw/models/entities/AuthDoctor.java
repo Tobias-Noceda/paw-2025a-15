@@ -1,33 +1,30 @@
-package ar.edu.itba.paw.models;
+package ar.edu.itba.paw.models.entities;
 
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
-@Entity
+//@Entity
 @Table(name = "auth_doctors")
 public class AuthDoctor {
     @EmbeddedId
     private AuthDoctorId id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("doctorId") 
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @MapsId("patientId") 
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private User patient;
-
-    @Enumerated
-    @Column( name = "access_level", nullable = false)
-    private AccessLevelEnum accessLevel;
 
     public AuthDoctor(){
         //just for hibernate
@@ -36,31 +33,47 @@ public class AuthDoctor {
     public AuthDoctor(User doctor, User patient){
         this.doctor = doctor;
         this.patient = patient;
-        this.accessLevel = AccessLevelEnum.VIEW_BASIC;
-        this.id = new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel);
+        this.id = new AuthDoctorId(doctor.getId(), patient.getId(), AccessLevelEnum.VIEW_BASIC);
     }
 
     public AuthDoctor(User doctor, User patient, AccessLevelEnum accessLevel){
         this.id = new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel);
         this.doctor = doctor;
         this.patient = patient;
-        this.accessLevel = accessLevel;
     }
 
     public AuthDoctorId getAuthDoctorId(){
         return id;
     }
 
+    public void setAuthDoctorId(AuthDoctorId id){
+        this.id = id;
+    }
+
     public User getDoctor(){
         return doctor;
+    }
+
+    public void setDoctor(User doctor){
+        this.doctor = doctor;
+        this.id.setDoctorId(doctor.getId());
     }
 
     public User getPatient(){
         return patient;
     }
 
+    public void setPatient(User patient){
+        this.patient = patient;
+        this.id.setPatientId(patient.getId());
+    }
+
     public AccessLevelEnum getAccessLevel(){
-        return accessLevel;
+        return id.getAccessLevel();
+    }
+
+    public void setAccessLevel(AccessLevelEnum accessLevel){
+        this.id.setAccessLevel(accessLevel);
     }
 
     @Override
@@ -72,7 +85,7 @@ public class AuthDoctor {
         AuthDoctor o = (AuthDoctor) other;
 
         return (this.id.equals(o.id)) && (this.doctor.equals(o.doctor)) 
-        && (this.patient.equals(o.patient)) && (this.accessLevel.ordinal() == o.accessLevel.ordinal());
+        && (this.patient.equals(o.patient));
     }
 
     @Override
@@ -80,7 +93,6 @@ public class AuthDoctor {
         int result = id.hashCode();
         result = 31 * result + doctor.hashCode();
         result = 31 * result + patient.hashCode();
-        result = 31 * result + accessLevel.hashCode();
         return result;
     }
 
@@ -90,7 +102,6 @@ public class AuthDoctor {
             "id=" + id +
             ", doctor=" + doctor +
             ", patient=" + patient +
-            ", accessLevel=" + accessLevel +
             '}';
     }
 }
