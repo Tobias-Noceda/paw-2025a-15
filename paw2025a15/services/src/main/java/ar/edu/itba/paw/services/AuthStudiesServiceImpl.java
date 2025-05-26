@@ -13,6 +13,8 @@ import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
+import java.util.List;
+
 @Service
 public class AuthStudiesServiceImpl implements AuthStudiesService{
 
@@ -40,6 +42,16 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
         else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
         return result;
+    }
+
+    @Override
+    public boolean authStudyListForDoctorId(List<Long> doctorsId, long StudyId) {
+        //TODO: hacer esto con una ida a la BD
+        if(doctorsId.isEmpty()) return false;
+        for (Long doctorId : doctorsId) {
+            authStudyForDoctorId(StudyId, doctorId);
+        }
+        return true;
     }
 
     @Transactional(readOnly = true)

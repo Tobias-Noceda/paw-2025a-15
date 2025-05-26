@@ -96,13 +96,7 @@ public class StudyController {
 
         File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         Study study = ss.create(createStudyForm.getType(), createStudyForm.getComment(), file, patientId, user.getId(), createStudyForm.getDate());
-        //TODO: Hacer el service que haga esto con una sola ida a la db
-
-        System.out.println("Study created with id: " + file.getId() );
-        for(long id : createStudyForm.getAuthDoctorIds()){
-            System.out.println("Auth doctor id: " + id );
-            ass.authStudyForDoctorId(study.getId(),id);
-        }
+        ass.authStudyListForDoctorId(createStudyForm.getAuthDoctorIds(), study.getId());
         if(patientId != user.getId()) {
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {
