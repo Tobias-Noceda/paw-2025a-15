@@ -43,7 +43,7 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         User doctor = us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthStudy(studyId, doctorId)) return true;
-        boolean result = authStudiesDao.authStudyForDoctorId(study, doctor);
+        boolean result = authStudiesDao.authStudyForDoctorId(studyId, doctorId);
         if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
         else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
         return result;

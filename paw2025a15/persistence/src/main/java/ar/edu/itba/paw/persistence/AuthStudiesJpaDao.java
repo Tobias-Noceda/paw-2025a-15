@@ -22,7 +22,10 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
     private EntityManager em;
 
     @Override
-    public boolean authStudyForDoctorId(Study study, User doctor) {
+    public boolean authStudyForDoctorId(long studyId, long doctorId) {
+        User doctor = em.find(User.class, doctorId);
+        Study study = em.find(Study.class, studyId);
+        if(study == null || doctor == null) return false;
         try{
             final AuthStudy as = new AuthStudy(doctor, study);
             em.persist(as);

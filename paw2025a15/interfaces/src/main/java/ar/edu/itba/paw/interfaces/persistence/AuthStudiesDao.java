@@ -1,11 +1,8 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
-import ar.edu.itba.paw.models.entities.Study;
-import ar.edu.itba.paw.models.entities.User;
-
 public interface AuthStudiesDao {
 
-    public boolean authStudyForDoctorId(Study study, User doctor);
+    public boolean authStudyForDoctorId(long studyId, long doctorId);
 
     public boolean hasAuthStudy(long studyId, long doctorId);
 
