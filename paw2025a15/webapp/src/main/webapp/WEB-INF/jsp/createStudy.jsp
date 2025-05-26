@@ -83,6 +83,13 @@
         <form:input id="comment" type="text" path="comment"/>
       </div>
 
+      <div class="sf-field">
+        <label for="authDoctorIds">
+          <spring:message code="uploadStudies.doctor"/>
+        </label>
+        <form:checkboxes path="authDoctorIds" items="${patientAuthDoctors}" itemValue="id" itemLabel="name" />
+      </div>
+
       <button type="submit" class="sf-button">
         <spring:message code="uploadStudies.button"/>
       </button>

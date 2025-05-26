@@ -76,7 +76,7 @@ public class StudyController {
         mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
-
+        mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(patientId));
         return mav;
     }
 
@@ -120,7 +120,6 @@ public class StudyController {
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
         mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
         mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
-
         mav.addObject("landingForm", new LandingForm());
         
         return mav;

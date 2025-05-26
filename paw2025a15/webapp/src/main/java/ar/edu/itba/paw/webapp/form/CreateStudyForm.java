@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,6 +28,12 @@ public class CreateStudyForm {
     @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
+
+    private List<Long> AuthDoctorIds;
+
+    public List<Long> getAuthDoctorIds() { return AuthDoctorIds; }
+
+    public void setAuthDoctorIds(List<Long> authDoctorIds) { AuthDoctorIds = authDoctorIds; }
 
     public MultipartFile getFile(){
         return file;
