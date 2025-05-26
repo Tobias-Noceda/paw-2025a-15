@@ -21,20 +21,15 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 @RunWith(MockitoJUnitRunner.class)
 public class InsuranceServiceImplTest {
 
-    private static final long PIC_ID = 1L;
     private static final byte[] PIC_CONTENT = "Image".getBytes();
     private static final FileTypeEnum PIC_FILE_TYPE = FileTypeEnum.JPEG;
     private static final File PICTURE = new File(PIC_CONTENT, PIC_FILE_TYPE);
 
-    private static final long PIC2_ID = 1L;
     private static final byte[] PIC_CONTENT2 = "Image".getBytes();
     private static final FileTypeEnum PIC_FILE_TYPE2 = FileTypeEnum.JPEG;
     private static final File PICTURE2 = new File(PIC_CONTENT2, PIC_FILE_TYPE2);
 
     private static final long INSURANCE_ID = 1L;
-    private static final long INSURANCE2_ID = 1L;
-    private static final long INSURANCE_PIC_ID = PIC_ID;
-    private static final long INSURANCE_PIC2_ID = PIC2_ID;
     private static final String INSURANCE_NAME = "OSDE";
     private static final String INSURANCE_NAME2 = "Galeno";
     private static final Insurance INSURANCE = new Insurance(INSURANCE_NAME, PICTURE);
