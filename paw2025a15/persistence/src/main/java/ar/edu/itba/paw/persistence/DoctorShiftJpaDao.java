@@ -36,11 +36,16 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         for (int i = 0; i < shifts.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
             try{
                 DoctorShift shift = shifts.get(i);
-                em.persist(shift);
-                results[i] = 1;
-                if (i % 50 == 0) {
-                    em.flush();
-                    em.clear();
+                User doctor = em.find(User.class, shift.getDoctor().getId());
+                if(doctor == null) results[i] = 0;
+                else{
+                    shift.setDoctor(doctor);
+                    em.merge(shift);
+                    results[i] = 1;
+                    if (i % 50 == 0) {
+                        em.flush();
+                        em.clear();
+                    }
                 }
             }
             catch(Exception e){
@@ -57,7 +62,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public List<DoctorShift> getShiftsByDoctorId(long doctorId) {
-        TypedQuery<DoctorShift> query = em.createQuery("from DoctorShift as ds where ds.id.doctorId = :doctorId",DoctorShift.class);
+        TypedQuery<DoctorShift> query = em.createQuery("from DoctorShift as ds where ds.doctor.id = :doctorId",DoctorShift.class);
         query.setParameter("doctorId", doctorId);
         return query.getResultList();
     }
@@ -88,10 +93,10 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     @Override
     public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday,
             LocalDate date, LocalTime time) {
-        String queryString = "SELECT ds FROM DoctorShift ds WHERE ds.id.doctorId = :doctorId AND ds.weekday = :weekday AND ds.startTime > :time AND NOT EXISTS (SELECT a FROM Appointment as a WHERE a.date = :date AND a.id.shiftId = ds.id)";
+        String queryString = "SELECT ds FROM DoctorShift ds WHERE ds.doctor.id = :doctorId AND ds.weekday = :weekday AND ds.startTime > :time AND NOT EXISTS (SELECT a FROM Appointment as a WHERE a.id.date = :date AND a.id.shiftId = ds.id)";
         TypedQuery<DoctorShift> query = em.createQuery(queryString,DoctorShift.class);
         query.setParameter("doctorId", doctorId);
-        query.setParameter("weekday", weekday.ordinal());
+        query.setParameter("weekday", weekday);
         query.setParameter("date", date);
         query.setParameter("time", time);
         return query.getResultList();
