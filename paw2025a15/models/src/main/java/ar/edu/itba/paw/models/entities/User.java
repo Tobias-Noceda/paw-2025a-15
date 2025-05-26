@@ -7,7 +7,7 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
 import javax.persistence.*;
 
-//@Entity
+@Entity
 @Table(name = "users",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "user_email")}

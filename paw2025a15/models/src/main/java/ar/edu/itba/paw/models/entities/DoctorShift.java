@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 import javax.persistence.*;
 
-//@Entity
+@Entity
 @Table(name = "doctor_shifts",
         uniqueConstraints = {
         @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_start_time"}),

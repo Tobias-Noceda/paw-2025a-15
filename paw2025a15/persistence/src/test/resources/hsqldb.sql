@@ -129,3 +129,9 @@ CREATE TABLE auth_studies (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id),
     FOREIGN KEY (study_id) REFERENCES studies(study_id)
 );
+
+CREATE SEQUENCE files_file_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE doctor_shifts_shift_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE insurances_insurance_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE studies_study_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE users_user_id_seq START WITH 1 INCREMENT BY 1;

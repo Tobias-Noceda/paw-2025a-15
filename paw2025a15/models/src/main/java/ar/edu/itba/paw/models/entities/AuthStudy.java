@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
-//@Entity
+@Entity
 @Table(name = "auth_studies")
 public class AuthStudy {
     @EmbeddedId

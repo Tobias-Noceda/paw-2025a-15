@@ -7,7 +7,7 @@ import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 import javax.persistence.*;
 
-//@Entity
+@Entity
 @Table(name = "studies")
 public class Study {
     @Id

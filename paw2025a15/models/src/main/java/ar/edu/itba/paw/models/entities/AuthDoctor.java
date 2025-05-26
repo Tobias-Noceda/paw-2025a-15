@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
-//@Entity
+@Entity
 @Table(name = "auth_doctors")
 public class AuthDoctor {
     @EmbeddedId

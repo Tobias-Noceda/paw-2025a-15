@@ -43,7 +43,7 @@ public class UserJpaDao implements UserDao {
     @Override
     public void changePasswordByID(long id, String password){
         User user = em.find(User.class, id);
-        if(password == null || password.isEmpty()) return;
+        if(user == null || password == null || password.isEmpty()) return;
         user.setPassword(password);
         em.merge(user);
     }
@@ -51,7 +51,7 @@ public class UserJpaDao implements UserDao {
     @Override
     public void editUser(long id, String name, String telephone, File picture) {
         User user = em.find(User.class, id);
-        if( (name == null || name.isEmpty()) || (telephone == null || telephone.isEmpty()) ) return;
+        if( (user ==null || name == null || name.isEmpty()) || (telephone == null || telephone.isEmpty()) ) return;
         user.setName(name);
         user.setTelephone(telephone);
         File oldPicture = user.getPicture();
@@ -67,7 +67,7 @@ public class UserJpaDao implements UserDao {
     @Override
     public void updateLocale(long userId, LocaleEnum locale) {
         User user = em.find(User.class, userId);
-        if(locale == null) return;
+        if(user == null || locale == null) return;
         user.setLocale(locale);
         em.merge(user);
     }
@@ -91,14 +91,16 @@ public class UserJpaDao implements UserDao {
 
     @Override
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
-        TypedQuery<Integer> query = em.createQuery(" select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor.id = :doctorId ", Integer.class);
+        String baseQuery = " select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor.id = :doctorId ";
+        if(name != null && !name.trim().isEmpty()) {
+            baseQuery += " AND LOWER(ad.patient.name) LIKE :userName";
+        }
+        TypedQuery<Long> query = em.createQuery(baseQuery, Long.class);
         query.setParameter("doctorId", doctorId);
         if(name != null && !name.trim().isEmpty()) {
-            query = em.createQuery(" select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor.id = :doctorId AND LOWER(ad.patient.name) LIKE :userName", Integer.class);
-            query.setParameter("doctorId", doctorId);
             query.setParameter("userName","%" + sanitize(name) + "%");
         }
-        return query.getSingleResult();
+        return query.getSingleResult().intValue();
     }
 
     private String sanitize(String name) {

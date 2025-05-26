@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.Optional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -9,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
+@Sql("classpath:images.sql")
 @Transactional
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +42,28 @@ public class FileJpaDaoTest {
 
         Assert.assertNotNull(filePersisted); 
         Assert.assertArrayEquals(CONTENT, filePersisted.getContent());
+    }
+
+    @Test
+    public void testFindById(){
+        final long IMAGE_ID = TestData.Images.validImageId;
+        final byte[] imageContent = TestData.Images.validImage.getContent();
+        
+        Optional<File> imageFound = fileDao.findById(IMAGE_ID);
+
+        Assert.assertNotNull(imageFound);
+        Assert.assertTrue(imageFound.isPresent());
+        Assert.assertArrayEquals(imageContent, imageFound.get().getContent());
+    }
+
+    @Test
+    public void testFindByIdNonexistent(){
+        final long IMAGE_ID = 0;
+        
+        Optional<File> imageFound = fileDao.findById(IMAGE_ID);
+
+        Assert.assertNotNull(imageFound);
+        Assert.assertFalse(imageFound.isPresent());
     }
 
 }

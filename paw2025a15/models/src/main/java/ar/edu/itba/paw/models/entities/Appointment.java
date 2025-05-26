@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 import java.time.LocalDate;
 
-//@Entity
+@Entity
 @Table(name = "appointments")
 public class Appointment {
     @EmbeddedId

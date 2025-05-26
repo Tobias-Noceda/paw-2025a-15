@@ -14,7 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-//@Entity
+@Entity
 @Table( name = "doctor_details",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "doctor_licence")}

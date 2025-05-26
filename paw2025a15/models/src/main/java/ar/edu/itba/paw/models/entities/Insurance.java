@@ -2,7 +2,7 @@ package ar.edu.itba.paw.models.entities;
 
 import javax.persistence.*;
 
-//@Entity
+@Entity
 @Table(name = "insurances",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "insurance_name")}
