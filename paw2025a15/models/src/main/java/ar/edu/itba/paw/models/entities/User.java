@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -47,6 +48,12 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
+
+    @ManyToMany(mappedBy = "authDoctors")
+    private List<Study> authorizedStudies;
+
+    @OneToMany(mappedBy = "user")
+    private List<Study> patientStudies;
 
     /*
     //Opcional TODO: esto esta raro capaz cambia si hacemos lo de herencia porque asi como esta es re antiintuitivo
@@ -151,6 +158,14 @@ public class User {
 
     public void setLocale(LocaleEnum locale){
         this.locale = locale;
+    }
+
+    public List<Study> getAuthStudies(){
+        return authorizedStudies;
+    }
+
+    public List<Study> getPatientStudies(){
+        return patientStudies;
     }
 
     @Override

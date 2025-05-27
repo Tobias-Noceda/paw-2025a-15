@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
@@ -40,6 +41,14 @@ public class Study {
 
     @Column( name = "study_date", nullable = false)
     private LocalDate studyDate;
+
+    @ManyToMany
+    @JoinTable(
+        name = "auth_studies",
+        joinColumns = @JoinColumn(name = "study_id"),
+        inverseJoinColumns = @JoinColumn(name = "doctor_id")
+    )
+    private List<User> authDoctors;
 
     public Study(){
         //just for hibernate
@@ -119,6 +128,10 @@ public class Study {
         this.studyDate = studyDate;
     }
 
+    public List<User> getAuthDoctors(){
+        return authDoctors;
+    }
+
     @Override
     public boolean equals(Object other){
         if(this == other) return true;
@@ -130,7 +143,8 @@ public class Study {
         return (this.id==o.id) && (this.type.equals(o.type))
         && (this.comment.equals(o.comment)) && (this.file.equals(o.file))
         && (this.user.equals(o.user)) && (this.uploader.equals(o.uploader))
-        && (this.uploadDate.equals(o.uploadDate)) && (this.studyDate.equals(o.studyDate));
+        //&& (this.uploadDate.equals(o.uploadDate)) 
+        && (this.studyDate.equals(o.studyDate));
     }
 
     @Override
@@ -141,14 +155,14 @@ public class Study {
         result = 31 * result + file.hashCode();
         result = 31 * result + user.hashCode();
         result = 31 * result + uploader.hashCode();
-        result = 31 * result + uploadDate.hashCode();
+        //result = 31 * result + uploadDate.hashCode();
         result = 31 * result + studyDate.hashCode();
         return result;
     }
 
     @Override
     public String toString(){
-        return "File{" +
+        return "Study{" +
             "id=" + id +
             ", type=" + type +
             ", comment=" + comment +
