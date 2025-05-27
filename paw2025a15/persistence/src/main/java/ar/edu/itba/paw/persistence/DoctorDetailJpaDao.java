@@ -1,5 +1,14 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.entities.DoctorCoverage;
@@ -10,13 +19,6 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
-
-import org.springframework.stereotype.Repository;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class DoctorDetailJpaDao implements DoctorDetailDao{
@@ -95,28 +97,13 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     @Override
     public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
             WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDoctorsPageByParams'");
+        return List.of(new DoctorView(3, "Tobías Noceda", SpecialtyEnum.CARDIOLOGY, 1, List.of(), List.of(WeekdayEnum.MONDAY, WeekdayEnum.WEDNESDAY)));
     }
 
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
             WeekdayEnum weekday) {
-//
-//        TypedQuery<Integer> query = em.createQuery("select count(*) from DoctorDetail as dd", Integer.class);
-//
-//        List<Object> params = new ArrayList<>();
-//        List<Integer> types = new ArrayList<>();
-//        addFiltersToQuery(query, params, types, specialty, insurance, weekday);
-//        if(name != null && !name.trim().isEmpty()) {
-//            query.append(" AND LOWER(u.user_name) LIKE ? ");
-//            params.add("%" + sanitize(name) + "%");
-//            types.add(java.sql.Types.VARCHAR);
-//        }
-
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDoctorsPageByParams'");
-
+                return 1; //TODO: Implementar correctamente
     }
 
 
