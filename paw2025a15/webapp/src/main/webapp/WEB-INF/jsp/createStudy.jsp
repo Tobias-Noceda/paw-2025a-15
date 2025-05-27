@@ -86,7 +86,6 @@
         <form:input id="comment" type="text" path="comment"/>
       </div>
 
-        <c:if test="${user_data.role.name() eq 'PATIENT'}">
           <c:if test="${not empty patientAuthDoctors}">
             <div class="sf-field">
               <label for="authDoctorIds">
@@ -122,7 +121,6 @@
               </div>
             </div>
           </c:if>
-        </c:if>
 
       <button type="submit" class="sf-button">
         <spring:message code="uploadStudies.button"/>
