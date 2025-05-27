@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class UserJpaDaoTest {
         final File PICTURE = TestData.Users.newPatient.getPicture();
         PICTURE.setId(TestData.Images.validImageId);
         final LocaleEnum USER_LOCALE = TestData.Users.newPatient.getLocale();
-
+        
         User user = userDao.create(USEREMAIL, PASSWORD, USERNAME, USER_TELEPHONE, USER_ROLE, PICTURE, USER_LOCALE);
         User userPersisted = em.find(User.class, user.getId());
 

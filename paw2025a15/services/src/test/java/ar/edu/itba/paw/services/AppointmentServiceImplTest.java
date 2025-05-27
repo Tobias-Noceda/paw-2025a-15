@@ -197,7 +197,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(us.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.empty());
-        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT), Mockito.eq(PATIENT), Mockito.eq(APP_DATE))).thenReturn(null);
+        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT_ID), Mockito.eq(PATIENT_ID), Mockito.eq(APP_DATE))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE)
@@ -213,7 +213,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(us.getUserById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentsByShiftIdAndDate(Mockito.eq(SHIFT_ID), Mockito.eq(APP_DATE))).thenReturn(Optional.empty());
-        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT), Mockito.eq(PATIENT), Mockito.eq(APP_DATE))).thenReturn(APP);
+        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT_ID), Mockito.eq(PATIENT_ID), Mockito.eq(APP_DATE))).thenReturn(APP);
         Mockito.doNothing().when(es).sendDoctorTakenShiftEmail(Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(APP), Mockito.eq(SHIFT));
         Mockito.doNothing().when(es).sendPatientTakenShiftEmail(Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(APP), Mockito.eq(SHIFT));
         Mockito.doNothing().when(ads).toggleAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID));

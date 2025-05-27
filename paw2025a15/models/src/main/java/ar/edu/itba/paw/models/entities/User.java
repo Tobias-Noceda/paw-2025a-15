@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -160,10 +161,14 @@ public class User {
 
         User o = (User) other;
 
-        return (this.id==o.id) && (this.name.equals(o.name)) 
-        && (this.email.equals(o.email)) && (this.password.equals(o.password))
-        && (this.telephone.equals(o.telephone)) && (this.role.equals(o.role))
-        && (this.picture.equals(o.picture)) && (this.createDate.equals(o.createDate))
+        return Objects.equals(this.id, o.id)
+        && (this.name.equals(o.name)) 
+        && (this.email.equals(o.email))
+        && (this.password.equals(o.password))
+        && (this.telephone.equals(o.telephone))
+        && (this.role.equals(o.role))
+        && (this.picture.equals(o.picture))
+        && (this.createDate.equals(o.createDate))
         && (this.locale.equals(o.locale));
     }
 

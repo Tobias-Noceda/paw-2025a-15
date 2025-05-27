@@ -43,11 +43,12 @@ public class AppointmentId implements Serializable{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AppointmentId)) return false;
-        AppointmentId that = (AppointmentId) o;
-        return (shiftId == that.shiftId) && Objects.equals(date, that.date);
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof AppointmentId)) return false;
+        AppointmentId o = (AppointmentId) other;
+        return (this.shiftId == o.shiftId) 
+        && Objects.equals(this.date, o.date);
     }
 
     @Override

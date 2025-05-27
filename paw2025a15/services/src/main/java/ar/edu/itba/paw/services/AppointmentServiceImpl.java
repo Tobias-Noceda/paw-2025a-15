@@ -60,7 +60,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         
         getAppointmentsByShiftIdAndDate(shiftId, date).ifPresent(a -> {throw new AppointmentAlreadyTakenException("Shift already taken");});
 
-        Appointment appointment = appointmentDao.addAppointment(shift, patient, date);
+        Appointment appointment = appointmentDao.addAppointment(shiftId, patientId, date);
         if(appointment == null){
             LOGGER.error("Failed to create appointment for patientId: {}, shiftId: {} and date: {} at {}", patientId, shiftId, date, LocalDateTime.now());
             throw new RuntimeException("Failed to create appointment for patientId: " + patientId +", shiftId: " + shiftId +" and date: " + date);
