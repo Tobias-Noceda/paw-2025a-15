@@ -500,3 +500,4 @@ body.dialog-opened {
 dialog {
     pointer-events: auto; /* Asegura que el modal sea interactivo */
 }
+

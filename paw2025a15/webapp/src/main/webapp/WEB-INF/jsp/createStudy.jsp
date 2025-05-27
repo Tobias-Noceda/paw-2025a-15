@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="<c:url value='/css/file-charge.css'/>" />
   <!-- cargamos sólo nuestro CSS de estudio -->
   <link rel="stylesheet" href="<c:url value='/css/study-form.css'/>" />
+  <link rel="stylesheet" href="<c:url value='/css/appointments.css'/>" />
 </head>
 <body>
 <jsp:include page="components/header.jsp"/>
@@ -78,7 +79,7 @@
       <!-- Comment -->
       <div class="sf-field">
         <label for="comment">
-          <spring:message code="uploadStudies.description"/>:
+          <spring:message code="uploadStudies.description"/>
         </label>
         <form:input id="comment" type="text" path="comment"/>
       </div>
@@ -87,7 +88,36 @@
         <label for="authDoctorIds">
           <spring:message code="uploadStudies.doctor"/>
         </label>
-        <form:checkboxes path="authDoctorIds" items="${patientAuthDoctors}" itemValue="id" itemLabel="name" />
+        <div class="appointments-table-header">
+          <table class="appointments-table">
+            <thead>
+            <tr>
+              <th><spring:message code="studies.authorizedDoctors"/></th>
+              <th class="last-column">
+              </th>
+            </tr>
+            </thead>
+          </table>
+        </div>
+
+        <c:if test="${not empty patientAuthDoctors}">
+          <div class="appointments-table-body">
+            <table class="appointments-table">
+              <tbody>
+              <c:forEach var="authDocs" items="${patientAuthDoctors}">
+                <tr class="appointments-row">
+                  <td class="text-cell">
+                    <c:out value="${authDocs.name}"/>
+                  </td>
+                  <td class="checkbox-cell last-column">
+                    <form:checkbox path="authDoctorIds" value="${authDocs.id}"/>
+                  </td>
+                </tr>
+              </c:forEach>
+              </tbody>
+            </table>
+          </div>
+        </c:if>
       </div>
 
       <button type="submit" class="sf-button">
