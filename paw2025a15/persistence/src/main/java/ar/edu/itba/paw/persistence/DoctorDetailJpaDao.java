@@ -10,7 +10,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
-import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorCoverage;
 import ar.edu.itba.paw.models.entities.DoctorCoverageId;
 import ar.edu.itba.paw.models.entities.DoctorDetail;
@@ -40,7 +40,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public void addDoctorCoverage(long doctorId, long insuranceId) {
-        User doctor = em.find(User.class, doctorId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
         Insurance insurance = em.find(Insurance.class, insuranceId);
         final DoctorCoverage dc = new DoctorCoverage(doctor, insurance);
         em.persist(dc);
@@ -48,7 +48,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public int[] addDoctorCoverages(long doctorId, List<Long> insurancesIds) {
-        User doctor = em.find(User.class, doctorId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
         int[] results = new int[insurancesIds.size()];
         for (int i = 0; i < insurancesIds.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
             try{
@@ -95,35 +95,20 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
             WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        return List.of(new DoctorView(3, "Tobías Noceda", SpecialtyEnum.CARDIOLOGY, 1, List.of(), List.of(WeekdayEnum.MONDAY, WeekdayEnum.WEDNESDAY)));
+        // Select all the posible doctors for "Doctor" entity
+        return em
+            .createQuery("SELECT d FROM Doctor d", Doctor.class)
+            .getResultList();
     }
 
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
             WeekdayEnum weekday) {
-                return 1; //TODO: Implementar correctamente
+                // get the total number of doctors
+                return em
+            .createQuery("SELECT d FROM Doctor d", Doctor.class)
+            .getResultList().size();
     }
-
-
-    private void addFiltersToQuery(StringBuilder query, List<Object> params, List<Integer> types, SpecialtyEnum specialty, Insurance insurance, WeekdayEnum weekday) {
-        if(specialty != null){
-            query.append(" AND dd.doctor_specialty = ? ");
-            params.add(specialty.ordinal());
-            types.add(java.sql.Types.INTEGER);
-        }
-        if(insurance != null){
-            query.append(" AND u.user_id IN (SELECT dc.doctor_id FROM doctor_coverages AS dc WHERE dc.insurance_id = ?)");
-            params.add(insurance.getId());
-            types.add(java.sql.Types.BIGINT);
-        }
-        if(weekday != null){
-            query.append(" AND u.user_id IN (SELECT ds.doctor_id FROM doctor_shifts AS ds WHERE ds.shift_weekday = ?) ");
-            params.add(weekday.ordinal());
-            types.add(java.sql.Types.INTEGER);
-        }
-    }
-
-
 }

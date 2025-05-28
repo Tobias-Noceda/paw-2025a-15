@@ -2,17 +2,24 @@ package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 
+import javax.persistence.*;
+
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
-import javax.persistence.*;
-
 @Entity
-@Table(name = "users",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = "user_email")}
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(
+    name = "users",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "user_email")
+    }
 )
-public class User {
+@DiscriminatorColumn(
+    name = "user_role",
+    discriminatorType = DiscriminatorType.INTEGER
+)
+public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
@@ -32,11 +39,10 @@ public class User {
     @Column(name = "user_telephone", length = 20, nullable = false)
     private String telephone;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "user_role", nullable = false)
-    private UserRoleEnum role;
+    @Column(name = "user_role", insertable = false, updatable = false)
+    private Integer userRole;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "picture_id", referencedColumnName = "file_id", nullable = false)
     private File picture;
 
@@ -74,7 +80,7 @@ public class User {
         this.password = password;
         this.name= name;
         this.telephone = telephone;
-        this.role = role;
+        this.userRole = role.ordinal();
         this.picture = picture;
         this.createDate = createDate;
         this.locale = locale;
@@ -120,12 +126,20 @@ public class User {
         this.telephone = telephone;
     }
 
+    public Integer getUserRole(){
+        return userRole;
+    }
+
+    public void setUserRole(Integer userRole){
+        this.userRole = userRole;
+    }
+
     public UserRoleEnum getRole(){
-        return role;
+        return UserRoleEnum.values()[userRole];
     }
 
     public void setRole(UserRoleEnum role){
-        this.role = role;
+        this.userRole = role.ordinal();
     }
 
     public File getPicture(){
@@ -162,7 +176,7 @@ public class User {
 
         return (this.id==o.id) && (this.name.equals(o.name)) 
         && (this.email.equals(o.email)) && (this.password.equals(o.password))
-        && (this.telephone.equals(o.telephone)) && (this.role.equals(o.role))
+        && (this.telephone.equals(o.telephone)) && (this.userRole.equals(o.userRole))
         && (this.picture.equals(o.picture)) && (this.createDate.equals(o.createDate))
         && (this.locale.equals(o.locale));
     }
@@ -174,7 +188,7 @@ public class User {
         result = 31 * result + email.hashCode();
         result = 31 * result + password.hashCode();
         result = 31 * result + telephone.hashCode();
-        result = 31 * result + role.hashCode();
+        result = 31 * result + userRole.hashCode();
         result = 31 * result + picture.hashCode();
         result = 31 * result + createDate.hashCode();
         result = 31 * result + locale.hashCode();
@@ -189,7 +203,7 @@ public class User {
             ", email=" + email +
             ", password=" + password +
             ", telephone=" + telephone +
-            ", role=" + role +
+            ", role=" + userRole +
             ", picture=" + picture +
             ", createDate=" + createDate +
             ", locale=" + locale +
