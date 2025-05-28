@@ -81,6 +81,8 @@
                 </c:set>
 
                 <div class="action-buttons">
+
+
                   <button
                           type="button"
                           name="action"
@@ -165,28 +167,41 @@
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
         <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
           <form:hidden path="index" id="indexField" />
-          <button
-            type="button"
-            class="navigation-button"
-            onclick="submitFormWithAction('previous')"
-            <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
-          >
-            <spring:message code="doctorDetail.previousWeek"/>
-          </button>
-          <div class="selected-month">
+          <form:hidden path="action" id="actionField" />
+          <div class="flex-container">
+            <div>
+              <button
+                      type="button"
+                      class="navigation-button"
+                      onclick="submitFormWithAction('previous')"
+                      <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.previousWeek"/>
+              </button>
+            </div>
+          <!--<div class="selected-month">
             <c:set var="month">
               <spring:message code="month.${shiftsWeekForm.month}"/>
             </c:set>
             <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
+          </div>-->
+
+            <div>
+              <form:input cssClass="input-field" id="dateSelector" type="date" min="${today}" path="date" onchange="submitFormWithAction('other')"/>
+            </div>
+
+            <div>
+              <button
+
+                      type="button"
+                      class="navigation-button"
+                      onclick="submitFormWithAction('next')"
+                      <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.nextWeek"/>
+              </button>
+            </div>
           </div>
-          <button
-            type="button"
-            class="navigation-button"
-            onclick="submitFormWithAction('next')"
-            <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
-          >
-            <spring:message code="doctorDetail.nextWeek"/>
-          </button>
         </form:form>
 
         <c:if test="${not empty takeTurnErrors}">
@@ -201,7 +216,7 @@
               <thead>
                 <tr>
                   <th><spring:message code="appointmentTable.weekdayColumn.title"></spring:message></th>
-                  <th><spring:message code="appointmentTable.monthdayColumn.title"></spring:message></th>
+                      <!--<th><spring:message code="appointmentTable.monthdayColumn.title"></spring:message></th>-->
                   <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
                 </tr>
               </thead>
@@ -242,7 +257,7 @@
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
-                      <td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true"/></td>
+                      <!--<td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true"/></td>-->
                       <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
 
 

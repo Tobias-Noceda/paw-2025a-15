@@ -1,12 +1,31 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import javax.validation.constraints.Future;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
 
 public class ShiftsWeekForm {
     private final Month month;
     private final int weekOfMonth;
+    @Future
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
+    private String action;
     public int index = 0;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public ShiftsWeekForm() {
         this.month = LocalDate.now().getMonth();
@@ -57,7 +76,7 @@ public class ShiftsWeekForm {
     }
 
     public boolean hasPrevious() {
-        return index > 0;
+        return LocalDate.now().isBefore(date);
     }
 
     public boolean hasNext() {
@@ -86,10 +105,26 @@ public class ShiftsWeekForm {
         return LocalDate.now().plusMonths((weekOfMonth + index) / 4).withDayOfMonth(getFirstDayOfWeek());
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
         return "ShiftsMonthForm{" +
-                "month=" + month +
+                "date=" + date +
                 '}';
+    }
+
+    public void decrementDate() {
+        date = date.minusDays(1);
+    }
+
+    public void incrementDate() {
+        date = date.plusDays(1);
     }
 }

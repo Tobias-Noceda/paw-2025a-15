@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -58,6 +59,8 @@ public class StudyController {
 
     @Autowired
     private MessageSource messageSource;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(
@@ -65,7 +68,8 @@ public class StudyController {
         @ModelAttribute("landingForm") final LandingForm landingForm,
         @ModelAttribute("createStudyForm") CreateStudyForm createStudyForm,
         BindingResult errors,
-        Locale locale
+        Locale locale,
+        @ModelAttribute("user_data") User user
     ){
         User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
@@ -77,7 +81,7 @@ public class StudyController {
         mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
-
+        mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
         return mav;
     }
 
@@ -92,12 +96,12 @@ public class StudyController {
     ) throws IOException {
         if (errors.hasErrors()) {
             System.out.println("Errors: " + errors);
-            return createStudyForm(patientId, landingForm, createStudyForm, errors, locale);
+            return createStudyForm(patientId, landingForm, createStudyForm, errors, locale, user);
         }
 
         File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        ss.create(createStudyForm.getType(), createStudyForm.getComment(), file, patientId, user.getId(), createStudyForm.getDate());
-
+        Study study = ss.create(createStudyForm.getType(), createStudyForm.getComment(), file, patientId, user.getId(), createStudyForm.getDate());
+        ass.authStudyListForDoctorId(createStudyForm.getAuthDoctorIds(), study.getId());
         if(patientId != user.getId()) {
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {

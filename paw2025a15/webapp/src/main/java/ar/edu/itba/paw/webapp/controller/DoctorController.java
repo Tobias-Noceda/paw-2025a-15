@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.models.AvailableTurn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,26 +60,39 @@ public class DoctorController {
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
-
-        if (action != null) {
-            if ("previous".equals(action)) {
-                shiftsWeekForm.decrementIndex();
-            } else if ("next".equals(action)) {
-                shiftsWeekForm.incrementIndex();
+        System.out.println(action);
+        if (shiftsWeekForm.getAction() != null) {
+            if ("previous".equals(shiftsWeekForm.getAction())) {
+                shiftsWeekForm.decrementDate();
+            } else if ("next".equals(shiftsWeekForm.getAction())) {
+                shiftsWeekForm.incrementDate();
             }
+        }else{
+            shiftsWeekForm.setDate(LocalDate.now());
         }
-        
+
+        mav.addObject("today", LocalDate.now());
         mav.addObject("doctorDetail", detail);
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(user.getId(), id));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());
         us.getUserById(id).ifPresent(doctor -> mav.addObject("doctor", doctor));
         mav.addObject("doctorInsurances", dds.getDoctorInsurancesById(id));
         mav.addObject("doctorShifts", dss.getUnifiedShiftsByDoctorId(id));
-        mav.addObject("doctorAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(id, shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
+        List<AvailableTurn> turns = dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(id, shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth());
+        List<AvailableTurn> dayTurns = new ArrayList<>();
+
+        //TODO: Servicio getAvailableTurnsByDoctorIdAndLocalDate
+        for (AvailableTurn turn : turns) {
+            if(turn.getDate().equals(shiftsWeekForm.getDate())) {
+                dayTurns.add(turn);
+            }
+        }
+        mav.addObject("doctorAppointments", dayTurns);
+
         mav.addObject("landingForm", new LandingForm());
 
         mav.addObject("shiftsWeekForm", shiftsWeekForm);
-
+        System.out.println(shiftsWeekForm);
         return mav;
     }
 

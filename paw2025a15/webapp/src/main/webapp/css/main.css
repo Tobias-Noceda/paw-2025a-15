@@ -364,6 +364,19 @@ body {
     box-sizing: border-box;
 }
 
+
+.input-field {
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    transition: border-color var(--transition);
+    resize:none;
+}
+
+
+
+
 /* Ajustes específicos para navegadores */
 @-moz-document url-prefix() {
     .search-bar-form input {
@@ -487,3 +500,4 @@ body.dialog-opened {
 dialog {
     pointer-events: auto; /* Asegura que el modal sea interactivo */
 }
+
