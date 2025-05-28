@@ -175,7 +175,7 @@
           </thead>
         </table>
       </div>
-      <c:if test="${not empty patientAuthDoctors}">
+      <c:if test="${not empty patient.authorizedDoctors}">
         <c:set var="confirmationMessage">
           <spring:message code="studies.cancelConfirm"/>
         </c:set>
@@ -191,7 +191,7 @@
             <c:set var="authCancelText">
               <spring:message code="doctorDetail.authorize.cancelButton"/>
             </c:set>
-            <c:forEach var="doctor" items="${patientAuthDoctors}">
+            <c:forEach var="doctor" items="${patient.authorizedDoctors}">
 
               <c:url value="/doctors/${doctor.id}" var="doctorUrl"/>
 
@@ -234,7 +234,7 @@
           </table>
         </div>
       </c:if>
-      <c:if test="${empty patientAuthDoctors}">
+      <c:if test="${empty patient.authorizedDoctors}">
         <div class="no-studies-container">
           <h4 class="no-studies-text"><spring:message code="studies.authorizedDoctors.empty"/></h4>
         </div>

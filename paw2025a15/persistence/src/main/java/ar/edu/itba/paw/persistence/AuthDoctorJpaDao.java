@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
-import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.AuthDoctorId;
-import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -20,16 +22,10 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     private EntityManager em;
 
     @Override
-    public List<DoctorView> getAuthDoctorsByPatientId(long id) {
-        String query = "SELECT NEW DoctorView(dd.doctor.id, u.name, dd.specialty, u.picture.id) " +
-                  "FROM AuthDoctor ad " +
-                  "JOIN User u ON ad.doctor.id = u.id " +
-                  "JOIN DoctorDetail dd ON dd.doctorId = u.id " +
-                  "WHERE ad.patient.id = :patientId";
-
-        return em.createQuery(query, DoctorView.class)
-                        .setParameter("patientId", id)
-                        .getResultList();
+    public List<Doctor> getAuthDoctorsByPatientId(long id) {
+        return em.createQuery("SELECT ad.doctor FROM AuthDoctor ad WHERE ad.patient.id = :patientId", Doctor.class)
+                .setParameter("patientId", id)
+                .getResultList();
     }
 
     @Override
@@ -52,7 +48,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public void authDoctor(User patient, User doctor, AccessLevelEnum accessLevel) {
+    public void authDoctor(Patient patient, Doctor doctor, AccessLevelEnum accessLevel) {
         if(hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), accessLevel)) return;
         if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), AccessLevelEnum.VIEW_BASIC)) authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
         final AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevel);
@@ -61,8 +57,8 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        User doctor = em.find(User.class, doctorId);
-        User patient = em.find(User.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        Patient patient = em.find(Patient.class, patientId);
         if(doctor==null || patient==null) return new int[0];
         int[] results = new int[accessLevels.size()];
         for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
@@ -102,8 +98,8 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public int[] unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        User doctor = em.find(User.class, doctorId);
-        User patient = em.find(User.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        Patient patient = em.find(Patient.class, patientId);
         if(doctor==null || patient==null) return new int[0];
         int[] results = new int[accessLevels.size()];
         for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber

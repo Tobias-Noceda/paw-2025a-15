@@ -21,7 +21,7 @@ public class DoctorSingleShift {
     @Column(name = "shift_id")
     private long id;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 

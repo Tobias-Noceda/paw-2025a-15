@@ -47,12 +47,15 @@ public class StudyJpaDao implements StudyDao {
         }
     @Override
     public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
-        String q = "from Study as s where s.user.id = :id and s.file.type = :type "
-                + (mostRecent ? "order by s.date desc" : "order by s.date asc");
+        String q = "from Study as s where s.user.id = :id "
+                + (type != null ? "and s.file.type = :type " : "")
+                + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
         query.setParameter("id", id);
-        query.setParameter("type", type);
+        if (type != null) {
+            query.setParameter("type", type);
+        }
 
         return query.getResultList();
     }
@@ -69,7 +72,7 @@ public class StudyJpaDao implements StudyDao {
     @Override
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
         String q = "from Study as s where s.user.id = :patientId and s.uploader.id = :doctorId and s.file.type = :type "
-                + (mostRecent ? "order by s.date desc" : "order by s.date asc");
+                + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
         query.setParameter("patientId", patientId);

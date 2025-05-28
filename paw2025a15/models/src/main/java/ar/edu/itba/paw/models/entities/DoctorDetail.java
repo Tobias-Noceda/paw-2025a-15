@@ -23,7 +23,7 @@ public class DoctorDetail {
     @Id
     private Long doctorId;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;

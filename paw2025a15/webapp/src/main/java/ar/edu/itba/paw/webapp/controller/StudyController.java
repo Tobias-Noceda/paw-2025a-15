@@ -24,8 +24,9 @@ import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
@@ -118,8 +119,8 @@ public class StudyController {
         }
 
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
-        mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
-        mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(),filterForm.getMostRecent()));
+        mav.addObject("patient", (Patient) user);
+        mav.addObject("patientStudies", ss.getFilteredStudies(user.getId(), filterForm.getType(), filterForm.getMostRecent()));
 
         mav.addObject("landingForm", new LandingForm());
         
@@ -142,11 +143,11 @@ public class StudyController {
         Study study = ss.getStudyById(studyId).orElseThrow();
 
         // Obtener todos los doctores asociados al paciente (autorizados o no)
-        List<DoctorView> doctors = ads.getAuthDoctorsByPatientId(user.getId());
+        List<Doctor> doctors = ads.getAuthDoctorsByPatientId(user.getId());
 
         // Crear un mapa para saber si cada doctor está autorizado a ver este estudio
         Map<Long, Boolean> authMap = new HashMap<>();
-        for (DoctorView doctor : doctors) {
+        for (Doctor doctor : doctors) {
             boolean hasAuth = ass.hasAuthStudy(studyId, doctor.getId());
             authMap.put(doctor.getId(), hasAuth);
         }

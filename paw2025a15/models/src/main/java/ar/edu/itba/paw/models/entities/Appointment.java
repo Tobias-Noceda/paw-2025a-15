@@ -10,7 +10,7 @@ public class Appointment {
     @EmbeddedId
     private AppointmentId id;
 
-    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @MapsId("shiftId") 
     @JoinColumn(name = "shift_id", referencedColumnName = "shift_id", nullable = false)
     private DoctorShift shift;

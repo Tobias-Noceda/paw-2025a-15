@@ -16,27 +16,27 @@ public class AuthDoctor {
     @EmbeddedId
     private AuthDoctorId id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("doctorId") 
-    @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
-    private User doctor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("id")
+    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
+    private Doctor doctor;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("patientId") 
-    @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
-    private User patient;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("id") 
+    @JoinColumn(name = "patient_id", referencedColumnName = "patient_id", nullable = false)
+    private Patient patient;
 
     public AuthDoctor(){
         //just for hibernate
     }
 
-    public AuthDoctor(User doctor, User patient){
+    public AuthDoctor(Doctor doctor, Patient patient){
         this.doctor = doctor;
         this.patient = patient;
         this.id = new AuthDoctorId(doctor.getId(), patient.getId(), AccessLevelEnum.VIEW_BASIC);
     }
 
-    public AuthDoctor(User doctor, User patient, AccessLevelEnum accessLevel){
+    public AuthDoctor(Doctor doctor, Patient patient, AccessLevelEnum accessLevel){
         this.id = new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel);
         this.doctor = doctor;
         this.patient = patient;
@@ -50,20 +50,20 @@ public class AuthDoctor {
         this.id = id;
     }
 
-    public User getDoctor(){
+    public Doctor getDoctor(){
         return doctor;
     }
 
-    public void setDoctor(User doctor){
+    public void setDoctor(Doctor doctor){
         this.doctor = doctor;
         this.id.setDoctorId(doctor.getId());
     }
 
-    public User getPatient(){
+    public Patient getPatient(){
         return patient;
     }
 
-    public void setPatient(User patient){
+    public void setPatient(Patient patient){
         this.patient = patient;
         this.id.setPatientId(patient.getId());
     }

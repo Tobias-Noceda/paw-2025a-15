@@ -14,12 +14,12 @@ public class AuthStudy {
     @EmbeddedId
     private AuthStudyId id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("doctorId") 
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
     private User doctor;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("studyId") 
     @JoinColumn(name = "study_id", referencedColumnName = "study_id", nullable = false)
     private Study study;

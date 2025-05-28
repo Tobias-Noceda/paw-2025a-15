@@ -17,7 +17,7 @@ public class Insurance {
     @Column( name = "insurance_name", length = 100, nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "picture_id", referencedColumnName = "file_id", nullable = false)
     private File picture;
 

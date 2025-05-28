@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.*;
@@ -19,8 +20,10 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
     name = "user_role",
     discriminatorType = DiscriminatorType.INTEGER
 )
-public abstract class User {
+public abstract class User implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(sequenceName = "users_user_id_seq", name = "users_user_id_seq", allocationSize = 1)
@@ -66,7 +69,7 @@ public abstract class User {
     private List<DoctorCoverage> doctorCoverages;
 
     //Doctor detail
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "doctor_id")
     private DoctorDetail doctorDetail;
     */

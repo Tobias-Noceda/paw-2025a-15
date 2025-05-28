@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -51,6 +52,9 @@ public class Patient extends User {
 
     @Column(name = "patient_job", length = 50)
     private String job;
+
+    @OneToMany(orphanRemoval = true, mappedBy = "patient", fetch = FetchType.LAZY)
+    private List<AuthDoctor> authDoctors;
 
     public Patient() {
         super();
@@ -158,5 +162,20 @@ public class Patient extends User {
 
     public void setJob(String job) {
         this.job = job;
+    }
+
+    public List<AuthDoctor> getAuthDoctors() {
+        return authDoctors;
+    }
+
+    public List<Doctor> getAuthorizedDoctors() {
+        return authDoctors.stream()
+            .map(AuthDoctor::getDoctor)
+            .distinct()
+            .toList();
+    }
+
+    public void setAuthDoctors(List<AuthDoctor> authDoctors) {
+        this.authDoctors = authDoctors;
     }
 }

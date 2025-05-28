@@ -14,12 +14,12 @@ public class DoctorCoverage {
     @EmbeddedId
     private DoctorCoverageId id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("id") 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("id")
     @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("id") 
     @JoinColumn(name = "insurance_id", referencedColumnName = "insurance_id", nullable = false)
     private Insurance insurance;

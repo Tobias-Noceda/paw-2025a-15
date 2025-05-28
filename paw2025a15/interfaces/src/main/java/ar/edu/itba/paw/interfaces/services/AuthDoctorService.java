@@ -2,11 +2,11 @@ package ar.edu.itba.paw.interfaces.services;
 
 import java.util.List;
 
-import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
 public interface AuthDoctorService {
-    public List<DoctorView> getAuthDoctorsByPatientId(long id);
+    public List<Doctor> getAuthDoctorsByPatientId(long id);
 
     public void toggleAuthDoctor(long patientId, long doctorId);
 

@@ -31,7 +31,7 @@ public class Doctor extends User {
     @Column(name = "doctor_specialty", nullable = false)
     private SpecialtyEnum specialty;
 
-    @OneToMany(orphanRemoval = false, mappedBy = "doctor", fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = true, mappedBy = "doctor", fetch = FetchType.LAZY)
     private List<DoctorCoverage> insurances;
 
     @OneToMany(orphanRemoval = true, mappedBy = "doctor", fetch = FetchType.LAZY)
