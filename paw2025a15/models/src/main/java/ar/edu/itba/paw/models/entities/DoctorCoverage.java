@@ -15,12 +15,12 @@ public class DoctorCoverage {
     private DoctorCoverageId id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("doctorId") 
-    @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
-    private User doctor;
+    @MapsId("id") 
+    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
+    private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("insuranceId") 
+    @MapsId("id") 
     @JoinColumn(name = "insurance_id", referencedColumnName = "insurance_id", nullable = false)
     private Insurance insurance;
 
@@ -28,7 +28,7 @@ public class DoctorCoverage {
         //just for hibernate
     }
 
-    public DoctorCoverage(User doctor, Insurance insurance){
+    public DoctorCoverage(Doctor doctor, Insurance insurance){
         this.id = new DoctorCoverageId(doctor.getId(), insurance.getId());
         this.doctor = doctor;
         this.insurance = insurance;
@@ -46,7 +46,7 @@ public class DoctorCoverage {
         return doctor;
     }
 
-    public void setDoctor(User doctor){
+    public void setDoctor(Doctor doctor){
         this.doctor = doctor;
         this.id.setDoctorId(doctor.getId());
     }
@@ -58,6 +58,10 @@ public class DoctorCoverage {
     public void setInsurance(Insurance insurance){
         this.insurance = insurance;
         this.id.setInsuranceId(insurance.getId());
+    }
+
+    public String getInsuranceName(){
+        return insurance.getName();
     }
 
     @Override
