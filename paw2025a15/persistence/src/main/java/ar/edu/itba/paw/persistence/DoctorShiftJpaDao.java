@@ -68,25 +68,22 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     }
 
     @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate,
-            LocalDate endDate) {
-        String query = "SELECT NEW AvailableTurn(gs.date, ds.id, ds.weekday, ds.startTime, ds.endTime, ds.address) " +
-                    "FROM DoctorShift ds, " +
-                    "FUNCTION('generate_series', :startDate, :endDate, INTERVAL '1 day') gs(date) " +
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
+        String query = "SELECT NEW ar.edu.itba.paw.models.AvailableTurn(ds.startTime, ds.endTime, ds.address, ds.id) " +
+                    "FROM DoctorShift ds " +
                     "WHERE ds.doctor.id = :doctorId " +
-                    "AND (FUNCTION('EXTRACT', 'ISODOW', gs.date) - 1) = ds.weekday " +
-                    "AND (gs.date + ds.startTime) >= CURRENT_TIMESTAMP " +
+                    "AND :weekday = ds.weekday " +
                     "AND NOT EXISTS ( " +
                     "   SELECT 1 FROM Appointment a " +
                     "   WHERE a.shift.id = ds.id " +
-                    "   AND a.date = gs.date " +
+                    "   AND a.id.date = :date " +
                     ") " +
-                    "ORDER BY gs.date, ds.startTime";
+                    "ORDER BY ds.startTime";
 
         return em.createQuery(query, AvailableTurn.class)
                             .setParameter("doctorId", doctorId)
-                            .setParameter("startDate", startDate)
-                            .setParameter("endDate", endDate)
+                            .setParameter("date", date)
+                            .setParameter("weekday", WeekdayEnum.fromString(date.getDayOfWeek().name()))
                             .getResultList();
     }
 

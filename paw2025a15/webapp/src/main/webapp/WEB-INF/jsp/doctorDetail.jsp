@@ -41,27 +41,27 @@
             <div class="doctor-insurances-div">
               <p class="doctor-insurances-label"><spring:message code="doctor.details.insurances.label"/></p>
               <p class="doctor-insurances">
-                <c:forEach var="insurance" items="${doctorInsurances}" varStatus="status">
-                  <c:out value="${insurance.name}" escapeXml="true"/><c:if test="${!status.last}">, </c:if>
+                <c:forEach var="insurance" items="${doctor.insuranceNames}" varStatus="status">
+                  <c:out value="${insurance}" escapeXml="true"/><c:if test="${!status.last}">, </c:if>
                 </c:forEach>
               </p>
             </div>
             <div class="doctor-specialty-div">
               <p class="doctor-specialty-label"><spring:message code="doctor.details.specialty.label"/></p>
-              <p class="doctor-specialty"><spring:message code="specialty.${doctorDetail.specialty}"/></p>
+              <p class="doctor-specialty"><spring:message code="specialty.${doctor.specialty}"/></p>
             </div>
             <div class="doctor-address-div">
               <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
-              <p class="doctor-address"><c:out value="${doctorShifts[0].address}" escapeXml="true"/></p>
+              <p class="doctor-address"><c:out value="${doctor.singleShifts[0].address}" escapeXml="true"/></p>
             </div>
             <div class="doctor-license-div">
               <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
-              <p class="doctor-license"><c:out value="${doctorDetail.doctorLicense}" escapeXml="true"/></p>
+              <p class="doctor-license"><c:out value="${doctor.licence}" escapeXml="true"/></p>
             </div>
             <p class="section-title"><spring:message code="doctor.details.schedule.label"/></p>
             <div class="doctor-schedule">
               <ul>
-                <c:forEach var="schedule" items="${doctorShifts}">
+                <c:forEach var="schedule" items="${doctor.singleShifts}">
                   <c:set var="myWeekday">
                     <spring:message code="weekday.${schedule.weekday.name}"/>
                   </c:set>
@@ -72,7 +72,7 @@
               </ul>
             </div>
           </div>
-          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" />
           <form id="authDoctorForm" action="${authDoctorPath}" method="POST">
             <c:if test="${!isAuthDoctor}">
               <div class="doctor-name-div">
@@ -84,11 +84,11 @@
 
 
                   <button
-                          type="button"
-                          name="action"
-                          value="toggle"
-                          onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
-                          class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-update-button'}"
+                    type="button"
+                    name="action"
+                    value="toggle"
+                    onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
+                    class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-update-button'}"
                   >
                     <c:out value="${buttonText}" escapeXml="true"/>
                   </button>
@@ -150,11 +150,11 @@
                 </button>
 
                 <button
-                        type="button"
-                        name="action"
-                        value="toggle"
-                        onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
-                        class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-update-button'}"
+                  type="button"
+                  name="action"
+                  value="toggle"
+                  onclick="confirmAuthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value)"
+                  class="${isAuthDoctor ? 'doctor-auth-button auth' : 'doctor-update-button'}"
                 >
                   <c:out value="${buttonText}" escapeXml="true"/>
                 </button>
@@ -165,38 +165,28 @@
       </div>
       <div class="appointment-list-container" style="max-height: fit-content; position: sticky; top: 87px;">
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
-        <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsWeekForm">
-          <form:hidden path="index" id="indexField" />
-          <form:hidden path="action" id="actionField" />
+        <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsDayForm">
           <div class="flex-container">
             <div>
               <button
-                      type="button"
-                      class="navigation-button"
-                      onclick="submitFormWithAction('previous')"
-                      <c:if test="${!shiftsWeekForm.hasPrevious()}">disabled</c:if>
+                type="button"
+                class="navigation-button"
+                onclick="submitFormWithAction('previous')"
+                <c:if test="${!shiftsDayForm.hasPrevious()}">disabled</c:if>
               >
                 <spring:message code="doctorDetail.previousWeek"/>
               </button>
             </div>
-          <!--<div class="selected-month">
-            <c:set var="month">
-              <spring:message code="month.${shiftsWeekForm.month}"/>
-            </c:set>
-            <spring:message code="doctorDetail.selectedWeek" arguments="${month},${shiftsWeekForm.startDate.year},${shiftsWeekForm.weekOfMonth + 1}"/>
-          </div>-->
 
             <div>
-              <form:input cssClass="input-field" id="dateSelector" type="date" min="${today}" path="date" onchange="submitFormWithAction('other')"/>
+              <form:input cssClass="input-field" id="dateSelector" path="date" type="date" min="${today}" onchange="submitFormWithAction('setDate')"/>
             </div>
 
             <div>
               <button
-
-                      type="button"
-                      class="navigation-button"
-                      onclick="submitFormWithAction('next')"
-                      <c:if test="${!shiftsWeekForm.hasNext()}">disabled</c:if>
+                type="button"
+                class="navigation-button"
+                onclick="submitFormWithAction('next')"
               >
                 <spring:message code="doctorDetail.nextWeek"/>
               </button>
@@ -230,10 +220,10 @@
                   <c:forEach var="appointment" items="${doctorAppointments}">
                     <!-- Format the date -->
                     <c:set var="formattedDay">
-                      <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
+                      <fmt:formatNumber value="${date.dayOfMonth}" pattern="00" />
                     </c:set>
                     <c:set var="monthName">
-                      <spring:message code="month.${appointment.date.month}" />
+                      <spring:message code="month.${date.month}" />
                     </c:set>
 
                     <c:set var="confirmMessage">
@@ -256,7 +246,7 @@
                       onclick="submitAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}')"
                       class="appointment-row"
                     >
-                      <td class="sticky-column"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
+                      <td class="sticky-column"><spring:message code="weekday.${date.dayOfWeek}"/></td>
                       <!--<td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true"/></td>-->
                       <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
 
@@ -265,7 +255,7 @@
                       <td style="display: none;">
                         <form:form modelAttribute="takeTurnForm" action="${appointmentPath}" method="POST">
                           <form:input type="hidden" path="shiftId" value="${appointment.shiftId}"/>
-                          <form:input type="hidden" path="date" value="${appointment.date}"/>
+                          <form:input type="hidden" path="date" value="${date}"/>
                           <form:input type="hidden" path="doctorId" value="${doctor.id}"/>
                         </form:form>
                       </td>

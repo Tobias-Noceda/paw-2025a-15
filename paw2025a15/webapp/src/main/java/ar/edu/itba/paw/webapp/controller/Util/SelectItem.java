@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.enums.*;
 import org.springframework.context.MessageSource;
-
-import javax.print.Doc;
 
 public class SelectItem {
 

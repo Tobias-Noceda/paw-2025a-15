@@ -14,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.LandingForm;
-import ar.edu.itba.paw.webapp.form.ShiftsWeekForm;
+import ar.edu.itba.paw.webapp.form.ShiftsDayForm;
 import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -31,15 +30,13 @@ public class AppointmentController {
     @Autowired
     private AppointmentService as;
 
-    @Autowired
-    private DoctorShiftService dss;
 
 
     @RequestMapping("/appointments")
     public ModelAndView appointments(
         @ModelAttribute("user_data") User user,
         @RequestParam(value = "action", required = false) String action,
-        @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
+        @ModelAttribute("shiftsWeekForm") final ShiftsDayForm shiftsWeekForm,
         Locale locale
     ) {
         ModelAndView mav = new ModelAndView("appointments");
@@ -51,14 +48,6 @@ public class AppointmentController {
         switch (user.getRole()) {
             case DOCTOR -> {
                 mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
-                if (action != null) {
-                    if ("previous".equals(action)) {
-                        shiftsWeekForm.decrementIndex();
-                    } else if ("next".equals(action)) {
-                        shiftsWeekForm.incrementIndex();
-                    }
-                }
-                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(user.getId(), shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
                 mav.addObject("shiftsWeekForm", shiftsWeekForm);
             }
             case PATIENT -> {
