@@ -27,7 +27,9 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     private EntityManager em;
 
     @Override
-    public DoctorDetail create(User doctor, String licence, SpecialtyEnum specialty) {
+    public DoctorDetail create(long doctorId, String licence, SpecialtyEnum specialty) {
+        User doctor = em.find(User.class, doctorId);
+        if(doctor == null) return null;
         final DoctorDetail dd = new DoctorDetail(doctor, licence, specialty);
         em.persist(dd);
         return dd;
@@ -42,6 +44,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     public void addDoctorCoverage(long doctorId, long insuranceId) {
         User doctor = em.find(User.class, doctorId);
         Insurance insurance = em.find(Insurance.class, insuranceId);
+        if(doctor == null || insurance == null) return;
         final DoctorCoverage dc = new DoctorCoverage(doctor, insurance);
         em.persist(dc);
     }
@@ -49,15 +52,28 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     @Override
     public int[] addDoctorCoverages(long doctorId, List<Long> insurancesIds) {
         User doctor = em.find(User.class, doctorId);
+        if(doctor == null) return new int[0];
         int[] results = new int[insurancesIds.size()];
         for (int i = 0; i < insurancesIds.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
             try{
-                DoctorCoverage dc = new DoctorCoverage(doctor, em.getReference(Insurance.class, insurancesIds.get(i)));
-                em.persist(dc);
-                results[i] = 1;
-                if (i % 50 == 0) {
-                    em.flush();
-                    em.clear();
+                Insurance insurance = em.find(Insurance.class, insurancesIds.get(i));
+                if(insurance!=null){
+                    DoctorCoverage dc = new DoctorCoverage(doctor, insurance);
+                    em.persist(dc);
+                    results[i] = 1;
+                    if (i != 0 && i % 50 == 0) {
+                        em.flush();
+                        em.clear();
+                        doctor = em.find(User.class, doctorId);
+                    }
+                }
+                else{
+                    results[i] = 0;
+                    if (i != 0 && i % 50 == 0) {
+                        em.flush();
+                        em.clear();
+                        doctor = em.find(User.class, doctorId);
+                    }
                 }
             }
             catch(Exception e){
@@ -89,7 +105,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public List<Insurance> getDoctorInsurancesById(long doctorId) {
-        TypedQuery<Insurance> query = em.createQuery("from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
+        TypedQuery<Insurance> query = em.createQuery("select dc.insurance from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
         query.setParameter("doctorId", doctorId);
         return query.getResultList();
     }

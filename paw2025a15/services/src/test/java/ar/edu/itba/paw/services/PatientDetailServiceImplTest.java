@@ -69,7 +69,7 @@ public class PatientDetailServiceImplTest {
         PATIENT.setId(PATIENT_ID);
         Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(us.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE))).thenReturn(PATIENT);
-        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(PATIENT_DETAIL_EMPTY);
+        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT_ID), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(PATIENT_DETAIL_EMPTY);
 
         User user = pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE);
 
@@ -103,7 +103,7 @@ public class PatientDetailServiceImplTest {
         PATIENT.setId(PATIENT_ID);
         Mockito.when(us.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(us.create(Mockito.eq(PATIENT_EMAIL), Mockito.eq(PATIENT_PASSWORD), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PATIENT_ROLE), Mockito.eq(PATIENT_LOCALE))).thenReturn(PATIENT);
-        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(null);
+        Mockito.when(patientDetailDaoMock.create(Mockito.eq(PATIENT_ID), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull())).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
             pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE)

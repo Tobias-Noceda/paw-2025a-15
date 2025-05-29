@@ -72,7 +72,7 @@ public class DoctorDetailServiceImplTest {
         DOC.setId(DOC_ID);
         Mockito.when(us.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(us.create(Mockito.eq(DOC_EMAIL), Mockito.eq(DOC_PASSWORD), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(DOC_ROLE), Mockito.eq(DOC_LOCALE))).thenReturn(DOC);
-        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(DOC_DETAIL);
+        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC_ID), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(DOC_DETAIL);
 
         User user = dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE);
 
@@ -94,7 +94,7 @@ public class DoctorDetailServiceImplTest {
         DOC.setId(DOC_ID);
         Mockito.when(us.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.empty());
         Mockito.when(us.create(Mockito.eq(DOC_EMAIL), Mockito.eq(DOC_PASSWORD), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(DOC_ROLE), Mockito.eq(DOC_LOCALE))).thenReturn(DOC);
-        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(null);
+        Mockito.when(doctorDetailDaoMock.create(Mockito.eq(DOC_ID), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
         dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_LOCALE)

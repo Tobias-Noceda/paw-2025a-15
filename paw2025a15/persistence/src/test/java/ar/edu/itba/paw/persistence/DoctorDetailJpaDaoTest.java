@@ -1,8 +1,11 @@
-/*package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence;
 
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 
 import org.junit.Assert;
@@ -23,9 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
-import ar.edu.itba.paw.models.DoctorDetail;
+import ar.edu.itba.paw.models.entities.DoctorCoverage;
+import ar.edu.itba.paw.models.entities.DoctorCoverageId;
+import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.Insurance;
+import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -34,200 +40,234 @@ import ar.edu.itba.paw.persistence.config.TestConfig;
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class DoctorDetailJdbcDaoTest {
-
+public class DoctorDetailJpaDaoTest {
+    
     @Autowired
-    private DataSource ds;  
+    private DoctorDetailJpaDao doctorDetailDao;
 
-    @Autowired
-    private DoctorDetailJdbcDao doctorDetailDao;
-
-    private JdbcTemplate jdbcTemplate;
-
-    @Before
-    public void setUp(){
-        jdbcTemplate = new JdbcTemplate(ds);
-    }
+    @PersistenceContext
+    private EntityManager em;
 
     @Test
     public void testCreate(){
-        final long DOC_ID = TestData.DoctorDetails.doctorDetail.getDoctorId();
+        final User DOC = TestData.Users.doctor;
+        final long DOC_ID = TestData.Users.doctorId;
+        DOC.setId(DOC_ID);
         final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
         final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
 
-        DoctorDetail doctorDetail = doctorDetailDao.create(DOC_ID, LICENCE, SPECIALTY);
+        DoctorDetail doctorDetail = doctorDetailDao.create(DOC.getId(), LICENCE, SPECIALTY);
+        DoctorDetail doctorDetailPersisted = em.find(DoctorDetail.class, doctorDetail.getDoctorId());
 
-        Assert.assertNotNull(doctorDetail);
-        Assert.assertEquals(DOC_ID, doctorDetail.getDoctorId());
-        Assert.assertEquals(LICENCE, doctorDetail.getDoctorLicense());
-        Assert.assertEquals(SPECIALTY, doctorDetail.getSpecialty());
-        Assert.assertEquals(1, 
-                            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_details", String.format("doctor_id = %d", DOC_ID)));
-
+        Assert.assertNotNull(doctorDetailPersisted);
+        Assert.assertEquals(DOC, doctorDetailPersisted.getDoctor());
+        Assert.assertEquals(LICENCE, doctorDetailPersisted.getDoctorLicense());
+        Assert.assertEquals(SPECIALTY, doctorDetailPersisted.getSpecialty());
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorDetails.sql"})
     public void testCreateExistentDetail(){
-        final long DOC_ID = TestData.DoctorDetails.doctorDetail.getDoctorId();
+        final long DOC_ID = TestData.Users.doctorId;
         final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
         final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
 
-        Assert.assertThrows(DuplicateKeyException.class,()->{
-            doctorDetailDao.create(DOC_ID, LICENCE, SPECIALTY);});
+        Assert.assertThrows(PersistenceException.class,()->{
+            doctorDetailDao.create(DOC_ID, LICENCE, SPECIALTY);
+            em.flush();
+        });
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorDetails.sql"})
     public void testGetDetailByDoctorId(){
-        final long DOC_ID = TestData.DoctorDetails.doctorDetail.getDoctorId();
+        final long DOC_ID = TestData.Users.doctorId;
         final DoctorDetail DETAIL = TestData.DoctorDetails.doctorDetail;
+        DETAIL.getDoctor().getPicture().setId(TestData.Images.validImageId);
 
         Optional<DoctorDetail> foundDetail = doctorDetailDao.getDetailByDoctorId(DOC_ID);
 
+        Assert.assertNotNull(foundDetail);
         Assert.assertTrue(foundDetail.isPresent());
         Assert.assertEquals(DETAIL, foundDetail.get());
-        Assert.assertEquals(1, 
-                            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_details", String.format("doctor_id = %d", DOC_ID)));
-
-    }
+     }
 
     @Test
     public void testGetDetailByDoctorIdNonexistentDoc(){
-        final long DOC_ID = TestData.DoctorDetails.doctorDetail.getDoctorId();
+        final long DOC_ID = TestData.Users.patientId;
 
         Optional<DoctorDetail> foundDetail = doctorDetailDao.getDetailByDoctorId(DOC_ID);
 
+        Assert.assertNotNull(foundDetail);
         Assert.assertFalse(foundDetail.isPresent());
-        Assert.assertEquals(0, 
-                            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_details", String.format("doctor_id = %d", DOC_ID)));
-
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql"})
     public void testAddDoctorCoverage(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
+        final long DOC_ID = TestData.Users.doctorId;
+        final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final DoctorCoverage DC = TestData.DoctorCoverages.doctorCoverage;
+        DC.setDoctor(TestData.Users.doctor);
+        DC.getDoctor().setId(DOC_ID);
+        DC.getDoctor().getPicture().setId(TestData.Images.validImageId);
+        DC.setInsurance(TestData.Insurances.validInsurance);
+        DC.getInsurance().setId(INSURANCE_ID);
 
         doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
+        DoctorCoverage dcPersisted = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
 
-        Assert.assertEquals(1, 
-                            JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE_ID)));
+        Assert.assertNotNull(dcPersisted);
+        Assert.assertEquals(DC, dcPersisted);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:insurances.sql"})
     public void testAddCoverageNonexistentDoctor(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
+        final long DOC_ID = TestData.Users.patientId;
+        final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
 
-        Assert.assertThrows(DataIntegrityViolationException.class, () -> {
-            doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
-        });
+        doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
+        DoctorCoverage dcPersisted = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
+        
+        Assert.assertNull(dcPersisted);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql"})
     public void testAddCoverageNonexistentInsurance(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
+        final long DOC_ID = TestData.Users.doctorId;
+        final long INSURANCE_ID = 99L;
 
-        Assert.assertThrows(DataIntegrityViolationException.class, () -> {
-            doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
-        });
+        doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
+        DoctorCoverage dcPersisted = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
+        
+        Assert.assertNull(dcPersisted);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql"})
     public void testAddCoverages(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
-        final long INSURANCE2_ID = TestData.DoctorCoverages.doctorCoverage2.getInsuranceId();
+        final long DOC_ID = TestData.Users.doctorId;
+        final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final long INSURANCE2_ID = TestData.Insurances.validInsurance2Id;
+        final DoctorCoverage DC = TestData.DoctorCoverages.doctorCoverage;
+        final DoctorCoverage DC2 = TestData.DoctorCoverages.doctorCoverage2;
+        DC.setDoctor(TestData.Users.doctor);
+        DC.getDoctor().setId(DOC_ID);
+        DC.getDoctor().getPicture().setId(TestData.Images.validImageId);
+        DC.setInsurance(TestData.Insurances.validInsurance);
+        DC.getInsurance().setId(INSURANCE_ID);
+
+        DC2.setDoctor(TestData.Users.doctor);
+        DC2.getDoctor().setId(DOC_ID);
+        DC2.getDoctor().getPicture().setId(TestData.Images.validImageId);
+        DC2.setInsurance(TestData.Insurances.validInsurance2);
+        DC2.getInsurance().setId(INSURANCE2_ID);
+
         final List<Long> INSURANCES_IDS = List.of(INSURANCE_ID, INSURANCE2_ID);
 
         int[] results = doctorDetailDao.addDoctorCoverages(DOC_ID, INSURANCES_IDS);
+        DoctorCoverage dcPersisted = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
+        DoctorCoverage dc2Persisted = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE2_ID));
         
         Assert.assertEquals(2, results.length);
         Assert.assertEquals(1, results[0]);
         Assert.assertEquals(1, results[1]);
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE_ID)));
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE2_ID)));
+        Assert.assertNotNull(dcPersisted);
+        Assert.assertNotNull(dc2Persisted);
+        Assert.assertEquals(DC.getDoctor(), dcPersisted.getDoctor());
+        Assert.assertEquals(DC.getInsurance(), dcPersisted.getInsurance());
+        //Assert.assertEquals(DC, dcPersisted);
+        Assert.assertEquals(DC2, dc2Persisted);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
     public void testRemoveDoctorCoverages(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
-        final long INSURANCE2_ID = TestData.DoctorCoverages.doctorCoverage2.getInsuranceId();
+        final long DOC_ID = TestData.Users.doctorId;
+        final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final long INSURANCE2_ID = TestData.Insurances.validInsurance2Id;
+        final DoctorCoverage DC2 = TestData.DoctorCoverages.doctorCoverage2;
+        DC2.setDoctor(TestData.Users.doctor);
+        DC2.getDoctor().setId(DOC_ID);
+        DC2.getDoctor().getPicture().setId(TestData.Images.validImageId);
+        DC2.setInsurance(TestData.Insurances.validInsurance2);
+        DC2.getInsurance().setId(INSURANCE2_ID);
+
         final List<Long> INSURANCES_IDS = List.of(INSURANCE_ID);
 
         doctorDetailDao.removeDoctorCoverages(DOC_ID, INSURANCES_IDS);
-
-        Assert.assertEquals(0, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE_ID)));
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE2_ID)));
+        DoctorCoverage dcFound = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
+        DoctorCoverage dc2Found = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE2_ID));
+        
+        Assert.assertNull(dcFound);
+        Assert.assertNotNull(dc2Found);
+        Assert.assertEquals(DC2, dc2Found);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
     public void testRemoveAllCoveragesForDoctorId(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
+        final long DOC_ID = TestData.Users.doctorId;
+        final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final long INSURANCE2_ID = TestData.Insurances.validInsurance2Id;
 
         doctorDetailDao.removeAllCoveragesForDoctorId(DOC_ID);
+        DoctorCoverage dcFound = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
+        DoctorCoverage dc2Found = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE2_ID));
         
-        Assert.assertEquals(0, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d ", DOC_ID)));
+        Assert.assertNull(dcFound);
+        Assert.assertNull(dc2Found);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
     public void testAddCoverageExistentDocCov(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
-        final long INSURANCE_ID = TestData.DoctorCoverages.doctorCoverage.getInsuranceId();
+        final long DOC_ID = TestData.Users.doctorId;
+        final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
 
-        Assert.assertThrows(DuplicateKeyException.class,()->{
-            doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);});
+        Assert.assertThrows(PersistenceException.class,()->{
+            doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
+            em.flush();
+        });
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:doctorCoverages.sql"})
     public void testGetInsurancesById(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
+        final long DOC_ID = TestData.Users.doctorId;
         final Insurance INSURANCE1 = TestData.Insurances.validInsurance;
+        final long INSURANCE1_ID = TestData.Insurances.validInsuranceId;
+        INSURANCE1.setId(INSURANCE1_ID);
         final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
+        final long INSURANCE2_ID = TestData.Insurances.validInsurance2Id;
+        INSURANCE2.setId(INSURANCE2_ID);
 
         List<Insurance> foundInsurances = doctorDetailDao.getDoctorInsurancesById(DOC_ID);
+        Insurance insuranceFound = em.find(Insurance.class, INSURANCE1_ID);
+        Insurance insurance2Found = em.find(Insurance.class, INSURANCE2_ID);
 
         Assert.assertFalse(foundInsurances.isEmpty());
         Assert.assertEquals(2, foundInsurances.size());
-        Assert.assertTrue(foundInsurances.contains(INSURANCE1));
-        Assert.assertTrue(foundInsurances.contains(INSURANCE2));
-        Assert.assertEquals(2, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d", DOC_ID)));
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE1.getId())));
-        Assert.assertEquals(1, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d AND insurance_id = %d", DOC_ID, INSURANCE2.getId())));
+        Assert.assertNotNull(insuranceFound);
+        Assert.assertNotNull(insurance2Found);
+        Assert.assertTrue(foundInsurances.contains(insuranceFound));
+        Assert.assertTrue(foundInsurances.contains(insurance2Found));
+        Assert.assertEquals(INSURANCE1, insuranceFound);
+        Assert.assertEquals(INSURANCE2, insurance2Found);
     }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:insurances.sql"})
     public void testGetInsurancesByIdNonexistentDoctor(){
-        final long DOC_ID = TestData.DoctorCoverages.doctorCoverage.getDoctorId();
+        final long DOC_ID = TestData.Users.patientId;
 
         List<Insurance> foundInsurances = doctorDetailDao.getDoctorInsurancesById(DOC_ID);
 
         Assert.assertTrue(foundInsurances.isEmpty());
-    
-        Assert.assertEquals(0, 
-        JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_coverages", String.format("doctor_id = %d", DOC_ID)));
     }
-
+/*TODO:continue this tests
     @Test
     @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorDetails.sql", "classpath:doctorShifts.sql", "classpath:doctorCoverages.sql"})
     public void testGetTotalDoctorsByParams(){
@@ -235,6 +275,7 @@ public class DoctorDetailJdbcDaoTest {
         final SpecialtyEnum DOC_SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
         final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        INSURANCE.setId(TestData.Insurances.validInsuranceId);
 
         int result = doctorDetailDao.getTotalDoctorsByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE, WEEKDAY);
 
@@ -413,6 +454,5 @@ public class DoctorDetailJdbcDaoTest {
         Assert.assertTrue(results.isEmpty());
         Assert.assertEquals(2, 
         JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
-    }
+    }*/
 }
-*/

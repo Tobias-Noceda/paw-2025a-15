@@ -44,7 +44,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
         User doc = us.create(email, password, name, telephone, UserRoleEnum.DOCTOR, locale);
         long doctorId = doc.getId();
         try {
-            DoctorDetail dd = doctorDetailDao.create(doc, doctorLicense, specialty);
+            DoctorDetail dd = doctorDetailDao.create(doctorId, doctorLicense, specialty);
             if(dd == null){
                 LOGGER.error("Failed to create doctor details for userId: {} at {}", doctorId, LocalDateTime.now());
                 throw new RuntimeException("Failed to create doctor details for userId: " + doctorId);
