@@ -79,7 +79,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
                     "AND NOT EXISTS ( " +
                     "   SELECT 1 FROM Appointment a " +
                     "   WHERE a.shift.id = ds.id " +
-                    "   AND a.date = gs.date " +
+                    "   AND a.id.date = gs.date " +
                     ") " +
                     "ORDER BY gs.date, ds.startTime";
 

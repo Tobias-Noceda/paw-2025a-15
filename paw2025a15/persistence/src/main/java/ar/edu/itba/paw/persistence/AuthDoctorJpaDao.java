@@ -31,10 +31,10 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
         try{
-            em.createQuery("from AuthDoctor as ad where ad.id.doctorId = :doctorId and ad.id.patientId = :patientId LIMIT 1",AuthDoctor.class)
+            em.createQuery("from AuthDoctor as ad where ad.id.doctorId = :doctorId and ad.id.patientId = :patientId ",AuthDoctor.class)
             .setParameter("doctorId", doctorId)
             .setParameter("patientId", patientId)
-            .getSingleResult();
+            .setMaxResults(1).getResultList();
             return true;
         }
         catch (NoResultException e) {
@@ -124,7 +124,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
-        String query = "SELECT DISTINCT ad.accessLevel FROM AuthDoctor ad " +
+        String query = "SELECT DISTINCT ad.id.accessLevel FROM AuthDoctor ad " +
                         "WHERE ad.doctor.id = :doctorId AND ad.patient.id = :patientId";
 
         return em.createQuery(query, AccessLevelEnum.class)

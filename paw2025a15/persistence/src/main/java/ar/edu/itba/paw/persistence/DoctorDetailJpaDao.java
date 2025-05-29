@@ -89,7 +89,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public List<Insurance> getDoctorInsurancesById(long doctorId) {
-        TypedQuery<Insurance> query = em.createQuery("from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
+        TypedQuery<Insurance> query = em.createQuery(" SELECT dc.insurance from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
         query.setParameter("doctorId", doctorId);
         return query.getResultList();
     }
