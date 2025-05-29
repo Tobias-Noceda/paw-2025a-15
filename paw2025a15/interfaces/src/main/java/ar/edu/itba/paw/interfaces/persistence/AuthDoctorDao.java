@@ -3,7 +3,6 @@ package ar.edu.itba.paw.interfaces.persistence;
 import java.util.List;
 
 import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
 public interface AuthDoctorDao {
@@ -13,7 +12,7 @@ public interface AuthDoctorDao {
 
     public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
-    public void authDoctor(User patient, User doctor, AccessLevelEnum accessLevel);
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
     public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 

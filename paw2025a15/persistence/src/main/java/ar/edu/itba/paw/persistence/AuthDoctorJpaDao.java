@@ -21,7 +21,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public List<DoctorView> getAuthDoctorsByPatientId(long id) {
-        String query = "SELECT NEW DoctorView(dd.doctor.id, u.name, dd.specialty, u.picture.id) " +
+        String query = "SELECT NEW ar.edu.itba.paw.models.DoctorView(dd.doctor.id, u.name, dd.specialty, u.picture.id) " +
                   "FROM AuthDoctor ad " +
                   "JOIN User u ON ad.doctor.id = u.id " +
                   "JOIN DoctorDetail dd ON dd.doctorId = u.id " +
@@ -52,9 +52,12 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public void authDoctor(User patient, User doctor, AccessLevelEnum accessLevel) {
-        if(hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), accessLevel)) return;
-        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), AccessLevelEnum.VIEW_BASIC)) authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        User patient = em.find(User.class, patientId);
+        User doctor = em.find(User.class, doctorId);
+        if(patient == null || doctor == null) return;
+        if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) return;
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_BASIC)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
         final AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevel);
         em.persist(ad);
     }
