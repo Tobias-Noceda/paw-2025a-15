@@ -83,6 +83,29 @@ CREATE TABLE IF NOT EXISTS appointments (
     FOREIGN KEY (patient_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS doctor_single_shifts (
+    shift_id SERIAL PRIMARY KEY,
+    doctor_id INT NOT NULL,
+    shift_weekday INT NOT NULL,
+    shift_address VARCHAR(50) NOT NULL,
+    shift_start_time TIME NOT NULL,
+    shift_end_time TIME NOT NULL,
+    shift_duration INT NOT NULL,
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS appointments_new (
+    shift_id BIGINT NOT NULL,
+    patient_id BIGINT NOT NULL,
+    appointment_date DATE NOT NULL,
+    appointment_start_time TIME NOT NULL,
+    appointment_end_time TIME NOT NULL,
+
+    PRIMARY KEY(shift_id, appointment_date, appointment_start_time, appointment_end_time),
+    FOREIGN KEY (shift_id) REFERENCES doctor_single_shifts(shift_id),
+    FOREIGN KEY (patient_id) REFERENCES users(user_id)
+);
+
 CREATE TABLE IF NOT EXISTS doctor_details ( 
     doctor_id BIGINT NOT NULL,
     doctor_licence VARCHAR(50) UNIQUE NOT NULL,

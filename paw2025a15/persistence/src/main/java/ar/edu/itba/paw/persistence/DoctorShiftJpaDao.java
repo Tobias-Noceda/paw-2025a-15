@@ -2,17 +2,23 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.models.AvailableTurn;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,24 +73,82 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         return query.getResultList();
     }
 
+    private List<AvailableTurn> getAvailableTurnsByShift(DoctorSingleShift dss, List<AppointmentNew> takenAppointments, LocalDate date) {
+        final List<AvailableTurn> availableTurns = new ArrayList<>();
+
+        // iterator of the taken appointments
+        Iterator<AppointmentNew> it = takenAppointments.iterator();
+        AppointmentNew currentAppointment = it.hasNext() ? it.next() : null;
+
+        LocalTime startTime = dss.getStartTime();
+
+        while (startTime.isBefore(dss.getEndTime())) {
+            LocalTime endTime = startTime.plusMinutes(dss.getDuration());
+            if(endTime.isAfter(dss.getEndTime())) break;
+            AvailableTurn availableTurn = new AvailableTurn(
+                date,
+                startTime,
+                endTime,
+                dss.getAddress(),
+                dss.getId()
+            );
+            boolean isAvailable = true;
+
+            while(currentAppointment != null) {
+                if(currentAppointment.getId().getStartTime().isAfter(endTime)) {
+                    break;
+                } else if (currentAppointment.getId().getEndTime().isBefore(startTime)) {
+                    // If the current appointment ends before the start time of the available turn, we can skip it
+                    currentAppointment = it.hasNext() ? it.next() : null;
+                } else {
+                    isAvailable = false;
+                    break;
+                }
+            }
+            if (isAvailable) {
+                availableTurns.add(availableTurn);
+            }
+            startTime = endTime; // Move to the next time slot
+        }
+        return availableTurns.isEmpty() ? Collections.emptyList() : availableTurns;
+    }
+
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
-        String query = "SELECT NEW ar.edu.itba.paw.models.AvailableTurn(ds.startTime, ds.endTime, ds.address, ds.id) " +
-                    "FROM DoctorShift ds " +
-                    "WHERE ds.doctor.id = :doctorId " +
-                    "AND :weekday = ds.weekday " +
-                    "AND NOT EXISTS ( " +
-                    "   SELECT 1 FROM Appointment a " +
-                    "   WHERE a.shift.id = ds.id " +
-                    "   AND a.id.date = :date " +
-                    ") " +
-                    "ORDER BY ds.startTime";
+        WeekdayEnum weekday = WeekdayEnum.fromString(date.getDayOfWeek().name());
 
-        return em.createQuery(query, AvailableTurn.class)
-                            .setParameter("doctorId", doctorId)
-                            .setParameter("date", date)
-                            .setParameter("weekday", WeekdayEnum.fromString(date.getDayOfWeek().name()))
-                            .getResultList();
+        final List<DoctorSingleShift> shiftsList = em.createQuery(
+            """
+                FROM DoctorSingleShift dss 
+                WHERE dss.doctor.id = :doctorId 
+                AND :weekday = dss.weekday
+            """, 
+            DoctorSingleShift.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("weekday", weekday)
+                .getResultList();
+
+        if (shiftsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        DoctorSingleShift dss = shiftsList.get(0);
+
+        final List<AppointmentNew> takenAppointments = em.createQuery(
+            """
+                FROM AppointmentNew a 
+                WHERE a.id.date = :date 
+                AND a.id.shiftId = :shiftId 
+                ORDER BY a.id.startTime
+            """,
+            AppointmentNew.class)
+                .setParameter("date", date)
+                .setParameter("shiftId", dss.getId())
+                .getResultList();
+
+        System.out.println("Taken appointments: " + takenAppointments.size());
+
+        return getAvailableTurnsByShift(dss, takenAppointments, date);
     }
 
     @Override

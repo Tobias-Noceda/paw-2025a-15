@@ -30,11 +30,11 @@ public class AppointmentNew {
         this.id = new AppointmentNewId(shift.getId(), date, startTime, endTime);
     }
 
-    public AppointmentNewId getAppointmentId(){
+    public AppointmentNewId getId(){
         return id;
     }
 
-    public void setAppointmentId(AppointmentNewId id){
+    public void setId(AppointmentNewId id){
         this.id = id;
     }
 
