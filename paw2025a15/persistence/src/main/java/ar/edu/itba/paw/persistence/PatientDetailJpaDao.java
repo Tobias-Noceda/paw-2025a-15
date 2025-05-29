@@ -17,9 +17,11 @@ public class PatientDetailJpaDao implements PatientDetailDao {
     private EntityManager em;
 
     @Override
-    public PatientDetail create(User patient, LocalDate birthdate, BloodTypeEnum bloodType, Double height,
+    public PatientDetail create(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height,
             Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies,
             String diet, String hobbies, String job) {
+        User patient = em.find(User.class, patientId);
+        if(patient == null) return null;
         final PatientDetail pd = new PatientDetail(patient, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
         em.persist(pd);
         return pd;
@@ -30,6 +32,7 @@ public class PatientDetailJpaDao implements PatientDetailDao {
             Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies,
             String diet, String hobbies, String job) {
         PatientDetail pd = em.find(PatientDetail.class, patientId);
+        if(pd==null) return;
         pd.setBirthdate(birthdate);
         pd.setBloodType(bloodType);
         pd.setHeight(height);
