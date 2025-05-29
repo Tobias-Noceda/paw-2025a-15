@@ -42,6 +42,28 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
     }
 
     @Override
+    public void authStudyForDoctorIdList(List<Long> doctorsId, long StudyId) {
+
+        if (doctorsId == null || doctorsId.isEmpty())
+            return;
+
+        Study study = em.find(Study.class, StudyId);
+
+        if(study==null){
+            return;
+        }
+
+        TypedQuery<User> query = em.createQuery("from User as u where u.id in :doctorsId",User.class);
+        query.setParameter("doctorsId", doctorsId);
+        List<User> doctors = query.getResultList();
+
+        for(User doctor : doctors){
+            AuthStudy as = new AuthStudy(doctor, study);
+            em.persist(as);
+        }
+    }
+
+    @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
         if(!hasAuthStudy(studyId, doctorId)) return;
         AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId));
