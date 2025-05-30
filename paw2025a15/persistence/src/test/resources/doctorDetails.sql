@@ -1,1 +1,1 @@
-INSERT INTO doctor_details(doctor_id, doctor_licence, doctor_specialty) VALUES(2, 'med-licence', 2);
+UPDATE doctor_details SET doctor_licence = 'med-licence' WHERE doctor_id = 2;

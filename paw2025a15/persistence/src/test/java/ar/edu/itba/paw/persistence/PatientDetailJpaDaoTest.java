@@ -1,4 +1,3 @@
-/*
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
@@ -12,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -157,6 +155,7 @@ public class PatientDetailJpaDaoTest {
     public void testGetDetailByPatientIdNullDetails(){
         final PatientDetail PATIENT_DETAILS = TestData.PatientDetails.newPatientDetailNullValues;
         final long PATIENT_ID = TestData.Users.patientId;
+        PATIENT_DETAILS.setPatientId(PATIENT_ID);
         PATIENT_DETAILS.getPatient().setId(TestData.Users.patientId);
         PATIENT_DETAILS.getPatient().getPicture().setId(TestData.Images.validImageId);
 
@@ -172,6 +171,7 @@ public class PatientDetailJpaDaoTest {
     public void testGetDetailByPatientIdNotNullDetails(){
         final PatientDetail PATIENT_DETAILS = TestData.PatientDetails.newPatientDetailNotNullValues;
         final long PATIENT_ID = TestData.Users.patientId;
+        PATIENT_DETAILS.setPatientId(PATIENT_ID);
         PATIENT_DETAILS.getPatient().setId(TestData.Users.patientId);
         PATIENT_DETAILS.getPatient().getPicture().setId(TestData.Images.validImageId);
 
@@ -283,4 +283,3 @@ public class PatientDetailJpaDaoTest {
     }
 
 }
- */

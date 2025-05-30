@@ -1,4 +1,3 @@
-/*
 package ar.edu.itba.paw.persistence;
 
 import java.util.List;
@@ -7,30 +6,21 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-import javax.sql.DataSource;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.entities.DoctorCoverage;
 import ar.edu.itba.paw.models.entities.DoctorCoverageId;
 import ar.edu.itba.paw.models.entities.DoctorDetail;
-import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -84,6 +74,7 @@ public class DoctorDetailJpaDaoTest {
     public void testGetDetailByDoctorId(){
         final long DOC_ID = TestData.Users.doctorId;
         final DoctorDetail DETAIL = TestData.DoctorDetails.doctorDetail;
+        DETAIL.setDoctorId(DOC_ID);
         DETAIL.getDoctor().getPicture().setId(TestData.Images.validImageId);
 
         Optional<DoctorDetail> foundDetail = doctorDetailDao.getDetailByDoctorId(DOC_ID);
@@ -91,7 +82,7 @@ public class DoctorDetailJpaDaoTest {
         Assert.assertNotNull(foundDetail);
         Assert.assertTrue(foundDetail.isPresent());
         Assert.assertEquals(DETAIL, foundDetail.get());
-     }
+    }
 
     @Test
     public void testGetDetailByDoctorIdNonexistentDoc(){
@@ -153,18 +144,11 @@ public class DoctorDetailJpaDaoTest {
         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
         final long INSURANCE2_ID = TestData.Insurances.validInsurance2Id;
         final DoctorCoverage DC = TestData.DoctorCoverages.doctorCoverage;
+        DC.getDoctorCoverageId().setDoctorId(DOC_ID);
+        DC.getDoctorCoverageId().setInsuranceId(INSURANCE_ID);
         final DoctorCoverage DC2 = TestData.DoctorCoverages.doctorCoverage2;
-        DC.setDoctor(TestData.Users.doctor);
-        DC.getDoctor().setId(DOC_ID);
-        DC.getDoctor().getPicture().setId(TestData.Images.validImageId);
-        DC.setInsurance(TestData.Insurances.validInsurance);
-        DC.getInsurance().setId(INSURANCE_ID);
-
-        DC2.setDoctor(TestData.Users.doctor);
-        DC2.getDoctor().setId(DOC_ID);
-        DC2.getDoctor().getPicture().setId(TestData.Images.validImageId);
-        DC2.setInsurance(TestData.Insurances.validInsurance2);
-        DC2.getInsurance().setId(INSURANCE2_ID);
+        DC2.getDoctorCoverageId().setDoctorId(DOC_ID);
+        DC2.getDoctorCoverageId().setInsuranceId(INSURANCE2_ID);
 
         final List<Long> INSURANCES_IDS = List.of(INSURANCE_ID, INSURANCE2_ID);
 
@@ -177,9 +161,7 @@ public class DoctorDetailJpaDaoTest {
         Assert.assertEquals(1, results[1]);
         Assert.assertNotNull(dcPersisted);
         Assert.assertNotNull(dc2Persisted);
-        Assert.assertEquals(DC.getDoctor(), dcPersisted.getDoctor());
-        Assert.assertEquals(DC.getInsurance(), dcPersisted.getInsurance());
-        //Assert.assertEquals(DC, dcPersisted);
+        Assert.assertEquals(DC, dcPersisted);
         Assert.assertEquals(DC2, dc2Persisted);
     }
 
@@ -455,6 +437,5 @@ public class DoctorDetailJpaDaoTest {
         Assert.assertTrue(results.isEmpty());
         Assert.assertEquals(2, 
         JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
-    }
+    }*/
 }
- */

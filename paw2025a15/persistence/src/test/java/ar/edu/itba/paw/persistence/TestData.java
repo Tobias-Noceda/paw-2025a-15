@@ -97,7 +97,7 @@ public class TestData {
     }
 
     public class PatientDetails{
-        public static final PatientDetail patientDetail = new PatientDetail(Users.patient, null, null, null, null, null, null, null, null, null, null, null, "carpenter");
+        public static final PatientDetail patientDetail = new PatientDetail(Users.patient, LocalDate.parse("2000-01-01"), null, 1.75, 89.00, null, null, null, null, null, null, null, "carpenter");
         public static final PatientDetail newPatientDetail = new PatientDetail(Users.patient, LocalDate.parse("2000-01-01"), BloodTypeEnum.AB_POSITIVE, 1.75, 89.00, false, true, null, null, null, null, null, null);
         public static final PatientDetail newPatientDetailNotNullValues = new PatientDetail(Users.patient, LocalDate.parse("2000-01-01"), BloodTypeEnum.AB_POSITIVE, 1.75, 89.00, false, true, "a", "a", "a", "a", "a", "a");
         public static final PatientDetail newPatientDetailNullValues = new PatientDetail(Users.patient, null, null, null, null, null, null, null, null, null, null, null, null);
