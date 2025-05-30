@@ -92,7 +92,6 @@ public class StudyController {
             Locale locale
     ) throws IOException {
         if (errors.hasErrors()) {
-            System.out.println("Errors: " + errors);
             return createStudyForm(patientId, landingForm, createStudyForm, errors, locale, user);
         }
 

@@ -60,7 +60,6 @@ public class StudyJpaDao implements StudyDao {
         return query.getResultList();
     }
 
-
     @Override
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
         TypedQuery<Study> query = em.createQuery("from Study as s where s.user.id = :patientId and s.uploader.id = :doctorId",Study.class);

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -40,6 +41,9 @@ public class DoctorSingleShift {
 
     @Column(name = "shift_duration", nullable = false)
     private int duration; // Duration in minutes
+
+    @OneToMany(orphanRemoval = false, mappedBy = "shift", fetch = FetchType.LAZY)
+    private List<AppointmentNew> appointments;
 
     public DoctorSingleShift(){
         //just for hibernate
@@ -108,6 +112,14 @@ public class DoctorSingleShift {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public List<AppointmentNew> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<AppointmentNew> appointments) {
+        this.appointments = appointments;
     }
 
     @Override

@@ -21,7 +21,7 @@
       <c:if test="${user_data.role=='PATIENT' || user_data == null}">
         <div class="card filter-card" >
           <h2 class="section-title"><spring:message code="landing.filter.title"/></h2>
-          <c:url value='/' var="filterUrl"/>
+          <c:url value='/home' var="filterUrl"/>
           <form:form modelAttribute="landingForm"
                     action="${filterUrl}"
                     method="get"

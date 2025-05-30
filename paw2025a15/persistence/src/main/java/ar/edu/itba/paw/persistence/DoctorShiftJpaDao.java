@@ -146,8 +146,6 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
                 .setParameter("shiftId", dss.getId())
                 .getResultList();
 
-        System.out.println("Taken appointments: " + takenAppointments.size());
-
         return getAvailableTurnsByShift(dss, takenAppointments, date);
     }
 

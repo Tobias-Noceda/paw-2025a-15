@@ -47,7 +47,7 @@
         </c:if>
       </c:set>
       <c:set var="searchLink">
-        <c:url value="/" />
+        <c:url value="/home" />
       </c:set>
 
       <div class="search-bar-container">
