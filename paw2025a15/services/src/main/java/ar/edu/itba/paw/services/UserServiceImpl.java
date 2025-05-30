@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,10 +17,12 @@ import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -42,16 +45,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale){
-        if(getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
-        File defaultPic = fs.findById(1).orElseThrow(()-> new NotFoundException("Default picture not found!"));
-        User user = userDao.create(email, passwordEncoder.encode(password), name, telephone, role, defaultPic, locale); // PictureId por defecto
-        if(user == null){
-            LOGGER.error("Failed to create user for email: {} at {}", email, LocalDateTime.now()); 
-            throw new RuntimeException("Failed to create user for email: " + email);
+    public Doctor createDoctor(String email, String password, String name, String telephone, File picture, LocaleEnum locale, String licence, SpecialtyEnum specialty) {
+        if (userDao.getUserByEmail(email).isPresent()) {
+            throw new AlreadyExistsException("User with email: " + email + " already exists!");
         }
-        LOGGER.info("Successfully created user with email: {}", email);
-        return user;
+        Doctor doctor = userDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture, locale, licence, specialty);
+        LOGGER.info("Created doctor user with email: {}", email);
+        return doctor;
+    }
+
+    @Transactional
+    @Override
+    public Patient createPatient(String email, String password, String name, String telephone, File picture, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight) {
+        if (userDao.getUserByEmail(email).isPresent()) {
+            throw new AlreadyExistsException("User with email: " + email + " already exists!");
+        }
+        Patient patient = userDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
+        LOGGER.info("Created patient user with email: {}", email);
+        return patient;
     }
 
     @Transactional(readOnly = true)

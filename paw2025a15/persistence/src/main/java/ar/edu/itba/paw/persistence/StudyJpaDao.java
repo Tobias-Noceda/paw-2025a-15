@@ -1,13 +1,16 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -45,29 +48,29 @@ public class StudyJpaDao implements StudyDao {
 
     @Override
     public List<Study> getStudiesByPatientId(long id) {
-        User patient = em.find(User.class, id);
+        Patient patient = em.find(Patient.class, id);
         if(patient == null) return Collections.emptyList();
-        return patient.getPatientStudies();
+        return patient.getStudies();
     }
 
     @Override
-    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
-        User patient = em.find(User.class, id);
-    if (patient == null) return Collections.emptyList();
+    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {
+        Patient patient = em.find(Patient.class, id);
+        if (patient == null) return Collections.emptyList();
 
-    return patient.getPatientStudies().stream()
-        .filter(study -> type == null || study.getType() == type)
-        .sorted(Comparator.comparing(Study::getStudyDate, mostRecent ? Comparator.reverseOrder() : Comparator.naturalOrder())) // Sort by study date
-        .collect(Collectors.toList());
+        return patient.getStudies().stream()
+            .filter(study -> type == null || study.getType() == type)
+            .sorted(Comparator.comparing(Study::getStudyDate, mostRecent ? Comparator.reverseOrder() : Comparator.naturalOrder()))
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
-        User patient = em.find(User.class, patientId);
-        User doctor = em.find(User.class, doctorId);
+        Patient patient = em.find(Patient.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
         if(patient == null || doctor == null) return Collections.emptyList();
         Set<Study> doctorStudySet = new HashSet<>(doctor.getAuthStudies());
-        return patient.getPatientStudies().stream()
+        return patient.getStudies().stream()
         .filter(doctorStudySet::contains)
         .collect(Collectors.toList());
 
@@ -75,20 +78,18 @@ public class StudyJpaDao implements StudyDao {
 
     @Override
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
-        User patient = em.find(User.class, patientId);
-        User doctor = em.find(User.class, doctorId);
+        Patient patient = em.find(Patient.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
         if (patient == null || doctor == null) return Collections.emptyList();
 
-        Set<Study> patientStudies = new HashSet<>(patient.getPatientStudies());
+        Set<Study> patientStudies = new HashSet<>(patient.getStudies());
         Set<Study> doctorStudies = new HashSet<>(doctor.getAuthStudies());
 
-        List<Study> filteredStudies = patientStudies.stream()
+        return patientStudies.stream()
             .filter(doctorStudies::contains) 
-            .filter(study -> type == null || study.getType() == type)
-            .sorted(Comparator.comparing(Study::getStudyDate, mostRecent ? Comparator.reverseOrder() : Comparator.naturalOrder())) // Sort by study date
+            .filter(study -> type == null || study.getType() == type) 
+            .sorted(Comparator.comparing(Study::getStudyDate, mostRecent ? Comparator.reverseOrder() : Comparator.naturalOrder())) 
             .collect(Collectors.toList());
-
-        return filteredStudies;
     }
 
 

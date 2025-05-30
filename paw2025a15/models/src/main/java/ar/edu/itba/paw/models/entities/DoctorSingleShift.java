@@ -7,13 +7,14 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "doctor_shifts",
-        uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_start_time"}),
-        @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_end_time"})
+@Table(
+    name = "doctor_single_shifts",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_start_time", "shift_duration"}),
+        @UniqueConstraint(columnNames = {"doctor_id", "shift_weekday", "shift_end_time", "shift_duration"})
     }
 )
-public class DoctorShift {
+public class DoctorSingleShift {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_shifts_shift_id_seq")
     @SequenceGenerator(sequenceName = "doctor_shifts_shift_id_seq", name = "doctor_shifts_shift_id_seq", allocationSize = 1)
@@ -37,16 +38,20 @@ public class DoctorShift {
     @Column(name = "shift_end_time", nullable = false)
     private LocalTime endTime;
 
-    public DoctorShift(){
+    @Column(name = "shift_duration", nullable = false)
+    private int duration; // Duration in minutes
+
+    public DoctorSingleShift(){
         //just for hibernate
     }
 
-    public DoctorShift(User doctor, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime){
+    public DoctorSingleShift(User doctor, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime, int duration){
         this.doctor = doctor;
         this.weekday = weekday;
         this.address = address;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.duration = duration;
     }
 
     public long getId(){
@@ -97,20 +102,26 @@ public class DoctorShift {
         this.endTime = endTime;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     @Override
     public boolean equals(Object other){
         if(this == other) return true;
 
-        if(!(other instanceof DoctorShift)) return false;
+        if(!(other instanceof DoctorSingleShift)) return false;
 
-        DoctorShift o = (DoctorShift) other;
+        DoctorSingleShift o = (DoctorSingleShift) other;
 
-        return (this.id==o.id) 
-        && (this.doctor.equals(o.doctor))
-        && (this.weekday.equals(o.weekday)) 
-        && (this.address.equals(o.address))
-        && (this.startTime.equals(o.startTime)) 
-        && (this.endTime.equals(o.endTime));
+        return (this.id==o.id) && (this.doctor.equals(o.doctor))
+        && (this.weekday.equals(o.weekday)) && (this.address.equals(o.address))
+        && (this.startTime.equals(o.startTime)) && (this.endTime.equals(o.endTime))
+        && (this.duration == o.duration);
     }
 
     @Override
@@ -133,6 +144,7 @@ public class DoctorShift {
             "," + "address=" + address +
             "," + "startTime=" + startTime +
             "," + "endTime=" + endTime +
+            "," + "duration=" + duration +
             '}';
     }
 }

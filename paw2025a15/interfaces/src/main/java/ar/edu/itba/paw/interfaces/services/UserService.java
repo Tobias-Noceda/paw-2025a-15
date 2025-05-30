@@ -1,16 +1,22 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
 public interface UserService {
 
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, LocaleEnum locale);
+    public Doctor createDoctor(String email, String password, String name, String telephone, File picture, LocaleEnum locale, String licence, SpecialtyEnum specialty);
+    
+    public Patient createPatient(String email, String password, String name, String telephone, File picture, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
 
     public void editUser(long id, String name, String telephone, File picture);
 

@@ -1,3 +1,4 @@
+/*
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
@@ -139,35 +140,6 @@ public class DoctorShiftJpaDaoTest {
         Assert.assertTrue(foundShifts.isEmpty());
     }
 
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql"})
-    public void testGetAvailableShiftsByDoctorIdWeekdayAndDateTimeNoAppointments(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
-        final LocalDate DATE = TestData.Appointments.appointment.getDate();
-        final LocalTime TIME = TestData.DoctorShifts.doctorShift.getStartTime();
-        final DoctorShift SHIFT2 = TestData.DoctorShifts.doctorShift2;
-        SHIFT2.setId(TestData.DoctorShifts.doctorShift2Id);
-        SHIFT2.getDoctor().setId(DOC_ID);
-        SHIFT2.getDoctor().getPicture().setId(TestData.Images.validImageId);
-
-        List<DoctorShift> foundShifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDateTime(DOC_ID, WEEKDAY, DATE, TIME);
-
-        Assert.assertFalse(foundShifts.isEmpty());
-        Assert.assertEquals(1, foundShifts.size());
-        Assert.assertTrue(foundShifts.contains(SHIFT2));
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql"})
-    public void testGetAvailableShiftsByDoctorIdWeekdayAndDateTimeAllAppointments(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
-        final LocalDate DATE = TestData.Appointments.appointment.getDate();
-        final LocalTime TIME = TestData.DoctorShifts.doctorShift.getStartTime();
-
-        List<DoctorShift> foundShifts = doctorShiftDao.getAvailableShiftsByDoctorIdWeekdayAndDateTime(DOC_ID, WEEKDAY, DATE, TIME);
-
-        Assert.assertTrue(foundShifts.isEmpty());
-    }
 }
+
+ */

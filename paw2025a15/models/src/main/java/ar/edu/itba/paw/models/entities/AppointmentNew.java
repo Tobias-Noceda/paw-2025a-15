@@ -3,54 +3,55 @@ package ar.edu.itba.paw.models.entities;
 import javax.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
-@Table(name = "appointments")
-public class Appointment {
+@Table(name = "appointments_new")
+public class AppointmentNew {
     @EmbeddedId
-    private AppointmentId id;
+    private AppointmentNewId id;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @MapsId("shiftId") 
+    @MapsId("shiftId")
     @JoinColumn(name = "shift_id", referencedColumnName = "shift_id", nullable = false)
-    private DoctorShift shift;
+    private DoctorSingleShift shift;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
-    private User patient;
+    private Patient patient;
 
-    public Appointment(){
+    public AppointmentNew(){
         //just for hibernate
     }
 
-    public Appointment(DoctorShift shift, User patient, LocalDate date){
+    public AppointmentNew(DoctorSingleShift shift, Patient patient, LocalDate date, LocalTime startTime, LocalTime endTime){
         this.shift = shift;
         this.patient = patient;
-        this.id = new AppointmentId(shift.getId(), date);
+        this.id = new AppointmentNewId(shift.getId(), date, startTime, endTime);
     }
 
-    public AppointmentId getAppointmentId(){
+    public AppointmentNewId getAppointmentId(){
         return id;
     }
 
-    public void setAppointmentId(AppointmentId id){
+    public void setAppointmentId(AppointmentNewId id){
         this.id = id;
     }
 
-    public DoctorShift getShift(){
+    public DoctorSingleShift getShift(){
         return shift;
     }
 
-    public void setShift(DoctorShift shift){
+    public void setShift(DoctorSingleShift shift){
         this.shift = shift;
         this.id.setShiftId(shift.getId());
     }
 
-    public User getPatient(){
+    public Patient getPatient(){
         return patient;
     }
 
-    public void setPatient(User patient){
+    public void setPatient(Patient patient){
         this.patient = patient;
     }
 
@@ -78,13 +79,12 @@ public class Appointment {
     public boolean equals(Object other){
         if(this == other) return true;
 
-        if(!(other instanceof Appointment)) return false;
+        if(!(other instanceof AppointmentNew)) return false;
 
-        Appointment o = (Appointment) other;
+        AppointmentNew o = (AppointmentNew) other;
 
-        return (this.id.equals(o.id))
-        && (this.shift.equals(o.shift)) 
-        && (this.patient.equals(o.patient));
+        return (this.id.equals(o.id)) &&
+        (this.shift.equals(o.shift)) && (this.patient.equals(o.patient));
     }
 
     @Override
@@ -104,3 +104,4 @@ public class Appointment {
             '}';
     }
 }
+

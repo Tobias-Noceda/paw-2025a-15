@@ -16,12 +16,12 @@ public class PatientCoverage {
     @Id
     private Long patientId;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private User patient;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "insurance_id", referencedColumnName = "insurance_id", nullable = false)
     private Insurance insurance;
 

@@ -2,8 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.entities.AuthStudy;
 import ar.edu.itba.paw.models.entities.AuthStudyId;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Study;
-import ar.edu.itba.paw.models.entities.User;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +23,7 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
 
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        User doctor = em.find(User.class, doctorId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
         Study study = em.find(Study.class, studyId);
         if(study == null || doctor == null) return false;
         try{

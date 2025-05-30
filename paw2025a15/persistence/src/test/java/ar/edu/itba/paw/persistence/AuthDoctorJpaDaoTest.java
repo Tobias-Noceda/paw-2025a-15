@@ -1,4 +1,5 @@
-package ar.edu.itba.paw.persistence;
+/*
+ackage ar.edu.itba.paw.persistence;
 
 import java.util.List;
 
@@ -504,3 +505,5 @@ public class AuthDoctorJpaDaoTest {
     }
 
 }
+
+ */

@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.PatientDetail;
-import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
@@ -20,7 +20,7 @@ public class PatientDetailJpaDao implements PatientDetailDao {
     public PatientDetail create(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height,
             Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies,
             String diet, String hobbies, String job) {
-        User patient = em.find(User.class, patientId);
+        Patient patient = em.find(Patient.class, patientId);
         if(patient == null) return null;
         final PatientDetail pd = new PatientDetail(patient, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
         em.persist(pd);

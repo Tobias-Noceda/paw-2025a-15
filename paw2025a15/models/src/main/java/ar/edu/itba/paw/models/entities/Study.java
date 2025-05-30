@@ -24,15 +24,15 @@ public class Study {
     @Column( name = "study_comment", length = 100)
     private String comment;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false)
     private File file;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private User user;
+    private User user;//TODO: change to patient datatype (if var name changes from user to patient, it must be change in the relation mappedBy in patient model)
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uploader_id", referencedColumnName = "user_id", nullable = false)
     private User uploader;
 

@@ -1,21 +1,45 @@
 package ar.edu.itba.paw.models.entities;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 
-import javax.persistence.*;
-
 @Entity
-@Table(name = "users",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = "user_email")}
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(
+    name = "users",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "user_email")
+    }
 )
-public class User {
+@DiscriminatorColumn(
+    name = "user_role",
+    discriminatorType = DiscriminatorType.INTEGER
+)
+public abstract class User implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(sequenceName = "users_user_id_seq", name = "users_user_id_seq", allocationSize = 1)
@@ -34,11 +58,10 @@ public class User {
     @Column(name = "user_telephone", length = 20, nullable = false)
     private String telephone;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "user_role", nullable = false)
-    private UserRoleEnum role;
+    @Column(name = "user_role", insertable = false, updatable = false)
+    private Integer userRole;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "picture_id", referencedColumnName = "file_id", nullable = false)
     private File picture;
 
@@ -49,30 +72,6 @@ public class User {
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
 
-    @ManyToMany(mappedBy = "authDoctors")
-    private List<Study> authorizedStudies;
-
-    @OneToMany(mappedBy = "user")
-    private List<Study> patientStudies;
-
-    /*
-    //Opcional TODO: esto esta raro capaz cambia si hacemos lo de herencia porque asi como esta es re antiintuitivo
-    //Patient appointments
-    @OneToMany(orphanRemoval = true, mappedBy = "patientId")
-    @Column(insertable = true, updatable = true)
-    private List<Appointment> appointments;
-
-    //Doctor coverages
-    @OneToMany(orphanRemoval = true, mappedBy = "doctorId")
-    @Column(insertable = true, updatable = true)
-    private List<DoctorCoverage> doctorCoverages;
-
-    //Doctor detail
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "doctor_id")
-    private DoctorDetail doctorDetail;
-    */
-
     public User(){
         //just for hibernate;
     }
@@ -82,7 +81,7 @@ public class User {
         this.password = password;
         this.name= name;
         this.telephone = telephone;
-        this.role = role;
+        this.userRole = role.ordinal();
         this.picture = picture;
         this.createDate = createDate;
         this.locale = locale;
@@ -128,12 +127,20 @@ public class User {
         this.telephone = telephone;
     }
 
+    public Integer getUserRole(){
+        return userRole;
+    }
+
+    public void setUserRole(Integer userRole){
+        this.userRole = userRole;
+    }
+
     public UserRoleEnum getRole(){
-        return role;
+        return UserRoleEnum.values()[userRole];
     }
 
     public void setRole(UserRoleEnum role){
-        this.role = role;
+        this.userRole = role.ordinal();
     }
 
     public File getPicture(){
@@ -160,14 +167,6 @@ public class User {
         this.locale = locale;
     }
 
-    public List<Study> getAuthStudies(){
-        return authorizedStudies;
-    }
-
-    public List<Study> getPatientStudies(){
-        return patientStudies;
-    }
-
     @Override
     public boolean equals(Object other){
         if(this == other) return true;
@@ -176,14 +175,10 @@ public class User {
 
         User o = (User) other;
 
-        return Objects.equals(this.id, o.id)
-        && (this.name.equals(o.name)) 
-        && (this.email.equals(o.email))
-        && (this.password.equals(o.password))
-        && (this.telephone.equals(o.telephone))
-        && (this.role.equals(o.role))
-        && (this.picture.equals(o.picture))
-        && (this.createDate.equals(o.createDate))
+        return (this.id==o.id) && (this.name.equals(o.name)) 
+        && (this.email.equals(o.email)) && (this.password.equals(o.password))
+        && (this.telephone.equals(o.telephone)) && (this.userRole.equals(o.userRole))
+        && (this.picture.equals(o.picture)) && (this.createDate.equals(o.createDate))
         && (this.locale.equals(o.locale));
     }
 
@@ -194,7 +189,7 @@ public class User {
         result = 31 * result + email.hashCode();
         result = 31 * result + password.hashCode();
         result = 31 * result + telephone.hashCode();
-        result = 31 * result + role.hashCode();
+        result = 31 * result + userRole.hashCode();
         result = 31 * result + picture.hashCode();
         result = 31 * result + createDate.hashCode();
         result = 31 * result + locale.hashCode();
@@ -209,7 +204,7 @@ public class User {
             ", email=" + email +
             ", password=" + password +
             ", telephone=" + telephone +
-            ", role=" + role +
+            ", role=" + userRole +
             ", picture=" + picture +
             ", createDate=" + createDate +
             ", locale=" + locale +

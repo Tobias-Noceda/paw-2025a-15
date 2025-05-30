@@ -12,9 +12,9 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.entities.Study;
-import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+
+import java.util.List;
 
 @Service
 public class AuthStudiesServiceImpl implements AuthStudiesService{
@@ -39,14 +39,24 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Transactional
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        Study study = ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));//TODO:check change for hibernate
-        User doctor = us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthStudy(studyId, doctorId)) return true;
         boolean result = authStudiesDao.authStudyForDoctorId(studyId, doctorId);
         if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
         else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
         return result;
+    }
+
+    @Override
+    public boolean authStudyListForDoctorId(List<Long> doctorsId, long StudyId) {
+        //TODO: hacer esto con una ida a la BD
+        if(doctorsId.isEmpty()) return false;
+        for (Long doctorId : doctorsId) {
+            authStudyForDoctorId(StudyId, doctorId);
+        }
+        return true;
     }
 
     @Transactional(readOnly = true)

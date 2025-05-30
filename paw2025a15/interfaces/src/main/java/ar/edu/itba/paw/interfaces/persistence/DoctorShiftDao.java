@@ -19,7 +19,5 @@ public interface DoctorShiftDao {
 
     public List<DoctorShift> getShiftsByDoctorId(long doctorId);
 
-    public List <AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate, LocalDate endDate);
-    
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday, LocalDate date, LocalTime time);
+    public List <AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date);
 }

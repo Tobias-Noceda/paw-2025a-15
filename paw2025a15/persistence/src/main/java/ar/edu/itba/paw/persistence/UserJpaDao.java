@@ -1,18 +1,26 @@
 package ar.edu.itba.paw.persistence;
 
+import java.math.BigDecimal;
+
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
+
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
 @Repository
 public class UserJpaDao implements UserDao {
@@ -21,10 +29,42 @@ public class UserJpaDao implements UserDao {
     private EntityManager em;
 
     @Override
-    public User create(String email, String password, String name, String telephone, UserRoleEnum role, File picture, LocaleEnum locale) {
-        final User user = new User(email, password, name, telephone, role, picture, LocalDate.now(),locale);
-        em.persist(user);
-        return user;
+    public Doctor createDoctor(
+        String email,
+        String password,
+        String name,
+        String telephone,
+        File picture,
+        LocaleEnum locale,
+        String licence,
+        SpecialtyEnum specialty
+    ) {
+        if(email == null || email.isEmpty() || password == null || password.isEmpty() || name == null || name.isEmpty() || telephone == null || telephone.isEmpty()) {
+            return null;
+        }
+        Doctor doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty);
+        em.persist(doctor);
+        return doctor;
+    }
+
+    @Override
+    public Patient createPatient(
+        String email,
+        String password,
+        String name,
+        String telephone,
+        File picture,
+        LocaleEnum locale,
+        LocalDate birthDate,
+        BigDecimal height,
+        BigDecimal weight
+    ) {
+        if(email == null || email.isEmpty() || password == null || password.isEmpty() || name == null || name.isEmpty() || telephone == null || telephone.isEmpty()) {
+            return null;
+        }
+        Patient patient = new Patient(email, password, name, telephone, picture, LocalDate.now(), locale, birthDate, height, weight);
+        em.persist(patient);
+        return patient;
     }
 
     @Override

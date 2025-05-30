@@ -22,6 +22,13 @@ public class AvailableTurn {
         this.shiftId = shiftId;
     }
 
+    public AvailableTurn(LocalTime startTime, LocalTime endTime, String address, long shiftId) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.address = address;
+        this.shiftId = shiftId;
+    }
+
     public LocalDate getDate() {
         return date;
     }

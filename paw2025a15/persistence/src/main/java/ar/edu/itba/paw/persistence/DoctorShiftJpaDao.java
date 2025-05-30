@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.models.AvailableTurn;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorShift;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
@@ -36,7 +37,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         for (int i = 0; i < shifts.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
             try{
                 DoctorShift shift = shifts.get(i);
-                User doctor = em.find(User.class, shift.getDoctor().getId());
+                Doctor doctor = em.find(Doctor.class, shift.getDoctor().getId());
                 if(doctor == null) results[i] = 0;
                 else{
                     shift.setDoctor(doctor);
@@ -68,38 +69,23 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     }
 
     @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdBetweenDates(long doctorId, LocalDate startDate,
-            LocalDate endDate) {
-        String query = "SELECT NEW AvailableTurn(gs.date, ds.id, ds.weekday, ds.startTime, ds.endTime, ds.address) " +
-                    "FROM DoctorShift ds, " +
-                    "FUNCTION('generate_series', :startDate, :endDate, INTERVAL '1 day') gs(date) " +
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
+        String query = "SELECT NEW ar.edu.itba.paw.models.AvailableTurn(ds.startTime, ds.endTime, ds.address, ds.id) " +
+                    "FROM DoctorShift ds " +
                     "WHERE ds.doctor.id = :doctorId " +
-                    "AND (FUNCTION('EXTRACT', 'ISODOW', gs.date) - 1) = ds.weekday " +
-                    "AND (gs.date + ds.startTime) >= CURRENT_TIMESTAMP " +
+                    "AND :weekday = ds.weekday " +
                     "AND NOT EXISTS ( " +
                     "   SELECT 1 FROM Appointment a " +
                     "   WHERE a.shift.id = ds.id " +
-                    "   AND a.date = gs.date " +
+                    "   AND a.id.date = :date " +
                     ") " +
-                    "ORDER BY gs.date, ds.startTime";
+                    "ORDER BY ds.startTime";
 
         return em.createQuery(query, AvailableTurn.class)
                             .setParameter("doctorId", doctorId)
-                            .setParameter("startDate", startDate)
-                            .setParameter("endDate", endDate)
+                            .setParameter("date", date)
+                            .setParameter("weekday", WeekdayEnum.fromString(date.getDayOfWeek().name()))
                             .getResultList();
-    }
-
-    @Override
-    public List<DoctorShift> getAvailableShiftsByDoctorIdWeekdayAndDateTime(long doctorId, WeekdayEnum weekday,
-            LocalDate date, LocalTime time) {
-        String queryString = "SELECT ds FROM DoctorShift ds WHERE ds.doctor.id = :doctorId AND ds.weekday = :weekday AND ds.startTime > :time AND NOT EXISTS (SELECT a FROM Appointment as a WHERE a.id.date = :date AND a.id.shiftId = ds.id)";
-        TypedQuery<DoctorShift> query = em.createQuery(queryString,DoctorShift.class);
-        query.setParameter("doctorId", doctorId);
-        query.setParameter("weekday", weekday);
-        query.setParameter("date", date);
-        query.setParameter("time", time);
-        return query.getResultList();
     }
     
 }

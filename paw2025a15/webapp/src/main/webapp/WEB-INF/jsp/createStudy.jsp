@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +16,7 @@
   <link rel="stylesheet" href="<c:url value='/css/file-charge.css'/>" />
   <!-- cargamos sólo nuestro CSS de estudio -->
   <link rel="stylesheet" href="<c:url value='/css/study-form.css'/>" />
+  <link rel="stylesheet" href="<c:url value='/css/appointments.css'/>" />
 </head>
 <body>
 <jsp:include page="components/header.jsp"/>
@@ -78,17 +81,53 @@
       <!-- Comment -->
       <div class="sf-field">
         <label for="comment">
-          <spring:message code="uploadStudies.description"/>:
+          <spring:message code="uploadStudies.description"/>
         </label>
         <form:input id="comment" type="text" path="comment"/>
       </div>
+
+          <c:if test="${not empty patientAuthDoctors}">
+            <div class="sf-field">
+              <label for="authDoctorIds">
+                <spring:message code="uploadStudies.doctor"/>
+              </label>
+              <div class="appointments-table-header">
+                <table class="appointments-table">
+                  <thead>
+                  <tr>
+                    <th><spring:message code="studies.authorizedDoctors"/></th>
+                    <th class="last-column">
+                    </th>
+                  </tr>
+                  </thead>
+                </table>
+              </div>
+
+              <div class="appointments-table-body">
+                <table class="appointments-table">
+                  <tbody>
+                  <c:forEach var="authDocs" items="${patientAuthDoctors}">
+                    <tr class="appointments-row">
+                      <td class="text-cell">
+                        <c:out value="${authDocs.name}"/>
+                      </td>
+                      <td class="checkbox-cell last-column">
+                        <form:checkbox path="authDoctorIds" value="${authDocs.id}"/>
+                      </td>
+                    </tr>
+                  </c:forEach>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </c:if>
 
       <button type="submit" class="sf-button">
         <spring:message code="uploadStudies.button"/>
       </button>
     </form:form>
   </div>
-</div
+</div>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
 
 </body>

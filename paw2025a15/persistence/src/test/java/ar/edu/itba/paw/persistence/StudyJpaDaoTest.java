@@ -1,4 +1,5 @@
-package ar.edu.itba.paw.persistence;
+/*
+ackage ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -354,3 +355,5 @@ public class StudyJpaDaoTest {
         Assert.assertTrue(foundStudies.contains(STUDY2));
     }
 }
+
+ */

@@ -3,7 +3,7 @@ package ar.edu.itba.paw.interfaces.persistence;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
@@ -25,7 +25,7 @@ public interface DoctorDetailDao {
 
     public List<Insurance> getDoctorInsurancesById(long doctorId);
 
-    public List<DoctorView> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
 
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday);
 

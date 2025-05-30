@@ -16,8 +16,8 @@ import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.DoctorView;
-import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -43,15 +43,15 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<DoctorView> getAuthDoctorsByPatientId(long id) {
+    public List<Doctor> getAuthDoctorsByPatientId(long id) {
         return authDoctorDao.getAuthDoctorsByPatientId(id);
     }
 
     @Transactional
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
-        User patient = us.getUserById(patientId).orElseThrow(()-> new NotFoundException("User with id: " + patientId + " does not exist!"));//TODO:check change for hibernate
-        User doctor = us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
+        Patient patient = (Patient) us.getUserById(patientId).orElseThrow(()-> new NotFoundException("User with id: " + patientId + " does not exist!"));//TODO:check change for hibernate
+        Doctor doctor = (Doctor) us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
         if(pds.getDetailByPatientId(patientId).isEmpty()) throw new NotFoundException("Patient with id: " + patientId + " does not exist!");
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthDoctor(patientId, doctorId)){
@@ -60,7 +60,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
         }
         else{
-            authDoctorDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
+            authDoctorDao.authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
             LOGGER.info("Giving basic authorization for doctor with id: {} of patient with id: {}", doctorId, patientId);
         }
     }

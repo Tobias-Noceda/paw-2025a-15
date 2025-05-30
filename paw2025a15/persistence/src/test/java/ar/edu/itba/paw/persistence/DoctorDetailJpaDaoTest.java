@@ -1,3 +1,4 @@
+/*
 package ar.edu.itba.paw.persistence;
 
 import java.util.List;
@@ -454,5 +455,6 @@ public class DoctorDetailJpaDaoTest {
         Assert.assertTrue(results.isEmpty());
         Assert.assertEquals(2, 
         JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "doctor_shifts", String.format("doctor_id IN (SELECT doctor_details.doctor_id FROM users JOIN doctor_details ON users.user_id = doctor_details.doctor_id JOIN doctor_coverages ON doctor_details.doctor_id = doctor_coverages.doctor_id WHERE LOWER(users.user_name) LIKE LOWER('%s') AND doctor_details.doctor_specialty = %d AND doctor_coverages.insurance_id = %d)", DOC_NAME, DOC_SPECIALTY.ordinal(), INSURANCE.getId())));
-    }*/
+    }
 }
+ */

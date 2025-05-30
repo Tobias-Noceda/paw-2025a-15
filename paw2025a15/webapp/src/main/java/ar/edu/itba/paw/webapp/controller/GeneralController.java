@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.DoctorView;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -65,7 +65,7 @@ public class GeneralController {
             } else {
                 insurance = null;
             }
-            List<DoctorView> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
+            List<Doctor> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
             totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday());
             mav.addObject("docList", doctors);
         } else {
