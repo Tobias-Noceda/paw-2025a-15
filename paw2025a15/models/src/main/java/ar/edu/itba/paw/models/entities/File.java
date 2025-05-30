@@ -62,7 +62,8 @@ public class File{
         if(!(other instanceof File)) return false;
 
         File o = (File) other;
-        return (this.id==o.id) && (this.type.equals(o.type));
+
+        return (this.id==o.id) && (this.type.equals(o.type)) && Arrays.equals(this.content,o.content);
     }
 
     @Override

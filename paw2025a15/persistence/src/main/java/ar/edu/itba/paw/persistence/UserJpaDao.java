@@ -96,9 +96,9 @@ public class UserJpaDao implements UserDao {
         user.setTelephone(telephone);
         File oldPicture = user.getPicture();
         boolean remove = false;
-        if(picture.getId()!=oldPicture.getId()){
+        if(!picture.equals(oldPicture)){
             user.setPicture(picture);
-            if(oldPicture.getId() != 1) remove = true;
+            remove = oldPicture.getId() != 1;
         }
         em.merge(user);
         if(remove) em.remove(oldPicture);
