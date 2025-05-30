@@ -48,7 +48,7 @@ public class StudyJpaDao implements StudyDao {
     @Override
     public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
         String q = "from Study as s where s.user.id = :id "
-                + (type != null ? "and s.file.type = :type " : "")
+                + (type != null ? "and s.type = :type " : "")
                 + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
