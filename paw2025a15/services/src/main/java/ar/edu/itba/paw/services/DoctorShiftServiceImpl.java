@@ -3,9 +3,7 @@ package ar.edu.itba.paw.services;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Month;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,73 +69,9 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<DoctorShift> getUnifiedShiftsByDoctorId(long doctorId) {
+    public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
-        List<DoctorShift> shifts = doctorShiftDao.getShiftsByDoctorId(doctorId);
-        
-        if (shifts == null || shifts.isEmpty()) return Collections.emptyList();
-        if(shifts.size() == 1) return shifts;
-        
-        List<DoctorShift> toReturn = new ArrayList<>();
-        DoctorShift current = shifts.get(0);
-        DoctorShift end;
 
-        for (int i = 1; i < shifts.size(); i++) {
-            end = shifts.get(i);
-            // Si es el mismo día y el turno actual termina cuando el próximo empieza
-            if(current.getWeekday() == end.getWeekday() && current.getEndTime().equals(end.getStartTime())) {
-                current = new DoctorShift(current.getDoctor(), current.getWeekday(), current.getAddress(), current.getStartTime(), end.getEndTime());
-            } else {
-                toReturn.add(current);
-                if(i < shifts.size()) {
-                    current = shifts.get(i);
-                }
-            }
-        }
-        // Agregar el último turno
-        toReturn.add(new DoctorShift(current.getDoctor(), current.getWeekday(), current.getAddress(), current.getStartTime(), current.getEndTime()));
-
-        return toReturn;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdByMonthAndWeekNumber(long doctorId, Month month, int weekNumber) {
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
-        LocalDate now = LocalDate.now();
-        int year = (now.getMonthValue() <= month.getValue()) ? now.getYear() : (now.getYear() + 1);
-        LocalDate startOfWeek;
-        LocalDate endOfWeek;
-        switch (weekNumber) {
-            case 0 -> {
-                startOfWeek = LocalDate.of(year, month, 1);
-                endOfWeek = LocalDate.of(year, month, 7);
-            }
-            case 1 -> {
-                startOfWeek = LocalDate.of(year, month, 8);
-                endOfWeek = LocalDate.of(year, month, 14);
-            }
-            case 2 -> {
-                startOfWeek = LocalDate.of(year, month, 15);
-                endOfWeek = LocalDate.of(year, month, 21);
-            }
-            case 3 -> {
-                startOfWeek = LocalDate.of(year, month, 22);
-                endOfWeek = LocalDate.of(year, month, month.length(isLeapYear(year)));
-            }
-            default -> throw new IllegalArgumentException("Invalid week number: " + weekNumber);
-        }
-        if (now.getMonth().equals(month) && now.getDayOfMonth() > endOfWeek.getDayOfMonth()) {
-            return List.of();
-        }
-        if (now.getMonth().equals(month) && now.getDayOfMonth() > startOfWeek.getDayOfMonth()) {
-            startOfWeek = now;
-        }
-
-        return doctorShiftDao.getAvailableTurnsByDoctorIdBetweenDates(doctorId, startOfWeek, endOfWeek);
-    }
-
-    private boolean isLeapYear(int year) {
-        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+        return doctorShiftDao.getAvailableTurnsByDoctorIdByDate(doctorId, date);
     }
 }

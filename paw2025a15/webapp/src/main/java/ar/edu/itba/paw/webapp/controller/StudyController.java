@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -59,8 +58,6 @@ public class StudyController {
 
     @Autowired
     private MessageSource messageSource;
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @RequestMapping(path = "/upload-study/{patientId:\\d+}", method = RequestMethod.GET)
     public ModelAndView createStudyForm(

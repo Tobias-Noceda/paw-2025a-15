@@ -1,19 +1,19 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.entities.AuthDoctor;
-import ar.edu.itba.paw.models.entities.AuthDoctorId;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
-
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
-import java.util.List;
+import org.springframework.stereotype.Repository;
+
+import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
+import ar.edu.itba.paw.models.entities.AuthDoctor;
+import ar.edu.itba.paw.models.entities.AuthDoctorId;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
 @Repository
 public class AuthDoctorJpaDao implements AuthDoctorDao{
@@ -31,10 +31,11 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
         try{
-            em.createQuery("from AuthDoctor as ad where ad.id.doctorId = :doctorId and ad.id.patientId = :patientId ",AuthDoctor.class)
+            em.createQuery("from AuthDoctor as ad where ad.id.doctorId = :doctorId and ad.id.patientId = :patientId",AuthDoctor.class)
             .setParameter("doctorId", doctorId)
             .setParameter("patientId", patientId)
-            .setMaxResults(1).getResultList();
+            .setMaxResults(1)
+            .getSingleResult();
             return true;
         }
         catch (NoResultException e) {
@@ -125,7 +126,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
         String query = "SELECT DISTINCT ad.id.accessLevel FROM AuthDoctor ad " +
-                        "WHERE ad.doctor.id = :doctorId AND ad.patient.id = :patientId";
+                        "WHERE ad.id.doctorId = :doctorId AND ad.id.patientId = :patientId";
 
         return em.createQuery(query, AccessLevelEnum.class)
                             .setParameter("doctorId", doctorId)

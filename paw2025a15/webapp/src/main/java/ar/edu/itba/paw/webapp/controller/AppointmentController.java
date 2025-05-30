@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.time.LocalDate;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.LandingForm;
-import ar.edu.itba.paw.webapp.form.ShiftsWeekForm;
+import ar.edu.itba.paw.webapp.form.ShiftsDayForm;
 import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -34,12 +35,11 @@ public class AppointmentController {
     @Autowired
     private DoctorShiftService dss;
 
-
     @RequestMapping("/appointments")
     public ModelAndView appointments(
         @ModelAttribute("user_data") User user,
         @RequestParam(value = "action", required = false) String action,
-        @ModelAttribute("shiftsWeekForm") final ShiftsWeekForm shiftsWeekForm,
+        @ModelAttribute("shiftsDayForm") final ShiftsDayForm shiftsDayForm,
         Locale locale
     ) {
         ModelAndView mav = new ModelAndView("appointments");
@@ -51,15 +51,8 @@ public class AppointmentController {
         switch (user.getRole()) {
             case DOCTOR -> {
                 mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
-                if (action != null) {
-                    if ("previous".equals(action)) {
-                        shiftsWeekForm.decrementIndex();
-                    } else if ("next".equals(action)) {
-                        shiftsWeekForm.incrementIndex();
-                    }
-                }
-                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByMonthAndWeekNumber(user.getId(), shiftsWeekForm.getMonth(), shiftsWeekForm.getWeekOfMonth()));
-                mav.addObject("shiftsWeekForm", shiftsWeekForm);
+                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), LocalDate.now()));
+                mav.addObject("shiftsDayForm", shiftsDayForm);
             }
             case PATIENT -> {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));

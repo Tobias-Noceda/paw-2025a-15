@@ -27,4 +27,13 @@ public enum WeekdayEnum {
         }
         throw new IllegalArgumentException("Number out of weekday range");
     }
+
+    public static WeekdayEnum fromString(String name) {
+        for (WeekdayEnum weekday : WeekdayEnum.values()) {
+            if (weekday.name.equalsIgnoreCase(name)) {
+                return weekday;
+            }
+        }
+        throw new IllegalArgumentException("No weekday found with name: " + name);
+    }
 }
