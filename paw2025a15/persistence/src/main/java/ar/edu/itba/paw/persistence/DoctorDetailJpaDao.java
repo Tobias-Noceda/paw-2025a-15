@@ -98,9 +98,65 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
             WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
         // Select all the posible doctors for "Doctor" entity
-        return em
-            .createQuery("SELECT d FROM Doctor d", Doctor.class)
-            .getResultList();
+        if (name == null && specialty == null && insuranceId == null && weekday == null) {
+            return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        }
+        // Build the query based on the parameters provided
+        StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
+        if (name != null && !name.isEmpty()) {
+            queryBuilder.append(" AND d.name LIKE :name");
+        }
+        if (specialty != null) {
+            queryBuilder.append(" AND d.specialty = :specialty");
+        }
+        if (insuranceId != null) {
+            queryBuilder.append(" AND :insuranceId MEMBER OF d.insurances");
+        }
+        if (weekday != null) {
+            queryBuilder.append(" AND :weekday MEMBER OF d.singleShifts.weekdays");
+        }
+        if (orderBy != null) {
+            switch (orderBy) {
+                case M_RECENT -> queryBuilder.append(" ORDER BY d.createDate ASC");
+                case L_RECENT -> queryBuilder.append(" ORDER BY d.createDate DESC");
+                case M_POPULAR -> queryBuilder.append(
+                    """
+                        ORDER BY (
+                            SELECT COUNT(a)
+                            FROM AppointmentNew a
+                            WHERE a.shift.doctor.id = d.id
+                        ) DESC    
+                    """);
+                case L_POPULAR -> queryBuilder.append(
+                    """
+                        ORDER BY (
+                            SELECT COUNT(a)
+                            FROM AppointmentNew a
+                            WHERE a.shift.doctor.id = d.id
+                        ) ASC    
+                    """);
+            }
+        }
+
+        TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
+        if (name != null && !name.isEmpty()) {
+            query.setParameter("name", "%" + name + "%");
+        }
+        if (specialty != null) {
+            query.setParameter("specialty", specialty);
+        }
+        if (insuranceId != null) {
+            query.setParameter("insuranceId", em.getReference(Insurance.class, insuranceId));
+        }
+        if (weekday != null) {
+            query.setParameter("weekday", weekday);
+        }
+        return query.setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
     }
 
     @Override
