@@ -1,12 +1,10 @@
-/*
-ackage ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence;
 
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -37,7 +35,7 @@ public class UserJpaDaoTest {
 
     @PersistenceContext
     private EntityManager em;
-
+/*TODO:rethink
     @Test
     public void testCreate(){
         final String USEREMAIL = TestData.Users.newPatient.getEmail();
@@ -60,8 +58,8 @@ public class UserJpaDaoTest {
         Assert.assertEquals(USER_ROLE, userPersisted.getRole());
         Assert.assertEquals(PICTURE, userPersisted.getPicture());
         Assert.assertEquals(USER_LOCALE, userPersisted.getLocale());
-    }
-
+    }*/
+/*TODO:rethink
     @Test
     public void testCreateExistentEmail(){
         final String USEREMAIL = TestData.Users.patient.getEmail();
@@ -77,7 +75,7 @@ public class UserJpaDaoTest {
             userDao.create(USEREMAIL, PASSWORD, USERNAME, USER_TELEPHONE, USER_ROLE, PICTURE, USER_LOCALE);
             em.flush();
         });
-    }
+    }*/
 
     @Test
     public void testGetUserById(){
@@ -131,20 +129,20 @@ public class UserJpaDaoTest {
     @Test
     public void testChangePasswordByID(){
         final long USER_ID = TestData.Users.patientId;
-        final User USER_OLD = TestData.Users.patient;
+        final Patient USER_OLD = TestData.Users.patient;
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
         final String PASSWORD = TestData.Users.patient.getPassword();
         final String NEW_PASSWORD = PASSWORD + "1";
-        final User USER_NEW = new User(USER_OLD.getEmail(), NEW_PASSWORD, USER_OLD.getName(), USER_OLD.getTelephone(), USER_OLD.getRole(), USER_OLD.getPicture(), USER_OLD.getCreateDate(), USER_OLD.getLocale());
+        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), NEW_PASSWORD, USER_OLD.getName(), USER_OLD.getTelephone(), USER_OLD.getPicture(), USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
         USER_OLD.setId(USER_ID);
 
         userDao.changePasswordByID(USER_ID, NEW_PASSWORD);
-        User userPersisted = em.find(User.class, USER_ID);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW, userPersisted);
-        Assert.assertNotEquals(USER_OLD, userPersisted);
+        Assert.assertEquals(USER_NEW.getPassword(), userPersisted.getPassword());
+        Assert.assertNotEquals(USER_OLD.getPassword(), userPersisted.getPassword());
     }
 
     @Test
@@ -160,7 +158,7 @@ public class UserJpaDaoTest {
 
     @Test
     public void testEditUser(){
-        final User USER_OLD = TestData.Users.patient;
+        final Patient USER_OLD = TestData.Users.patient;
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
@@ -168,15 +166,19 @@ public class UserJpaDaoTest {
         final String NEW_USERNAME = USER_OLD.getName() + "1";
         final File NEW_PICTURE = TestData.Images.validImage2;
         NEW_PICTURE.setId(TestData.Images.validImage2Id);
-        final User USER_NEW = new User(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, NEW_TELEPHONE, USER_OLD.getRole(), NEW_PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale());
+        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, NEW_TELEPHONE, NEW_PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
 
         userDao.editUser(USER_ID, NEW_USERNAME, NEW_TELEPHONE, NEW_PICTURE);
-        User userPersisted = em.find(User.class, USER_ID);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW, userPersisted);
-        Assert.assertNotEquals(USER_OLD, userPersisted);    
+        Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
+        Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
+        Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
+        Assert.assertNotEquals(USER_OLD.getName(), userPersisted.getName());   
+        Assert.assertNotEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
+        Assert.assertNotEquals(USER_OLD.getPicture(), userPersisted.getPicture());  
     }
 
     @Test
@@ -195,47 +197,55 @@ public class UserJpaDaoTest {
 
    @Test
     public void testEditUserNameOnly(){
-        final User USER_OLD = TestData.Users.patient;
+        final Patient USER_OLD = TestData.Users.patient;
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
         final String USER_TELEPHONE = USER_OLD.getTelephone();
         final File PICTURE = USER_OLD.getPicture();
         final String NEW_USERNAME = USER_OLD.getName() + "1";
-        final User USER_NEW = new User(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, USER_TELEPHONE, USER_OLD.getRole(), PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale());
+        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, USER_TELEPHONE, PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
 
         userDao.editUser(USER_ID, NEW_USERNAME, USER_TELEPHONE, PICTURE);
-        User userPersisted = em.find(User.class, USER_ID);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW, userPersisted);
-        Assert.assertNotEquals(USER_OLD, userPersisted);   
+        Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
+        Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
+        Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
+        Assert.assertNotEquals(USER_OLD.getName(), userPersisted.getName());   
+        Assert.assertEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
+        Assert.assertEquals(USER_OLD.getPicture(), userPersisted.getPicture());    
     }
 
     @Test
     public void testEditUserTelephoneOnly(){
-        final User USER_OLD = TestData.Users.patient;
+        final Patient USER_OLD = TestData.Users.patient;
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
         final String USERNAME = USER_OLD.getName();
         final File PICTURE = USER_OLD.getPicture();
         final String NEW_TELEPHONE = "1111111111";
-        final User USER_NEW = new User(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, NEW_TELEPHONE, USER_OLD.getRole(), PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale());
+        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, NEW_TELEPHONE, PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
 
         userDao.editUser(USER_ID, USERNAME, NEW_TELEPHONE, PICTURE);
-        User userPersisted = em.find(User.class, USER_ID);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW, userPersisted);
-        Assert.assertNotEquals(USER_OLD, userPersisted);   
+        Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
+        Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
+        Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
+        Assert.assertEquals(USER_OLD.getName(), userPersisted.getName());   
+        Assert.assertNotEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
+        Assert.assertEquals(USER_OLD.getPicture(), userPersisted.getPicture());    
     }
 
     @Test
     public void testEditUserPicOnly(){
-        final User USER_OLD = TestData.Users.patient;
+        final Patient USER_OLD = TestData.Users.patient;
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
@@ -243,33 +253,37 @@ public class UserJpaDaoTest {
         final String USERNAME = USER_OLD.getName();
         final File NEW_PICTURE = TestData.Images.validImage2;
         NEW_PICTURE.setId(TestData.Images.validImage2Id);
-        final User USER_NEW = new User(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, USER_TELEPHONE, USER_OLD.getRole(), NEW_PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale());
+        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, USER_TELEPHONE, NEW_PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
 
         userDao.editUser(USER_ID, USERNAME, USER_TELEPHONE, NEW_PICTURE);
-        User userPersisted = em.find(User.class, USER_ID);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW, userPersisted);
-        Assert.assertNotEquals(USER_OLD, userPersisted);   
+        Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
+        Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
+        Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
+        Assert.assertEquals(USER_OLD.getName(), userPersisted.getName());   
+        Assert.assertEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
+        Assert.assertNotEquals(USER_OLD.getPicture(), userPersisted.getPicture());  
     }
 
     @Test
     public void testUpdateLocale(){
-        final User USER_OLD = TestData.Users.patient;
+        final Patient USER_OLD = TestData.Users.patient;
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
         final LocaleEnum NEW_LOCALE = LocaleEnum.ES_AR;
-        final User USER_NEW = new User(USER_OLD.getEmail(), USER_OLD.getPassword(), USER_OLD.getName(), USER_OLD.getTelephone(), USER_OLD.getRole(), USER_OLD.getPicture(), USER_OLD.getCreateDate(), NEW_LOCALE);
+        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USER_OLD.getName(), USER_OLD.getTelephone(), USER_OLD.getPicture(), USER_OLD.getCreateDate(), NEW_LOCALE, USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
 
         userDao.updateLocale(USER_ID, NEW_LOCALE);
-        User userPersisted = em.find(User.class, USER_ID);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW, userPersisted);
-        Assert.assertNotEquals(USER_OLD, userPersisted);   
+        Assert.assertEquals(USER_NEW.getLocale(), userPersisted.getLocale());
+        Assert.assertNotEquals(USER_OLD.getLocale(), userPersisted.getLocale());   
     }
 
     @Test
@@ -399,5 +413,3 @@ public class UserJpaDaoTest {
     }
 
 }
-
- */
