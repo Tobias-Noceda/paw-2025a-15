@@ -49,9 +49,11 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public void authDoctor(Patient patient, Doctor doctor, AccessLevelEnum accessLevel) {
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        Patient patient = em.find(Patient.class, patientId);
         if(hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), accessLevel)) return;
-        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), AccessLevelEnum.VIEW_BASIC)) authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
+        if(accessLevel!=AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patient.getId(), doctor.getId(), AccessLevelEnum.VIEW_BASIC)) authDoctor(patient.getId(), doctor.getId(), AccessLevelEnum.VIEW_BASIC);
         final AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevel);
         em.persist(ad);
     }

@@ -50,8 +50,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
-        Patient patient = (Patient) us.getUserById(patientId).orElseThrow(()-> new NotFoundException("User with id: " + patientId + " does not exist!"));//TODO:check change for hibernate
-        Doctor doctor = (Doctor) us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
+        //Patient patient = (Patient) us.getUserById(patientId).orElseThrow(()-> new NotFoundException("User with id: " + patientId + " does not exist!"));//TODO:check change for hibernate
+        //Doctor doctor = (Doctor) us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
         if(pds.getDetailByPatientId(patientId).isEmpty()) throw new NotFoundException("Patient with id: " + patientId + " does not exist!");
         if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthDoctor(patientId, doctorId)){
@@ -60,7 +60,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
         }
         else{
-            authDoctorDao.authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
+            authDoctorDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
             LOGGER.info("Giving basic authorization for doctor with id: {} of patient with id: {}", doctorId, patientId);
         }
     }
