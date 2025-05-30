@@ -1,5 +1,4 @@
-/*
-ackage ar.edu.itba.paw.persistence;
+/*package ar.edu.itba.paw.persistence;
 
 import java.util.List;
 
@@ -16,9 +15,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.DoctorView;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.AuthDoctorId;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
@@ -55,7 +54,7 @@ public class AuthDoctorJpaDaoTest {
         INSURANCE2.getPicture().setId(PICTURE_ID);
         final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
 
-        List<DoctorView> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
+        List<Doctor> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
         AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOCTOR_ID, PATIENT_ID, AccessLevelEnum.VIEW_BASIC));
 
         Assert.assertFalse(foundDocs.isEmpty());
@@ -63,14 +62,11 @@ public class AuthDoctorJpaDaoTest {
         Assert.assertEquals(DOCTOR_ID, foundDocs.getFirst().getId());
         Assert.assertEquals(DOC_NAME, foundDocs.getFirst().getName());
         Assert.assertEquals(SPECIALTY, foundDocs.getFirst().getSpecialty());
-        Assert.assertEquals(PICTURE_ID, foundDocs.getFirst().getImageId());
+        Assert.assertEquals(PICTURE_ID, foundDocs.getFirst().getPicture().getId());
         Assert.assertFalse(foundDocs.getFirst().getInsurances().isEmpty());
         Assert.assertEquals(2, foundDocs.getFirst().getInsurances().size());
         Assert.assertTrue(foundDocs.getFirst().getInsurances().contains(INSURANCE1));
         Assert.assertTrue(foundDocs.getFirst().getInsurances().contains(INSURANCE2));
-        Assert.assertFalse(foundDocs.getFirst().getWeekdays().isEmpty());
-        Assert.assertEquals(1, foundDocs.getFirst().getWeekdays().size());
-        Assert.assertTrue(foundDocs.getFirst().getWeekdays().contains(WEEKDAY));
         Assert.assertNotNull(adFound);
         Assert.assertEquals(PATIENT_ID, adFound.getPatient().getId());
         Assert.assertEquals(DOCTOR_ID, adFound.getDoctor().getId());
@@ -82,7 +78,7 @@ public class AuthDoctorJpaDaoTest {
     public void testGetAuthDoctorsByPatientIdWithoutAuths(){
         final long PATIENT_ID = TestData.Users.patientId;
 
-        List<DoctorView> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
+        List<Doctor> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
 
         Assert.assertTrue(foundDocs.isEmpty());
     }
@@ -92,7 +88,7 @@ public class AuthDoctorJpaDaoTest {
     public void testGetAuthDoctorsByPatientIdNonexistentPatient(){
         final long PATIENT_ID = TestData.Users.newPatient.getId();
 
-        List<DoctorView> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
+        List<Doctor> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
 
         Assert.assertTrue(foundDocs.isEmpty());
     }
@@ -504,6 +500,4 @@ public class AuthDoctorJpaDaoTest {
         Assert.assertEquals(1, results[1]);
     }
 
-}
-
- */
+}*/
