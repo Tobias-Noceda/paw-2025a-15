@@ -95,13 +95,13 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
             boolean isAvailable = true;
 
             while(currentAppointment != null) {
-                if(currentAppointment.getId().getStartTime().isAfter(endTime)) {
-                    break;
-                } else if (currentAppointment.getId().getEndTime().isBefore(startTime)) {
+                if (currentAppointment.getId().getEndTime().isBefore(startTime)) {
                     // If the current appointment ends before the start time of the available turn, we can skip it
                     currentAppointment = it.hasNext() ? it.next() : null;
-                } else {
+                } else if(currentAppointment.getId().getStartTime().equals(startTime)) {
                     isAvailable = false;
+                    break;
+                } else {
                     break;
                 }
             }

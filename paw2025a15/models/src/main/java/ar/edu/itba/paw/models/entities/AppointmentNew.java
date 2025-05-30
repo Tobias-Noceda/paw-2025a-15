@@ -17,7 +17,7 @@ public class AppointmentNew {
     private DoctorSingleShift shift;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "patient_id", referencedColumnName = "patient_id", nullable = false)
     private Patient patient;
 
     public AppointmentNew(){

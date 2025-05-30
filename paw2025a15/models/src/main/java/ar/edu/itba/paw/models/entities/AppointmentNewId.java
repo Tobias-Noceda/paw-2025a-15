@@ -67,6 +67,10 @@ public class AppointmentNewId implements Serializable {
         this.endTime = endTime;
     }
 
+    public String getStartToEndTime() {
+        return startTime + " - " + endTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

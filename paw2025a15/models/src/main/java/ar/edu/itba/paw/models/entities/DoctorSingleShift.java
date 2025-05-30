@@ -22,8 +22,8 @@ public class DoctorSingleShift {
     private long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
-    private User doctor;
+    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
+    private Doctor doctor;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "shift_weekday", nullable = false)
@@ -45,7 +45,7 @@ public class DoctorSingleShift {
         //just for hibernate
     }
 
-    public DoctorSingleShift(User doctor, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime, int duration){
+    public DoctorSingleShift(Doctor doctor, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime, int duration){
         this.doctor = doctor;
         this.weekday = weekday;
         this.address = address;
@@ -62,11 +62,11 @@ public class DoctorSingleShift {
         this.id = id;
     }
 
-    public User getDoctor(){
+    public Doctor getDoctor(){
         return doctor;
     }
 
-    public void setDoctor(User doctor){
+    public void setDoctor(Doctor doctor){
         this.doctor = doctor;
     }
 

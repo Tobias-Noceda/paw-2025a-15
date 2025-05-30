@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.time.LocalDate;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -30,13 +32,14 @@ public class AppointmentController {
     @Autowired
     private AppointmentService as;
 
-
+    @Autowired
+    private DoctorShiftService dss;
 
     @RequestMapping("/appointments")
     public ModelAndView appointments(
         @ModelAttribute("user_data") User user,
         @RequestParam(value = "action", required = false) String action,
-        @ModelAttribute("shiftsWeekForm") final ShiftsDayForm shiftsWeekForm,
+        @ModelAttribute("shiftsDayForm") final ShiftsDayForm shiftsDayForm,
         Locale locale
     ) {
         ModelAndView mav = new ModelAndView("appointments");
@@ -48,7 +51,8 @@ public class AppointmentController {
         switch (user.getRole()) {
             case DOCTOR -> {
                 mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
-                mav.addObject("shiftsWeekForm", shiftsWeekForm);
+                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), LocalDate.now()));
+                mav.addObject("shiftsDayForm", shiftsDayForm);
             }
             case PATIENT -> {
                 mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
