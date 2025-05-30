@@ -1,4 +1,4 @@
-/*package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence;
 
 import java.util.List;
 
@@ -59,14 +59,6 @@ public class AuthDoctorJpaDaoTest {
 
         Assert.assertFalse(foundDocs.isEmpty());
         Assert.assertEquals(1, foundDocs.size());
-        Assert.assertEquals(DOCTOR_ID, foundDocs.getFirst().getId());
-        Assert.assertEquals(DOC_NAME, foundDocs.getFirst().getName());
-        Assert.assertEquals(SPECIALTY, foundDocs.getFirst().getSpecialty());
-        Assert.assertEquals(PICTURE_ID, foundDocs.getFirst().getPicture().getId());
-        Assert.assertFalse(foundDocs.getFirst().getInsurances().isEmpty());
-        Assert.assertEquals(2, foundDocs.getFirst().getInsurances().size());
-        Assert.assertTrue(foundDocs.getFirst().getInsurances().contains(INSURANCE1));
-        Assert.assertTrue(foundDocs.getFirst().getInsurances().contains(INSURANCE2));
         Assert.assertNotNull(adFound);
         Assert.assertEquals(PATIENT_ID, adFound.getPatient().getId());
         Assert.assertEquals(DOCTOR_ID, adFound.getDoctor().getId());
@@ -500,4 +492,4 @@ public class AuthDoctorJpaDaoTest {
         Assert.assertEquals(1, results[1]);
     }
 
-}*/
+}

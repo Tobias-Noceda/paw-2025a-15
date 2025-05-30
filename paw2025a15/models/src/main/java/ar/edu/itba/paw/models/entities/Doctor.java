@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -32,8 +34,13 @@ public class Doctor extends User {
     @Column(name = "doctor_specialty", nullable = false)
     private SpecialtyEnum specialty;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "doctor", fetch = FetchType.LAZY)
-    private List<DoctorCoverage> insurances;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "doctor_coverages",
+        joinColumns = @JoinColumn(name = "doctor_id"),
+        inverseJoinColumns = @JoinColumn(name = "insurance_id")
+    )
+    private List<Insurance> insurances;
 
     @OneToMany(orphanRemoval = true, mappedBy = "doctor", fetch = FetchType.LAZY)
     private List<DoctorSingleShift> singleShifts;
@@ -68,11 +75,11 @@ public class Doctor extends User {
         this.specialty = specialty;
     }
 
-    public List<DoctorCoverage> getInsurances() {
+    public List<Insurance> getInsurances() {
         return insurances;
     }
 
-    public void setInsurances(List<DoctorCoverage> insurances) {
+    public void setInsurances(List<Insurance> insurances) {
         this.insurances = insurances;
     }
 
@@ -93,7 +100,7 @@ public class Doctor extends User {
 
     public List<String> getInsuranceNames() {
         return insurances.stream()
-                .map(DoctorCoverage::getInsuranceName)
+                .map(Insurance::getName)
                 .distinct()
                 .toList();
     }

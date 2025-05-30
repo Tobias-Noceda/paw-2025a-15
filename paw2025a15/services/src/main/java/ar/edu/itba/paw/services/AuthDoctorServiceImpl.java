@@ -60,7 +60,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
             LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctorId, patientId);
         }
         else{
-            authDoctorDao.authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
+            authDoctorDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
             LOGGER.info("Giving basic authorization for doctor with id: {} of patient with id: {}", doctorId, patientId);
         }
     }

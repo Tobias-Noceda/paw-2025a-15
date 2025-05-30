@@ -21,14 +21,12 @@ import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
 
-    private static final long PIC_ID = 1L;
     private static final byte[] PIC_CONTENT = "Image".getBytes();
     private static final FileTypeEnum PIC_FILE_TYPE = FileTypeEnum.JPEG;
     private static final File PICTURE = new File(PIC_CONTENT, PIC_FILE_TYPE);
@@ -38,7 +36,6 @@ public class UserServiceImplTest {
     private static final File PICTURE2 = new File(PIC_CONTENT2, PIC_FILE_TYPE2);
 
     private static final long PATIENT_ID = 1L;
-    private static final long PATIENT_PIC_ID = PIC_ID;
     private static final String PATIENT_EMAIL = "grace@example.com";
     private static final String PATIENT_NAME = "grace";
     private static final String PATIENT_NAME2 = "gracie";
@@ -52,8 +49,6 @@ public class UserServiceImplTest {
     private static final BigDecimal PATIENT_WEIGHT = BigDecimal.valueOf(89.00);
     private static final Patient PATIENT = new Patient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PICTURE, PATIENT_CREATE_DATE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
     
-    private static final long DOC_ID = 2L;
-    private static final long DOC_PIC_ID = PIC_ID;
     private static final String DOC_EMAIL = "sabrina@example.com";
     private static final String DOC_NAME = "sabrina";
     private static final String DOC_PASSWORD = "shortandsweet";

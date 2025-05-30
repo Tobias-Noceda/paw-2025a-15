@@ -1,4 +1,3 @@
-/*
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
@@ -141,5 +140,3 @@ public class DoctorShiftJpaDaoTest {
     }
 
 }
-
- */
