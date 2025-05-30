@@ -105,12 +105,7 @@ public class DoctorShift {
 
         DoctorShift o = (DoctorShift) other;
 
-        return (this.id==o.id) 
-        && (this.doctor.equals(o.doctor))
-        && (this.weekday.equals(o.weekday)) 
-        && (this.address.equals(o.address))
-        && (this.startTime.equals(o.startTime)) 
-        && (this.endTime.equals(o.endTime));
+        return (this.id==o.id);
     }
 
     @Override

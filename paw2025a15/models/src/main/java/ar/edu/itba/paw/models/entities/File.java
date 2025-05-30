@@ -63,7 +63,7 @@ public class File{
 
         File o = (File) other;
 
-        return (this.id==o.id) && (this.type.equals(o.type)) && Arrays.equals(this.content,o.content);
+        return (this.id==o.id);
     }
 
     @Override

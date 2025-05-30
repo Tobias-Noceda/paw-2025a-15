@@ -58,8 +58,9 @@ public abstract class User implements Serializable {
     @Column(name = "user_telephone", length = 20, nullable = false)
     private String telephone;
 
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "user_role", insertable = false, updatable = false)
-    private Integer userRole;
+    private UserRoleEnum userRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "picture_id", referencedColumnName = "file_id", nullable = false)
@@ -81,7 +82,7 @@ public abstract class User implements Serializable {
         this.password = password;
         this.name= name;
         this.telephone = telephone;
-        this.userRole = role.ordinal();
+        this.userRole = role;
         this.picture = picture;
         this.createDate = createDate;
         this.locale = locale;
@@ -127,20 +128,20 @@ public abstract class User implements Serializable {
         this.telephone = telephone;
     }
 
-    public Integer getUserRole(){
+    public UserRoleEnum getUserRole(){
         return userRole;
     }
 
-    public void setUserRole(Integer userRole){
+    public void setUserRole(UserRoleEnum userRole){
         this.userRole = userRole;
     }
 
     public UserRoleEnum getRole(){
-        return UserRoleEnum.values()[userRole];
+        return userRole;
     }
 
     public void setRole(UserRoleEnum role){
-        this.userRole = role.ordinal();
+        this.userRole = role;
     }
 
     public File getPicture(){
@@ -175,11 +176,8 @@ public abstract class User implements Serializable {
 
         User o = (User) other;
 
-        return (this.id==o.id) && (this.name.equals(o.name)) 
-        && (this.email.equals(o.email)) && (this.password.equals(o.password))
-        && (this.telephone.equals(o.telephone)) && (this.userRole.equals(o.userRole))
-        && (this.picture.equals(o.picture)) && (this.createDate.equals(o.createDate))
-        && (this.locale.equals(o.locale));
+        return (this.id==o.id) 
+        && (this.email.equals(o.email)) ;
     }
 
     @Override
@@ -210,18 +208,4 @@ public abstract class User implements Serializable {
             ", locale=" + locale +
             '}';
     }
-
-    /*
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public List<DoctorCoverage> getDoctorCoverages() {
-        return doctorCoverages;
-    }
-
-    public DoctorDetail getDoctorDetail() {
-        return doctorDetail;
-    }
-        */
 }

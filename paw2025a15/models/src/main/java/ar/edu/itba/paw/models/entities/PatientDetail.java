@@ -212,19 +212,7 @@ public class PatientDetail {
 
         PatientDetail o = (PatientDetail) other;
 
-        return (this.patient==null?(o.patient==null):(this.patient.equals(o.patient))) 
-        && (this.birthdate==null?(o.birthdate==null):(this.birthdate.equals(o.birthdate)))
-        && (this.bloodType==null?(o.bloodType==null):(this.bloodType.equals(o.bloodType)))
-        && (this.height==null?(o.height==null):(this.height.equals(o.height)))
-        && (this.weight==null?(o.weight==null):(this.weight.equals(o.weight)))
-        && (this.smokes==null?(o.smokes==null):(this.smokes.equals(o.smokes)))
-        && (this.drinks==null?(o.drinks==null):(this.drinks.equals(o.drinks)))
-        && (this.meds==null?(o.meds==null):(this.meds.equals(o.meds)))
-        && (this.conditions==null?(o.conditions==null):(this.conditions.equals(o.conditions)))
-        && (this.allergies==null?(o.allergies==null):(this.allergies.equals(o.allergies)))
-        && (this.diet==null?(o.diet==null):(this.diet.equals(o.diet)))
-        && (this.hobbies==null?(o.hobbies==null):(this.hobbies.equals(o.hobbies)))
-        && (this.job==null?(o.job==null):(this.job.equals(o.job)));
+        return (this.patientId==o.patientId);
     }
 
     @Override

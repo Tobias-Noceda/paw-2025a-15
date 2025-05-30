@@ -1,5 +1,6 @@
-/*package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -13,15 +14,15 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.entities.Appointment;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorCoverage;
 import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.entities.DoctorShift;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.PatientDetail;
 import ar.edu.itba.paw.models.entities.Study;
-import ar.edu.itba.paw.models.entities.User;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 //Readable output of all the data inputed in test/resources
@@ -58,15 +59,15 @@ public class TestData {
     }
 
     public class Users{
-        public static final User patient = new User("donna@example.com", "supersecret123", "donna", "1144445555", UserRoleEnum.PATIENT, Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US);
+        public static final Patient patient = new Patient("donna@example.com", "supersecret123", "donna", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
         public static final long patientId = 1L;
-        public static final User newPatient = new User("sophie@example.com", "supersecret123", "sophie", "1144445555", UserRoleEnum.PATIENT, Images.validImage, LocalDate.now() , LocaleEnum.EN_US);
+        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret123", "sophie", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
         public static final long newPatientId = 3L;
         
 
-        public static final User doctor = new User("membrillo@example.com", "supersecret123", "membrillo", "1144445555", UserRoleEnum.DOCTOR, Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US);
+        public static final Doctor doctor = new Doctor("membrillo@example.com", "supersecret123", "membrillo", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY);
         public static final long doctorId = 2L;
-        public static final User newDoctor = new User("batata@example.com", "supersecret123", "batata", "1144445555", UserRoleEnum.DOCTOR, Images.validImage, LocalDate.now() , LocaleEnum.EN_US);
+        public static final Doctor newDoctor = new Doctor("batata@example.com", "supersecret123", "batata", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY);
         public static final long newDoctorId = 3L;
     }
 
@@ -107,4 +108,3 @@ public class TestData {
         public static final AuthDoctor authDoctorSocialLevel = new AuthDoctor(Users.doctor, Users.patient, AccessLevelEnum.VIEW_SOCIAL);
     }
 }
-*/

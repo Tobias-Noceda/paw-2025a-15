@@ -1,4 +1,3 @@
-/*
 package ar.edu.itba.paw.persistence;
 
 import java.util.List;
@@ -116,8 +115,8 @@ public class InsuranceJpaDaoTest {
         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
         Assert.assertNotNull(insurancePersisted);
-        Assert.assertEquals(INSURANCE_NEW, insurancePersisted);
-        Assert.assertNotEquals(INSURANCE_OLD, insurancePersisted);   
+        Assert.assertEquals(INSURANCE_NEW.getPicture(), insurancePersisted.getPicture());
+        Assert.assertNotEquals(INSURANCE_OLD.getPicture(), insurancePersisted.getPicture());   
     }
 
     @Test
@@ -184,5 +183,3 @@ public class InsuranceJpaDaoTest {
     }    
 
 }
-
- */

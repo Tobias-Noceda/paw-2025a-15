@@ -140,11 +140,7 @@ public class Study {
 
         Study o = (Study) other;
 
-        return (this.id==o.id) && (this.type.equals(o.type))
-        && (this.comment.equals(o.comment)) && (this.file.equals(o.file))
-        && (this.user.equals(o.user)) && (this.uploader.equals(o.uploader))
-        //&& (this.uploadDate.equals(o.uploadDate)) 
-        && (this.studyDate.equals(o.studyDate));
+        return (this.id==o.id);
     }
 
     @Override
