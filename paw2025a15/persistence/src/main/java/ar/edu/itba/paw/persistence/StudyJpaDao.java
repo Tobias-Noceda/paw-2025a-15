@@ -71,16 +71,28 @@ public class StudyJpaDao implements StudyDao {
 
     @Override
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
-        String q = "from Study as s where s.user.id = :patientId and s.uploader.id = :doctorId and s.file.type = :type "
-                + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
+        String q = "select s " +
+                "from Study s " +
+                "join AuthStudy a on a.study = s " +
+                "where s.user.id = :patientId " +
+                "and a.doctor.id = :doctorId ";
+        if (type != null) {
+            q += "and s.type = :type ";
+        }
+        q += (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
         query.setParameter("patientId", patientId);
         query.setParameter("doctorId", doctorId);
-        query.setParameter("type", type);
+
+        if (type != null) {
+            query.setParameter("type", type);
+        }
 
         return query.getResultList();
     }
+
+
 
 
 }
