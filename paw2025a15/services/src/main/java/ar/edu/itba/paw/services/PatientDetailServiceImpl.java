@@ -36,7 +36,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     private FileService fs;
 
     @Transactional
-    @Override
+    @Override//TODO: esta rari que no llame al dao
     public User createPatient(String email, String password, String name, String telephone, LocaleEnum locale) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));

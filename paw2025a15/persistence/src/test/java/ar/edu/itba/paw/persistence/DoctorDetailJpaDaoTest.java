@@ -100,11 +100,8 @@ public class DoctorDetailJpaDaoTest {
         final long DOC_ID = TestData.Users.doctorId;
         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
         final DoctorCoverage DC = TestData.DoctorCoverages.doctorCoverage;
-        DC.setDoctor(TestData.Users.doctor);
-        DC.getDoctor().setId(DOC_ID);
-        DC.getDoctor().getPicture().setId(TestData.Images.validImageId);
-        DC.setInsurance(TestData.Insurances.validInsurance);
-        DC.getInsurance().setId(INSURANCE_ID);
+        DC.getDoctorCoverageId().setDoctorId(DOC_ID);
+        DC.getDoctorCoverageId().setInsuranceId(INSURANCE_ID);
 
         doctorDetailDao.addDoctorCoverage(DOC_ID, INSURANCE_ID);
         DoctorCoverage dcPersisted = em.find(DoctorCoverage.class, new DoctorCoverageId(DOC_ID, INSURANCE_ID));
@@ -172,11 +169,8 @@ public class DoctorDetailJpaDaoTest {
         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
         final long INSURANCE2_ID = TestData.Insurances.validInsurance2Id;
         final DoctorCoverage DC2 = TestData.DoctorCoverages.doctorCoverage2;
-        DC2.setDoctor(TestData.Users.doctor);
-        DC2.getDoctor().setId(DOC_ID);
-        DC2.getDoctor().getPicture().setId(TestData.Images.validImageId);
-        DC2.setInsurance(TestData.Insurances.validInsurance2);
-        DC2.getInsurance().setId(INSURANCE2_ID);
+        DC2.getDoctorCoverageId().setDoctorId(DOC_ID);
+        DC2.getDoctorCoverageId().setInsuranceId(INSURANCE2_ID);
 
         final List<Long> INSURANCES_IDS = List.of(INSURANCE_ID);
 

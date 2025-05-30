@@ -40,7 +40,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
     @Autowired
     private FileService fs;
 
-    @Transactional
+    @Transactional//TODO: no llama al dao, medio raro que este aca
     @Override
     public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, LocaleEnum locale) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");

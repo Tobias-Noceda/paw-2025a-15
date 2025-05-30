@@ -1,5 +1,6 @@
-/*package ar.edu.itba.paw.services;
+package ar.edu.itba.paw.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -18,12 +19,13 @@ import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Appointment;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorShift;
 import ar.edu.itba.paw.models.entities.File;
-import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
@@ -41,20 +43,23 @@ public class AppointmentServiceImplTest {
     private static final String PATIENT_NAME = "grace";
     private static final String PATIENT_PASSWORD = "goodgraces";
     private static final String PATIENT_TELEPHONE = "1144445555";
-    private static final UserRoleEnum PATIENT_ROLE = UserRoleEnum.PATIENT;
     private static final LocaleEnum PATIENT_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate PATIENT_CREATE_DATE = LocalDate.parse("2025-04-09");
-    private static final User PATIENT = new User(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_ROLE, FILE, PATIENT_CREATE_DATE, PATIENT_LOCALE);
+    private static final LocalDate PATIENT_BIRTHDATE = LocalDate.parse("2001-01-01");
+    private static final BigDecimal PATIENT_HEIGHT = BigDecimal.valueOf(1.75);
+    private static final BigDecimal PATIENT_WEIGHT = BigDecimal.valueOf(89.00);
+    private static final Patient PATIENT = new Patient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, FILE, PATIENT_CREATE_DATE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
 
     private static final long DOC_ID = 2L;
     private static final String DOC_EMAIL = "sabrina@example.com";
     private static final String DOC_NAME = "sabrina";
     private static final String DOC_PASSWORD = "shortandsweet";
     private static final String DOC_TELEPHONE = "1144445555";
-    private static final UserRoleEnum DOC_ROLE = UserRoleEnum.DOCTOR;
     private static final LocaleEnum DOC_LOCALE = LocaleEnum.ES_AR;
     private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
-    private static final User DOC = new User(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_ROLE, FILE, DOC_CREATE_DATE, DOC_LOCALE);
+    private static final String DOC_LICENCE= "med-licence";
+    private static final SpecialtyEnum DOC_SPECIALTY= SpecialtyEnum.CARDIOLOGY;
+    private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY);
     
     private static final long SHIFT_ID = 1L;
     private static final String ADDRESS = "fake123";
@@ -306,4 +311,3 @@ public class AppointmentServiceImplTest {
     }
 
 }
-*/
