@@ -51,14 +51,10 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         return result;
     }
 
+    @Transactional
     @Override
-    public boolean authStudyListForDoctorId(List<Long> doctorsId, long StudyId) {
-        //TODO: hacer esto con una ida a la BD
-        if(doctorsId.isEmpty()) return false;
-        for (Long doctorId : doctorsId) {
-            authStudyForDoctorId(StudyId, doctorId);
-        }
-        return true;
+    public void authStudyForDoctorIdList(List<Long> doctorsId, long StudyId) {
+        authStudiesDao.authStudyForDoctorIdList(doctorsId, StudyId);
     }
 
     @Transactional(readOnly = true)

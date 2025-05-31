@@ -13,7 +13,7 @@ public interface AuthDoctorDao {
 
     public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
-    public void authDoctor(Patient patient, Doctor doctor, AccessLevelEnum accessLevel);
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
     public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
