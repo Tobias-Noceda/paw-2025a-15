@@ -212,7 +212,7 @@ public class PatientDetail {
 
         PatientDetail o = (PatientDetail) other;
 
-        return (this.patient==null?(o.patient==null):(this.patient.equals(o.patient))) 
+        return (this.patientId==o.patientId)
         && (this.birthdate==null?(o.birthdate==null):(this.birthdate.equals(o.birthdate)))
         && (this.bloodType==null?(o.bloodType==null):(this.bloodType.equals(o.bloodType)))
         && (this.height==null?(o.height==null):(this.height.equals(o.height)))

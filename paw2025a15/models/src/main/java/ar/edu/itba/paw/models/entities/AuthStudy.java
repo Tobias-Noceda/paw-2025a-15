@@ -68,8 +68,7 @@ public class AuthStudy {
 
         AuthStudy o = (AuthStudy) other;
 
-        return (this.id.equals(o.id)) && (this.doctor.equals(o.doctor)) 
-        && (this.study.equals(o.study));
+        return (this.id.equals(o.id));
     }
 
     @Override

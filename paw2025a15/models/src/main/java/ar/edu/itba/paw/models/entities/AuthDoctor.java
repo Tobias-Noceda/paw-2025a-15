@@ -84,8 +84,7 @@ public class AuthDoctor {
 
         AuthDoctor o = (AuthDoctor) other;
 
-        return (this.id.equals(o.id)) && (this.doctor.equals(o.doctor)) 
-        && (this.patient.equals(o.patient));
+        return (this.id.equals(o.id));
     }
 
     @Override

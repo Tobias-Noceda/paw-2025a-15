@@ -72,7 +72,7 @@ public class DoctorCoverage {
 
         DoctorCoverage o = (DoctorCoverage) other;
 
-        return (this.doctor.equals(o.doctor)) && (this.insurance.equals(o.insurance));
+        return (this.id.equals(o.id));
     }
 
     @Override

@@ -71,7 +71,7 @@ public class Insurance {
 
         Insurance o = (Insurance) other;
 
-        return (this.id==o.id) && (this.name.equals(o.name)) && (this.picture.equals(o.picture));
+        return (this.id==o.id) && (this.name.equals(o.name));
     }
 
     @Override

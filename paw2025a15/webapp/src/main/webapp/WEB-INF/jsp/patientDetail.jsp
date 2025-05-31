@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling-->
-          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_BASIC')}">
+          <c:if test="${allowedAccessLevels.contains('VIEW_BASIC')}">
           <div class="basic">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.age"/>:</p>
@@ -86,7 +86,7 @@
             </div>
           </div>
           </c:if>
-          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_HABITS')}">
+          <c:if test="${allowedAccessLevels.contains('VIEW_HABITS')}">
           <p class="section-title" ><spring:message code="profileInfo.habits"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="habits">
@@ -125,7 +125,7 @@
             </div>
           </div>
           </c:if>
-          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_MEDICAL')}">
+          <c:if test="${allowedAccessLevels.contains('VIEW_MEDICAL')}">
           <p class="section-title"><spring:message code="profileInfo.medical"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="med">
@@ -164,7 +164,7 @@
             </div>
           </div>
           </c:if>
-          <c:if test="${isAuthDoctor && allowedAccessLevels.contains('VIEW_SOCIAL')}">
+          <c:if test="${allowedAccessLevels.contains('VIEW_SOCIAL')}">
           <p class="section-title"><spring:message code="profileInfo.social"/></p>
           <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
           <div class="lifestyle">

@@ -1,1 +1,1 @@
-INSERT INTO patient_details(patient_id) VALUES(1);
+UPDATE patient_details SET patient_job = null, patient_birthdate = null, patient_height = null, patient_weight = null WHERE patient_id = 1;

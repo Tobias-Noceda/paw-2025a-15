@@ -42,11 +42,12 @@ public class DoctorCoverageId implements Serializable{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DoctorCoverageId)) return false;
-        DoctorCoverageId that = (DoctorCoverageId) o;
-        return (doctorId == that.doctorId) && (insuranceId == that.insuranceId);
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof DoctorCoverageId)) return false;
+        DoctorCoverageId o = (DoctorCoverageId) other;
+        return (this.doctorId == o.doctorId) 
+        && (this.insuranceId == o.insuranceId);
     }
 
     @Override

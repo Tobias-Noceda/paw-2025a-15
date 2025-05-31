@@ -18,7 +18,6 @@ import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
@@ -30,9 +29,6 @@ import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 
 @Controller
 public class DoctorController {
-
-    @Autowired
-    private UserService us;
 
     @Autowired
     private DoctorDetailService dds;
@@ -55,7 +51,7 @@ public class DoctorController {
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
-        Doctor doctor = (Doctor) us.getUserById(id).orElseThrow(() -> new NotFoundException("Doctor does not exist"));
+        Doctor doctor = dds.getDoctorById(id).orElseThrow(() -> new NotFoundException("Doctor does not exist"));
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 

@@ -20,7 +20,7 @@ public class UserJpaDao implements UserDao {
     @Override
     public Optional<User> getUserById(long id){
         return Optional.ofNullable(em.find(User.class, id));
-    }
+    }    
 
     @Override
     public Optional<User> getUserByEmail(String email){

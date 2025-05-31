@@ -58,7 +58,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                 AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevels.get(i));
                 em.persist(ad);
                 results[i] = 1;
-                if (i % 50 == 0) {
+                if (i!=0 && i % 50 == 0) {
                     em.flush();
                     em.clear();
                 }
@@ -81,11 +81,11 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public void unauthDoctorByAccessLevel(Patient patient, Doctor doctor, AccessLevelEnum accessLevel) {
-        if(accessLevel!=AccessLevelEnum.VIEW_BASIC){
-            AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel));
-            if(ad != null) em.remove(ad);
+        if(accessLevel == AccessLevelEnum.VIEW_BASIC) {
+            unauthDoctorAllAccessLevels(patient, doctor);
         }
-        else unauthDoctorAllAccessLevels(patient, doctor);
+        AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel));
+        if(ad != null) em.remove(ad);
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Appointment {
     @JoinColumn(name = "shift_id", referencedColumnName = "shift_id", nullable = false)
     private DoctorShift shift;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private User patient;
 
@@ -82,8 +82,7 @@ public class Appointment {
 
         Appointment o = (Appointment) other;
 
-        return (this.id.equals(o.id)) &&
-        (this.shift.equals(o.shift)) && (this.patient.equals(o.patient));
+        return (this.id.equals(o.id));
     }
 
     @Override

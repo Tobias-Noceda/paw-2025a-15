@@ -1,2 +1,1 @@
-INSERT INTO patient_details(patient_id, patient_birthdate, patient_blood_type, patient_height, patient_weight, patient_smokes, patient_drinks, patient_meds, patient_conditions, patient_allergies, patient_diet, patient_hobbies, patient_job) 
-VALUES(1, '2000-01-01', 6, 1.75, 89.00, false, true, 'a', 'a', 'a', 'a', 'a', 'a');
+UPDATE patient_details SET patient_blood_type = 6, patient_smokes = false, patient_drinks =true, patient_meds = 'a', patient_conditions = 'a', patient_allergies = 'a', patient_diet = 'a', patient_hobbies = 'a', patient_job = 'a' WHERE patient_id = 1;
