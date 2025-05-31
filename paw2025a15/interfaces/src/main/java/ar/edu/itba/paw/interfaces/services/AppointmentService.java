@@ -1,16 +1,16 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.AppointmentNew;
-import ar.edu.itba.paw.models.entities.Appointment;
 
 public interface AppointmentService {
-    public Appointment addAppointment(long shiftId, long patientId, LocalDate date);
+    public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime);
 
-    public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date);
+    public Optional<AppointmentNew> getAppointmentByShiftIdDateAndTime(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime);
 
     public List<AppointmentNew> getFutureAppointmentDataByPatientId(long patientId);
 
@@ -18,7 +18,7 @@ public interface AppointmentService {
 
     public List<AppointmentNew> getFutureAppointmentDataByDoctorId(long doctorId);
 
-    public void cancelAppointment(long shiftId, LocalDate date, long cancelId);
+    public void cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId);
 
-    public void removeAppointment(long shiftId, LocalDate date, long doctorId);
+    public void removeAppointment(long shiftId, LocalDate date, long doctorId, LocalTime startTime, LocalTime endTime);
 }

@@ -249,14 +249,13 @@
                       <td class="sticky-column"><spring:message code="weekday.${date.dayOfWeek}"/></td>
                       <!--<td class="sticky-column"><c:out value="${formattedDay}" escapeXml="true"/></td>-->
                       <td><c:out value="${appointment.getStartToEndTime()}" escapeXml="true"/></td>
-
-
-
                       <td style="display: none;">
                         <form:form modelAttribute="takeTurnForm" action="${appointmentPath}" method="POST">
                           <form:input type="hidden" path="shiftId" value="${appointment.shiftId}"/>
                           <form:input type="hidden" path="date" value="${date}"/>
                           <form:input type="hidden" path="doctorId" value="${doctor.id}"/>
+                          <form:hidden path="startTime" value="${appointment.startTime}" />
+                          <form:hidden path="endTime" value="${appointment.endTime}" />
                         </form:form>
                       </td>
                     </tr>

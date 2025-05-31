@@ -2,8 +2,9 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.models.entities.AuthStudy;
 import ar.edu.itba.paw.models.entities.AuthStudyId;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
-import ar.edu.itba.paw.models.entities.User;
 
 import org.springframework.stereotype.Repository;
 
@@ -22,9 +23,7 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
     private EntityManager em;
 
     @Override
-    public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        User doctor = em.find(User.class, doctorId);
-        Study study = em.find(Study.class, studyId);
+    public boolean authStudyForDoctor(Study study, Doctor doctor) {
         if(study == null || doctor == null) return false;
         try{
             final AuthStudy as = new AuthStudy(doctor, study);
@@ -37,47 +36,41 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
     }
 
     @Override
-    public boolean hasAuthStudy(long studyId, long doctorId) {
-        return em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId))!=null;
+    public boolean hasAuthStudy(Study study, Doctor doctor) {
+        return em.find(AuthStudy.class, new AuthStudyId(doctor.getId(), study.getId())) != null;
     }
 
     @Override
-    public void authStudyForDoctorIdList(List<Long> doctorsId, long StudyId) {
+    public void authStudyForDoctorIdList(List<Long> doctorIds, Study study) {
 
-        if (doctorsId == null || doctorsId.isEmpty())
+        if (doctorIds == null || doctorIds.isEmpty() || study == null)
             return;
 
-        Study study = em.find(Study.class, StudyId);
+        TypedQuery<Doctor> query = em.createQuery("from Doctor as d where d.id in :doctorIds",Doctor.class);
+        query.setParameter("doctorIds", doctorIds);
+        List<Doctor> doctors = query.getResultList();
 
-        if(study==null){
-            return;
-        }
-
-        TypedQuery<User> query = em.createQuery("from User as u where u.id in :doctorsId",User.class);
-        query.setParameter("doctorsId", doctorsId);
-        List<User> doctors = query.getResultList();
-
-        for(User doctor : doctors){
+        for(Doctor doctor : doctors){
             AuthStudy as = new AuthStudy(doctor, study);
             em.persist(as);
         }
     }
 
     @Override
-    public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(!hasAuthStudy(studyId, doctorId)) return;
-        AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId));
+    public void unauthStudyForDoctor(Study study, Doctor doctor) {
+        if(!hasAuthStudy(study, doctor)) return;
+        AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctor.getId(), study.getId()));
         em.remove(as);
     }
 
     @Override
-    public void unauthAllStudiesForDoctorIdAndPatientId(long userId, long doctorId) {
-        final TypedQuery<Study> query = em.createQuery("from Study as s where s.user.id = :userId",Study.class);
-        query.setParameter("userId", userId);
+    public void unauthAllStudiesForDoctorAndPatient(Patient patient, Doctor doctor) {
+        final TypedQuery<Study> query = em.createQuery("from Study as s where s.patient = :patient",Study.class);
+        query.setParameter("patient", patient);
         List<Study> studies = query.getResultList();
 
         for(Study study : studies){//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
-            AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, study.getId()));
+            AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctor.getId(), study.getId()));
             if(as!=null) em.remove(as);
         }
         em.flush();

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,23 +28,18 @@ import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.entities.DoctorDetail;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
-    @Autowired
-    private UserService us;
 
     @Autowired
     private PatientDetailService pds;
@@ -81,13 +77,28 @@ public class UserController {
         }else {
             picture = user.getPicture();
         }
-        us.editUser(user.getId(), user.getName(),profileForm.getPhoneNumber(), picture);
-        us.updateLocale(user.getId(), profileForm.getMailLanguage());
         
-        if(user.getRole().equals(UserRoleEnum.PATIENT)) {
-            pds.updatePatientDetails(user.getId(), profileForm.getBirthDate(), profileForm.getBloodType(), profileForm.getHeight(), profileForm.getWeight(), profileForm.getSmokes(), profileForm.getDrinks(), profileForm.getMeds(), profileForm.getConditions(), profileForm.getAllergies(), profileForm.getDiet(), profileForm.getHobbies(), profileForm.getJob() );
+        if(user instanceof Doctor doctor) {
+            dds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
         } else {
-            dds.updateDoctorCoverages(user.getId(), profileForm.getInsurances());
+            pds.updatePatient(
+                (Patient) user,
+                profileForm.getPhoneNumber(),
+                picture,
+                profileForm.getMailLanguage(),
+                profileForm.getBirthDate(),
+                profileForm.getBloodType(),
+                BigDecimal.valueOf(profileForm.getHeight()),
+                BigDecimal.valueOf(profileForm.getWeight()),
+                profileForm.getSmokes(),
+                profileForm.getDrinks(),
+                profileForm.getMeds(),
+                profileForm.getConditions(),
+                profileForm.getAllergies(),
+                profileForm.getDiet(),
+                profileForm.getHobbies(),
+                profileForm.getJob()
+            );
         }
         LOGGER.info("User with id: {} updated!", user.getId());
         
@@ -112,13 +123,10 @@ public class UserController {
             profileForm.setMailLanguage(user.getLocale());
         }
 
-        if(user.getRole().equals(UserRoleEnum.PATIENT)) {
-            mav.addObject("patientDetails", pds.getDetailByPatientId(user.getId()).orElseThrow(() -> new NotFoundException("Patient details not found for user with id: " + user.getId())));
-        } else if (user.getRole().equals(UserRoleEnum.DOCTOR)) {
-            mav.addObject("patientDetails", null);
-            profileForm.setInsurances(InsuranceToLong(dds.getDoctorInsurancesById(user.getId())));
-            DoctorDetail doctorDetail = dds.getDetailByDoctorId(user.getId()).orElseThrow(() -> new NotFoundException("Doctor details not found for user with id: " + user.getId()));
-            mav.addObject("doctorDetail", doctorDetail);
+        if (user instanceof Doctor doctor) {
+            profileForm.setInsurances(
+                doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
+            );
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
@@ -129,7 +137,7 @@ public class UserController {
         return mav;
     }
 
-    static List<Long> InsuranceToLong(List<Insurance> insurances) {
+    static List<Long> insuranceToLong(List<Insurance> insurances) {
         List<Long> insurancesLong = new ArrayList<>();
         for(Insurance insurance : insurances) {
             insurancesLong.add(insurance.getId());

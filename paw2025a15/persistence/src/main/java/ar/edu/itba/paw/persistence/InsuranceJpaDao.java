@@ -26,21 +26,6 @@ public class InsuranceJpaDao implements InsuranceDao{
     }
 
     @Override
-    public void edit(long id, String name, File picture) {
-        Insurance insurance = em.find(Insurance.class, id);
-        if(insurance == null || name == null || name.isEmpty()) return;
-        insurance.setName(name);
-        File oldPicture = insurance.getPicture();
-        boolean remove = false;
-        if(!picture.equals(oldPicture)){
-            insurance.setPicture(picture);
-            remove = oldPicture.getId() != 1;
-        }
-        em.merge(insurance);
-        if(remove) em.remove(oldPicture);
-    }
-
-    @Override
     public Optional<Insurance> getInsuranceById(long id) {
         return Optional.ofNullable(em.find(Insurance.class, id));
     }

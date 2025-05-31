@@ -53,15 +53,30 @@ public class Patient extends User {
     @Column(name = "patient_job", length = 50)
     private String job;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "patient", fetch = FetchType.LAZY)
-    private List<AuthDoctor> authDoctors;
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "auth_doctors",
+        joinColumns = @JoinColumn(name = "patient_id"),
+        inverseJoinColumns = @JoinColumn(name = "doctor_id")
+    )
+    private List<Doctor> authorizedDoctors;
 
     public Patient() {
         super();
     }
 
-    public Patient(String email, String password, String name, String telephone, File picture, LocalDate createDate, LocaleEnum locale,
-                   LocalDate birthdate, BigDecimal height, BigDecimal weight) {
+    public Patient(
+        String email,
+        String password,
+        String name,
+        String telephone,
+        File picture,
+        LocalDate createDate,
+        LocaleEnum locale,
+        LocalDate birthdate,
+        BigDecimal height,
+        BigDecimal weight
+    ) {
         super(email, password, name, telephone, UserRoleEnum.PATIENT, picture, createDate, locale);
         this.birthdate = birthdate;
         this.height = height;
@@ -164,18 +179,13 @@ public class Patient extends User {
         this.job = job;
     }
 
-    public List<AuthDoctor> getAuthDoctors() {
-        return authDoctors;
-    }
-
     public List<Doctor> getAuthorizedDoctors() {
-        return authDoctors.stream()
-            .map(AuthDoctor::getDoctor)
+        return authorizedDoctors.stream()
             .distinct()
             .toList();
     }
 
-    public void setAuthDoctors(List<AuthDoctor> authDoctors) {
-        this.authDoctors = authDoctors;
+    public void setAuthorizedDoctors(List<Doctor> authorizedDoctors) {
+        this.authorizedDoctors = authorizedDoctors;
     }
 }

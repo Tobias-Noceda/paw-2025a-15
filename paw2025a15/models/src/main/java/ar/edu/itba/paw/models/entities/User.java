@@ -205,7 +205,6 @@ public abstract class User implements Serializable {
             ", password=" + password +
             ", telephone=" + telephone +
             ", role=" + userRole +
-            ", picture=" + picture +
             ", createDate=" + createDate +
             ", locale=" + locale +
             '}';

@@ -84,15 +84,15 @@ public class DoctorController {
         @RequestParam("action") String action, 
         @RequestParam(value = "accessLevels", required = false) List<String> accessLevels
     ) {
-        dds.getDetailByDoctorId(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
-
+        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
+        
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
-        if ("update".equals(action)) {
+        if (action.equals("update")) {
             ads.updateAuthDoctor(user.getId(), doctorId, (accessLevels == null ? null : accessLevels.stream().map(AccessLevelEnum::valueOf).toList()));
         }
-        else if ("toggle".equals(action)) {
+        else if (action.equals("toggle")) {
             ads.toggleAuthDoctor(user.getId(), doctorId);
         }
 
@@ -110,6 +110,5 @@ public class DoctorController {
     ){
         ass.toggleStudyForDoctorId(studyId, doctorId);
         return new ModelAndView("redirect:/study-info/" + studyId);
-
     }
 }

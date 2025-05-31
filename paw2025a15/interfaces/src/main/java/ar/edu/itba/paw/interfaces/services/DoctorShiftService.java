@@ -6,24 +6,18 @@ import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.AvailableTurn;
-import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorShiftService {
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);
 
-    public Optional<DoctorShift> getShiftById(long id);
+    public Optional<DoctorSingleShift> getShiftById(long id);
 
     /**
-     * * Returns a list of available turns for a doctor in a specific month and week number.
+     * * Returns a list of available turns for a doctor in a specific date.
      * * @param doctorId The ID of the doctor.
-     * * @param month The month for which to retrieve available turns.
-     * * @param weekNumber The week number of the month (0-3). 
-     *                     * 0 = first week (1-7),
-     *                     * 1 = second week (8-14),
-     *                     * 2 = third week (15-21),
-     *                     * 3 = fourth week (22-end).
-     * * @return A list of available turns for the specified doctor, month, and week number.
+     * * @return A list of available turns for the specified doctor and date.
      * *         If no turns are available, an empty list is returned.
      */
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date);

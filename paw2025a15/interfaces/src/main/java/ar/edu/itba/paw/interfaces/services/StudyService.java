@@ -15,13 +15,7 @@ public interface StudyService {
 
     public Optional<Study> getStudyById(long id);
 
-    public List<Study> getStudiesByPatientId(long id);
-
-    public Optional<File> getStudyFile(long id);
-    
     public List<Study> getFilteredStudies(long id, StudyTypeEnum type, boolean mostRecent);
-
-    public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId);
 
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent);
 }

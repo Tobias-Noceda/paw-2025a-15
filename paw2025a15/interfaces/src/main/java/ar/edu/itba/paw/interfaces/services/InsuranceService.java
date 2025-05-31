@@ -16,6 +16,4 @@ public interface InsuranceService {
     public Optional<Insurance> getInsuranceByName(String name);
 
     public List<Insurance> getAllInsurances();
-
-    public Optional<File> getInsurancePicture(long id);
 }

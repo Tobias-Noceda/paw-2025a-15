@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,7 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -34,7 +34,7 @@ public class Doctor extends User {
     @Column(name = "doctor_specialty", nullable = false)
     private SpecialtyEnum specialty;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = false, fetch = FetchType.LAZY)
     @JoinTable(
         name = "doctor_coverages",
         joinColumns = @JoinColumn(name = "doctor_id"),
@@ -49,11 +49,22 @@ public class Doctor extends User {
         super();
     }
     
-    public Doctor(String email, String password, String name, String telephone, File picture, LocalDate createDate, LocaleEnum locale,
-                  String licence, SpecialtyEnum specialty) {
-        super(email, password, name, telephone, UserRoleEnum.DOCTOR, picture, createDate, locale);
+    public Doctor(
+        String email,
+        String password,
+        String name,
+        String telephone,
+        File picture,
+        LocalDate creatDate,
+        LocaleEnum locale,
+        String licence,
+        SpecialtyEnum specialty,
+        List<Insurance> insurances
+    ) {
+        super(email, password, name, telephone, UserRoleEnum.DOCTOR, picture, creatDate, locale);
         this.licence = licence;
         this.specialty = specialty;
+        this.insurances = insurances != null ? insurances : new ArrayList<>();
     }
 
     public String getLicence() {
@@ -78,6 +89,21 @@ public class Doctor extends User {
 
     public void setInsurances(List<Insurance> insurances) {
         this.insurances = insurances;
+    }
+
+    public void addInsurance(Insurance insurance) {
+        if (insurances == null) {
+            insurances = new ArrayList<>();
+        }
+        if (insurance != null && !insurances.contains(insurance)) {
+            insurances.add(insurance);
+        }
+    }
+
+    public void removeInsurance(Insurance insurance) {
+        if (insurances != null && insurance != null) {
+            insurances.remove(insurance);
+        }
     }
 
     public List<DoctorSingleShift> getSingleShifts() {

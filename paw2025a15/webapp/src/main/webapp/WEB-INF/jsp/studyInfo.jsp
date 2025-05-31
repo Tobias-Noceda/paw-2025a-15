@@ -110,7 +110,7 @@
                 </table>
             </div>
 
-            <c:if test="${not empty patientAuthDoctors}">
+            <c:if test="${not empty authDoctors}">
                 <div class="studies-table-body">
                     <table class="studies-table">
                         <tbody>
@@ -124,8 +124,8 @@
                             <spring:message code="doctorDetail.authorize.cancelButton"/>
                         </c:set>
 
-                        <c:forEach var="doctor" items="${patientAuthDoctors}">
-                            <c:set var="hasAuth" value="${authMap[doctor.id]}" />
+                        <c:forEach var="doctor" items="${authDoctors}">
+                            <c:set var="hasAuth" value="${study.authDoctors.contains(doctor)}"/>
                             <c:set var="buttonClass" value="${hasAuth ? 'btn-red' : 'btn-green'}"/>
                             <c:set var="buttonLabel" value="${hasAuth ? 'Desautorizar' : 'Autorizar'}"/>
 
@@ -160,7 +160,7 @@
                     </table>
                 </div>
             </c:if>
-            <c:if test="${empty patientAuthDoctors}">
+            <c:if test="${empty authDoctors}">
                 <div class="no-studies-container">
                     <h4 class="no-studies-text"><spring:message code="studies.authorizedDoctors.empty"/></h4>
                 </div>

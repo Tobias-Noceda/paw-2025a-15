@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
@@ -21,15 +23,15 @@ public class StudyJpaDao implements StudyDao {
     private EntityManager em;
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, File file, User user, User uploader, LocalDate studyDate) {
-        final Study study = new Study(type, comment, file, user, uploader, LocalDateTime.now(), studyDate);
+    public Study create(StudyTypeEnum type, String comment, File file, Patient patient, User uploader, LocalDate studyDate) {
+        final Study study = new Study(type, comment, file, patient, uploader, LocalDateTime.now(), studyDate);
         em.persist(study);
         return study;
     }
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, File file, User user, User uploader) {
-        final Study study = new Study(type, comment, file, user, uploader, LocalDateTime.now(), LocalDate.now());
+    public Study create(StudyTypeEnum type, String comment, File file, Patient patient, User uploader) {
+        final Study study = new Study(type, comment, file, patient, uploader, LocalDateTime.now(), LocalDate.now());
         em.persist(study);
         return study;
     }
@@ -39,20 +41,14 @@ public class StudyJpaDao implements StudyDao {
         return Optional.ofNullable(em.find(Study.class, id));
     }
 
-        @Override
-        public List<Study> getStudiesByPatientId(long id) {
-            final TypedQuery<Study> query = em.createQuery("from Study as s where s.user.id = :id",Study.class);
-            query.setParameter("id", id);
-            return query.getResultList();
-        }
     @Override
-    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
-        String q = "from Study as s where s.user.id = :id "
+    public List<Study> getFilteredStudiesByPatient(Patient patient, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
+        String q = "from Study as s where s.patient = :patient "
                 + (type != null ? "and s.type = :type " : "")
                 + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
-        query.setParameter("id", id);
+        query.setParameter("patient", patient);
         if (type != null) {
             query.setParameter("type", type);
         }
@@ -61,28 +57,19 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
-    public List<Study> getStudiesByPatientIdAndDoctorId(long patientId, long doctorId) {
-        TypedQuery<Study> query = em.createQuery("from Study as s where s.user.id = :patientId and s.uploader.id = :doctorId",Study.class);
-        query.setParameter("patientId", patientId);
-        query.setParameter("doctorId", doctorId);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
-        String q = "select s " +
-                "from Study s " +
+    public List<Study> getFilteredStudiesByPatientAndDoctor(Patient patient, Doctor doctor, StudyTypeEnum type, boolean mostRecent) {
+        String q = "SELECT s from Study s " +
                 "join AuthStudy a on a.study = s " +
-                "where s.user.id = :patientId " +
-                "and a.doctor.id = :doctorId ";
+                "where s.patient = :patient " +
+                "and a.doctor = :doctor ";
         if (type != null) {
             q += "and s.type = :type ";
         }
         q += (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
-        query.setParameter("patientId", patientId);
-        query.setParameter("doctorId", doctorId);
+        query.setParameter("patient", patient);
+        query.setParameter("doctor", doctor);
 
         if (type != null) {
             query.setParameter("type", type);
@@ -90,8 +77,4 @@ public class StudyJpaDao implements StudyDao {
 
         return query.getResultList();
     }
-
-
-
-
 }

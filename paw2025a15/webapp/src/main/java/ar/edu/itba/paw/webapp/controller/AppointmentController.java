@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -48,17 +50,17 @@ public class AppointmentController {
             throw new UnauthorizedException("User not found");
         }
 
-        switch (user.getRole()) {
-            case DOCTOR -> {
-                mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
-                mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), LocalDate.now()));
-                mav.addObject("shiftsDayForm", shiftsDayForm);
-            }
-            case PATIENT -> {
-                mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
-                mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
-            }
-            default -> { return new ModelAndView("redirect:/login"); }
+        if (user instanceof Patient) {
+            System.out.println("Patient appointments");
+            mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
+            mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
+        } else if (user instanceof Doctor) {
+            System.out.println("Doctor appointments");
+            mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
+            mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), LocalDate.now()));
+            mav.addObject("shiftsDayForm", shiftsDayForm);
+        } else {
+            return new ModelAndView("redirect:/login");
         }
         
         mav.addObject("landingForm", new LandingForm());
@@ -82,7 +84,7 @@ public class AppointmentController {
             throw new UnauthorizedException("User not found");
         }
         try {
-            as.cancelAppointment(form.getShiftId(), form.getDate(), user.getId());
+            as.cancelAppointment(form.getShiftId(), form.getDate(), form.getStartTime(), form.getEndTime(), user.getId());
         } catch (Exception e) {
             throw new FormErrorException("Error in appointment form: " + e.getMessage());
         }
@@ -103,7 +105,7 @@ public class AppointmentController {
                 throw new UnauthorizedException("User not found");
             }
             try {
-                as.addAppointment(form.getShiftId(), user.getId(), form.getDate());
+                as.addAppointment(form.getShiftId(), user.getId(), form.getDate(), form.getStartTime(), form.getEndTime());
             } catch (Exception e) {
                 throw new FormErrorException("Error in appointment form: " + e.getMessage());
             }
@@ -130,7 +132,7 @@ public class AppointmentController {
             throw new UnauthorizedException("User not found");
         }
         try {
-            as.removeAppointment(form.getShiftId(), form.getDate(), user.getId());
+            as.removeAppointment(form.getShiftId(), form.getDate(), user.getId(), form.getStartTime(), form.getEndTime());
         } catch (Exception e) {
             throw new FormErrorException("Error in form: " + e.getMessage());
         }

@@ -1,10 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.models.entities.Appointment;
-import ar.edu.itba.paw.models.entities.AppointmentId;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
-import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.AppointmentNewId;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import javax.persistence.PersistenceContext;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,21 +25,25 @@ public class AppointmentJpaDao implements AppointmentDao{
     private EntityManager em;
 
     @Override
-    public Appointment addAppointment(DoctorShift shift, User patient, LocalDate date) {
-        final Appointment app = new Appointment(shift, patient, date);
+    public AppointmentNew addAppointment(DoctorSingleShift shift, User patient, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        final AppointmentNew app = new AppointmentNew(shift, patient, date, startTime, endTime);
         em.persist(app);
         return app;
     }
 
     @Override
-    public Optional<Appointment> getAppointmentsByShiftIdAndDate(long shiftId, LocalDate date) {
-        return Optional.ofNullable(em.find(Appointment.class, new AppointmentId(shiftId, date)));
+    public Optional<AppointmentNew> getAppointmentByShiftDateAndTime(DoctorSingleShift shift, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        AppointmentNew app = em.find(AppointmentNew.class, new AppointmentNewId(shift.getId(), date, startTime, endTime));
+        if(app == null) {
+            return Optional.empty();
+        }
+        return Optional.of(app);
     }
 
     @Override
-    public List<AppointmentNew> getFutureAppointmentDataByPatientId(long patientId) {//TODO:check from migration jpa
+    public List<AppointmentNew> getFutureAppointmentDataByPatient(Patient patient) {
         String query = "FROM AppointmentNew a " +
-                    "WHERE a.patient.id = :patientId " +
+                    "WHERE a.patient = :patient " +
                     "AND (a.id.date > :today " +
                     "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
                     "ORDER BY a.id.date ASC, a.id.startTime ASC";
@@ -45,16 +51,16 @@ public class AppointmentJpaDao implements AppointmentDao{
         LocalDateTime now = LocalDateTime.now();
 
         return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("patientId", patientId)
+                        .setParameter("patient", patient)
                         .setParameter("today", now.toLocalDate())
                         .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
     }
 
     @Override
-    public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId) {//TODO:check from migration jpa
+    public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient) {
         String query = "FROM AppointmentNew a " +
-                    "WHERE a.patient.id = :patientId " +
+                    "WHERE a.patient = :patient " +
                     "AND (a.id.date < :today " +
                     "OR (a.id.date = :today AND a.id.startTime < :todaysTime)) " +
                     "ORDER BY a.id.date DESC, a.id.startTime DESC";
@@ -62,42 +68,43 @@ public class AppointmentJpaDao implements AppointmentDao{
         LocalDateTime now = LocalDateTime.now();
 
         return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("patientId", patientId)
+                        .setParameter("patient", patient)
                         .setParameter("today", now.toLocalDate())
                         .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
     }
 
     @Override
-    public List<AppointmentNew> getFutureAppointmentDataByDoctorId(long doctorId) {//TODO:check from migration jpa
+    public List<AppointmentNew> getFutureAppointmentDataByDoctor(Doctor doctor) {
         String query = "FROM AppointmentNew a " +
-                    "WHERE a.shift.doctor.id = :doctorId " +
+                    "WHERE a.shift.doctor = :doctor " +
+                    "AND (a.patient <> :doctor) " +
                     "AND (a.id.date > :today " +
                     "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
                     "ORDER BY a.id.date ASC, a.id.startTime ASC";
 
         LocalDateTime now = LocalDateTime.now();
         return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("doctorId", doctorId)
+                        .setParameter("doctor", doctor)
                         .setParameter("today", now.toLocalDate())
                         .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
     }
 
     @Override
-    public List<Appointment> getAppointmentsForDate(LocalDate date) {
-        String query = "SELECT from Appointment a where a.date = :date";
-        return em.createQuery(query, Appointment.class)
-                        .setParameter("date", date)
-                        .getResultList();
+    public boolean cancelAppointment(DoctorSingleShift shift, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        AppointmentNew app = em.find(AppointmentNew.class, new AppointmentNewId(shift.getId(), date, startTime, endTime));
+        if(app ==null) return false;
+        em.remove(app);
+        return true;
     }
 
     @Override
-    public boolean removeAppointment(long shiftId, LocalDate date) {
-        Appointment app = em.find(Appointment.class, new AppointmentId(shiftId, date));
-        if(app==null) return false;
-        em.remove(app);
-        return true;
+    public List<AppointmentNew> getAppointmentsForDate(LocalDate date) {
+        String query = "from AppointmentNew a where a.id.date = :date";
+        return em.createQuery(query, AppointmentNew.class)
+                        .setParameter("date", date)
+                        .getResultList();
     }
 
     @Override

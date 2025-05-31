@@ -1,12 +1,16 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
-import ar.edu.itba.paw.models.entities.PatientDetail;
-import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -17,37 +21,64 @@ public class PatientDetailJpaDao implements PatientDetailDao {
     private EntityManager em;
 
     @Override
-    public PatientDetail create(User patient, LocalDate birthdate, BloodTypeEnum bloodType, Double height,
-            Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies,
-            String diet, String hobbies, String job) {
-        final PatientDetail pd = new PatientDetail(patient, birthdate, bloodType, height, weight, smokes, drinks, meds, conditions, allergies, diet, hobbies, job);
-        em.persist(pd);
-        return pd;
+    public Patient createPatient(
+        String email,
+        String password,
+        String name,
+        String telephone,
+        File picture,
+        LocaleEnum locale,
+        LocalDate birthDate,
+        BigDecimal height,
+        BigDecimal weight
+    ) {
+        Patient patient = new Patient(email, password, name, telephone, picture, LocalDate.now(), locale, birthDate, height, weight);
+        em.persist(patient);
+        return patient;
     }
 
     @Override
-    public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height,
-            Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies,
-            String diet, String hobbies, String job) {
-        PatientDetail pd = em.find(PatientDetail.class, patientId);
-        pd.setBirthdate(birthdate);
-        pd.setBloodType(bloodType);
-        pd.setHeight(height);
-        pd.setWeight(weight);
-        pd.setSmokes(smokes);
-        pd.setDrinks(drinks);
-        pd.setMeds(meds);
-        pd.setConditions(conditions);
-        pd.setAllergies(allergies);
-        pd.setDiet(diet);
-        pd.setHobbies(hobbies);
-        pd.setJob(job);
-        em.merge(pd);
+    public void updatePatient(
+        Patient patient,
+        String phoneNumber,
+        File picture,
+        LocaleEnum mailLanguage,
+        LocalDate birthdate,
+        BloodTypeEnum bloodType,
+        BigDecimal height,
+        BigDecimal weight,
+        Boolean smokes,
+        Boolean drinks,
+        String meds,
+        String conditions,
+        String allergies,
+        String diet,
+        String hobbies,
+        String job
+    ) {
+        patient.setTelephone(phoneNumber);
+        if (picture != null) {
+            patient.setPicture(picture);
+        }
+        patient.setLocale(mailLanguage);
+        patient.setBirthdate(birthdate);
+        patient.setBloodType(bloodType);
+        patient.setHeight(height);
+        patient.setWeight(weight);
+        patient.setSmokes(smokes);
+        patient.setDrinks(drinks);
+        patient.setMeds(meds);
+        patient.setConditions(conditions);
+        patient.setAllergies(allergies);
+        patient.setDiet(diet);
+        patient.setHobbies(hobbies);
+        patient.setJob(job);
+        em.merge(patient);
     }
 
     @Override
-    public Optional<PatientDetail> getDetailByPatientId(long patientId) {
-        return Optional.ofNullable(em.find(PatientDetail.class, patientId));
+    public Optional<Patient> getPatientById(long patientId) {
+        Patient patient = em.find(Patient.class, patientId);
+        return patient != null ? Optional.of(patient) : Optional.empty();
     }
-
 }

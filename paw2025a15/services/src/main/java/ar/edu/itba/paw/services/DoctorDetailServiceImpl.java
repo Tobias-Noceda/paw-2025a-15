@@ -1,25 +1,29 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
@@ -40,82 +44,58 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
     @Autowired
     private FileService fs;
 
+    @Autowired
+    private InsuranceService is;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     @Override
-    public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, LocaleEnum locale) {
+    public Optional<Doctor> getDoctorById(long id) {
+        return doctorDetailDao.getDoctorById(id);
+    }
+
+    @Transactional
+    @Override
+    public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));
-        return us.createDoctor(email, password, name, telephone, picture, locale, doctorLicense, specialty);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Optional<DoctorDetail> getDetailByDoctorId(long doctorId) {
-        return doctorDetailDao.getDetailByDoctorId(doctorId);
+        List<Insurance> insuranceEntities;
+        if (insurances == null || insurances.isEmpty()) {
+            insuranceEntities = Collections.emptyList();
+        } else {
+            insuranceEntities = new ArrayList<>();
+            for (long insuranceId : insurances) {
+                Insurance insurance = is.getInsuranceById(insuranceId)
+                        .orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
+                insuranceEntities.add(insurance);
+            }
+        }
+        return doctorDetailDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture, locale, doctorLicense, specialty, insuranceEntities);
     }
 
     @Transactional
     @Override
-    public void createDoctorCoverages(long doctorId, List<Long> insurances) {
-        if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
-        List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
-        if(currentInsurances != null && !currentInsurances.isEmpty()) throw new AlreadyExistsException("Doctor with userId: " + doctorId + " already has insurances created!");
-        int[] added = doctorDetailDao.addDoctorCoverages(doctorId, insurances);
-        for (int i = 0; i < added.length; i++) {
-            if (added[i] > 0) {
-                LOGGER.info("Added insuranceId: {} for doctorId: {}", insurances.get(i), doctorId);
-            } else {
-                LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", insurances.get(i), doctorId, LocalDateTime.now());
-                throw new RuntimeException("Failed to add insuranceId: " + insurances.get(i) + "as doctor coverage for userId: " + doctorId);
-            }
+    public void updateDoctor(
+        Doctor doctor, 
+        String phoneNumber,
+        File picture,
+        LocaleEnum mailLanguage,
+        final List<Long> insurancesIds
+    ) {
+        if (doctor == null) {
+            throw new NotFoundException("Doctor not found!");
         }
-    }
-
-    @Transactional
-    @Override
-    public void updateDoctorCoverages(long doctorId, final List<Long> insurancesIds) {
-        if(getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with userId: " + doctorId + " does not exist!");
-        if(insurancesIds == null || insurancesIds.isEmpty()) {
-            doctorDetailDao.removeAllCoveragesForDoctorId(doctorId);
-            LOGGER.info("Removed all insurances for doctorId: {}", doctorId);
-            return;
+        
+        List<Insurance> insurances = new ArrayList<>();
+        for (long insurance : insurancesIds) {
+            Insurance insuranceEntity = is.getInsuranceById(insurance)
+                    .orElseThrow(() -> new NotFoundException("Insurance with id: " + insurance + " does not exist!"));
+            insurances.add(insuranceEntity);
         }
-        List<Insurance> currentInsurances = doctorDetailDao.getDoctorInsurancesById(doctorId);
-        if(currentInsurances == null || currentInsurances.isEmpty()){
-            int[] added = doctorDetailDao.addDoctorCoverages(doctorId, insurancesIds);
-            for (int i = 0; i < added.length; i++) {
-                if (added[i] > 0) {
-                    LOGGER.info("Added insuranceId: {} for doctorId: {}", insurancesIds.get(i), doctorId);
-                } else {
-                    LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", insurancesIds.get(i), doctorId, LocalDateTime.now());
-                    throw new RuntimeException("Failed to add insuranceId: " + insurancesIds.get(i) + "as doctor coverage for userId: " + doctorId);
-                }
-            }
-            return;
-        }
-        List<Long> toRemove = new ArrayList<>();
-        List<Long> newInsurances = new ArrayList<>(insurancesIds);
-        for (Insurance currentInsurance : currentInsurances) {
-            if(insurancesIds.contains(currentInsurance.getId())) newInsurances.remove(currentInsurance.getId());
-            else toRemove.add(currentInsurance.getId());
-        }
-        doctorDetailDao.removeDoctorCoverages(doctorId, toRemove);
-        int[] added = doctorDetailDao.addDoctorCoverages(doctorId, newInsurances);
-        for (int i = 0; i < added.length; i++) {
-            if (added[i] > 0) {
-                LOGGER.info("Added insuranceId: {} for doctorId: {}", newInsurances.get(i), doctorId);
-            } else {
-                LOGGER.error("Failed to add insuranceId: {} for doctorId: {} at {}", newInsurances.get(i), doctorId, LocalDateTime.now());
-                throw new RuntimeException("Failed to add insuranceId: " + newInsurances.get(i) + "as doctor coverage for userId: " + doctorId);
-            }
-        }
-        LOGGER.info("Updated insurances for doctorId: {}", doctorId);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Insurance> getDoctorInsurancesById(long doctorId) {
-        return doctorDetailDao.getDoctorInsurancesById(doctorId);
+        doctorDetailDao.updateDoctor(doctor, phoneNumber, picture, mailLanguage, insurances);
+        LOGGER.info("Updated doctor with id: {}", doctor.getId());
     }
 
     @Transactional(readOnly = true)
@@ -128,5 +108,21 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
     @Override
     public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
         return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
+    }
+
+    @Transactional
+    @Override
+    public List<Patient> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
+        Doctor doctor = doctorDetailDao.getDoctorById(doctorId)
+                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDetailDao.searchAuthPatientsPageByDoctorAndName(doctor, name, page, pageSize);
+    }
+
+    @Transactional
+    @Override
+    public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
+        Doctor doctor = doctorDetailDao.getDoctorById(doctorId)
+                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDetailDao.searchAuthPatientsCountByDoctorAndName(doctor, name);
     }
 }

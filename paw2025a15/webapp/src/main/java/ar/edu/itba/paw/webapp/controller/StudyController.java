@@ -2,10 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -46,9 +43,6 @@ public class StudyController {
 
     @Autowired
     private UserService us;
-
-    @Autowired
-    private AuthDoctorService ads;
 
     @Autowired
     private AuthStudiesService ass;
@@ -78,7 +72,7 @@ public class StudyController {
         mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
-        mav.addObject("patientAuthDoctors", ads.getAuthDoctorsByPatientId(user.getId()));
+
         return mav;
     }
 
@@ -138,25 +132,21 @@ public class StudyController {
         }
 
         ModelAndView mav = new ModelAndView("studyInfo");
+        Patient patient = (Patient) user;
 
         // Obtener el estudio
         Study study = ss.getStudyById(studyId).orElseThrow();
 
         // Obtener todos los doctores asociados al paciente (autorizados o no)
-        List<Doctor> doctors = ads.getAuthDoctorsByPatientId(user.getId());
+        List<Doctor> doctors = patient.getAuthorizedDoctors();
 
-        // Crear un mapa para saber si cada doctor está autorizado a ver este estudio
-        Map<Long, Boolean> authMap = new HashMap<>();
-        for (Doctor doctor : doctors) {
-            boolean hasAuth = ass.hasAuthStudy(studyId, doctor.getId());
-            authMap.put(doctor.getId(), hasAuth);
-        }
+        List<Doctor> studyAuthDoctors = study.getAuthDoctors();
+        System.out.println("Study Auth Doctors: " + studyAuthDoctors);
 
         mav.addObject("landingForm", new LandingForm());
         mav.addObject("study", study);
-        mav.addObject("patientAuthDoctors", doctors); // todos los posibles
-        mav.addObject("authMap", authMap);            // mapa de autorización
-        mav.addObject("user", user);
+        mav.addObject("authDoctors", doctors);
+        mav.addObject("studyAuthDoctors", studyAuthDoctors);
         return mav;
     }
 }

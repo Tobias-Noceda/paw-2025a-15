@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,12 +13,11 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorCoverage;
-import ar.edu.itba.paw.models.entities.DoctorCoverageId;
-import ar.edu.itba.paw.models.entities.DoctorDetail;
+import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
-import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -27,71 +28,30 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     private EntityManager em;
 
     @Override
-    public DoctorDetail create(User doctor, String licence, SpecialtyEnum specialty) {
-        final DoctorDetail dd = new DoctorDetail(doctor, licence, specialty);
-        em.persist(dd);
-        return dd;
+    public Doctor createDoctor(String email, String password, String name, String telephone, File picture, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances) {
+        Doctor doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
+        em.persist(doctor);
+        return doctor;
     }
 
     @Override
-    public Optional<DoctorDetail> getDetailByDoctorId(long doctorId) {
-        return Optional.ofNullable(em.find(DoctorDetail.class, doctorId));
-    }
-
-    @Override
-    public void addDoctorCoverage(long doctorId, long insuranceId) {
-        Doctor doctor = em.find(Doctor.class, doctorId);
-        Insurance insurance = em.find(Insurance.class, insuranceId);
-        final DoctorCoverage dc = new DoctorCoverage(doctor, insurance);
-        em.persist(dc);
-    }
-
-    @Override
-    public int[] addDoctorCoverages(long doctorId, List<Long> insurancesIds) {
-        Doctor doctor = em.find(Doctor.class, doctorId);
-        int[] results = new int[insurancesIds.size()];
-        for (int i = 0; i < insurancesIds.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
-            try{
-                DoctorCoverage dc = new DoctorCoverage(doctor, em.getReference(Insurance.class, insurancesIds.get(i)));
-                em.persist(dc);
-                results[i] = 1;
-                if (i % 50 == 0) {
-                    em.flush();
-                    em.clear();
-                }
-            }
-            catch(Exception e){
-                results[i] = 0;
-            }
+    public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Insurance> insurances) {
+        doctor.setTelephone(phoneNumber);
+        if (picture != null) {
+            doctor.setPicture(picture);
         }
-        return results;
-    }
-
-    @Override
-    public void removeAllCoveragesForDoctorId(long doctorId) {
-        String q = "delete from DoctorCoverage as dc where dc.doctor.id = :doctorId";
-        em.createQuery(q).setParameter("doctorId", doctorId).executeUpdate();
-    }
-
-    @Override
-    public void removeDoctorCoverages(long doctorId, List<Long> toRemove) {
-        User doctor = em.find(User.class, doctorId);
-        if(doctor==null) return;
-        for (int i = 0; i < toRemove.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
-            DoctorCoverage dc = em.find(DoctorCoverage.class, new DoctorCoverageId(doctorId, toRemove.get(i)));
-            if(dc!=null) em.remove(dc);
-            if (i % 50 == 0) {
-                em.flush();
-                em.clear();
-            }
+        doctor.setLocale(mailLanguage);
+        if (insurances == null) {
+            insurances = Collections.emptyList();
         }
+        doctor.setInsurances(insurances);
+        em.merge(doctor);
     }
 
     @Override
-    public List<Insurance> getDoctorInsurancesById(long doctorId) {
-        TypedQuery<Insurance> query = em.createQuery(" SELECT dc.insurance from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
-        query.setParameter("doctorId", doctorId);
-        return query.getResultList();
+    public Optional<Doctor> getDoctorById(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        return doctor != null ? Optional.of(doctor) : Optional.empty();
     }
 
     private void buildQueryByParams(StringBuilder queryBuilder, String name, SpecialtyEnum specialty, Insurance insurance,
@@ -119,6 +79,74 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
                 }
             }
         }
+    }
+
+    @Override
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance,
+            WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        // Select all the posible doctors for "Doctor" entity
+        if (name == null && specialty == null && insurance == null && weekday == null) {
+            return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        }
+        // Build the query based on the parameters provided
+        StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
+        buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, orderBy);
+
+        TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
+        setQueryParameters(query, name, specialty, insurance, weekday);
+
+        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
+        if(orderBy != null && (orderBy == DoctorOrderEnum.M_POPULAR || orderBy == DoctorOrderEnum.L_POPULAR)) {
+            sortByPopularity(doctors, orderBy);
+        }
+
+        return doctors;
+    }
+
+    @Override
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
+            WeekdayEnum weekday) {
+                // get the total number of doctors
+                return em
+            .createQuery("SELECT d FROM Doctor d", Doctor.class)
+            .getResultList().size();
+    }
+
+    @Override
+    public List<Patient> searchAuthPatientsPageByDoctorAndName(Doctor doctor, String name, int page, int pageSize) {
+        if(page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        TypedQuery<Patient> query = em.createQuery(
+                "select distinct ad.patient from AuthDoctor as ad where ad.doctor = :doctor ", Patient.class);
+        query.setParameter("doctor", doctor);
+        if(name != null && !name.trim().isEmpty()) {
+            query = em.createQuery("select distinct ad.patient from AuthDoctor as ad where ad.doctor = :doctor AND LOWER(ad.patient.name) LIKE :userName ", Patient.class);
+            query.setParameter("doctor", doctor);
+            query.setParameter("userName","%" + sanitize(name) + "%");
+        }
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public int searchAuthPatientsCountByDoctorAndName(Doctor doctor, String name) {
+        String baseQuery = " select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor = :doctor ";
+        if(name != null && !name.trim().isEmpty()) {
+            baseQuery += " AND LOWER(ad.patient.name) LIKE :userName";
+        }
+        TypedQuery<Long> query = em.createQuery(baseQuery, Long.class);
+        query.setParameter("doctor", doctor);
+        if(name != null && !name.trim().isEmpty()) {
+            query.setParameter("userName","%" + sanitize(name) + "%");
+        }
+        return query.getSingleResult().intValue();
     }
 
     private String sanitize(String name) {
@@ -174,42 +202,5 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
             // Sort by appointments count in ascending order
             return Integer.compare(count1, count2);
         });
-    }
-
-    @Override
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance,
-            WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        // Select all the posible doctors for "Doctor" entity
-        if (name == null && specialty == null && insurance == null && weekday == null) {
-            return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
-                    .setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-        }
-        // Build the query based on the parameters provided
-        StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
-        buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, orderBy);
-
-        TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
-        setQueryParameters(query, name, specialty, insurance, weekday);
-
-        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-
-        if(orderBy != null && (orderBy == DoctorOrderEnum.M_POPULAR || orderBy == DoctorOrderEnum.L_POPULAR)) {
-            sortByPopularity(doctors, orderBy);
-        }
-
-        return doctors;
-    }
-
-    @Override
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
-            WeekdayEnum weekday) {
-                // get the total number of doctors
-                return em
-            .createQuery("SELECT d FROM Doctor d", Doctor.class)
-            .getResultList().size();
     }
 }

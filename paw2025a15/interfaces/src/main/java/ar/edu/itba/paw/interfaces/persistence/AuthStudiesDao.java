@@ -2,15 +2,19 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import java.util.List;
 
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.entities.Study;
+
 public interface AuthStudiesDao {
 
-    public boolean authStudyForDoctorId(long studyId, long doctorId);
+    public boolean authStudyForDoctor(Study study, Doctor doctor);
 
-    public boolean hasAuthStudy(long studyId, long doctorId);
+    public boolean hasAuthStudy(Study study, Doctor doctor);
 
-    public void authStudyForDoctorIdList(List<Long> doctorsId, long StudyId);
+    public void authStudyForDoctorIdList(List<Long> doctorsId, Study study);
 
-    public void unauthStudyForDoctorId(long studyId, long doctorId);
+    public void unauthStudyForDoctor(Study study, Doctor doctor);
 
-    public void unauthAllStudiesForDoctorIdAndPatientId(long userId, long doctorId);
+    public void unauthAllStudiesForDoctorAndPatient(Patient patient, Doctor doctor);
 }

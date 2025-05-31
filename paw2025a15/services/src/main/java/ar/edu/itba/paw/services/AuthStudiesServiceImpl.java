@@ -11,12 +11,13 @@ import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.entities.Study;
-import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 import java.util.List;
+
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.entities.Study;
 
 @Service
 public class AuthStudiesServiceImpl implements AuthStudiesService{
@@ -35,17 +36,14 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Autowired
     private DoctorDetailService dds;
 
-    @Autowired
-    private UserService us;
-
     @Transactional
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
         Study study = ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));//TODO:check change for hibernate
-        User doctor = us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
+
         if(hasAuthStudy(studyId, doctorId)) return true;
-        boolean result = authStudiesDao.authStudyForDoctorId(studyId, doctorId);
+        boolean result = authStudiesDao.authStudyForDoctor(study, doctor);
         if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);
         else LOGGER.error("Failed to give authorization of study with id:{} to doctor: {}", studyId, doctorId);
         return result;
@@ -53,31 +51,33 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
 
     @Transactional
     @Override
-    public void authStudyForDoctorIdList(List<Long> doctorsId, long StudyId) {
-        authStudiesDao.authStudyForDoctorIdList(doctorsId, StudyId);
+    public void authStudyForDoctorIdList(List<Long> doctorsId, long studyId) {
+        Study study = ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        authStudiesDao.authStudyForDoctorIdList(doctorsId, study);
     }
 
     @Transactional(readOnly = true)
     @Override
     public boolean hasAuthStudy(long studyId, long doctorId) {
-        return authStudiesDao.hasAuthStudy(studyId, doctorId);
+        Study study = ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+
+        return authStudiesDao.hasAuthStudy(study, doctor);
     }
 
     @Transactional
     @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(ss.getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(!hasAuthStudy(studyId, doctorId)) return;
-        authStudiesDao.unauthStudyForDoctorId(studyId, doctorId);
+        Study study = ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        authStudiesDao.unauthStudyForDoctor(study, doctor);
         LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
     }
 
     @Transactional
     @Override
     public void toggleStudyForDoctorId(long studyId, long doctorId) {
-        if(ss.getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
         if(hasAuthStudy(studyId, doctorId)) {
             unauthStudyForDoctorId(studyId, doctorId);
         }else{
@@ -87,11 +87,11 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
 
     @Transactional
     @Override
-    public void unauthAllStudiesForDoctorIdAndPatientId(long userId, long doctorId){
-        if(pds.getDetailByPatientId(userId).isEmpty()) throw new NotFoundException("Patient with id: " + userId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
-        authStudiesDao.unauthAllStudiesForDoctorIdAndPatientId(userId, doctorId);
-        LOGGER.info("Removed all authorizations of all studies of userId:{} for doctor: {}", userId, doctorId);
+    public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId) {
+        Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        authStudiesDao.unauthAllStudiesForDoctorAndPatient(patient, doctor);
+        LOGGER.info("Removed all authorizations of all studies of patient with id: {} for doctor: {}", patientId, doctorId);
     }
 
 }

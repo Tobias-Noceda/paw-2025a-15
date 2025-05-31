@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Locale;
 
@@ -72,14 +73,16 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                User newUser = pds.createPatient(
+                pds.createPatient(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
                         form.getPhoneNumber(),
-                        LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
+                        LocaleEnum.fromLocale(LocaleContextHolder.getLocale()),
+                        form.getBirthDate(),
+                        BigDecimal.valueOf(form.getHeight()),
+                        BigDecimal.valueOf(form.getWeight())
                 );
-                pds.updatePatientDetails(newUser.getId(), form.getBirthDate(),null, form.getHeight(), form.getWeight(), null, null , null, null, null, null, null, null);
                 loginUser(form.getEmail(), form.getPassword());
                 return new ModelAndView("redirect:/");
             } catch (Exception e) {
@@ -121,11 +124,9 @@ public class RegisterController {
                         form.getPhoneNumber(),
                         form.getDoctorLicense(),
                         form.getSpecialty(),
+                        form.getObrasSociales(),
                         LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
                 );
-                if(form.getObrasSociales()!=null) {
-                    dds.createDoctorCoverages(doc.getId(), form.getObrasSociales());
-                }
                 dss.createShifts(
                         doc.getId(),
                         form.getSchedules().getWeekday(),

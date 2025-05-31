@@ -21,9 +21,11 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import ar.edu.itba.paw.interfaces.services.EmailService;
-import ar.edu.itba.paw.models.entities.Appointment;
-import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
 
@@ -78,7 +80,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendDoctorTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendDoctorTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
@@ -107,7 +109,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendPatientTakenShiftEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendPatientTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
@@ -136,7 +138,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendRecievedStudyEmail(User patient, User doctor, File file, Study study, String description) {
+    public void sendRecievedStudyEmail(Patient patient, Doctor doctor, File file, Study study, String description) {
         Map<String, Object> templateModel;
         templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
@@ -166,7 +168,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendDoctorCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendDoctorCancelledAppointmentEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
@@ -195,7 +197,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendDoctorCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendDoctorCancellationConfirmationEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
@@ -222,7 +224,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendPatientCancelledAppointmentEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendPatientCancelledAppointmentEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
 
         templateModel.put("homeLink", baseURL);
@@ -252,7 +254,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendPatientCancellationConfirmationEmail(User patient, User doctor, Appointment appointment, DoctorShift shift) {
+    public void sendPatientCancellationConfirmationEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
@@ -300,24 +302,28 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendPatientAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale) {
+    public void sendPatientAppointmentReminderEmail(AppointmentNew appointment) {
+        User patient = appointment.getPatient();
+        Doctor doctor = appointment.getShift().getDoctor();
+        DoctorSingleShift shift = appointment.getShift();
+        
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, patient.getLocale().toLocale()));
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", doctor.getEmail());
         templateModel.put("phone", doctor.getTelephone());
         templateModel.put("shiftsLink", baseURL + "appointments/");
 
-        String subject = messageSource.getMessage("reminder.subject", null, locale);
+        String subject = messageSource.getMessage("reminder.subject", null, patient.getLocale().toLocale());
 
         try {
-            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentReminderTemplate", locale);
+            sendSimpleMessageTemplate(patient.getEmail(), subject, templateModel, "patientAppointmentReminderTemplate", patient.getLocale().toLocale());
         } catch (MessagingException e) {
             LOGGER.error("Error sending patient reminder email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
@@ -325,24 +331,28 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendDoctorAppointmentReminderEmail(User patient, User doctor, Appointment appointment, DoctorShift shift, Locale locale) {
+    public void sendDoctorAppointmentReminderEmail(AppointmentNew appointment) {
+        User patient = appointment.getPatient();
+        Doctor doctor = appointment.getShift().getDoctor();
+        DoctorSingleShift shift = appointment.getShift();
+
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
         templateModel.put("imageSource", baseURL + "supersecret/files/logo");
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("patientName", patient.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
-        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        templateModel.put("monthName", appointment.getDate().getMonth().getDisplayName(TextStyle.FULL, doctor.getLocale().toLocale()));
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("address", shift.getAddress());
         templateModel.put("email", patient.getEmail());
         templateModel.put("phone", patient.getTelephone());
         templateModel.put("uploadLink", baseURL + "appointments/");
 
-        String subject = messageSource.getMessage("reminder.subject", null, locale);
+        String subject = messageSource.getMessage("reminder.subject", null, doctor.getLocale().toLocale());
 
         try {
-            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentReminderTemplate", locale);
+            sendSimpleMessageTemplate(doctor.getEmail(), subject, templateModel, "doctorAppointmentReminderTemplate", doctor.getLocale().toLocale());
         } catch (MessagingException e) {
             LOGGER.error("Error sending doctor reminder email to {}: {}", doctor.getEmail(), e.getMessage(), e);
         }

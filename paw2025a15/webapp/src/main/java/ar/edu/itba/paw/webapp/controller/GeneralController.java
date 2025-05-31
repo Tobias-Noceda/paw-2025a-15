@@ -17,9 +17,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
@@ -30,9 +30,6 @@ import ar.edu.itba.paw.webapp.form.LandingForm;
 public class GeneralController {
 
     private final static int PAGE_SIZE = 10;
-
-    @Autowired
-    private UserService us;
 
     @Autowired
     private DoctorDetailService dds;
@@ -69,8 +66,8 @@ public class GeneralController {
             totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insurance, landingForm.getWeekday());
             mav.addObject("docList", doctors);
         } else {
-            List<User> patients = us.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);
-            totalLength = us.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getQuery());
+            List<Patient> patients = dds.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);
+            totalLength = dds.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getQuery());
             mav.addObject("patients", patients);
         }
 

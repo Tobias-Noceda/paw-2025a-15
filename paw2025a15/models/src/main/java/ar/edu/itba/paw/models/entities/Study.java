@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
@@ -28,8 +29,8 @@ public class Study {
     private File file;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "user_id", referencedColumnName = "patient_id", nullable = false)
+    private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uploader_id", referencedColumnName = "user_id", nullable = false)
@@ -41,15 +42,23 @@ public class Study {
     @Column( name = "study_date", nullable = false)
     private LocalDate studyDate;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "auth_studies",
+        joinColumns = @JoinColumn(name = "study_id", referencedColumnName = "study_id"),
+        inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id")
+    )
+    List<Doctor> authDoctors;
+
     public Study(){
         //just for hibernate
     }
 
-    public Study(StudyTypeEnum type, String comment, File file, User user, User uploader, LocalDateTime uploadDate, LocalDate studyDate){
+    public Study(StudyTypeEnum type, String comment, File file, Patient patient, User uploader, LocalDateTime uploadDate, LocalDate studyDate){
         this.type = type;
         this.comment = comment;
         this.file = file;
-        this.user = user;
+        this.patient = patient;
         this.uploader = uploader;
         this.uploadDate = uploadDate;
         this.studyDate = studyDate;
@@ -87,12 +96,12 @@ public class Study {
         this.file = file;
     }
 
-    public User getUser(){
-        return user;
+    public Patient getPatient(){
+        return patient;
     }
 
-    public void setUser(User user){
-        this.user = user;
+    public void setPatient(Patient patient){
+        this.patient = patient;
     }
 
     public User getUploader(){
@@ -119,6 +128,14 @@ public class Study {
         this.studyDate = studyDate;
     }
 
+    public List<Doctor> getAuthDoctors() {
+        return authDoctors;
+    }
+
+    public void setAuthDoctors(List<Doctor> authDoctors) {
+        this.authDoctors = authDoctors;
+    }
+
     @Override
     public boolean equals(Object other){
         if(this == other) return true;
@@ -129,7 +146,7 @@ public class Study {
 
         return (this.id==o.id) && (this.type.equals(o.type))
         && (this.comment.equals(o.comment)) && (this.file.equals(o.file))
-        && (this.user.equals(o.user)) && (this.uploader.equals(o.uploader))
+        && (this.patient.equals(o.patient)) && (this.uploader.equals(o.uploader))
         && (this.uploadDate.equals(o.uploadDate)) && (this.studyDate.equals(o.studyDate));
     }
 
@@ -139,7 +156,7 @@ public class Study {
         result = 31 * result + type.hashCode();
         result = 31 * result + comment.hashCode();
         result = 31 * result + file.hashCode();
-        result = 31 * result + user.hashCode();
+        result = 31 * result + patient.hashCode();
         result = 31 * result + uploader.hashCode();
         result = 31 * result + uploadDate.hashCode();
         result = 31 * result + studyDate.hashCode();
@@ -153,7 +170,7 @@ public class Study {
             ", type=" + type +
             ", comment=" + comment +
             ", file=" + file +
-            ", user=" + user +
+            ", user=" + patient +
             ", uploader=" + uploader +
             ", uploadDate=" + uploadDate +
             ", studyDate=" + studyDate +

@@ -66,6 +66,8 @@
                     <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
                       <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
                       <form:hidden path="date" value="${appointment.id.date}" />
+                      <form:hidden path="startTime" value="${appointment.id.startTime}" />
+                      <form:hidden path="endTime" value="${appointment.id.endTime}" />
                       <button class="cancel-button" type="button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationMessage}', null, '${confirmText}', '${cancelText}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                           <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
@@ -177,6 +179,8 @@
                     <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
                       <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
                       <form:hidden path="date" value="${appointment.id.date}" />
+                      <form:hidden path="startTime" value="${appointment.id.startTime}" />
+                      <form:hidden path="endTime" value="${appointment.id.endTime}" />
                       <button class="cancel-button" type="button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationMessage}', null, '${confirmText}', '${cancelText}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                           <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
@@ -223,20 +227,22 @@
               <tbody>
               <c:forEach var="appointment" items="${doctorFreeAppointments}">
                 <tr class="appointment-row">
-                  <td class="text-cell"><spring:message code="weekday.${appointment.id.date.dayOfWeek}"/></td>
-                  <td class="text-cell"><c:out value="${appointment.id.date.dayOfMonth}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
+                  <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" /></td>
                   <td class="cancel-cell">
                     <c:set var="removeConfirmationMessage">
-                      <spring:message code="appointments.removeConfirm" arguments="${appointment.id.getStartToEndTime()}"/>
+                      <spring:message code="appointments.removeConfirm" arguments="${appointment.getStartToEndTime()}"/>
                     </c:set>
                     <c:set var="secondaryText"><spring:message code="appointments.remove.second"/></c:set>
                     <c:set var="removeText"><spring:message code="appointments.remove"/></c:set>
                     <c:set var="cancelRemoveText"><spring:message code="appointments.dismiss"/></c:set>
                     <c:url var="removeUrl" value="/removeAppointment" />
                     <form:form modelAttribute="takeTurnForm" action="${removeUrl}" method="post" id="removeAppointmentForm">
-                      <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
-                      <form:hidden path="date" value="${appointment.id.date}" />
+                      <form:hidden path="shiftId" value="${appointment.shiftId}" />
+                      <form:hidden path="date" value="${appointment.date}" />
+                      <form:hidden path="startTime" value="${appointment.startTime}" />
+                      <form:hidden path="endTime" value="${appointment.endTime}" />
                       <button class="cancel-button" type="button" onclick="openConfirmDialog(this.form, '${removeConfirmationMessage}', '${secondaryText}', '${removeText}', '${cancelRemoveText}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                           <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>

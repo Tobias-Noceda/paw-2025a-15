@@ -8,8 +8,6 @@ import ar.edu.itba.paw.models.entities.Insurance;
 
 public interface InsuranceDao {
     public Insurance create(String name, File picture);
-
-    public void edit(long id, String name, File picture);
     
     public Optional<Insurance> getInsuranceById(long id);
 

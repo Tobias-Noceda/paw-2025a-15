@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models.entities;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -158,5 +159,26 @@ public class DoctorSingleShift {
             "," + "endTime=" + endTime +
             "," + "duration=" + duration +
             '}';
+    }
+
+    public boolean isValidStartAndEndTime(LocalTime startTime, LocalTime endTime) {
+        if(startTime == null || endTime == null || startTime.isAfter(endTime)) {
+            return false;
+        }
+        LocalTime appointmentStart = this.startTime;
+        while (appointmentStart.isBefore(this.endTime.minusMinutes(this.duration))) {
+            if (appointmentStart.equals(startTime) || appointmentStart.equals(endTime.minusMinutes(this.duration))) {
+                return true;
+            }
+            appointmentStart = appointmentStart.plusMinutes(this.duration);
+        }
+        return false;
+    }
+
+    public boolean isValidDate(LocalDate date) {
+        if (date == null) {
+            return false;
+        }
+        return WeekdayEnum.fromString(date.getDayOfWeek().name()).equals(this.weekday);
     }
 }

@@ -1,16 +1,35 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.entities.PatientDetail;
-import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 
 public interface PatientDetailDao {
-    public PatientDetail create(User patient, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet, String hobbies, String job);
+    public Patient createPatient(String email, String password, String name, String telephone, File picture, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
 
-    public void updatePatientDetails(long patientId, LocalDate birthdate, BloodTypeEnum bloodType, Double height, Double weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet, String hobbies, String job);
+    public void updatePatient(
+        Patient patient,
+        String phoneNumber,
+        File picture,
+        LocaleEnum mailLanguage,
+        LocalDate birthdate,
+        BloodTypeEnum bloodType,
+        BigDecimal height,
+        BigDecimal weight,
+        Boolean smokes,
+        Boolean drinks,
+        String meds,
+        String conditions,
+        String allergies,
+        String diet,
+        String hobbies,
+        String job
+    );
 
-    public Optional<PatientDetail> getDetailByPatientId(long patientId);
+    public Optional<Patient> getPatientById(long patientId);
 }
