@@ -70,6 +70,16 @@ public class UserJpaDao implements UserDao {
     @Override
     public Optional<User> getUserById(long id){
         return Optional.ofNullable(em.find(User.class, id));
+    }    
+
+    @Override
+    public Optional<Patient> getPatientById(long id){
+        return Optional.ofNullable(em.find(Patient.class, id));
+    }
+
+    @Override
+    public Optional<Doctor> getDoctorById(long id){
+        return Optional.ofNullable(em.find(Doctor.class, id));
     }
 
     @Override

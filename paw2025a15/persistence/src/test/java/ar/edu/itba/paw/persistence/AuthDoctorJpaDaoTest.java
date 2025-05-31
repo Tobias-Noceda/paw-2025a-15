@@ -20,8 +20,6 @@ import ar.edu.itba.paw.models.entities.AuthDoctorId;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -43,16 +41,13 @@ public class AuthDoctorJpaDaoTest {
     public void testGetAuthDoctorsByPatientId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final long DOCTOR_ID = TestData.Users.doctorId;
-        final String DOC_NAME = TestData.Users.doctor.getName();
         final long PICTURE_ID = TestData.Images.validImageId;
-        final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
         final Insurance INSURANCE1 = TestData.Insurances.validInsurance;
         INSURANCE1.setId(TestData.Insurances.validInsuranceId);
         INSURANCE1.getPicture().setId(PICTURE_ID);
         final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
         INSURANCE2.setId(TestData.Insurances.validInsurance2Id);
         INSURANCE2.getPicture().setId(PICTURE_ID);
-        final WeekdayEnum WEEKDAY = TestData.DoctorShifts.doctorShift.getWeekday();
 
         List<Doctor> foundDocs = authDoctorDao.getAuthDoctorsByPatientId(PATIENT_ID);
         AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOCTOR_ID, PATIENT_ID, AccessLevelEnum.VIEW_BASIC));

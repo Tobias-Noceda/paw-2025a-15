@@ -55,7 +55,7 @@ public class DoctorController {
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
-        Doctor doctor = (Doctor) us.getUserById(id).orElseThrow(() -> new NotFoundException("Doctor does not exist"));
+        Doctor doctor = us.getDoctorById(id).orElseThrow(() -> new NotFoundException("Doctor does not exist"));
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 

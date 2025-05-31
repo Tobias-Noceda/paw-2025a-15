@@ -40,8 +40,7 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
         ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
-        us.getUserById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        us.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         if(hasAuthStudy(studyId, doctorId)) return true;
         boolean result = authStudiesDao.authStudyForDoctorId(studyId, doctorId);
         if(result) LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctorId);

@@ -68,7 +68,7 @@ public class StudyController {
         Locale locale,
         @ModelAttribute("user_data") User user
     ){
-        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
+        Patient patient = us.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new NotFoundException("Patient not found");

@@ -24,6 +24,10 @@ public interface UserService {
 
     public Optional<User> getUserById(long id);
 
+    public Optional<Patient> getPatientById(long id);
+
+    public Optional<Doctor> getDoctorById(long id);
+
     public Optional<File> getUserPicture(long id);
 
     public Optional<User> getUserByEmail(String email);

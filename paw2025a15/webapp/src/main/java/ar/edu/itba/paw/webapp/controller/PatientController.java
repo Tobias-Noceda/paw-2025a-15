@@ -17,6 +17,7 @@ import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -51,7 +52,7 @@ public class PatientController {
             @ModelAttribute("filterForm") final FileFilterForm filterForm,
             Locale locale
     ) {
-        User patient = us.getUserById(patientId)
+        Patient patient = us.getPatientById(patientId)
             .orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {

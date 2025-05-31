@@ -73,6 +73,18 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
+    public Optional<Patient> getPatientById(long id) {
+        return userDao.getPatientById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Doctor> getDoctorById(long id) {
+        return userDao.getDoctorById(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public Optional<File> getUserPicture(long id) {
         User user = getUserById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist!"));
 

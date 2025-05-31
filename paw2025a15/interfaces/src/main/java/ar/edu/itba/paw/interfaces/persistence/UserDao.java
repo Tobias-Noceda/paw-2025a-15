@@ -23,9 +23,13 @@ public interface UserDao {
 
     public Optional<User> getUserById(long id);
 
+    public Optional<Patient> getPatientById(long id);
+
+    public Optional<Doctor> getDoctorById(long id);
+
     public Optional<User> getUserByEmail(String email);
 
-    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize);
+    public List<User> searchAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize);//TODO:maybe que devuelva Patient?
 
     public int searchAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 

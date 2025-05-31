@@ -22,8 +22,9 @@ import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AppointmentData;
 import ar.edu.itba.paw.models.entities.Appointment;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorShift;
-import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -51,9 +52,9 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Transactional
     @Override
     public Appointment addAppointment(long shiftId, long patientId, LocalDate date) {
-        User patient = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        Patient patient = us.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with id: " + shiftId + " not found"));
-        User doctor = us.getUserById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));//TODO:check changed for hibernate
+        Doctor doctor = us.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
         if(date==null || date.isBefore(LocalDate.now()) || (date.isEqual(LocalDate.now()) && shift.getStartTime().isBefore(LocalTime.now()))) throw new IllegalArgumentException("Shift must be in a valid datetime");
         
         if(date.getDayOfWeek().ordinal() != shift.getWeekday().ordinal()) throw new IllegalArgumentException("Shift must be on the same day of the week as the appointment date");
@@ -105,9 +106,9 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, long cancelId) {
         Appointment appointment = getAppointmentsByShiftIdAndDate(shiftId, date).orElseThrow(() -> new NotFoundException("Appointment with shiftId: " + shiftId + " and date: " + date + " does not exist!"));
-        User patient = us.getUserById(appointment.getPatient().getId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatient().getId() + " does not exist!"));//TODO:check changed for hibernate
+        Patient patient = us.getPatientById(appointment.getPatient().getId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatient().getId() + " does not exist!"));//TODO:check changed for hibernate
         DoctorShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
-        User doctor = us.getUserById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));//TODO:check changed for hibernate
+        Doctor doctor = us.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));//TODO:check changed for hibernate
 
         if(cancelId==patient.getId()){
             if(appointmentDao.removeAppointment(shiftId, date)){
@@ -148,10 +149,10 @@ public class AppointmentServiceImpl implements AppointmentService{
         LocalDate date = LocalDate.now().plusDays(1);
         List<Appointment> appointments = appointmentDao.getAppointmentsForDate(date);
         for (Appointment appointment : appointments) {
-            us.getUserById(appointment.getPatient().getId()).ifPresent(patient -> {//TODO:check changed for hibernate
+            us.getPatientById(appointment.getPatient().getId()).ifPresent(patient -> {//TODO:check changed for hibernate
                 DoctorShift shift = dss.getShiftById(appointment.getShift().getId()).orElse(null);//TODO:check changed for hibernate
                 if (shift != null) {
-                    us.getUserById(shift.getDoctor().getId()).ifPresent(doctor -> {//TODO:check changed for hibernate
+                    us.getDoctorById(shift.getDoctor().getId()).ifPresent(doctor -> {//TODO:check changed for hibernate
                         Locale patientLocale = patient.getLocale().toLocale();
                         Locale doctorLocale = doctor.getLocale().toLocale();
                         es.sendPatientAppointmentReminderEmail(patient, doctor, appointment, shift, patientLocale);
