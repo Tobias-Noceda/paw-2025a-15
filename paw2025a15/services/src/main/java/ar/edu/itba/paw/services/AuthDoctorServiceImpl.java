@@ -50,6 +50,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         }
         else{
             authDoctorDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
+            authDoctorDao.authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
             LOGGER.info("Giving basic authorization for doctor with id: {} of patient with id: {}", doctorId, patientId);
         }
     }

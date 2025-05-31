@@ -17,8 +17,9 @@ public class AppointmentNew {
     private DoctorSingleShift shift;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @MapsId("id")
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
-    private Patient patient;
+    private User patient;
 
     public AppointmentNew(){
         //just for hibernate
@@ -30,11 +31,11 @@ public class AppointmentNew {
         this.id = new AppointmentNewId(shift.getId(), date, startTime, endTime);
     }
 
-    public AppointmentNewId getAppointmentId(){
+    public AppointmentNewId getId(){
         return id;
     }
 
-    public void setAppointmentId(AppointmentNewId id){
+    public void setId(AppointmentNewId id){
         this.id = id;
     }
 
@@ -47,11 +48,11 @@ public class AppointmentNew {
         this.id.setShiftId(shift.getId());
     }
 
-    public Patient getPatient(){
+    public User getPatient(){
         return patient;
     }
 
-    public void setPatient(Patient patient){
+    public void setPatient(User patient){
         this.patient = patient;
     }
 

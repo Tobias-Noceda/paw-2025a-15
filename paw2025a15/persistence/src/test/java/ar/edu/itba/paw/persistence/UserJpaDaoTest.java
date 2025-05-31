@@ -200,9 +200,10 @@ public class UserJpaDaoTest {
         final Patient USER_OLD = TestData.Users.patient;
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
-        USER_OLD.getPicture().setId(TestData.Images.validImageId);
         final String USER_TELEPHONE = USER_OLD.getTelephone();
-        final File PICTURE = USER_OLD.getPicture();
+        final File PICTURE = TestData.Images.validImage;
+        PICTURE.setId(TestData.Images.validImageId);
+        USER_OLD.setPicture(PICTURE);
         final String NEW_USERNAME = USER_OLD.getName() + "1";
         final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, USER_TELEPHONE, PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
@@ -211,12 +212,9 @@ public class UserJpaDaoTest {
         Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
+        Assert.assertEquals(USER_NEW, userPersisted);
         Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
-        Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
-        Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
-        Assert.assertNotEquals(USER_OLD.getName(), userPersisted.getName());   
-        Assert.assertEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
-        Assert.assertEquals(USER_OLD.getPicture(), userPersisted.getPicture());    
+        Assert.assertNotEquals(USER_OLD.getName(), userPersisted.getName());    
     }
 
     @Test
@@ -225,22 +223,20 @@ public class UserJpaDaoTest {
         final long USER_ID = TestData.Users.patientId;
         USER_OLD.setId(USER_ID);
         USER_OLD.getPicture().setId(TestData.Images.validImageId);
-        final String USERNAME = USER_OLD.getName();
-        final File PICTURE = USER_OLD.getPicture();
         final String NEW_TELEPHONE = "1111111111";
+        final String USERNAME = USER_OLD.getName();
+        final File PICTURE = TestData.Images.validImage;
+        PICTURE.setId(TestData.Images.validImageId);
         final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, NEW_TELEPHONE, PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
         USER_NEW.setId(USER_ID);
 
         userDao.editUser(USER_ID, USERNAME, NEW_TELEPHONE, PICTURE);
         Patient userPersisted = em.find(Patient.class, USER_ID);
-
+        
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
+        Assert.assertEquals(USER_NEW, userPersisted);
         Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
-        Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
-        Assert.assertEquals(USER_OLD.getName(), userPersisted.getName());   
         Assert.assertNotEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
-        Assert.assertEquals(USER_OLD.getPicture(), userPersisted.getPicture());    
     }
 
     @Test
@@ -260,11 +256,8 @@ public class UserJpaDaoTest {
         Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
-        Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
+        Assert.assertEquals(USER_NEW, userPersisted);
         Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
-        Assert.assertEquals(USER_OLD.getName(), userPersisted.getName());   
-        Assert.assertEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
         Assert.assertNotEquals(USER_OLD.getPicture(), userPersisted.getPicture());  
     }
 

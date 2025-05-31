@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.models.AppointmentData;
 import ar.edu.itba.paw.models.entities.Appointment;
 import ar.edu.itba.paw.models.entities.AppointmentId;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.DoctorShift;
 import ar.edu.itba.paw.models.entities.Patient;
 
@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,57 +38,52 @@ public class AppointmentJpaDao implements AppointmentDao{
     }
 
     @Override
-    public List<AppointmentData> getFutureAppointmentDataByPatientId(long patientId) {//TODO:check from migration jpa
-        String query = "SELECT NEW ar.edu.itba.paw.models.AppointmentData(ds.id, u.id, u.name, d.id, d.name, " +
-                  "a.id.date, ds.startTime, ds.endTime, ds.address) " +
-                  "FROM Appointment a " +
-                  "JOIN a.patient u " +
-                  "JOIN a.shift ds " +
-                  "JOIN ds.doctor d " +
-                  "WHERE a.patient.id = :patientId " +
-                  "AND FUNCTION('TO_TIMESTAMP', CONCAT(a.id.date, ' ', ds.startTime), 'YYYY-MM-DD HH24:MI:SS') > :now " +
-                  "ORDER BY a.id.date ASC, ds.startTime ASC";
+    public List<AppointmentNew> getFutureAppointmentDataByPatientId(long patientId) {//TODO:check from migration jpa
+        String query = "FROM AppointmentNew a " +
+                    "WHERE a.patient.id = :patientId " +
+                    "AND (a.id.date > :today " +
+                    "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
+                    "ORDER BY a.id.date ASC, a.id.startTime ASC";
 
-        return em.createQuery(query, AppointmentData.class)
+        LocalDateTime now = LocalDateTime.now();
+
+        return em.createQuery(query, AppointmentNew.class)
                         .setParameter("patientId", patientId)
-                        .setParameter("now", java.sql.Date.valueOf(LocalDate.now()))
+                        .setParameter("today", now.toLocalDate())
+                        .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
     }
 
     @Override
-    public List<AppointmentData> getOldAppointmentDataByPatientId(long patientId) {//TODO:check from migration jpa
-        String query = "SELECT NEW ar.edu.itba.paw.models.AppointmentData(ds.id, u.id, u.name, d.id, d.name, " +
-                  "a.id.date, ds.startTime, ds.endTime, ds.address) " +
-                  "FROM Appointment a " +
-                  "JOIN a.patient u " +
-                  "JOIN a.shift ds " +
-                  "JOIN ds.doctor d " +
-                  "WHERE a.patient.id = :patientId " +
-                  "AND FUNCTION('TO_TIMESTAMP', CONCAT(a.id.date, ' ', ds.startTime), 'YYYY-MM-DD HH24:MI:SS') < :now " +
-                  "ORDER BY a.id.date DESC, ds.startTime DESC";
+    public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId) {//TODO:check from migration jpa
+        String query = "FROM AppointmentNew a " +
+                    "WHERE a.patient.id = :patientId " +
+                    "AND (a.id.date < :today " +
+                    "OR (a.id.date = :today AND a.id.startTime < :todaysTime)) " +
+                    "ORDER BY a.id.date DESC, a.id.startTime DESC";
 
-        return em.createQuery(query, AppointmentData.class)
+        LocalDateTime now = LocalDateTime.now();
+
+        return em.createQuery(query, AppointmentNew.class)
                         .setParameter("patientId", patientId)
-                        .setParameter("now", java.sql.Date.valueOf(LocalDate.now()))
+                        .setParameter("today", now.toLocalDate())
+                        .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
     }
 
     @Override
-    public List<AppointmentData> getFutureAppointmentDataByDoctorId(long doctorId) {//TODO:check from migration jpa
-        String query = "SELECT NEW ar.edu.itba.paw.models.AppointmentData(ds.id, u.id, u.name, d.id, d.name, " +
-                  "a.id.date, ds.startTime, ds.endTime, ds.address) " +
-                  "FROM Appointment a " +
-                  "JOIN a.patient u " +
-                  "JOIN a.shift ds " +
-                  "JOIN ds.doctor d " +
-                  "WHERE ds.doctor.id = :doctorId " +
-                  "AND ds.doctor.id <> a.patient.id " +
-                  "AND FUNCTION('TO_TIMESTAMP', CONCAT(a.id.date, ' ', ds.startTime), 'YYYY-MM-DD HH24:MI:SS') > :now " +
-                  "ORDER BY a.id.date ASC, ds.startTime ASC";
+    public List<AppointmentNew> getFutureAppointmentDataByDoctorId(long doctorId) {//TODO:check from migration jpa
+        String query = "FROM AppointmentNew a " +
+                    "WHERE a.shift.doctor.id = :doctorId " +
+                    "AND (a.id.date > :today " +
+                    "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
+                    "ORDER BY a.id.date ASC, a.id.startTime ASC";
 
-        return em.createQuery(query, AppointmentData.class)
+        LocalDateTime now = LocalDateTime.now();
+        return em.createQuery(query, AppointmentNew.class)
                         .setParameter("doctorId", doctorId)
-                        .setParameter("now", java.sql.Date.valueOf(LocalDate.now()))
+                        .setParameter("today", now.toLocalDate())
+                        .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
     }
 

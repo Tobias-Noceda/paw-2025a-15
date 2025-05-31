@@ -10,11 +10,11 @@ import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -54,14 +54,18 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
-    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {
-        Patient patient = em.find(Patient.class, id);
-        if (patient == null) return Collections.emptyList();
+    public List<Study> getFilteredStudiesByPatientId(long id, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
+        String q = "from Study as s where s.user.id = :id "
+                + (type != null ? "and s.type = :type " : "")
+                + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
-        return patient.getStudies().stream()
-            .filter(study -> type == null || study.getType() == type)
-            .sorted(Comparator.comparing(Study::getStudyDate, mostRecent ? Comparator.reverseOrder() : Comparator.naturalOrder()))
-            .collect(Collectors.toList());
+        TypedQuery<Study> query = em.createQuery(q, Study.class);
+        query.setParameter("id", id);
+        if (type != null) {
+            query.setParameter("type", type);
+        }
+
+        return query.getResultList();
     }
 
     @Override
@@ -78,19 +82,28 @@ public class StudyJpaDao implements StudyDao {
 
     @Override
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
-        Patient patient = em.find(Patient.class, patientId);
-        Doctor doctor = em.find(Doctor.class, doctorId);
-        if (patient == null || doctor == null) return Collections.emptyList();
+        String q = "select s " +
+                "from Study s " +
+                "join AuthStudy a on a.study = s " +
+                "where s.user.id = :patientId " +
+                "and a.doctor.id = :doctorId ";
+        if (type != null) {
+            q += "and s.type = :type ";
+        }
+        q += (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
-        Set<Study> patientStudies = new HashSet<>(patient.getStudies());
-        Set<Study> doctorStudies = new HashSet<>(doctor.getAuthStudies());
+        TypedQuery<Study> query = em.createQuery(q, Study.class);
+        query.setParameter("patientId", patientId);
+        query.setParameter("doctorId", doctorId);
 
-        return patientStudies.stream()
-            .filter(doctorStudies::contains) 
-            .filter(study -> type == null || study.getType() == type) 
-            .sorted(Comparator.comparing(Study::getStudyDate, mostRecent ? Comparator.reverseOrder() : Comparator.naturalOrder())) 
-            .collect(Collectors.toList());
+        if (type != null) {
+            query.setParameter("type", type);
+        }
+
+        return query.getResultList();
     }
+
+
 
 
 }

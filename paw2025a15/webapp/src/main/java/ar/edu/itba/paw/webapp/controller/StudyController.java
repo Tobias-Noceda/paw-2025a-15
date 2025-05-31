@@ -92,13 +92,12 @@ public class StudyController {
             Locale locale
     ) throws IOException {
         if (errors.hasErrors()) {
-            System.out.println("Errors: " + errors);
             return createStudyForm(patientId, landingForm, createStudyForm, errors, locale, user);
         }
 
         File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
         Study study = ss.create(createStudyForm.getType(), createStudyForm.getComment(), file, patientId, user.getId(), createStudyForm.getDate());
-        ass.authStudyListForDoctorId(createStudyForm.getAuthDoctorIds(), study.getId());
+        ass.authStudyForDoctorIdList(createStudyForm.getAuthDoctorIds(), study.getId());
         if(patientId != user.getId()) {
             return new ModelAndView("redirect:/patient/" + patientId);
         } else {

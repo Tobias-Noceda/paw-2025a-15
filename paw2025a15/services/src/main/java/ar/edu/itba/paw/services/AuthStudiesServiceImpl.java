@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthStudiesDao;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
@@ -42,14 +40,10 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         return result;
     }
 
+    @Transactional
     @Override
-    public boolean authStudyListForDoctorId(List<Long> doctorsId, long StudyId) {
-        //TODO: hacer esto con una ida a la BD
-        if(doctorsId.isEmpty()) return false;
-        for (Long doctorId : doctorsId) {
-            authStudyForDoctorId(StudyId, doctorId);
-        }
-        return true;
+    public void authStudyForDoctorIdList(List<Long> doctorsId, long StudyId) {
+        authStudiesDao.authStudyForDoctorIdList(doctorsId, StudyId);
     }
 
     @Transactional(readOnly = true)

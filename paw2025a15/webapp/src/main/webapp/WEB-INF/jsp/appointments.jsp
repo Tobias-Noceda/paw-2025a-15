@@ -46,26 +46,26 @@
             <table class="appointments-table">
               <tbody>
               <c:forEach var="appointment" items="${patientFutureAppointments}">
-                <c:url value="/doctors/${appointment.doctorId}" var="doctorUrl" />
+                <c:url value="/doctors/${appointment.shift.doctor.id}" var="doctorUrl" />
                 <tr class="appointment-row" onclick="window.location='${doctorUrl}'" style="cursor: pointer;">
                   <c:set var="day">
-                    <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
+                    <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
                   </c:set>
                   <c:set var="month">
-                    <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
+                    <fmt:formatNumber value="${appointment.id.date.monthValue}" pattern="00" />
                   </c:set>
-                  <c:set var="year" value="${appointment.date.year}" />
+                  <c:set var="year" value="${appointment.id.date.year}" />
                   <c:set var="formattedDate">
                     <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"/>
                   </c:set>
-                  <td class="text-cell"><c:out value="${appointment.doctorName}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" /></td>
                   <td class="text-cell"><c:out value="${formattedDate}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.address}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.address}" /></td>
                   <td class="cancel-cell">
                     <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
-                      <form:hidden path="shiftId" value="${appointment.shiftId}" />
-                      <form:hidden path="date" value="${appointment.date}" />
+                      <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
+                      <form:hidden path="date" value="${appointment.id.date}" />
                       <button class="cancel-button" type="button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationMessage}', null, '${confirmText}', '${cancelText}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                           <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
@@ -106,22 +106,22 @@
             <table class="appointments-table">
               <tbody>
               <c:forEach var="appointment" items="${patientOldAppointments}">
-                <c:url value="/doctors/${appointment.doctorId}" var="doctorUrl" />
+                <c:url value="/doctors/${appointment.shift.doctor.id}" var="doctorUrl" />
                 <tr class="appointment-row" onclick="window.location='${doctorUrl}'" style="cursor: pointer;">
                   <c:set var="day">
-                    <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
+                    <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
                   </c:set>
                   <c:set var="month">
-                    <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
+                    <fmt:formatNumber value="${appointment.id.date.monthValue}" pattern="00" />
                   </c:set>
-                  <c:set var="year" value="${appointment.date.year}" />
+                  <c:set var="year" value="${appointment.id.date.year}" />
                   <c:set var="formattedDate">
                     <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"/>
                   </c:set>
-                  <td class="text-cell"><c:out value="${appointment.doctorName}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" /></td>
                   <td class="text-cell"><c:out value="${formattedDate}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.address}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.address}" /></td>
                 </tr>
               </c:forEach>
               </tbody>
@@ -158,25 +158,25 @@
             <table class="appointments-table">
               <tbody>
               <c:forEach var="appointment" items="${doctorTakenAppointments}">
-                <c:url value="/patient/${appointment.patientId}" var="patientUrl" />
+                <c:url value="/patient/${appointment.patient.id}" var="patientUrl" />
                 <tr class="appointment-row" onclick="window.location='${patientUrl}'" style="cursor: pointer;">
                   <c:set var="day">
-                    <fmt:formatNumber value="${appointment.date.dayOfMonth}" pattern="00" />
+                    <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
                   </c:set>
                   <c:set var="month">
-                    <fmt:formatNumber value="${appointment.date.monthValue}" pattern="00" />
+                    <fmt:formatNumber value="${appointment.id.date.monthValue}" pattern="00" />
                   </c:set>
-                  <c:set var="year" value="${appointment.date.year}" />
+                  <c:set var="year" value="${appointment.id.date.year}" />
                   <c:set var="formattedDate">
                     <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"/>
                   </c:set>
-                  <td class="text-cell"><c:out value="${appointment.patientName}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.patient.name}" /></td>
                   <td class="text-cell"><c:out value="${formattedDate}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
                   <td class="cancel-cell">
                     <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
-                      <form:hidden path="shiftId" value="${appointment.shiftId}" />
-                      <form:hidden path="date" value="${appointment.date}" />
+                      <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
+                      <form:hidden path="date" value="${appointment.id.date}" />
                       <button class="cancel-button" type="button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationMessage}', null, '${confirmText}', '${cancelText}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                           <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z" />
@@ -223,20 +223,20 @@
               <tbody>
               <c:forEach var="appointment" items="${doctorFreeAppointments}">
                 <tr class="appointment-row">
-                  <td class="text-cell"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
-                  <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><spring:message code="weekday.${appointment.id.date.dayOfWeek}"/></td>
+                  <td class="text-cell"><c:out value="${appointment.id.date.dayOfMonth}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
                   <td class="cancel-cell">
                     <c:set var="removeConfirmationMessage">
-                      <spring:message code="appointments.removeConfirm" arguments="${appointment.getStartToEndTime()}"/>
+                      <spring:message code="appointments.removeConfirm" arguments="${appointment.id.getStartToEndTime()}"/>
                     </c:set>
                     <c:set var="secondaryText"><spring:message code="appointments.remove.second"/></c:set>
                     <c:set var="removeText"><spring:message code="appointments.remove"/></c:set>
                     <c:set var="cancelRemoveText"><spring:message code="appointments.dismiss"/></c:set>
                     <c:url var="removeUrl" value="/removeAppointment" />
                     <form:form modelAttribute="takeTurnForm" action="${removeUrl}" method="post" id="removeAppointmentForm">
-                      <form:hidden path="shiftId" value="${appointment.shiftId}" />
-                      <form:hidden path="date" value="${appointment.date}" />
+                      <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
+                      <form:hidden path="date" value="${appointment.id.date}" />
                       <button class="cancel-button" type="button" onclick="openConfirmDialog(this.form, '${removeConfirmationMessage}', '${secondaryText}', '${removeText}', '${cancelRemoveText}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
                           <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>

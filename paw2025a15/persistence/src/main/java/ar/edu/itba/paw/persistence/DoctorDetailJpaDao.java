@@ -103,18 +103,119 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public List<Insurance> getDoctorInsurancesById(long doctorId) {
-        TypedQuery<Insurance> query = em.createQuery("select dc.insurance from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
+        TypedQuery<Insurance> query = em.createQuery(" SELECT dc.insurance from DoctorCoverage as dc where dc.doctor.id = :doctorId ", Insurance.class);
         query.setParameter("doctorId", doctorId);
         return query.getResultList();
     }
 
+    private void buildQueryByParams(StringBuilder queryBuilder, String name, SpecialtyEnum specialty, Insurance insurance,
+            WeekdayEnum weekday, DoctorOrderEnum orderBy) {
+        // Build the query based on the parameters provided
+        if (name != null && !name.isEmpty()) {
+            queryBuilder.append(" AND LOWER(d.name) LIKE :name");
+        }
+        if (specialty != null) {
+            queryBuilder.append(" AND d.specialty = :specialty");
+        }
+        if (insurance != null) {
+            queryBuilder.append(" AND :insurance MEMBER OF d.insurances");
+        }
+        if (weekday != null) {
+            queryBuilder.append(" AND EXISTS (SELECT 1 FROM DoctorSingleShift dss WHERE dss.doctor = d AND dss.weekday = :weekday)");
+        }
+        if (orderBy != null) {
+            switch (orderBy) {
+                case M_RECENT -> queryBuilder.append(" ORDER BY d.createDate ASC");
+                case L_RECENT -> queryBuilder.append(" ORDER BY d.createDate DESC");
+                default -> {
+                    // Imposible to filter by popularity in a query.
+                    // If this is the case, the order will be done in Java
+                }
+            }
+        }
+    }
+
+    private String sanitize(String name) {
+        if (name == null) return null;
+        return name
+                .replace("\\", "\\\\\\")
+                .replace("%", "\\\\%")
+                .replace("_", "\\\\_")
+                .replaceAll("\\s+", " ")
+                .toLowerCase();
+    }
+
+    private void setQueryParameters(TypedQuery<Doctor> query, String name, SpecialtyEnum specialty, Insurance insurance,
+            WeekdayEnum weekday) {
+        if (name != null && !name.isEmpty()) {
+            query.setParameter("name", "%" + sanitize(name) + "%");
+        }
+        if (specialty != null) {
+            query.setParameter("specialty", specialty);
+        }
+        if (insurance != null) {
+            query.setParameter("insurance", insurance);
+        }
+        if (weekday != null) {
+            query.setParameter("weekday", weekday);
+        }
+    }
+
+    private void sortByPopularity(List<Doctor> doctors, DoctorOrderEnum orderBy) {
+        doctors.sort((d1, d2) -> {
+            int count1 = em.createQuery(
+                """
+                    SELECT COUNT(a)
+                    FROM AppointmentNew a
+                    WHERE a.shift.doctor = :doctor1
+                    AND a.shift.doctor <> a.patient
+                """,
+                Long.class
+            ).setParameter("doctor1", d1).getSingleResult().intValue();
+            int count2 = em.createQuery(
+                """
+                    SELECT COUNT(a)
+                    FROM AppointmentNew a
+                    WHERE a.shift.doctor = :doctor2
+                    AND a.shift.doctor <> a.patient
+                """,
+                Long.class
+            ).setParameter("doctor2", d2).getSingleResult().intValue();
+            if(orderBy == DoctorOrderEnum.M_POPULAR) {
+                // Sort by appointments count in descending order
+                return Integer.compare(count2, count1);
+            }
+            // Sort by appointments count in ascending order
+            return Integer.compare(count1, count2);
+        });
+    }
+
     @Override
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance,
             WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
         // Select all the posible doctors for "Doctor" entity
-        return em
-            .createQuery("SELECT d FROM Doctor d", Doctor.class)
-            .getResultList();
+        if (name == null && specialty == null && insurance == null && weekday == null) {
+            return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+        }
+        // Build the query based on the parameters provided
+        StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
+        buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, orderBy);
+
+        TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
+        setQueryParameters(query, name, specialty, insurance, weekday);
+
+        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
+        if(orderBy != null && (orderBy == DoctorOrderEnum.M_POPULAR || orderBy == DoctorOrderEnum.L_POPULAR)) {
+            sortByPopularity(doctors, orderBy);
+        }
+
+        return doctors;
     }
 
     @Override

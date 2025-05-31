@@ -17,7 +17,6 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.entities.DoctorShift;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
@@ -43,8 +42,7 @@ public class DoctorShiftServiceImplTest {
     private static final String DOC_LICENCE = "med-licence";
     private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
     private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY);
-    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC, DOC_LICENCE, DOC_SPECIALTY);
-
+    
     private static final String ADDRESS = "fake123";
     private static final LocalTime START_TIME = LocalTime.parse("10:00:00");
     private static final LocalTime END_TIME = LocalTime.parse("10:30:00");
