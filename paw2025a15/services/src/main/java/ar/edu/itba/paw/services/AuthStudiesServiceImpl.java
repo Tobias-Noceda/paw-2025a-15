@@ -28,12 +28,6 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     private StudyService ss;
 
     @Autowired
-    private PatientDetailService pds;
-
-    @Autowired
-    private DoctorDetailService dds;
-
-    @Autowired
     private UserService us;
 
     @Transactional
@@ -67,8 +61,8 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Transactional
     @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(ss.getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        us.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         if(!hasAuthStudy(studyId, doctorId)) return;
         authStudiesDao.unauthStudyForDoctorId(studyId, doctorId);
         LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
@@ -77,8 +71,8 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Transactional
     @Override
     public void toggleStudyForDoctorId(long studyId, long doctorId) {
-        if(ss.getStudyById(studyId).isEmpty()) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        us.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         if(hasAuthStudy(studyId, doctorId)) {
             unauthStudyForDoctorId(studyId, doctorId);
         }else{
@@ -89,8 +83,8 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Transactional
     @Override
     public void unauthAllStudiesForDoctorIdAndPatientId(long userId, long doctorId){
-        if(pds.getDetailByPatientId(userId).isEmpty()) throw new NotFoundException("Patient with id: " + userId + " does not exist!");
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        us.getPatientById(userId).orElseThrow(()-> new NotFoundException("Patient with id: " + userId + " does not exist!"));
+        us.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         authStudiesDao.unauthAllStudiesForDoctorIdAndPatientId(userId, doctorId);
         LOGGER.info("Removed all authorizations of all studies of userId:{} for doctor: {}", userId, doctorId);
     }

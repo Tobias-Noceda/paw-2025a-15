@@ -121,7 +121,7 @@ public class StudyServiceImpl implements StudyService{
     @Transactional(readOnly = true)
     @Override
     public Optional<File> getStudyFile(long id) {
-        Study study = studyDao.findStudyById(id).orElseThrow(() -> new AlreadyExistsException("Study with id: " + id + " does not exist!"));
+        Study study = studyDao.findStudyById(id).orElseThrow(() -> new NotFoundException("Study with id: " + id + " does not exist!"));
 
         return fs.findById(study.getFile().getId());//TODO:changed when migrating jpa, check later
     }

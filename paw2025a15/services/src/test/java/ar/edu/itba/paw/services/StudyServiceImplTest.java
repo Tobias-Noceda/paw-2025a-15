@@ -16,10 +16,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorDetail;
@@ -53,8 +51,7 @@ public class StudyServiceImplTest {
     private static final BigDecimal PATIENT_HEIGHT = BigDecimal.valueOf(1.75);
     private static final BigDecimal PATIENT_WEIGHT = BigDecimal.valueOf(89.00);
     private static final Patient PATIENT = new Patient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, FILE, PATIENT_CREATE_DATE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
-    private static final PatientDetail PATIENT_DETAIL_EMPTY = new PatientDetail(PATIENT, null, null, null, null, null, null, null, null, null, null, null, null);
-
+    
     private static final long DOC_ID = 2L;
     private static final String DOC_EMAIL = "sabrina@example.com";
     private static final String DOC_NAME = "sabrina";
@@ -65,8 +62,7 @@ public class StudyServiceImplTest {
     private static final String DOC_LICENCE = "med-licence";
     private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
     private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY);
-    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC, DOC_LICENCE, DOC_SPECIALTY);
-
+    
     private static final long STUDY_ID = 1L;
     private static final StudyTypeEnum STUDYTYPE = StudyTypeEnum.OTHER;
     private static final String COMMENT = "comment";
@@ -80,12 +76,6 @@ public class StudyServiceImplTest {
 
     @Mock
     private StudyDao studyDaoMock;
-
-    @Mock
-    private PatientDetailService pds;
-
-    @Mock
-    private DoctorDetailService dds;
 
     @Mock
     private AuthDoctorService ads;
@@ -104,12 +94,10 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDate(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
-        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(STUDY_DATE))).thenReturn(STUDY_WITH_DATE);
         Mockito.doNothing().when(es).sendRecievedStudyEmail(Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(FILE), Mockito.eq(STUDY_WITH_DATE), Mockito.eq(COMMENT));
         Mockito.when(ass.authStudyForDoctorId(Mockito.eq(FILE.getId()), Mockito.eq(DOC_ID))).thenReturn(true);
@@ -122,12 +110,10 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDate(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
-        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(DOC))).thenReturn(STUDY_WITHOUT_DATE);
         Mockito.doNothing().when(es).sendRecievedStudyEmail(Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(FILE), Mockito.eq(STUDY_WITHOUT_DATE), Mockito.eq(COMMENT));
         Mockito.when(ass.authStudyForDoctorId(Mockito.eq(FILE.getId()), Mockito.eq(DOC_ID))).thenReturn(true);
@@ -140,9 +126,8 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDateUploaderNotADoctorButThemselves(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
+        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(PATIENT), Mockito.eq(STUDY_DATE))).thenReturn(STUDY_WITH_DATE);
 
         Study study = ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, PATIENT_ID, STUDY_DATE);
@@ -153,9 +138,8 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDateUploaderNotADoctorButThemselves(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
+        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(PATIENT))).thenReturn(STUDY_WITHOUT_DATE);
 
         Study study = ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, PATIENT_ID);
@@ -166,12 +150,10 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDateFailure(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
-        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(STUDY_DATE))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
@@ -181,12 +163,10 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDateFailure(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
-        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(DOC))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
@@ -196,7 +176,8 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDateNonexistentUser(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
+        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, DOC_ID, STUDY_DATE)
@@ -205,24 +186,22 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDateNonexistentUploader(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(UnauthorizedException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, DOC_ID, STUDY_DATE)
         );
     }
 
     @Test
     public void testCreateWithStudyDateUnathDoc(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(false);
-
+        
         Assert.assertThrows(UnauthorizedException.class, () -> 
             ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, DOC_ID, STUDY_DATE)
         );
@@ -230,11 +209,6 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDateNonexistentFile(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-        Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
         Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
@@ -244,6 +218,8 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDateNonexistentUser(){
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
+        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, DOC_ID)
@@ -252,24 +228,22 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDateNonexistentUploader(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(UnauthorizedException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, DOC_ID)
         );
     }
 
     @Test
     public void testCreateWithoutStudyDateUnauthDoc(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(false);
-
+        
         Assert.assertThrows(UnauthorizedException.class, () -> 
             ss.create(STUDYTYPE, COMMENT, FILE, PATIENT_ID, DOC_ID)
         );
@@ -277,11 +251,6 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithoutStudyDateNonexistentFile(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-        Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
         Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
@@ -291,12 +260,10 @@ public class StudyServiceImplTest {
 
     @Test
     public void testCreateWithStudyDateNullDate(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL_EMPTY));
+        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(ads.hasAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID))).thenReturn(true);
-        Mockito.when(fs.findById(Mockito.eq(FILE.getId()))).thenReturn(Optional.of(FILE));
         Mockito.when(studyDaoMock.create(Mockito.eq(STUDYTYPE), Mockito.eq(COMMENT), Mockito.eq(FILE), Mockito.eq(PATIENT), Mockito.eq(DOC))).thenReturn(STUDY_WITHOUT_DATE);
         Mockito.when(ass.authStudyForDoctorId(Mockito.eq(FILE.getId()), Mockito.eq(DOC_ID))).thenReturn(true);
 
@@ -321,7 +288,7 @@ public class StudyServiceImplTest {
     public void testGetStudyFileNonexistentStudy(){
         Mockito.when(studyDaoMock.findStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(AlreadyExistsException.class, () -> 
+        Assert.assertThrows(NotFoundException.class, () -> 
             ss.getStudyFile(STUDY_ID)
         );
     }

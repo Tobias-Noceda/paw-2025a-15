@@ -14,15 +14,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthStudiesDao;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.entities.PatientDetail;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -47,8 +43,7 @@ public class AuthStudiesServiceImplTest {
     private static final String DOC_LICENCE= "med-licence";
     private static final SpecialtyEnum DOC_SPECIALTY= SpecialtyEnum.CARDIOLOGY;
     private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY);
-    private static final DoctorDetail DOC_DETAIL = new DoctorDetail(DOC, DOC_LICENCE, DOC_SPECIALTY);
-
+    
     private static final long PATIENT_ID = 1L;
     private static final String PATIENT_EMAIL = "grace@example.com";
     private static final String PATIENT_NAME = "grace";
@@ -60,8 +55,7 @@ public class AuthStudiesServiceImplTest {
     private static final BigDecimal PATIENT_HEIGHT = BigDecimal.valueOf(1.75);
     private static final BigDecimal PATIENT_WEIGHT = BigDecimal.valueOf(89.00);
     private static final Patient PATIENT = new Patient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, FILE, PATIENT_CREATE_DATE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
-    private static final PatientDetail PATIENT_DETAIL = new PatientDetail(PATIENT, null, null, null, null, null, null, null, null, null, null, null, null);
-
+    
     private static final long STUDY_ID = 1L;
     private static final StudyTypeEnum STUDYTYPE = StudyTypeEnum.OTHER;
     private static final String COMMENT = "comment";
@@ -79,19 +73,12 @@ public class AuthStudiesServiceImplTest {
     private StudyService ss;
 
     @Mock
-    private PatientDetailService pds;
-
-    @Mock
-    private DoctorDetailService dds;
-
-    @Mock
     private UserService us;
 
     @Test
     public void testAuthStudyForDoctorId() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
         Mockito.when(authStudyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
@@ -104,7 +91,6 @@ public class AuthStudiesServiceImplTest {
     public void testAuthStudyForDoctorIdFailure() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
         Mockito.when(authStudyDaoMock.authStudyForDoctorId(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
 
@@ -117,7 +103,6 @@ public class AuthStudiesServiceImplTest {
     public void testAuthStudyForDoctorIdAlreadyAuth() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
         Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
         boolean result = ass.authStudyForDoctorId(STUDY_ID, DOC_ID);
@@ -137,8 +122,7 @@ public class AuthStudiesServiceImplTest {
     @Test
     public void testAuthStudyForDoctorIdNonexistentDoc() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ass.authStudyForDoctorId(STUDY_ID, DOC_ID)
@@ -157,7 +141,7 @@ public class AuthStudiesServiceImplTest {
     @Test
     public void testUnauthStudyForDoctorIdNonexistentDoc() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ass.unauthStudyForDoctorId(STUDY_ID, DOC_ID)
@@ -176,7 +160,7 @@ public class AuthStudiesServiceImplTest {
     @Test
     public void testToggleStudyForDoctorIdNonexistentDoctor(){
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ass.toggleStudyForDoctorId(STUDY_ID, DOC_ID)
@@ -185,7 +169,7 @@ public class AuthStudiesServiceImplTest {
 
     @Test
     public void testUnauthAllStudiesForDoctorIdAndPatientIdNonexistentPatient(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ass.unauthAllStudiesForDoctorIdAndPatientId(PATIENT_ID, DOC_ID)
@@ -194,8 +178,8 @@ public class AuthStudiesServiceImplTest {
 
     @Test
     public void testUnauthAllStudiesForDoctorIdAndPatientIdNonexistentDoc(){
-        Mockito.when(pds.getDetailByPatientId(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT_DETAIL));
-        Mockito.when(dds.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ass.unauthAllStudiesForDoctorIdAndPatientId(PATIENT_ID, DOC_ID)

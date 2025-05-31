@@ -32,9 +32,6 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     private DoctorShiftDao doctorShiftDao;
 
     @Autowired
-    private DoctorDetailService dds;
-
-    @Autowired
     private UserService us;
 
     @Transactional
@@ -69,7 +66,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Transactional(readOnly = true)
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
-        if(dds.getDetailByDoctorId(doctorId).isEmpty()) throw new NotFoundException("Doctor with id: " + doctorId + " does not exist!");
+        us.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
 
         return doctorShiftDao.getAvailableTurnsByDoctorIdByDate(doctorId, date);
     }
