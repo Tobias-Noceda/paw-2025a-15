@@ -1,2 +1,0 @@
-INSERT INTO doctor_shifts(shift_id, doctor_id, shift_weekday, shift_address, shift_start_time, shift_end_time) VALUES(1, 2, 3, 'Lavarden', '10:00:00', '10:15:00');
-INSERT INTO doctor_shifts(shift_id, doctor_id, shift_weekday, shift_address, shift_start_time, shift_end_time) VALUES(2, 2, 3, 'Lavarden', '10:15:00', '10:30:00');

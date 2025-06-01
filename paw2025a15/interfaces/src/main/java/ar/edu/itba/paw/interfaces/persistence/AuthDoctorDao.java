@@ -2,24 +2,22 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import java.util.List;
 
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
 public interface AuthDoctorDao {
-    public boolean hasAuthDoctor(Patient patient, Doctor doctor);
+    public boolean hasAuthDoctor(long patientId, long doctorId);
 
-    public boolean hasAuthDoctorWithAccessLevel(Patient patient, Doctor doctor, AccessLevelEnum accessLevel);
+    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
-    public void authDoctor(Patient patient, Doctor doctor, AccessLevelEnum accessLevel);
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
-    public int[] authDoctorWithLevels(Patient patient, Doctor doctor, List<AccessLevelEnum> accessLevels);
+    public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
-    public void unauthDoctorAllAccessLevels(Patient patient, Doctor doctor);
+    public void unauthDoctorAllAccessLevels(long patientId, long doctorId);
 
-    public void unauthDoctorByAccessLevel(Patient patient, Doctor doctor, AccessLevelEnum accessLevel);
+    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
-    public int[] unauthDoctorForLevels(Patient patient, Doctor doctor, List<AccessLevelEnum> accessLevels);
+    public int[] unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
-    public List<AccessLevelEnum> getAuthAccessLevelEnums(Patient patient, Doctor doctor);
+    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId);
 }

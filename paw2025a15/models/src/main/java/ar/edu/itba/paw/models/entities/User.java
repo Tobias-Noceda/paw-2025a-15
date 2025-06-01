@@ -36,15 +36,12 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
     name = "user_role",
     discriminatorType = DiscriminatorType.INTEGER
 )
-public abstract class User implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    
+public abstract class User implements Serializable {    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(sequenceName = "users_user_id_seq", name = "users_user_id_seq", allocationSize = 1)
     @Column(name = "user_id")
-    private long id;
+    private Long id;
 
     @Column(name = "user_email", length = 100, unique = true, nullable = false)
     private String email;
@@ -88,11 +85,11 @@ public abstract class User implements Serializable {
         this.locale = locale;
     }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 
-    public void setId(long id){
+    public void setId(Long id){
         this.id = id;
     }
 
@@ -176,7 +173,7 @@ public abstract class User implements Serializable {
 
         User o = (User) other;
 
-        return (this.id==o.id) && (this.email.equals(o.email));
+        return (this.id.equals(o.id)) && (this.email.equals(o.email));
     }
 
     @Override

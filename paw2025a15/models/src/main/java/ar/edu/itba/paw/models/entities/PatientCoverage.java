@@ -69,7 +69,7 @@ public class PatientCoverage {
 
         PatientCoverage o = (PatientCoverage) other;
 
-        return (this.patientId==o.patientId);
+        return (this.patientId.equals(o.patientId));
     }
 
     @Override

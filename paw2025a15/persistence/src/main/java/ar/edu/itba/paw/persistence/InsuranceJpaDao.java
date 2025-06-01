@@ -1,16 +1,17 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistence.InsuranceDao;
-import ar.edu.itba.paw.models.entities.File;
-import ar.edu.itba.paw.models.entities.Insurance;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
+
+import ar.edu.itba.paw.interfaces.persistence.InsuranceDao;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 
 @Repository
 public class InsuranceJpaDao implements InsuranceDao{
@@ -23,6 +24,17 @@ public class InsuranceJpaDao implements InsuranceDao{
         final Insurance insurance = new Insurance(name, picture);
         em.persist(insurance);
         return insurance;
+    }
+
+    @Override
+    public Insurance edit(Insurance insurance, String name, File picture) {
+        if (name != null && !name.isEmpty()) {
+            insurance.setName(name);
+        }
+        if (picture != null) {
+            insurance.setPicture(picture);
+        }
+        return em.merge(insurance);
     }
 
     @Override

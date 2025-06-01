@@ -1,1 +1,0 @@
-UPDATE doctor_details SET doctor_licence = 'med-licence' WHERE doctor_id = 2;

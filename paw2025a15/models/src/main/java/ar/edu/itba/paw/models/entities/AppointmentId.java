@@ -13,7 +13,7 @@ public class AppointmentId implements Serializable{
     private static final long serialVersionUID = 1L;
     
     @Column(name = "shift_id")
-    private long shiftId;
+    private Long shiftId;
 
     @Column(name = "appointment_date")
     private LocalDate date;
@@ -27,11 +27,11 @@ public class AppointmentId implements Serializable{
         this.date = date;
     }
 
-    public long getShiftId(){
+    public Long getShiftId(){
         return shiftId;
     }
 
-    public void setShiftId(long shiftId){
+    public void setShiftId(Long shiftId){
         this.shiftId = shiftId;
     }
 
@@ -48,7 +48,7 @@ public class AppointmentId implements Serializable{
         if (this == other) return true;
         if (!(other instanceof AppointmentId)) return false;
         AppointmentId o = (AppointmentId) other;
-        return (this.shiftId == o.shiftId) 
+        return (this.shiftId.equals(o.shiftId)) 
         && Objects.equals(this.date, o.date);
     }
 

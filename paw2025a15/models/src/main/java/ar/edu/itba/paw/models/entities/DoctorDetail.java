@@ -87,7 +87,7 @@ public class DoctorDetail {
 
         DoctorDetail o = (DoctorDetail) other;
 
-        return (this.doctorId==o.doctorId) && (this.doctorLicense.equals(o.doctorLicense));
+        return (this.doctorId.equals(o.doctorId)) && (this.doctorLicense.equals(o.doctorLicense));
     }
 
     @Override

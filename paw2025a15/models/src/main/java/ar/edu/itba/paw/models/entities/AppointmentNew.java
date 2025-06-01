@@ -83,8 +83,7 @@ public class AppointmentNew {
 
         AppointmentNew o = (AppointmentNew) other;
 
-        return (this.id.equals(o.id)) &&
-        (this.shift.equals(o.shift)) && (this.patient.equals(o.patient));
+        return (this.id.equals(o.id));
     }
 
     @Override

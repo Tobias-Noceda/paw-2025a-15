@@ -22,11 +22,11 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     private EntityManager em;
 
     @Override
-    public boolean hasAuthDoctor(Patient patient, Doctor doctor) {
+    public boolean hasAuthDoctor(long patientId, long doctorId) {
         try{
-            em.createQuery("from AuthDoctor as ad where ad.doctor = :doctor and ad.patient = :patient",AuthDoctor.class)
-            .setParameter("doctor", doctor)
-            .setParameter("patient", patient)
+            em.createQuery("from AuthDoctor as ad where ad.doctor.id = :doctorId and ad.patient.id = :patientId",AuthDoctor.class)
+            .setParameter("doctorId", doctorId)
+            .setParameter("patientId", patientId)
             .setMaxResults(1)
             .getSingleResult();
             return true;
@@ -37,20 +37,25 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public boolean hasAuthDoctorWithAccessLevel(Patient patient, Doctor doctor, AccessLevelEnum accessLevel) {
-        return em.find(AuthDoctor.class, new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel)) != null;
+    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        return em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel)) != null;
     }
 
     @Override
-    public void authDoctor(Patient patient, Doctor doctor, AccessLevelEnum accessLevel) {
-        if(hasAuthDoctorWithAccessLevel(patient, doctor, accessLevel)) return;
-        if(accessLevel != AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patient, doctor, AccessLevelEnum.VIEW_BASIC)) authDoctor(patient, doctor, AccessLevelEnum.VIEW_BASIC);
+    public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        Patient patient = em.find(Patient.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(patient==null || doctor==null) return;
+        if(hasAuthDoctorWithAccessLevel(patientId, doctorId, accessLevel)) return;
+        if(accessLevel != AccessLevelEnum.VIEW_BASIC && !hasAuthDoctorWithAccessLevel(patientId, doctorId, AccessLevelEnum.VIEW_BASIC)) authDoctor(patientId, doctorId, AccessLevelEnum.VIEW_BASIC);
         final AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevel);
         em.persist(ad);
     }
 
     @Override
-    public int[] authDoctorWithLevels(Patient patient, Doctor doctor, List<AccessLevelEnum> accessLevels) {
+    public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        Patient patient = em.find(Patient.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
         if(doctor==null || patient==null) return new int[0];
         int[] results = new int[accessLevels.size()];
         for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
@@ -61,6 +66,8 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                 if (i!=0 && i % 50 == 0) {
                     em.flush();
                     em.clear();
+                    doctor = em.find(Doctor.class, doctorId);
+                    patient = em.find(Patient.class, patientId);
                 }
             }
             catch(Exception e){
@@ -71,25 +78,27 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public void unauthDoctorAllAccessLevels(Patient patient, Doctor doctor) {
-        if(!hasAuthDoctor(patient, doctor)) return;
-        em.createQuery("DELETE FROM AuthDoctor ad WHERE ad.patient = :patient AND ad.doctor = :doctor")
-            .setParameter("patient", patient)
-            .setParameter("doctor", doctor)
+    public void unauthDoctorAllAccessLevels(long patientId, long doctorId) {
+        em.createQuery("DELETE FROM AuthDoctor ad WHERE ad.patient.id = :patientId AND ad.doctor.id = :doctorId")
+            .setParameter("patientId", patientId)
+            .setParameter("doctorId", doctorId)
             .executeUpdate();
     }
 
     @Override
-    public void unauthDoctorByAccessLevel(Patient patient, Doctor doctor, AccessLevelEnum accessLevel) {
-        if(accessLevel == AccessLevelEnum.VIEW_BASIC) {
-            unauthDoctorAllAccessLevels(patient, doctor);
+    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+        if(accessLevel==AccessLevelEnum.VIEW_BASIC){
+            unauthDoctorAllAccessLevels(patientId, doctorId);
+            return;
         }
-        AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctor.getId(), patient.getId(), accessLevel));
+        AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel));
         if(ad != null) em.remove(ad);
     }
 
     @Override
-    public int[] unauthDoctorForLevels(Patient patient, Doctor doctor, List<AccessLevelEnum> accessLevels) {
+    public int[] unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        Patient patient = em.find(Patient.class, patientId);
         if(doctor==null || patient==null) return new int[0];
         int[] results = new int[accessLevels.size()];
         for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
@@ -113,13 +122,13 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public List<AccessLevelEnum> getAuthAccessLevelEnums(Patient patient, Doctor doctor) {
+    public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
         String query = "SELECT DISTINCT ad.id.accessLevel FROM AuthDoctor ad " +
-                        "WHERE ad.doctor = :doctor AND ad.patient = :patient";
+                        "WHERE ad.doctor.id = :doctorId AND ad.patient.id = :patientId";
 
         return em.createQuery(query, AccessLevelEnum.class)
-                            .setParameter("doctor", doctor)
-                            .setParameter("patient", patient)
+                            .setParameter("doctorId", doctorId)
+                            .setParameter("patientId", patientId)
                             .getResultList();
     }
 }

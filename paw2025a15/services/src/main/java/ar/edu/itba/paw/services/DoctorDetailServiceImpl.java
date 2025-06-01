@@ -77,7 +77,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
                 insuranceEntities.add(insurance);
             }
         }
-        return doctorDetailDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture, locale, doctorLicense, specialty, insuranceEntities);
+        return doctorDetailDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
     }
 
     @Transactional
@@ -89,7 +89,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
         LocaleEnum mailLanguage,
         final List<Long> insurancesIds
     ) {
-        if (doctor == null) {
+        if (doctor == null || getDoctorById(doctor.getId()).isEmpty()) {
             throw new NotFoundException("Doctor not found!");
         }
         
@@ -99,35 +99,37 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
                     .orElseThrow(() -> new NotFoundException("Insurance with id: " + insurance + " does not exist!"));
             insurances.add(insuranceEntity);
         }
-        doctorDetailDao.updateDoctor(doctor, phoneNumber, picture, mailLanguage, insurances);
+        doctorDetailDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances);
         LOGGER.info("Updated doctor with id: {}", doctor.getId());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        is.getInsuranceById(insuranceId).orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
         return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday) {
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday) {
+        is.getInsuranceById(insuranceId).orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
         return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
 
     @Transactional
     @Override
     public List<Patient> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
-        Doctor doctor = doctorDetailDao.getDoctorById(doctorId)
+        doctorDetailDao.getDoctorById(doctorId)
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDetailDao.searchAuthPatientsPageByDoctorAndName(doctor, name, page, pageSize);
+        return doctorDetailDao.searchAuthPatientsPageByDoctorAndName(doctorId, name, page, pageSize);
     }
 
     @Transactional
     @Override
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
-        Doctor doctor = doctorDetailDao.getDoctorById(doctorId)
+        doctorDetailDao.getDoctorById(doctorId)
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDetailDao.searchAuthPatientsCountByDoctorAndName(doctor, name);
+        return doctorDetailDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
     }
 }

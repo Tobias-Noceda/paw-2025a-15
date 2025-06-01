@@ -12,10 +12,10 @@ public class DoctorCoverageId implements Serializable{
     private static final long serialVersionUID = 1L;
     
     @Column(name = "doctor_id")
-    private long doctorId;
+    private Long doctorId;
 
     @Column(name = "insurance_id")
-    private long insuranceId;
+    private Long insuranceId;
 
     public DoctorCoverageId(){
         //just for hibernate;
@@ -26,19 +26,19 @@ public class DoctorCoverageId implements Serializable{
         this.insuranceId = insuranceId;
     }
 
-    public long getDoctorId(){
+    public Long getDoctorId(){
         return doctorId;
     }
 
-    public void setDoctorId(long doctorId){
+    public void setDoctorId(Long doctorId){
         this.doctorId = doctorId;
     }
 
-    public long getInsuranceId(){
+    public Long getInsuranceId(){
         return insuranceId;
     }
 
-    public void setInsuranceId(long insuranceId){
+    public void setInsuranceId(Long insuranceId){
         this.insuranceId = insuranceId;
     }
 
@@ -47,8 +47,8 @@ public class DoctorCoverageId implements Serializable{
         if (this == other) return true;
         if (!(other instanceof DoctorCoverageId)) return false;
         DoctorCoverageId o = (DoctorCoverageId) other;
-        return (this.doctorId == o.doctorId) 
-        && (this.insuranceId == o.insuranceId);
+        return (this.doctorId.equals(o.doctorId)) 
+        && (this.insuranceId.equals(o.insuranceId));
     }
 
     @Override

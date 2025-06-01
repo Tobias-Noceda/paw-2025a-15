@@ -15,7 +15,7 @@ public class Study {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "studies_study_id_seq")
     @SequenceGenerator(sequenceName = "studies_study_id_seq", name = "studies_study_id_seq", allocationSize = 1)
     @Column( name = "study_id")
-    private long id;
+    private Long id;
 
     @Enumerated(EnumType.ORDINAL)
     @Column( name = "study_type", nullable = false)
@@ -64,11 +64,11 @@ public class Study {
         this.studyDate = studyDate;
     }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 
-    public void setId(long id){
+    public void setId(Long id){
         this.id = id;
     }
 
@@ -144,10 +144,7 @@ public class Study {
 
         Study o = (Study) other;
 
-        return (this.id==o.id) && (this.type.equals(o.type))
-        && (this.comment.equals(o.comment)) && (this.file.equals(o.file))
-        && (this.patient.equals(o.patient)) && (this.uploader.equals(o.uploader))
-        && (this.uploadDate.equals(o.uploadDate)) && (this.studyDate.equals(o.studyDate));
+        return (this.id.equals(o.id));
     }
 
     @Override

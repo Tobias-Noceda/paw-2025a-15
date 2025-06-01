@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
@@ -47,19 +48,19 @@ public class StudyJpaDaoTest {
         final String COMMENT = TestData.Studies.newStudyWithoutDate.getComment();
         final File FILE = TestData.Images.validImage;
         FILE.setId(TestData.Images.validImageId);
-        final User USER = TestData.Users.patient;
-        USER.setId(TestData.Users.patientId);
+        final Patient PATIENT = TestData.Users.patient;
+        PATIENT.setId(TestData.Users.patientId);
         final User UPLOADER = TestData.Users.patient;
         UPLOADER.setId(TestData.Users.patientId);
 
-        Study study = studyDao.create(TYPE, COMMENT, FILE, USER, UPLOADER);
+        Study study = studyDao.create(TYPE, COMMENT, FILE, PATIENT, UPLOADER);
         Study studyPersisted = em.find(Study.class, study.getId());
 
         Assert.assertNotNull(studyPersisted);
         Assert.assertEquals(STUDY.getType(), studyPersisted.getType());
         Assert.assertEquals(STUDY.getComment(), studyPersisted.getComment());
         Assert.assertEquals(STUDY.getFile(), studyPersisted.getFile());
-        Assert.assertEquals(STUDY.getUser(), studyPersisted.getUser());
+        Assert.assertEquals(STUDY.getPatient(), studyPersisted.getPatient());
         Assert.assertEquals(STUDY.getUploader(), studyPersisted.getUploader());
         Assert.assertEquals(STUDY.getStudyDate(), studyPersisted.getStudyDate());
     }
@@ -72,13 +73,13 @@ public class StudyJpaDaoTest {
         final String COMMENT = TestData.Studies.validStudyWithDate.getComment();
         final File FILE = TestData.Images.validImage;
         FILE.setId(TestData.Images.validImageId);
-        final User USER = TestData.Users.patient;
-        USER.setId(TestData.Users.patientId);
+        final Patient PATIENT = TestData.Users.patient;
+        PATIENT.setId(TestData.Users.patientId);
         final User UPLOADER = TestData.Users.patient;
         UPLOADER.setId(TestData.Users.patientId);
         final LocalDate STUDY_DATE = TestData.Studies.validStudyWithDate.getStudyDate();
 
-        Study study = studyDao.create(TYPE, COMMENT, FILE, USER, UPLOADER, STUDY_DATE);
+        Study study = studyDao.create(TYPE, COMMENT, FILE, PATIENT, UPLOADER, STUDY_DATE);
         Study studyPersisted = em.find(Study.class, study.getId());
 
         Assert.assertNotNull(study);
@@ -86,7 +87,7 @@ public class StudyJpaDaoTest {
         Assert.assertEquals(STUDY.getType(), studyPersisted.getType());
         Assert.assertEquals(STUDY.getComment(), studyPersisted.getComment());
         Assert.assertEquals(STUDY.getFile(), studyPersisted.getFile());
-        Assert.assertEquals(STUDY.getUser(), studyPersisted.getUser());
+        Assert.assertEquals(STUDY.getPatient(), studyPersisted.getPatient());
         Assert.assertEquals(STUDY.getUploader(), studyPersisted.getUploader());
         Assert.assertEquals(STUDY.getStudyDate(), studyPersisted.getStudyDate());
     }
@@ -97,7 +98,7 @@ public class StudyJpaDaoTest {
         final long STUDY_ID = TestData.Studies.validStudyWithDateId;
         STUDY.setId(STUDY_ID);
         STUDY.getFile().setId(TestData.Images.validImageId);
-        STUDY.getUser().setId(TestData.Users.patientId);
+        STUDY.getPatient().setId(TestData.Users.patientId);
         STUDY.getUploader().setId(TestData.Users.patientId);
 
         Optional<Study> foundStudy = studyDao.findStudyById(STUDY_ID);
@@ -117,106 +118,23 @@ public class StudyJpaDaoTest {
     }
 
     @Test
-    public void testGetStudiesByPatientId(){
-        final long PATIENT_ID = TestData.Users.patientId;
-        final Study STUDY1 = TestData.Studies.validStudyWithDate;
-        STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
-        STUDY1.getUploader().setId(TestData.Users.patientId);
-        final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
-        STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
-        STUDY2.getUploader().setId(TestData.Users.patientId);
-
-        List<Study> foundStudies = studyDao.getStudiesByPatientId(PATIENT_ID);
-
-        Assert.assertFalse(foundStudies.isEmpty());
-        Assert.assertEquals(2, foundStudies.size());
-        Assert.assertTrue(foundStudies.contains(STUDY1));
-        Assert.assertTrue(foundStudies.contains(STUDY2));
-    }
-
-    @Test
-    public void testGetStudiesByPatientIdNonexistentPatient(){
-        final long PATIENT_ID = TestData.Users.newPatientId;
-
-        List<Study> foundStudies = studyDao.getStudiesByPatientId(PATIENT_ID);
-
-        Assert.assertTrue(foundStudies.isEmpty());
-    }
-
-    @Test
-    public void testGetStudiesByPatientIdAndDoctorIdUnauth(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final long PATIENT_ID = TestData.Users.patientId;
-        final Study STUDY1 = TestData.Studies.validStudyWithDate;
-        STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
-        STUDY1.getUploader().setId(TestData.Users.patientId);
-        final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
-        STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
-        STUDY2.getUploader().setId(TestData.Users.patientId);
-
-        List<Study> foundStudies = studyDao.getStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID);
-        Study study1Persisted = em.find(Study.class, STUDY1.getId());
-        Study study2Persisted = em.find(Study.class, STUDY2.getId());
-
-        Assert.assertTrue(foundStudies.isEmpty());
-        Assert.assertNotNull(study1Persisted);
-        Assert.assertNotNull(study2Persisted);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
-    public void testGetStudiesByPatientIdAndDoctorIdAuth(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final long PATIENT_ID = TestData.Users.patientId;
-        final Study STUDY1 = TestData.Studies.validStudyWithDate;
-        STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
-        STUDY1.getUploader().setId(TestData.Users.patientId);
-        final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
-        STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
-        STUDY2.getUploader().setId(TestData.Users.patientId);
-
-        List<Study> foundStudies = studyDao.getStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID);
-        Study study1Persisted = em.find(Study.class, STUDY1.getId());
-        Study study2Persisted = em.find(Study.class, STUDY2.getId());
-
-        Assert.assertFalse(foundStudies.isEmpty());
-        Assert.assertNotNull(study1Persisted);
-        Assert.assertNotNull(study2Persisted);
-        Assert.assertEquals(2, foundStudies.size());
-        Assert.assertTrue(foundStudies.contains(STUDY1));
-        Assert.assertTrue(foundStudies.contains(STUDY2));
-    }
-
-    @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:extraStudies.sql"})
     public void testGetFilteredStudiesByPatientId(){
-        final long PATIENT_ID = TestData.Users.patientId;
+        final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
         STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
+        STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
         STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
+        STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
-        final long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
-        final long EXTRASTUDY2_ID = TestData.Studies.extraStudy2Id;
+        final Long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
+        final Long EXTRASTUDY2_ID = TestData.Studies.extraStudy2Id;
 
-        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientId(PATIENT_ID, STUDY1.getType(), false);
+        List<Study> foundStudies = studyDao.getFilteredStudiesByPatient(PATIENT, STUDY1.getType(), false);
         Study study1Persisted = em.find(Study.class, STUDY1.getId());
         Study study2Persisted = em.find(Study.class, STUDY2.getId());
         Study extraStudy1Persisted = em.find(Study.class, EXTRASTUDY1_ID);
@@ -234,19 +152,19 @@ public class StudyJpaDaoTest {
 
     @Test
     public void testGetFilteredStudiesByPatientIdNullType(){
-        final long PATIENT_ID = TestData.Users.patientId;
+        final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
         STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
+        STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
         STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
+        STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
-        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientId(PATIENT_ID, null, true);
+        List<Study> foundStudies = studyDao.getFilteredStudiesByPatient(PATIENT, null, true);
         Study study1Persisted = em.find(Study.class, STUDY1.getId());
         Study study2Persisted = em.find(Study.class, STUDY2.getId());
 
@@ -260,30 +178,30 @@ public class StudyJpaDaoTest {
 
     @Test
     public void testGetFilteredStudiesByPatientIdNonexistentPatient(){
-        final long PATIENT_ID = TestData.Users.newPatientId;
+        final Long PATIENT = TestData.Users.newPatientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
 
-        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientId(PATIENT_ID, STUDY1.getType(), false);
+        List<Study> foundStudies = studyDao.getFilteredStudiesByPatient(PATIENT, STUDY1.getType(), false);
 
         Assert.assertTrue(foundStudies.isEmpty());
     }
 
     @Test
     public void testGetFilteredStudiesByPatientIdAndDoctorIdUnauth(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC = TestData.Users.doctorId;
+        final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
         STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
+        STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
         STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
+        STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
-        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID, STUDY1.getType(), false);
+        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientAndDoctor(PATIENT, DOC, STUDY1.getType(), false);
         Study study1Persisted = em.find(Study.class, STUDY1.getId());
         Study study2Persisted = em.find(Study.class, STUDY2.getId());
 
@@ -295,22 +213,22 @@ public class StudyJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql", "classpath:extraStudies.sql"})
     public void testGetFilteredStudiesByPatientIdAndDoctorIdAuth(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC = TestData.Users.doctorId;
+        final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
         STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
+        STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
         STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
+        STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
         final long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
         final long EXTRASTUDY2_ID = TestData.Studies.extraStudy2Id;
 
-        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID, STUDY1.getType(), false);
+        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientAndDoctor(PATIENT, DOC, STUDY1.getType(), false);
         Study study1Persisted = em.find(Study.class, STUDY1.getId());
         Study study2Persisted = em.find(Study.class, STUDY2.getId());
         Study extraStudy1Persisted = em.find(Study.class, EXTRASTUDY1_ID);
@@ -329,20 +247,20 @@ public class StudyJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
     public void testGetFilteredStudiesByPatientIdAndDoctorIdAuthNullType(){
-        final long DOC_ID = TestData.Users.doctorId;
-        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC = TestData.Users.doctorId;
+        final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
         STUDY1.getFile().setId(TestData.Images.validImageId);
-        STUDY1.getUser().setId(TestData.Users.patientId);
+        STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
         STUDY2.getFile().setId(TestData.Images.validImageId);
-        STUDY2.getUser().setId(TestData.Users.patientId);
+        STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
-        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID, null, true);
+        List<Study> foundStudies = studyDao.getFilteredStudiesByPatientAndDoctor(PATIENT, DOC, null, true);
         Study study1Persisted = em.find(Study.class, STUDY1.getId());
         Study study2Persisted = em.find(Study.class, STUDY2.getId());
 

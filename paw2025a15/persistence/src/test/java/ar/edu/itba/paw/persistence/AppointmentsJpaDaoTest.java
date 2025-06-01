@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +18,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.entities.Appointment;
-import ar.edu.itba.paw.models.entities.AppointmentId;
-import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.AppointmentNewId;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
@@ -38,20 +39,22 @@ public class AppointmentsJpaDaoTest {
     private EntityManager em;
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
     public void testAddAppointment(){
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final long PATIENT_ID = TestData.Users.patientId;
-        final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final Appointment APP = TestData.Appointments.appointment;
-        APP.getAppointmentId().setShiftId(SHIFT_ID);
+        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
+        final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final AppointmentNew APP = TestData.NewAppointments.appointment;
+        APP.getId().setShiftId(SHIFT_ID);
         APP.getShift().setId(SHIFT_ID);
         APP.getShift().getDoctor().setId(TestData.Users.doctorId);
         APP.getPatient().setId(PATIENT_ID);
         APP.getPatient().getPicture().setId(TestData.Images.validImageId);
 
-        Appointment appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE);
-        Appointment appPersisted = em.find(Appointment.class, appointment.getAppointmentId());
+        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME);
+        AppointmentNew appPersisted = em.find(AppointmentNew.class, appointment.getId());
 
         Assert.assertNotNull(appPersisted);
         Assert.assertEquals(APP, appPersisted);
@@ -60,35 +63,39 @@ public class AppointmentsJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql"})
     public void testAddAppointmentNonexistentShift(){
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
         final long PATIENT_ID = TestData.Users.patientId;
-        final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
+        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
 
-        Appointment appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE);
-        Appointment appPersisted = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE));
+        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME);
+        AppointmentNew appPersisted = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, START_TIME, END_TIME));
 
         Assert.assertNull(appointment);
         Assert.assertNull(appPersisted);
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
     public void testGetAppointmentsByShiftIdAndDate(){
-        final DoctorShift SHIFT = TestData.DoctorShifts.doctorShift;
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
+        final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         SHIFT.setId(SHIFT_ID);
         final User PATIENT = TestData.Users.patient;
         final long PATIENT_ID = TestData.Users.patientId;
         PATIENT.setId(PATIENT_ID);
-        final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final Appointment APP = TestData.Appointments.appointment;
-        APP.getAppointmentId().setShiftId(SHIFT_ID);
+        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
+        final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final AppointmentNew APP = TestData.NewAppointments.appointment;
+        APP.getId().setShiftId(SHIFT_ID);
         APP.getShift().setId(SHIFT_ID);
         APP.getShift().getDoctor().setId(TestData.Users.doctorId);
         APP.getShift().getDoctor().getPicture().setId(TestData.Images.validImageId);
         APP.setPatient(PATIENT);
 
-        Optional<Appointment> appointment = appointmentDao.getAppointmentsByShiftIdAndDate(SHIFT_ID, APP_DATE);
+        Optional<AppointmentNew> appointment = appointmentDao.getAppointmentByShiftDateAndTime(SHIFT, APP_DATE, START_TIME, END_TIME);
 
         Assert.assertNotNull(appointment);
         Assert.assertTrue(appointment.isPresent());
@@ -96,19 +103,19 @@ public class AppointmentsJpaDaoTest {
     }
 /*
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetFutureAppointmentDataByPatientId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
         final long DOCTOR_ID = TestData.Users.doctorId;
         final String DOC_NAME = TestData.Users.doctor.getName();
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
-        final LocalTime START_TIME = TestData.DoctorShifts.doctorShift.getStartTime();
-        final LocalTime END_TIME = TestData.DoctorShifts.doctorShift.getEndTime();
-        final long SHIFT2_ID = TestData.DoctorShifts.doctorShift2Id;
-        final LocalTime START_TIME2 = TestData.DoctorShifts.doctorShift2.getStartTime();
-        final LocalTime END_TIME2 = TestData.DoctorShifts.doctorShift2.getEndTime();
-        final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
+        final long SHIFT2_ID = TestData.DoctorSingleShifts.doctorSingleShift2Id;
+        final LocalTime START_TIME2 = TestData.DoctorSingleShifts.doctorSingleShift2.getStartTime();
+        final LocalTime END_TIME2 = TestData.DoctorSingleShifts.doctorSingleShift2.getEndTime();
+        final String ADDRESS = TestData.DoctorSingleShifts.doctorSingleShift.getAddress();
         final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
         final LocalDate APP_DATE_OLD = TestData.Appointments.oldAppointment.getDate();
         final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
@@ -132,19 +139,19 @@ public class AppointmentsJpaDaoTest {
     }*/
 /*
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetOldAppointmentDataByPatientId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
         final long DOCTOR_ID = TestData.Users.doctorId;
         final String DOC_NAME = TestData.Users.doctor.getName();
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
-        final LocalTime START_TIME = TestData.DoctorShifts.doctorShift.getStartTime();
-        final LocalTime END_TIME = TestData.DoctorShifts.doctorShift.getEndTime();
-        final long SHIFT2_ID = TestData.DoctorShifts.doctorShift2Id;
-        final LocalTime START_TIME2 = TestData.DoctorShifts.doctorShift2.getStartTime();
-        final LocalTime END_TIME2 = TestData.DoctorShifts.doctorShift2.getEndTime();
-        final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
+        final long SHIFT2_ID = TestData.DoctorSingleShifts.doctorSingleShift2Id;
+        final LocalTime START_TIME2 = TestData.DoctorSingleShifts.doctorSingleShift2.getStartTime();
+        final LocalTime END_TIME2 = TestData.DoctorSingleShifts.doctorSingleShift2.getEndTime();
+        final String ADDRESS = TestData.DoctorSingleShifts.doctorSingleShift.getAddress();
         final LocalDate APP_DATE = TestData.Appointments.oldAppointment.getDate();
         final LocalDate APP_DATE_NEW = TestData.Appointments.appointment.getDate();
         final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
@@ -168,19 +175,19 @@ public class AppointmentsJpaDaoTest {
    }
 *//*
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetFutureAppointmentDataByDoctorId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
         final long DOCTOR_ID = TestData.Users.doctorId;
         final String DOC_NAME = TestData.Users.doctor.getName();
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
-        final LocalTime START_TIME = TestData.DoctorShifts.doctorShift.getStartTime();
-        final LocalTime END_TIME = TestData.DoctorShifts.doctorShift.getEndTime();
-        final long SHIFT2_ID = TestData.DoctorShifts.doctorShift2Id;
-        final LocalTime START_TIME2 = TestData.DoctorShifts.doctorShift2.getStartTime();
-        final LocalTime END_TIME2 = TestData.DoctorShifts.doctorShift2.getEndTime();
-        final String ADDRESS = TestData.DoctorShifts.doctorShift.getAddress();
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
+        final long SHIFT2_ID = TestData.DoctorSingleShifts.doctorSingleShift2Id;
+        final LocalTime START_TIME2 = TestData.DoctorSingleShifts.doctorSingleShift2.getStartTime();
+        final LocalTime END_TIME2 = TestData.DoctorSingleShifts.doctorSingleShift2.getEndTime();
+        final String ADDRESS = TestData.DoctorSingleShifts.doctorSingleShift.getAddress();
         final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
         final LocalDate APP_DATE_OLD = TestData.Appointments.oldAppointment.getDate();
         final AppointmentData APP_DATA = new AppointmentData(SHIFT_ID, PATIENT_ID, PATIENT_NAME, DOCTOR_ID, DOC_NAME, APP_DATE, START_TIME, END_TIME, ADDRESS);
@@ -204,33 +211,35 @@ public class AppointmentsJpaDaoTest {
     }*/
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetAppointmentsForDate(){
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final long PATIENT_ID = TestData.Users.patientId;
-        final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final Appointment APP = TestData.Appointments.appointment;
-        APP.getAppointmentId().setShiftId(SHIFT_ID);
+        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
+        final AppointmentNew APP = TestData.NewAppointments.appointment;
+        APP.getId().setShiftId(SHIFT_ID);
         APP.getShift().setId(SHIFT_ID);
         APP.getShift().getDoctor().setId(TestData.Users.doctorId);
         APP.getShift().getDoctor().getPicture().setId(TestData.Images.validImageId);
         APP.getPatient().setId(PATIENT_ID);
         APP.getPatient().getPicture().setId(TestData.Images.validImageId);
-        final long SHIFT2_ID = TestData.DoctorShifts.doctorShift2Id;
-        final Appointment APP2 = TestData.Appointments.appointment2;
-        APP2.getAppointmentId().setShiftId(SHIFT2_ID);
-        APP2.getShift().setId(SHIFT2_ID);
+        final AppointmentNew APP2 = TestData.NewAppointments.appointment2;
+        APP2.getId().setShiftId(SHIFT_ID);
+        APP2.getShift().setId(SHIFT_ID);
         APP2.getShift().getDoctor().setId(TestData.Users.doctorId);
         APP2.getShift().getDoctor().getPicture().setId(TestData.Images.validImageId);
         APP2.getPatient().setId(PATIENT_ID);
         APP2.getPatient().getPicture().setId(TestData.Images.validImageId);
-        final LocalDate APP_DATE_OLD = TestData.Appointments.oldAppointment.getDate();
+        final LocalDate APP_DATE_OLD = TestData.NewAppointments.oldAppointment.getDate();
+        final LocalTime TIME1 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime TIME2 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
 
-        List<Appointment> results = appointmentDao.getAppointmentsForDate(APP_DATE);
-        Appointment appFound1 = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE));
-        Appointment appFound2 = em.find(Appointment.class, new AppointmentId(SHIFT2_ID, APP_DATE));
-        Appointment appFound3 = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE_OLD));
-        Appointment appFound4 = em.find(Appointment.class, new AppointmentId(SHIFT2_ID, APP_DATE_OLD));
+        List<AppointmentNew> results = appointmentDao.getAppointmentsForDate(APP_DATE);
+        AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME1, TIME2));
+        AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME2, TIME3));
+        AppointmentNew appFound3 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME1, TIME2));
+        AppointmentNew appFound4 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME2, TIME3));
 
         Assert.assertNotNull(results);
         Assert.assertNotNull(appFound1);
@@ -244,18 +253,21 @@ public class AppointmentsJpaDaoTest {
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testRemoveAppointment(){
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
-        final long SHIFT2_ID = TestData.DoctorShifts.doctorShift2Id;
-        final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final LocalDate APP_DATE_OLD = TestData.Appointments.oldAppointment.getDate();
+        final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
+        final LocalDate APP_DATE_OLD = TestData.NewAppointments.oldAppointment.getDate();
+        final LocalTime TIME1 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime TIME2 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
 
-        boolean result = appointmentDao.removeAppointment(SHIFT_ID, APP_DATE);
-        Appointment appFound1 = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE));
-        Appointment appFound2 = em.find(Appointment.class, new AppointmentId(SHIFT2_ID, APP_DATE));
-        Appointment appFound3 = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE_OLD));
-        Appointment appFound4 = em.find(Appointment.class, new AppointmentId(SHIFT2_ID, APP_DATE_OLD));
+        boolean result = appointmentDao.cancelAppointment(SHIFT, APP_DATE, TIME1, TIME2);
+        AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME1, TIME2));
+        AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME2, TIME3));
+        AppointmentNew appFound3 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME1, TIME2));
+        AppointmentNew appFound4 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME2, TIME3));
 
         Assert.assertTrue(result);
         Assert.assertNull(appFound1);
@@ -265,18 +277,22 @@ public class AppointmentsJpaDaoTest {
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testRemoveAppointmentNonexistentAppointment(){
-        final long SHIFT_ID = TestData.DoctorShifts.doctorShiftId;
-        final long SHIFT2_ID = TestData.DoctorShifts.doctorShift2Id;
-        final LocalDate APP_DATE = TestData.Appointments.appointment.getDate();
-        final LocalDate APP_DATE_OLD = TestData.Appointments.oldAppointment.getDate();
+        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final DoctorSingleShift fakeShift = TestData.DoctorSingleShifts.doctorSingleShift;
+        fakeShift.setId(99L);
+        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
+        final LocalDate APP_DATE_OLD = TestData.NewAppointments.oldAppointment.getDate();
+        final LocalTime TIME1 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime TIME2 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
 
-        boolean result = appointmentDao.removeAppointment(99L, LocalDate.parse("1999-01-01"));
-        Appointment appFound1 = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE));
-        Appointment appFound2 = em.find(Appointment.class, new AppointmentId(SHIFT2_ID, APP_DATE));
-        Appointment appFound3 = em.find(Appointment.class, new AppointmentId(SHIFT_ID, APP_DATE_OLD));
-        Appointment appFound4 = em.find(Appointment.class, new AppointmentId(SHIFT2_ID, APP_DATE_OLD));
+        boolean result = appointmentDao.cancelAppointment(fakeShift, LocalDate.parse("1999-01-01"), LocalTime.parse("00:00:00"), LocalTime.parse("01:00:00"));
+        AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME1, TIME2));
+        AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME2, TIME3));
+        AppointmentNew appFound3 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME1, TIME2));
+        AppointmentNew appFound4 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME2, TIME3));
 
         Assert.assertFalse(result);
         Assert.assertNotNull(appFound1);

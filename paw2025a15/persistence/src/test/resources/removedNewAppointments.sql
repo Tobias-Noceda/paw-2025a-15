@@ -1,0 +1,2 @@
+INSERT INTO appointments_new(shift_id, patient_id, appointment_date, appointment_start_time, appointment_end_time) VALUES(1, 2, '2025-04-19', '10:00:00', '10:15:00');
+INSERT INTO appointments_new(shift_id, patient_id, appointment_date, appointment_start_time, appointment_end_time) VALUES(1, 2, '2025-04-19', '10:15:00', '10:30:00');

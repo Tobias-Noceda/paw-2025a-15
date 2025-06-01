@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,13 +43,15 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
-    public List<Study> getFilteredStudiesByPatient(Patient patient, StudyTypeEnum type, boolean mostRecent) {//TODO: le faltan cosas de la transicion, chequear en la version jdbc (creo q es solo esta funcion de ste doc)
-        String q = "from Study as s where s.patient = :patient "
+    public List<Study> getFilteredStudiesByPatient(long patientId, StudyTypeEnum type, boolean mostRecent) {
+        Patient patient = em.find(Patient.class, patientId);
+        if(patient==null) return Collections.emptyList();
+        String q = "from Study as s where s.patient.id = :patientId "
                 + (type != null ? "and s.type = :type " : "")
                 + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
-        query.setParameter("patient", patient);
+        query.setParameter("patientId", patientId);
         if (type != null) {
             query.setParameter("type", type);
         }
@@ -57,19 +60,22 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
-    public List<Study> getFilteredStudiesByPatientAndDoctor(Patient patient, Doctor doctor, StudyTypeEnum type, boolean mostRecent) {
+    public List<Study> getFilteredStudiesByPatientAndDoctor(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
+        Patient patient = em.find(Patient.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(patient==null || doctor==null) return Collections.emptyList();
         String q = "SELECT s from Study s " +
                 "join AuthStudy a on a.study = s " +
-                "where s.patient = :patient " +
-                "and a.doctor = :doctor ";
+                "where s.patient.id = :patientId " +
+                "and a.doctor.id = :doctorId ";
         if (type != null) {
             q += "and s.type = :type ";
         }
         q += (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
 
         TypedQuery<Study> query = em.createQuery(q, Study.class);
-        query.setParameter("patient", patient);
-        query.setParameter("doctor", doctor);
+        query.setParameter("patientId", patientId);
+        query.setParameter("doctorId", doctorId);
 
         if (type != null) {
             query.setParameter("type", type);

@@ -15,10 +15,10 @@ public class AuthDoctorId implements Serializable{
     private static final long serialVersionUID = 1L;
     
     @Column(name = "doctor_id")
-    private long doctorId;
+    private Long doctorId;
 
     @Column(name = "patient_id")
-    private long patientId;
+    private Long patientId;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "access_level")
@@ -34,19 +34,19 @@ public class AuthDoctorId implements Serializable{
         this.accessLevel = accessLevel;
     }
 
-    public long getDoctorId(){
+    public Long getDoctorId(){
         return doctorId;
     }
 
-    public void setDoctorId(long doctorId){
+    public void setDoctorId(Long doctorId){
         this.doctorId = doctorId;
     }
 
-    public long getPatientId(){
+    public Long getPatientId(){
         return patientId;
     }
 
-    public void setPatientId(long patientId){
+    public void setPatientId(Long patientId){
         this.patientId = patientId;
     }
 
@@ -59,12 +59,12 @@ public class AuthDoctorId implements Serializable{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AuthDoctorId)) return false;
-        AuthDoctorId that = (AuthDoctorId) o;
-        return (doctorId == that.doctorId) && (patientId == that.patientId)
-        && (accessLevel.ordinal() == that.accessLevel.ordinal());
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof AuthDoctorId)) return false;
+        AuthDoctorId o = (AuthDoctorId) other;
+        return (doctorId.equals(o.doctorId)) && (patientId.equals(o.patientId))
+        && (accessLevel.ordinal() == o.accessLevel.ordinal());
     }
 
     @Override

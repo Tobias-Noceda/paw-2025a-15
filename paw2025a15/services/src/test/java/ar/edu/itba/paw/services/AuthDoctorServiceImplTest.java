@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
@@ -42,21 +42,21 @@ public class AuthDoctorServiceImplTest {
     private static final Patient PATIENT = new Patient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, FILE, PATIENT_CREATE_DATE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
     
     private static final long DOC_ID = 2L;
-    
+   
     private static final List<AccessLevelEnum> accessLevels = List.of(AccessLevelEnum.VIEW_SOCIAL, AccessLevelEnum.VIEW_HABITS);
 
     @InjectMocks
     private AuthDoctorServiceImpl ads;
 
     @Mock
-    private AuthDoctorDao authDoctorMock;
+    private PatientDetailService pds;
 
     @Mock
-    private UserService us;
+    private DoctorDetailService dds;
 
     @Test
     public void testToggleAuthDoctorNonexistentPatient(){
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ads.toggleAuthDoctor(PATIENT_ID, DOC_ID)
@@ -65,8 +65,8 @@ public class AuthDoctorServiceImplTest {
 
     @Test
     public void testToggleAuthDoctorNonexistentDoc(){
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ads.toggleAuthDoctor(PATIENT_ID, DOC_ID)
@@ -75,7 +75,7 @@ public class AuthDoctorServiceImplTest {
 
     @Test
     public void testUpdateAuthDoctorNonexistentPatient(){
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ads.updateAuthDoctor(PATIENT_ID, DOC_ID, accessLevels)
@@ -84,8 +84,8 @@ public class AuthDoctorServiceImplTest {
 
     @Test
     public void testUpdateAuthDoctorNonexistentDoc(){
-        Mockito.when(us.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(us.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ads.updateAuthDoctor(PATIENT_ID, DOC_ID, accessLevels)
