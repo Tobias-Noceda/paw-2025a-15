@@ -65,7 +65,7 @@
             <p class="name"><c:out value="${user_data.name}" escapeXml="true"/></p>
             <p class="email"><c:out value="${user_data.email}" escapeXml="true"/></p>
             <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user_data.role}"/></p>
-            <c:if test="${user_data.role == 'DOCTOR'}">
+            <c:if test="${user_data.userRole eq 'DOCTOR'}">
               <p class="role"><spring:message code="doctor.details.license.label"/> <c:out value="${doctorDetail.doctorLicense}" escapeXml="true"/></p>
             </c:if>
           </div>

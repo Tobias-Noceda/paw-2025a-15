@@ -87,7 +87,7 @@
         <form:input id="comment" type="text" path="comment"/>
       </div>
 
-          <c:if test="${not empty patientAuthDoctors}">
+      <c:if test="${UserRole eq 'PATIENT' and not empty patient.authorizedDoctors}">
             <div class="sf-field">
               <label for="authDoctorIds">
                 <spring:message code="uploadStudies.doctor"/>
@@ -107,7 +107,7 @@
               <div class="appointments-table-body">
                 <table class="appointments-table">
                   <tbody>
-                  <c:forEach var="authDocs" items="${patientAuthDoctors}">
+                  <c:forEach var="authDocs" items="${patient.authorizedDoctors}">
                     <tr class="appointments-row">
                       <td class="text-cell">
                         <c:out value="${authDocs.name}"/>

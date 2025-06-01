@@ -127,13 +127,14 @@ public class UserController {
             profileForm.setInsurances(
                 doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
             );
+        } else {
+            mav.addObject("patientDetails", pds.getPatientById(user.getId()).orElse(null));
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
         mav.addObject("landingForm", new LandingForm());
-
         return mav;
     }
 
