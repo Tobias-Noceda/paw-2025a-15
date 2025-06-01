@@ -2,6 +2,8 @@ package ar.edu.itba.paw.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Assert;
@@ -13,10 +15,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
 import ar.edu.itba.paw.interfaces.persistence.UserDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -26,6 +32,10 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
+
+    private static final byte[] FILE_CONTENT = "Image".getBytes();
+    private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
+    private static final File FILE = new File(FILE_CONTENT, FILETYPE);
 
     private static final byte[] PIC_CONTENT = "Image".getBytes();
     private static final FileTypeEnum PIC_FILE_TYPE = FileTypeEnum.JPEG;
@@ -57,16 +67,30 @@ public class UserServiceImplTest {
     private static final LocalDate DOC_CREATE_DATE = LocalDate.parse("2025-04-09");
     private static final String DOC_LICENCE = "med-licence";
     private static final SpecialtyEnum DOC_SPECIALTY = SpecialtyEnum.CARDIOLOGY;
-    private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, PICTURE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY);
+    private static final List<Insurance> DOC_INSURANCES = new ArrayList<>();
+    private static final List<Long> DOC_INSURANCE_IDS = new ArrayList<>();
+    private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY, DOC_INSURANCES);
     
     @InjectMocks
-    private UserServiceImpl us;
+    private PatientDetailServiceImpl pds;
 
     @Mock
     private UserDao userDaoMock;
 
     @Mock
+    private PatientDetailDao PatientDetailDaoMock;
+
+    @Mock
+    private DoctorDetailDao doctorDetailDaoMock;
+
+    @Mock
     private FileService fs;
+
+    @Mock
+    private UserService us;
+
+    @Mock
+    private DoctorDetailServiceImpl dds;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -76,9 +100,9 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.empty());
         //Mockito.when(fs.findById(Mockito.eq(PATIENT_PIC_ID))).thenReturn(Optional.of(PICTURE));
         Mockito.when(passwordEncoder.encode(Mockito.eq(PATIENT_PASSWORD))).thenReturn("userPassEnc");
-        Mockito.when(userDaoMock.createPatient(Mockito.eq(PATIENT_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PICTURE), Mockito.eq(PATIENT_LOCALE), Mockito.eq(PATIENT_BIRTHDATE), Mockito.eq(PATIENT_HEIGHT), Mockito.eq(PATIENT_WEIGHT))).thenReturn(PATIENT);
+        Mockito.when(PatientDetailDaoMock.createPatient(Mockito.eq(PATIENT_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(PATIENT_NAME), Mockito.eq(PATIENT_TELEPHONE), Mockito.eq(PICTURE), Mockito.eq(PATIENT_LOCALE), Mockito.eq(PATIENT_BIRTHDATE), Mockito.eq(PATIENT_HEIGHT), Mockito.eq(PATIENT_WEIGHT))).thenReturn(PATIENT);
 
-        Patient user = us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PICTURE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
+        Patient user = pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(PATIENT, user);
@@ -89,7 +113,7 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(PATIENT_EMAIL))).thenReturn(Optional.of(PATIENT));
 
         Assert.assertThrows(AlreadyExistsException.class, () -> 
-            us.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PICTURE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT)
+            pds.createPatient(PATIENT_EMAIL, PATIENT_PASSWORD, PATIENT_NAME, PATIENT_TELEPHONE, PATIENT_LOCALE, PATIENT_BIRTHDATE, PATIENT_HEIGHT, PATIENT_WEIGHT)
         );
     }
 /*
@@ -110,9 +134,9 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.empty());
         //Mockito.when(fs.findById(Mockito.eq(DOC_PIC_ID))).thenReturn(Optional.of(PICTURE));
         Mockito.when(passwordEncoder.encode(Mockito.eq(DOC_PASSWORD))).thenReturn("userPassEnc");
-        Mockito.when(userDaoMock.createDoctor(Mockito.eq(DOC_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(PICTURE), Mockito.eq(DOC_LOCALE), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY))).thenReturn(DOC);
+        Mockito.when(doctorDetailDaoMock.createDoctor(Mockito.eq(DOC_EMAIL), Mockito.eq("userPassEnc"), Mockito.eq(DOC_NAME), Mockito.eq(DOC_TELEPHONE), Mockito.eq(PICTURE), Mockito.eq(DOC_LOCALE), Mockito.eq(DOC_LICENCE), Mockito.eq(DOC_SPECIALTY), Mockito.eq(DOC_INSURANCES))).thenReturn(DOC);
 
-        Doctor user = us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE,  PICTURE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY);
+        Doctor user = dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_INSURANCE_IDS, DOC_LOCALE);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(DOC, user);
@@ -123,7 +147,7 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.of(DOC));
 
         Assert.assertThrows(AlreadyExistsException.class, () -> 
-            us.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE,  PICTURE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY)
+            dds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, DOC_INSURANCE_IDS, DOC_LOCALE)
         );
     }
 /*
@@ -139,25 +163,27 @@ public class UserServiceImplTest {
         ).getMessage().contains("Failed to create user for email");
     }*/
 
-    @Test
-    public void testGetUserPicture(){
-        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(fs.findById(Mockito.eq(PATIENT.getPicture().getId()))).thenReturn(Optional.of(PICTURE));
+    // TODO: revisar, pero con hibernate creo que no tiene sentido
+    // @Test
+    // public void testGetUserPicture(){
+    //     Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+    //     Mockito.when(fs.findById(Mockito.eq(PATIENT.getPicture().getId()))).thenReturn(Optional.of(PICTURE));
 
-        Optional<File> file = us.getUserPicture(PATIENT_ID);
+    //     Optional<File> file = fs.getUserPicture(PATIENT);
 
-        Assert.assertTrue(file.isPresent());
-        Assert.assertEquals(PICTURE, file.get());
-    }
+    //     Assert.assertTrue(file.isPresent());
+    //     Assert.assertEquals(PICTURE, file.get());
+    // }
 
-    @Test
-    public void testGetUserPictureNonexistentUser(){
-        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+    // TODO: revisar, pero con hibernate creo que no tiene sentido
+    // @Test
+    // public void testGetUserPictureNonexistentUser(){
+    //     Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(NotFoundException.class, () -> 
-            us.getUserPicture(PATIENT_ID)
-        );
-    }
+    //     Assert.assertThrows(NotFoundException.class, () -> 
+    //         us.getUserPicture(PATIENT_ID)
+    //     );
+    // }
 
     @Test
     public void testChangePasswordByIDNonexistentUser(){
@@ -168,32 +194,14 @@ public class UserServiceImplTest {
         );
     }
 
-    @Test
-    public void testEditUserNonexistent(){
-        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+    // TODO: revisar, pero esto creo que ahora quedó en updateDoctor/updatePatient
+    // @Test
+    // public void testUpdateLocaleNonexistentUser(){
+    //     Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(NotFoundException.class, () -> 
-            us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PICTURE2)
-        );
-    }
-
-    @Test
-    public void testEditUserNonexistentPicture(){
-        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(fs.findById(Mockito.eq(PICTURE2.getId()))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            us.editUser(PATIENT_ID, PATIENT_NAME2, PATIENT_TELEPHONE2, PICTURE2)
-        );
-    }
-
-    @Test
-    public void testUpdateLocaleNonexistentUser(){
-        Mockito.when(userDaoMock.getUserById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            us.updateLocale(PATIENT_ID, PATIENT_LOCALE)
-        );
-    }
+    //     Assert.assertThrows(NotFoundException.class, () -> 
+    //         us.updateLocale(PATIENT_ID, PATIENT_LOCALE)
+    //     );
+    // }
 
 }

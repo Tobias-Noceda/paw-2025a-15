@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
@@ -12,12 +13,12 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.models.entities.Appointment;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorCoverage;
 import ar.edu.itba.paw.models.entities.DoctorDetail;
-import ar.edu.itba.paw.models.entities.DoctorShift;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -65,9 +66,9 @@ public class TestData {
         public static final long newPatientId = 3L;
         
 
-        public static final Doctor doctor = new Doctor("membrillo@example.com", "supersecret123", "membrillo", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY);
+        public static final Doctor doctor = new Doctor("membrillo@example.com", "supersecret123", "membrillo", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY, List.of());
         public static final long doctorId = 2L;
-        public static final Doctor newDoctor = new Doctor("batata@example.com", "supersecret123", "batata", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY);
+        public static final Doctor newDoctor = new Doctor("batata@example.com", "supersecret123", "batata", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY, List.of());
         public static final long newDoctorId = 3L;
     }
 
@@ -80,20 +81,34 @@ public class TestData {
         public static final DoctorCoverage doctorCoverage2 = new DoctorCoverage(Users.doctor, Insurances.validInsurance2);
     }
 
-    public class DoctorShifts{
-        public static final DoctorShift doctorShift = new DoctorShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-        public static final long doctorShiftId = 1L;
-        public static final DoctorShift doctorShift2 = new DoctorShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:15:00"), LocalTime.parse("10:30:00"));
-        public static final long doctorShift2Id = 2L;
+    // public class DoctorShifts{
+    //     public static final DoctorShift doctorShift = new DoctorShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+    //     public static final long doctorShiftId = 1L;
+    //     public static final DoctorShift doctorShift2 = new DoctorShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:15:00"), LocalTime.parse("10:30:00"));
+    //     public static final long doctorShift2Id = 2L;
+    // }
+
+    // public class Appointments{
+    //     public static final Appointment appointment = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-10-09"));
+    //     public static final Appointment appointment2 = new Appointment(DoctorShifts.doctorShift2, Users.patient, LocalDate.parse("2025-10-09"));
+    //     public static final Appointment oldAppointment = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-04-09"));
+    //     public static final Appointment oldAppointment2 = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-04-09"));
+    //     public static final Appointment removedAppointment = new Appointment(DoctorShifts.doctorShift2, Users.patient, LocalDate.parse("2025-04-19"));
+    //     public static final Appointment removedAppointment2 = new Appointment(DoctorShifts.doctorShift, Users.doctor, LocalDate.parse("2025-04-19"));
+    // }
+
+    public class DoctorSingleShifts{
+        public static final DoctorSingleShift doctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:30:00"), 15);
+        public static final long doctorSingleShiftId = 1L;
     }
 
-    public class Appointments{
-        public static final Appointment appointment = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-10-09"));
-        public static final Appointment appointment2 = new Appointment(DoctorShifts.doctorShift2, Users.patient, LocalDate.parse("2025-10-09"));
-        public static final Appointment oldAppointment = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-04-09"));
-        public static final Appointment oldAppointment2 = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-04-09"));
-        public static final Appointment removedAppointment = new Appointment(DoctorShifts.doctorShift2, Users.patient, LocalDate.parse("2025-04-19"));
-        public static final Appointment removedAppointment2 = new Appointment(DoctorShifts.doctorShift, Users.doctor, LocalDate.parse("2025-04-19"));
+    public class NewAppointments{
+        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final AppointmentNew oldAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final AppointmentNew oldAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final AppointmentNew removedAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final AppointmentNew removedAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.doctor, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
     }
 
     public class PatientDetails{
