@@ -8,7 +8,7 @@
   <head>
     <meta charset="UTF-8">
     <title>CareTrace</title>
-    <link rel="icon" href="<c:url value='/favicon.ico'/>">
+    <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>">
     <!-- CSS base compartido -->
     <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
     <link rel="stylesheet" href="<c:url value='/css/landing-page.css'/>">

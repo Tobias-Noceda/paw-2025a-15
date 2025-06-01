@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+// TODO: borrar si se borra DoctorCoverage
 @Embeddable
 public class DoctorCoverageId implements Serializable{
     private static final long serialVersionUID = 1L;
