@@ -87,7 +87,7 @@
         <form:input id="comment" type="text" path="comment"/>
       </div>
 
-      <c:if test="${UserRole eq 'PATIENT' and not empty patient.authorizedDoctors}">
+      <c:if test="${user_data.userRole eq 'PATIENT' and not empty patient.authorizedDoctors}">
             <div class="sf-field">
               <label for="authDoctorIds">
                 <spring:message code="uploadStudies.doctor"/>

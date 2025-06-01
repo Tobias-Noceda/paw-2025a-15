@@ -71,7 +71,6 @@ public class StudyController {
         ModelAndView mav = new ModelAndView("createStudy");
         mav.addObject("today", LocalDate.now() );
         mav.addObject("patient", patient);
-        mav.addObject("UserRole", user.getRole().name());
         mav.addObject("studyTypeSelectItems", SelectItem.getStudyTypeSelectItems(messageSource, locale));
 
         return mav;
