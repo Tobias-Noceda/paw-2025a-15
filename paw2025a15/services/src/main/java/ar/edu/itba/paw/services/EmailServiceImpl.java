@@ -2,8 +2,8 @@ package ar.edu.itba.paw.services;
 
 import java.time.format.TextStyle;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -157,12 +157,12 @@ public class EmailServiceImpl implements EmailService{
             .append(file.getType().getName().split("/")[1]);
 
         Locale locale = patient.getLocale().toLocale();
-        String subject = messageSource.getMessage("receivedStudy.subject", null, locale);
+        String subject = messageSource.getMessage("recievedStudy.subject", null, locale);
 
         try {
             sendMessageWithFileTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString(), locale);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending received study email to {}: {}", patient.getEmail(), e.getMessage(), e);
+            LOGGER.error("Error sending recieved study email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
     }
 
