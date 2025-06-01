@@ -88,12 +88,12 @@ public class TestData {
     }
 
     public class NewAppointments{
-        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-        public static final AppointmentNew oldAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-        public static final AppointmentNew oldAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-        public static final AppointmentNew removedAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-        public static final AppointmentNew removedAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.doctor, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
+        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 1");
+        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 2");
+        public static final AppointmentNew oldAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 3");
+        public static final AppointmentNew oldAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 4");
+        public static final AppointmentNew removedAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 5");
+        public static final AppointmentNew removedAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.doctor, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 6");
     }
 
     public class PatientDetails{

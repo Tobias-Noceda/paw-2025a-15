@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -25,8 +26,6 @@ import ar.edu.itba.paw.webapp.form.AppointmentForm;
 import ar.edu.itba.paw.webapp.form.LandingForm;
 import ar.edu.itba.paw.webapp.form.ShiftsDayForm;
 import ar.edu.itba.paw.webapp.form.TakeTurnForm;
-
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AppointmentController {
@@ -105,7 +104,7 @@ public class AppointmentController {
                 throw new UnauthorizedException("User not found");
             }
             try {
-                as.addAppointment(form.getShiftId(), user.getId(), form.getDate(), form.getStartTime(), form.getEndTime());
+                as.addAppointment(form.getShiftId(), user.getId(), form.getDate(), form.getStartTime(), form.getEndTime(), ""); // TODO: add detail to the appointment
             } catch (Exception e) {
                 throw new FormErrorException("Error in appointment form: " + e.getMessage());
             }

@@ -8,7 +8,7 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 
 public interface AppointmentService {
-    public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime);
+    public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail);
 
     public Optional<AppointmentNew> getAppointmentByShiftIdDateAndTime(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime);
 

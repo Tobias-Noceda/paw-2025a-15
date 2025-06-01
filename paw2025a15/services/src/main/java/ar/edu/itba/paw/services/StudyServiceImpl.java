@@ -117,6 +117,12 @@ public class StudyServiceImpl implements StudyService{
 
     @Transactional(readOnly = true)
     @Override
+    public boolean deleteStudy(long id) {
+        return studyDao.deleteStudy(id);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<Study> getFilteredStudies(long patientId, StudyTypeEnum type, boolean mostRecent) {
         pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return studyDao.getFilteredStudiesByPatient(patientId, type, mostRecent);

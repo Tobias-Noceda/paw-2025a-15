@@ -53,7 +53,7 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional
     @Override
-    public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail) {
         Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with id: " + shiftId + " not found"));
         Doctor doctor = dds.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
@@ -64,13 +64,13 @@ public class AppointmentServiceImpl implements AppointmentService{
         
         getAppointmentByShiftIdDateAndTime(shiftId, date, startTime, endTime).ifPresent(a -> {throw new AppointmentAlreadyTakenException("Shift already taken");});
 
-        AppointmentNew appointment = appointmentDao.addAppointment(shiftId, patientId, date, startTime, endTime);
+        AppointmentNew appointment = appointmentDao.addAppointment(shiftId, patientId, date, startTime, endTime, detail);
         if(appointment == null){
             LOGGER.error("Failed to create appointment for patientId: {}, shiftId: {} and date: {} at {}", patientId, shiftId, date, LocalDateTime.now());
             throw new RuntimeException("Failed to create appointment for patientId: " + patientId +", shiftId: " + shiftId +" and date: " + date);
         }
         LOGGER.info("Successfully created appointment for patientId: {}, shiftId: {} and date: {}", patientId, shiftId, date);
-        if(patient.getId() != doctor.getId()) {
+        if(patient.getId().equals(doctor.getId())) {
             es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
             es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
             
@@ -138,7 +138,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
         if(shift.getDoctor().getId() != doctorId) throw new UnauthorizedException("User not authorized to remove this appointment");//TODO:check changed for hibernate
 
-        addAppointment(shiftId, doctorId, date, startTime, endTime);
+        addAppointment(shiftId, doctorId, date, startTime, endTime, null);//recreate the appointment with null detail to remove it from the free appointments list
         LOGGER.info("Doctor with id: {} has removed an appointment from their free appointments at shiftId: {} and date: {}", doctorId, shiftId, date);
     }
 

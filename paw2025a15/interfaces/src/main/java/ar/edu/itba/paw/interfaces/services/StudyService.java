@@ -15,6 +15,8 @@ public interface StudyService {
 
     public Optional<Study> getStudyById(long id);
 
+    public boolean deleteStudy(long id);
+
     public List<Study> getFilteredStudies(long id, StudyTypeEnum type, boolean mostRecent);
 
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent);

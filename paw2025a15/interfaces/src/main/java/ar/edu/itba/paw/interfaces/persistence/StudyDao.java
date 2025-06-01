@@ -17,6 +17,8 @@ public interface StudyDao {
 
     public Optional<Study> findStudyById(long id);
 
+    public boolean deleteStudy(long id);
+
     public List<Study> getFilteredStudiesByPatient(long patientId, StudyTypeEnum type, boolean mostRecent);
     
     public List<Study> getFilteredStudiesByPatientAndDoctor(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent);

@@ -18,8 +18,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -46,6 +46,7 @@ public class AppointmentsJpaDaoTest {
         final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
         final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
         final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final String DETAIL = TestData.NewAppointments.appointment.getDetail();
         final AppointmentNew APP = TestData.NewAppointments.appointment;
         APP.getId().setShiftId(SHIFT_ID);
         APP.getShift().setId(SHIFT_ID);
@@ -53,7 +54,7 @@ public class AppointmentsJpaDaoTest {
         APP.getPatient().setId(PATIENT_ID);
         APP.getPatient().getPicture().setId(TestData.Images.validImageId);
 
-        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME);
+        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME, DETAIL);
         AppointmentNew appPersisted = em.find(AppointmentNew.class, appointment.getId());
 
         Assert.assertNotNull(appPersisted);
@@ -66,10 +67,11 @@ public class AppointmentsJpaDaoTest {
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
         final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final String DETAIL = "Appointment detail 1";
         final long PATIENT_ID = TestData.Users.patientId;
         final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
 
-        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME);
+        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME, DETAIL);
         AppointmentNew appPersisted = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, START_TIME, END_TIME));
 
         Assert.assertNull(appointment);

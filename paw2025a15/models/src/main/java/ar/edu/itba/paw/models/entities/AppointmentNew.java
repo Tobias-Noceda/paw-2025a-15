@@ -1,15 +1,26 @@
 package ar.edu.itba.paw.models.entities;
 
-import javax.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "appointments_new")
 public class AppointmentNew {
     @EmbeddedId
     private AppointmentNewId id;
+
+    @Column(name = "appointment_detail", length = 500, nullable = true)
+    private String detail;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @MapsId("shiftId")
@@ -24,10 +35,11 @@ public class AppointmentNew {
         //just for hibernate
     }
 
-    public AppointmentNew(DoctorSingleShift shift, User patient, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public AppointmentNew(DoctorSingleShift shift, User patient, LocalDate date, LocalTime startTime, LocalTime endTime, String detail){
         this.shift = shift;
         this.patient = patient;
         this.id = new AppointmentNewId(shift.getId(), date, startTime, endTime);
+        this.detail = detail;
     }
 
     public AppointmentNewId getId(){
@@ -36,6 +48,14 @@ public class AppointmentNew {
 
     public void setId(AppointmentNewId id){
         this.id = id;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
     public DoctorSingleShift getShift(){

@@ -46,6 +46,16 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
+    public boolean deleteStudy(long id) {
+        Study study = em.find(Study.class, id);
+        if (study == null) {
+            return false;
+        }
+        em.remove(study);
+        return true;
+    }
+
+    @Override
     public List<Study> getFilteredStudiesByPatient(long patientId, StudyTypeEnum type, boolean mostRecent) {
         Patient patient = em.find(Patient.class, patientId);
         if(patient==null) return Collections.emptyList();

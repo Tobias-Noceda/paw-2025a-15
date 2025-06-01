@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS appointments_new (
     appointment_date DATE NOT NULL,
     appointment_start_time TIME NOT NULL,
     appointment_end_time TIME NOT NULL,
+    appointment_detail VARCHAR(500),
 
     PRIMARY KEY(shift_id, appointment_date, appointment_start_time, appointment_end_time),
     FOREIGN KEY (shift_id) REFERENCES doctor_single_shifts(shift_id),
