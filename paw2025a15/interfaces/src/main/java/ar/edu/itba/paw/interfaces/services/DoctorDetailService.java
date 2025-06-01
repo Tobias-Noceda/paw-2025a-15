@@ -6,8 +6,8 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -21,9 +21,9 @@ public interface DoctorDetailService {
 
     public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Long> insurances);
     
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
 
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday);
 
     public List<Patient> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize);
 

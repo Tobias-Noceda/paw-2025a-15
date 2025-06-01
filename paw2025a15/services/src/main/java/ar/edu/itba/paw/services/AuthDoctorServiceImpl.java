@@ -100,7 +100,7 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         pds.getPatientById(patientId).orElseThrow(()-> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         List<AccessLevelEnum> toRemove;
-        List<AccessLevelEnum> toAdd = new ArrayList<>(accessLevels);
+        List<AccessLevelEnum> toAdd = accessLevels == null ? new ArrayList<>() : new ArrayList<>(accessLevels);
         if(accessLevels==null || accessLevels.isEmpty()){
             toRemove = getAuthAccessLevelEnums(patientId, doctorId);
             toRemove.remove(AccessLevelEnum.VIEW_BASIC);

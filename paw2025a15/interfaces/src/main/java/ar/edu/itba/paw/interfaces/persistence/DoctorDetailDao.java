@@ -18,9 +18,9 @@ public interface DoctorDetailDao {
 
     public Optional<Doctor> getDoctorById(long id);
 
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
 
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday);
 
     public List<Patient> searchAuthPatientsPageByDoctorAndName(long doctorId, String name, int page, int pageSize);
 

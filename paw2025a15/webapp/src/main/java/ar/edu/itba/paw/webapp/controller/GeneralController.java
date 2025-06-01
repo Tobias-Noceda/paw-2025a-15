@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
@@ -56,14 +55,18 @@ public class GeneralController {
         int totalLength;
         
         if(user == null || user.getRole().equals(UserRoleEnum.PATIENT) || user.getRole().equals(UserRoleEnum.ADMIN)) {
-            Insurance insurance;
+            Long insuranceId;
             if (landingForm.getInsurances() != null) {
-                insurance = is.getInsuranceById(landingForm.getInsurances()).orElse(null);
+                if(is.getInsuranceById(landingForm.getInsurances()).isPresent()) {
+                    insuranceId = landingForm.getInsurances();
+                } else {
+                    insuranceId = null;
+                }
             } else {
-                insurance = null;
+                insuranceId = null;
             }
-            List<Doctor> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), (insurance != null ? insurance.getId() : null), landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
-            totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), (insurance != null ? insurance.getId() : null), landingForm.getWeekday());
+            List<Doctor> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insuranceId, landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
+            totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insuranceId, landingForm.getWeekday());
             mav.addObject("docList", doctors);
         } else {
             List<Patient> patients = dds.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);

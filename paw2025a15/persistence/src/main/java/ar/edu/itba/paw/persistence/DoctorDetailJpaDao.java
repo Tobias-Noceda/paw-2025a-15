@@ -49,7 +49,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
         doctor.setInsurances(insurances);
         File oldPicture = doctor.getPicture();
         boolean remove = false;
-        if(picture.getId()!=oldPicture.getId()){
+        if(picture.getId().equals(oldPicture.getId())){
             doctor.setPicture(picture);
             if(oldPicture.getId() != 1) remove = true;
         }
@@ -63,37 +63,14 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
         return doctor != null ? Optional.of(doctor) : Optional.empty();
     }
 
-    private void buildQueryByParams(StringBuilder queryBuilder, String name, SpecialtyEnum specialty, Insurance insurance,
-            WeekdayEnum weekday, DoctorOrderEnum orderBy) {
-        // Build the query based on the parameters provided
-        if (name != null && !name.isEmpty()) {
-            queryBuilder.append(" AND LOWER(d.name) LIKE :name");
-        }
-        if (specialty != null) {
-            queryBuilder.append(" AND d.specialty = :specialty");
-        }
-        if (insurance != null) {
-            queryBuilder.append(" AND :insurance MEMBER OF d.insurances");
-        }
-        if (weekday != null) {
-            queryBuilder.append(" AND EXISTS (SELECT 1 FROM DoctorSingleShift dss WHERE dss.doctor = d AND dss.weekday = :weekday)");
-        }
-        if (orderBy != null) {
-            switch (orderBy) {
-                case M_RECENT -> queryBuilder.append(" ORDER BY d.createDate ASC");
-                case L_RECENT -> queryBuilder.append(" ORDER BY d.createDate DESC");
-                default -> {
-                    // Imposible to filter by popularity in a query.
-                    // If this is the case, the order will be done in Java
-                }
-            }
-        }
-    }
-
     @Override
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, long insuranceId,
-            WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        Insurance insurance = em.find(Insurance.class, insuranceId);
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        Insurance insurance;
+        if (insuranceId != null) {
+            insurance = em.find(Insurance.class, insuranceId);
+        } else {
+            insurance = null;
+        }
         if (name == null && specialty == null && insurance == null && weekday == null) {
             return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
                     .setFirstResult((page - 1) * pageSize)
@@ -119,13 +96,24 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     }
 
     @Override
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, long insuranceId,
-            WeekdayEnum weekday) {
-                // get the total number of doctors
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday) {
+        Insurance insurance;
+        if (insuranceId != null) {
+            insurance = em.find(Insurance.class, insuranceId);
+        } else {
+            insurance = null;
+        }
+        if (name == null && specialty == null && insurance == null && weekday == null) {
+            return em.createQuery("SELECT COUNT(d) FROM Doctor d", Long.class).getSingleResult().intValue();
+        }
+        
+        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(d) FROM Doctor d WHERE 1=1");
+        buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, null);
 
-            return em
-            .createQuery("SELECT d FROM Doctor d", Doctor.class)
-            .getResultList().size();
+        TypedQuery<Long> query = em.createQuery(queryBuilder.toString(), Long.class);
+        setQueryParameters(query, name, specialty, insurance, weekday);
+
+        return query.getSingleResult().intValue();
     }
 
     @Override
@@ -181,7 +169,34 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
                 .toLowerCase();
     }
 
-    private void setQueryParameters(TypedQuery<Doctor> query, String name, SpecialtyEnum specialty, Insurance insurance,
+    private void buildQueryByParams(StringBuilder queryBuilder, String name, SpecialtyEnum specialty, Insurance insurance,
+            WeekdayEnum weekday, DoctorOrderEnum orderBy) {
+        // Build the query based on the parameters provided
+        if (name != null && !name.isEmpty()) {
+            queryBuilder.append(" AND LOWER(d.name) LIKE :name");
+        }
+        if (specialty != null) {
+            queryBuilder.append(" AND d.specialty = :specialty");
+        }
+        if (insurance != null) {
+            queryBuilder.append(" AND :insurance MEMBER OF d.insurances");
+        }
+        if (weekday != null) {
+            queryBuilder.append(" AND EXISTS (SELECT 1 FROM DoctorSingleShift dss WHERE dss.doctor = d AND dss.weekday = :weekday)");
+        }
+        if (orderBy != null) {
+            switch (orderBy) {
+                case M_RECENT -> queryBuilder.append(" ORDER BY d.createDate ASC");
+                case L_RECENT -> queryBuilder.append(" ORDER BY d.createDate DESC");
+                default -> {
+                    // Imposible to filter by popularity in a query.
+                    // If this is the case, the order will be done in Java
+                }
+            }
+        }
+    }
+
+    private void setQueryParameters(TypedQuery<?> query, String name, SpecialtyEnum specialty, Insurance insurance,
             WeekdayEnum weekday) {
         if (name != null && !name.isEmpty()) {
             query.setParameter("name", "%" + sanitize(name) + "%");
