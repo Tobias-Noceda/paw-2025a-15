@@ -54,6 +54,12 @@
                 <strong><spring:message code="studyTable.uploadDateColumn.title"/>:</strong>
                 <span><spring:message code="dateFormat" arguments="${uploadDay},${uploadMonth},${uploadYear}"/></span>
             </div>
+
+            <!--Subido por-->
+            <div class="study-detail">
+                <strong><spring:message code="studyTable.uploader"/></strong>
+                <span><c:out value="${study.uploader.name}"/></span>
+            </div>
         </div>
         <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
 
