@@ -10,10 +10,7 @@ import javax.validation.constraints.Size;
 
 import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.webapp.form.constraints.EmailNonexistentInUsers;
-import ar.edu.itba.paw.webapp.form.constraints.FieldMatch;
-import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
-import ar.edu.itba.paw.webapp.form.constraints.ValidSchedule;
+import ar.edu.itba.paw.webapp.form.constraints.*;
 
 @FieldMatch(first = "password", second = "confirmPassword", message = "{form.password.match}")
 public class DoctorForm {
@@ -52,6 +49,7 @@ public class DoctorForm {
 
 
     @Pattern(regexp = "^\\d{1,15}$", message = "{form.doctorLicense.invalidFormat}")
+    @ValidLicence
     private String doctorLicense;
 
     public String getPhoneNumber() {

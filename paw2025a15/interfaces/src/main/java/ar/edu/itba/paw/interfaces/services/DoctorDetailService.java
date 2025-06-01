@@ -18,6 +18,8 @@ public interface DoctorDetailService {
 
     public Optional<Doctor> getDoctorById(long id);
 
+    public boolean licenceExists(String licence);
+
     public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Long> insurances);
     
     public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
