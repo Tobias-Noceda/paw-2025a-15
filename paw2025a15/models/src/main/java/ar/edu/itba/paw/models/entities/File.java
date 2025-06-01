@@ -13,7 +13,7 @@ public class File{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "files_file_id_seq")
     @SequenceGenerator(sequenceName = "files_file_id_seq", name = "files_file_id_seq", allocationSize = 1)
     @Column( name = "file_id")
-    private long id;
+    private Long id;
 
     @Column(name = "file_content", nullable = false)
     private byte[] content;
@@ -39,11 +39,11 @@ public class File{
         this.content = content;
     }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 
-    public void setId(long id){
+    public void setId(Long id){
         this.id = id;
     }
 
@@ -63,7 +63,7 @@ public class File{
 
         File o = (File) other;
 
-        return (this.id==o.id);
+        return (this.id.equals(o.id));
     }
 
 

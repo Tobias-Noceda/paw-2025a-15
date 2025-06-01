@@ -118,17 +118,17 @@ public class StudyServiceImpl implements StudyService{
     @Transactional(readOnly = true)
     @Override
     public List<Study> getFilteredStudies(long patientId, StudyTypeEnum type, boolean mostRecent) {
-        Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        return studyDao.getFilteredStudiesByPatient(patient, type, mostRecent);
+        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        return studyDao.getFilteredStudiesByPatient(patientId, type, mostRecent);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
-        Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
 
-        return studyDao.getFilteredStudiesByPatientAndDoctor(patient, doctor, type, mostRecent);
+        return studyDao.getFilteredStudiesByPatientAndDoctor(patientId, doctorId, type, mostRecent);
     }
 
 }

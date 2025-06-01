@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -65,7 +66,7 @@ public class AppointmentServiceImplTest {
     private static final SpecialtyEnum DOC_SPECIALTY= SpecialtyEnum.CARDIOLOGY;
     private static final List<Insurance> DOC_INSURANCES = new ArrayList<>();
     private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY, DOC_INSURANCES);
-    
+ 
     private static final long SHIFT_ID = 1L;
     private static final String ADDRESS = "fake123";
     private static final LocalTime START_TIME = LocalTime.parse("10:00:00");
@@ -78,7 +79,7 @@ public class AppointmentServiceImplTest {
     private static final DoctorSingleShift SHIFT_00 = new DoctorSingleShift(DOC, WEEKDAY, ADDRESS, LocalTime.parse("00:00:00"), END_TIME, DURATION);
     private static final DoctorSingleShift SHIFT_WRONG_WEEKDAY = new DoctorSingleShift(DOC, WRONG_WEEKDAY, ADDRESS, START_TIME, END_TIME, DURATION);
     
-    private static final AppointmentNew APP = new AppointmentNew(SHIFT, PATIENT, APP_DATE, START_TIME, END_TIME);
+    private AppointmentNew APP;// = new AppointmentNew(SHIFT, PATIENT, APP_DATE, START_TIME, END_TIME);
 
     @InjectMocks
     private AppointmentServiceImpl as;
@@ -101,6 +102,12 @@ public class AppointmentServiceImplTest {
     @Mock 
     private AuthDoctorService ads;
 
+    @Before
+    public void setup() {
+        SHIFT.setId(SHIFT_ID); // Ensure ID is set before creating APP
+        APP = new AppointmentNew(SHIFT, PATIENT, APP_DATE, START_TIME, END_TIME);
+    }
+    
     @Test
     public void testAddAppointmentNonexistentPatient(){
         Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
@@ -122,6 +129,7 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDoc(){
+        SHIFT.getDoctor().setId(DOC_ID);;
         Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
@@ -186,21 +194,6 @@ public class AppointmentServiceImplTest {
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME)
         );
     }
-
-    // TODO: falla y no sé como hacerlo bien pero con lo nuevo estaría bueno que haya algo así
-    // @Test
-    // public void testAddAppointmentNonexistentTimeWrong(){
-    //     DOC.setId(DOC_ID);
-    //     SHIFT.setId(SHIFT_ID);
-    //     PATIENT.setId(PATIENT_ID);
-    //     Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
-    //     Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-    //     Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-
-    //     Assert.assertThrows(IllegalArgumentException.class, () -> 
-    //         as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, WRONG_START_TIME, WRONG_END_TIME)
-    //     );
-    // }
 
     @Test
     public void testAddAppointmentTakenApp(){

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
@@ -18,7 +17,7 @@ public interface StudyDao {
 
     public Optional<Study> findStudyById(long id);
 
-    public List<Study> getFilteredStudiesByPatient(Patient patient, StudyTypeEnum type, boolean mostRecent);
+    public List<Study> getFilteredStudiesByPatient(long patientId, StudyTypeEnum type, boolean mostRecent);
     
-    public List<Study> getFilteredStudiesByPatientAndDoctor(Patient patient, Doctor doctor, StudyTypeEnum type, boolean mostRecent);
+    public List<Study> getFilteredStudiesByPatientAndDoctor(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent);
 }

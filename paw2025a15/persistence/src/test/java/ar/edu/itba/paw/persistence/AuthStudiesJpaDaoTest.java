@@ -15,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.models.entities.AuthStudy;
 import ar.edu.itba.paw.models.entities.AuthStudyId;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -37,26 +34,25 @@ public class AuthStudiesJpaDaoTest {
 
     @Test
     public void testAuthStudyForDoctorId(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 
-        boolean result = authStudiesDao.authStudyForDoctor(STUDY, DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), STUDY.getId()));
+        boolean result = authStudiesDao.authStudyForDoctor(STUDY_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
 
         Assert.assertTrue(result);
         Assert.assertNotNull(asPersisted);
-        Assert.assertEquals(DOC, asPersisted.getDoctor());
-        Assert.assertEquals(STUDY, asPersisted.getStudy());
+        Assert.assertEquals(DOC_ID, asPersisted.getAuthStudyId().getDoctorId());
+        Assert.assertEquals(STUDY_ID, asPersisted.getAuthStudyId().getStudyId());
     }
 
     @Test
     public void testAuthStudyForDoctorIdNonexistentDoc(){
-        final Doctor FAKE_DOC = new Doctor(); 
-        FAKE_DOC.setId(0L);
-        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final Long DOC_ID = TestData.Users.newDoctorId;
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 
-        boolean result = authStudiesDao.authStudyForDoctor(STUDY, FAKE_DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(FAKE_DOC.getId(), STUDY.getId()));
+        boolean result = authStudiesDao.authStudyForDoctor(STUDY_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
 
         Assert.assertFalse(result);
         Assert.assertNull(asPersisted);
@@ -64,12 +60,11 @@ public class AuthStudiesJpaDaoTest {
 
     @Test
     public void testAuthStudyForDoctorIdNonexistentStudy(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Study FAKE_STUDY = new Study();
-        FAKE_STUDY.setId(0L);
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long STUDY_ID = TestData.Studies.newStudyId;
 
-        boolean result = authStudiesDao.authStudyForDoctor(FAKE_STUDY, DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), 0L));
+        boolean result = authStudiesDao.authStudyForDoctor(STUDY_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
 
         Assert.assertFalse(result);
         Assert.assertNull(asPersisted);
@@ -78,24 +73,24 @@ public class AuthStudiesJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
     public void testHasAuthStudy(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 
-        boolean result = authStudiesDao.hasAuthStudy(STUDY, DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), STUDY.getId()));
+        boolean result = authStudiesDao.hasAuthStudy(STUDY_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
 
         Assert.assertTrue(result);
         Assert.assertNotNull(asPersisted);
-        Assert.assertEquals(DOC.getId(), asPersisted.getDoctor().getId());
-        Assert.assertEquals(STUDY.getId(), asPersisted.getStudy().getId());
+        Assert.assertEquals(DOC_ID, asPersisted.getDoctor().getId());
+        Assert.assertEquals(STUDY_ID, asPersisted.getStudy().getId());
     }
 
     @Test
     public void testHasAuthStudyUnauth(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 
-        boolean result = authStudiesDao.hasAuthStudy(STUDY, DOC);
+        boolean result = authStudiesDao.hasAuthStudy(STUDY_ID, DOC_ID);
 
         Assert.assertFalse(result);
     }
@@ -103,22 +98,22 @@ public class AuthStudiesJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
     public void testUnauthStudyForDoctorId(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 
-        authStudiesDao.unauthStudyForDoctor(STUDY, DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), STUDY.getId()));
+        authStudiesDao.unauthStudyForDoctor(STUDY_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
 
         Assert.assertNull(asPersisted);
     }
 
     @Test
     public void testUnauthStudyForDoctorIdUnauth(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Study STUDY = TestData.Studies.validStudyWithDate;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 
-        authStudiesDao.unauthStudyForDoctor(STUDY, DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), STUDY.getId()));
+        authStudiesDao.unauthStudyForDoctor(STUDY_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
 
         Assert.assertNull(asPersisted);
     }
@@ -126,14 +121,14 @@ public class AuthStudiesJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
     public void testUnauthAllStudyForDoctorIdAndPatientId(){
-        final Doctor DOC = TestData.Users.doctor;
-        final Patient PATIENT = TestData.Users.patient;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Long PATIENT_ID = TestData.Users.patientId;
         final long STUDY1_ID = TestData.Studies.validStudyWithDateId;
         final long STUDY2_ID = TestData.Studies.validStudyWithoutDateId;
 
-        authStudiesDao.unauthAllStudiesForDoctorAndPatient(PATIENT, DOC);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), STUDY1_ID));
-        AuthStudy as2Persisted = em.find(AuthStudy.class, new AuthStudyId(DOC.getId(), STUDY2_ID));
+        authStudiesDao.unauthAllStudiesForDoctorAndPatient(PATIENT_ID, DOC_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY1_ID));
+        AuthStudy as2Persisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY2_ID));
 
         Assert.assertNull(asPersisted);
         Assert.assertNull(as2Persisted);

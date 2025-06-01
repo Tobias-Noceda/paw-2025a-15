@@ -63,20 +63,21 @@ public class InsuranceJpaDaoTest {
         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
         Assert.assertNotNull(insurancePersisted);
-        Assert.assertEquals(INSURANCE_NEW, insurancePersisted);
-        Assert.assertNotEquals(INSURANCE_OLD, insurancePersisted);   
+        Assert.assertEquals(INSURANCE_NEW.getId(), insurancePersisted.getId());
+        Assert.assertEquals(INSURANCE_NEW.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(INSURANCE_NEW.getPicture().getId(), insurancePersisted.getPicture().getId());  
     }
 
     @Test
     public void testEditNonexistentInsurance(){
-        final Insurance FAKE_INSURANCE =  new Insurance("Fake Insurance", TestData.Images.validImage);
-        FAKE_INSURANCE.setId(0L);
-        final String NEW_NAME = TestData.Insurances.newInsurance.getName();
+        final Insurance INSURANCE = TestData.Insurances.newInsurance;
+        final long INSURANCE_ID = TestData.Insurances.newInsuranceId;
+        final String NEW_NAME = TestData.Insurances.validInsurance.getName();
         final File NEW_PICTURE = TestData.Images.validImage2;
         NEW_PICTURE.setId(TestData.Images.validImage2Id);
 
-        insuranceDao.edit(FAKE_INSURANCE, NEW_NAME, NEW_PICTURE);
-        Insurance insurancePersisted = em.find(Insurance.class, FAKE_INSURANCE);
+        insuranceDao.edit(INSURANCE, NEW_NAME, NEW_PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
         Assert.assertNull(insurancePersisted);
     }
@@ -96,8 +97,9 @@ public class InsuranceJpaDaoTest {
         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
         Assert.assertNotNull(insurancePersisted);
-        Assert.assertEquals(INSURANCE_NEW, insurancePersisted);
-        Assert.assertNotEquals(INSURANCE_OLD, insurancePersisted);   
+        Assert.assertEquals(INSURANCE_NEW.getId(), insurancePersisted.getId());
+        Assert.assertEquals(INSURANCE_NEW.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(INSURANCE_OLD.getPicture().getId(), insurancePersisted.getPicture().getId());     
     }
 
     @Test
@@ -116,8 +118,9 @@ public class InsuranceJpaDaoTest {
         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
         Assert.assertNotNull(insurancePersisted);
-        Assert.assertEquals(INSURANCE_NEW.getPicture(), insurancePersisted.getPicture());
-        Assert.assertNotEquals(INSURANCE_OLD.getPicture(), insurancePersisted.getPicture());   
+        Assert.assertEquals(INSURANCE_NEW.getId(), insurancePersisted.getId());
+        Assert.assertEquals(INSURANCE_OLD.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(INSURANCE_NEW.getPicture().getId(), insurancePersisted.getPicture().getId());    
     }
 
     @Test
@@ -131,7 +134,9 @@ public class InsuranceJpaDaoTest {
 
         Assert.assertNotNull(foundInsurance);
         Assert.assertTrue(foundInsurance.isPresent());
-        Assert.assertEquals(INSURANCE, foundInsurance.get());
+        Assert.assertEquals(INSURANCE.getId(), foundInsurance.get().getId());
+        Assert.assertEquals(INSURANCE.getName(), foundInsurance.get().getName());
+        Assert.assertEquals(INSURANCE.getPicture().getId(), foundInsurance.get().getPicture().getId());
     }
 
     @Test

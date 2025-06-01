@@ -21,10 +21,12 @@ import ar.edu.itba.paw.models.exceptions.NotFoundException;
 @RunWith(MockitoJUnitRunner.class)
 public class InsuranceServiceImplTest {
 
+    private static final Long PICTURE_ID = 1L;
     private static final byte[] PIC_CONTENT = "Image".getBytes();
     private static final FileTypeEnum PIC_FILE_TYPE = FileTypeEnum.JPEG;
     private static final File PICTURE = new File(PIC_CONTENT, PIC_FILE_TYPE);
 
+    private static final Long PICTURE2_ID = 1L;
     private static final byte[] PIC_CONTENT2 = "Image".getBytes();
     private static final FileTypeEnum PIC_FILE_TYPE2 = FileTypeEnum.JPEG;
     private static final File PICTURE2 = new File(PIC_CONTENT2, PIC_FILE_TYPE2);
@@ -46,8 +48,9 @@ public class InsuranceServiceImplTest {
 
     @Test
     public void testCreate(){
+        PICTURE.setId(PICTURE_ID);
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME))).thenReturn(Optional.empty());
-        Mockito.when(fs.findById(Mockito.eq(PICTURE.getId()))).thenReturn(Optional.of(PICTURE));
+        Mockito.when(fs.findById(Mockito.eq(PICTURE_ID))).thenReturn(Optional.of(PICTURE));
         Mockito.when(insuranceDaoMock.create(Mockito.eq(INSURANCE_NAME), Mockito.eq(PICTURE))).thenReturn(INSURANCE);
 
         Insurance insurance = is.create(INSURANCE_NAME, PICTURE);
@@ -67,8 +70,9 @@ public class InsuranceServiceImplTest {
 
     @Test
     public void testCreateNonexistentPic(){
+        PICTURE.setId(PICTURE_ID);
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME))).thenReturn(Optional.empty());
-        Mockito.when(fs.findById(PICTURE.getId())).thenReturn(Optional.empty());
+        Mockito.when(fs.findById(PICTURE_ID)).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             is.create(INSURANCE_NAME, PICTURE)
@@ -78,7 +82,7 @@ public class InsuranceServiceImplTest {
     @Test
     public void testCreateFailure(){
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME))).thenReturn(Optional.empty());
-        Mockito.when(fs.findById(PICTURE.getId())).thenReturn(Optional.of(PICTURE));
+        Mockito.when(fs.findById(PICTURE_ID)).thenReturn(Optional.of(PICTURE));
         Mockito.when(insuranceDaoMock.create(Mockito.eq(INSURANCE_NAME), Mockito.eq(PICTURE))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
@@ -107,22 +111,13 @@ public class InsuranceServiceImplTest {
 
     @Test
     public void testEditNonexistentPic(){
+        PICTURE2.setId(PICTURE2_ID);
         Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.of(INSURANCE));
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME2))).thenReturn(Optional.empty());
-        Mockito.when(fs.findById(Mockito.eq(PICTURE2.getId()))).thenReturn(Optional.empty());
+        Mockito.when(fs.findById(Mockito.eq(PICTURE2_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2)
         );
     }
-
-    // TODO: revisar, pero con hibernate creo que no tiene sentido
-    // @Test
-    // public void testGetInsurancePicNonexistentInsurance(){
-    //     Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
-
-    //     Assert.assertThrows(NotFoundException.class, () -> 
-    //         is.getInsurancePicture(INSURANCE_ID)
-    //     );
-    // }
 }

@@ -87,8 +87,8 @@ public class AuthStudiesServiceImplTest {
     public void testAuthStudyForDoctorId() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(false);
-        Mockito.when(authStudyDaoMock.authStudyForDoctor(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(true);
+        Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
+        Mockito.when(authStudyDaoMock.authStudyForDoctor(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
         boolean result = ass.authStudyForDoctorId(STUDY_ID, DOC_ID);
 
@@ -99,8 +99,8 @@ public class AuthStudiesServiceImplTest {
     public void testAuthStudyForDoctorIdFailure() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(false);
-        Mockito.when(authStudyDaoMock.authStudyForDoctor(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(false);
+        Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
+        Mockito.when(authStudyDaoMock.authStudyForDoctor(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(false);
 
         boolean result = ass.authStudyForDoctorId(STUDY_ID, DOC_ID);
 
@@ -111,7 +111,7 @@ public class AuthStudiesServiceImplTest {
     public void testAuthStudyForDoctorIdAlreadyAuth() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_WITH_DATE), Mockito.eq(DOC))).thenReturn(true);
+        Mockito.when(authStudyDaoMock.hasAuthStudy(Mockito.eq(STUDY_ID), Mockito.eq(DOC_ID))).thenReturn(true);
 
         boolean result = ass.authStudyForDoctorId(STUDY_ID, DOC_ID);
 

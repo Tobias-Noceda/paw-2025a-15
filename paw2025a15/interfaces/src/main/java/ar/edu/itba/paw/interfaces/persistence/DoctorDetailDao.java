@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
@@ -13,17 +12,17 @@ import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorDetailDao {
-    public Doctor createDoctor(String email, String password, String name, String telephone, File picture, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances);
+    public Doctor createDoctor(String email, String password, String name, String telephone, long pictureId, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances);
     
-    public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Insurance> insurances);
+    public void updateDoctor(long doctorId, String telephone, long pictureId, LocaleEnum mailLanguage, List<Insurance> insurances);
 
     public Optional<Doctor> getDoctorById(long id);
 
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
 
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId, WeekdayEnum weekday);
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, long insuranceId, WeekdayEnum weekday);
 
-    public List<Patient> searchAuthPatientsPageByDoctorAndName(Doctor doctor, String name, int page, int pageSize);
+    public List<Patient> searchAuthPatientsPageByDoctorAndName(long doctorId, String name, int page, int pageSize);
 
-    public int searchAuthPatientsCountByDoctorAndName(Doctor doctor, String name);
+    public int searchAuthPatientsCountByDoctorAndName(long doctorId, String name);
 }

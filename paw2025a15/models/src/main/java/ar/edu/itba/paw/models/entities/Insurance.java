@@ -12,7 +12,7 @@ public class Insurance {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "insurances_insurance_id_seq")
     @SequenceGenerator(sequenceName = "insurances_insurance_id_seq", name = "insurances_insurance_id_seq", allocationSize = 1)
     @Column( name = "insurance_id")
-    private long id;
+    private Long id;
 
     @Column( name = "insurance_name", length = 100, nullable = false)
     private String name;
@@ -30,11 +30,11 @@ public class Insurance {
         this.picture = picture;
     }
 
-    public long getId(){
+    public Long getId(){
         return id;
     }
 
-    public void setId(long id){
+    public void setId(Long id){
         this.id = id;
     }
 
@@ -71,7 +71,7 @@ public class Insurance {
 
         Insurance o = (Insurance) other;
 
-        return (this.id==o.id) && (this.name.equals(o.name));
+        return (this.id.equals(o.id)) && (this.name.equals(o.name));
     }
 
     @Override

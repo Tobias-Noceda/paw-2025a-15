@@ -38,7 +38,7 @@ public class DoctorShiftJpaDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql"})
     public void testCreate(){
         final Doctor DOC =  TestData.Users.doctor;
-        final long DOC_ID = TestData.Users.doctorId;
+        final Long DOC_ID = TestData.Users.doctorId;
         DOC.setId(DOC_ID);
         final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
         final String ADDRESS = TestData.DoctorSingleShifts.doctorSingleShift.getAddress();
@@ -95,7 +95,7 @@ public class DoctorShiftJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
     public void getShiftById(){
-        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final Long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
         SHIFT.setId(SHIFT_ID);
         SHIFT.getDoctor().setId(TestData.Users.doctorId);

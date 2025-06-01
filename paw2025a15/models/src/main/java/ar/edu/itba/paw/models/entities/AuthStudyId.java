@@ -11,10 +11,10 @@ public class AuthStudyId implements Serializable{
     private static final long serialVersionUID = 1L;
     
     @Column(name = "doctor_id")
-    private long doctorId;
+    private Long doctorId;
 
     @Column(name = "study_id")
-    private long studyId;
+    private Long studyId;
 
     public AuthStudyId(){
         //just for hibernate
@@ -25,28 +25,28 @@ public class AuthStudyId implements Serializable{
         this.studyId = studyId;
     }
 
-    public long getDoctorId(){
+    public Long getDoctorId(){
         return doctorId;
     }
 
-    public void setDoctorId(long doctorId){
+    public void setDoctorId(Long doctorId){
         this.doctorId = doctorId;
     }
 
-    public long getStudyId(){
+    public Long getStudyId(){
         return studyId;
     }
 
-    public void setStudyId(long studyId){
+    public void setStudyId(Long studyId){
         this.studyId = studyId;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AuthStudyId)) return false;
-        AuthStudyId that = (AuthStudyId) o;
-        return (doctorId == that.doctorId) && (studyId == that.studyId);
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof AuthStudyId)) return false;
+        AuthStudyId o = (AuthStudyId) other;
+        return (doctorId.equals(o.doctorId)) && (studyId.equals(o.studyId));
     }
 
     @Override

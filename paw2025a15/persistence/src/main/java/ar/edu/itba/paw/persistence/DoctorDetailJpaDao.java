@@ -28,24 +28,33 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     private EntityManager em;
 
     @Override
-    public Doctor createDoctor(String email, String password, String name, String telephone, File picture, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances) {
+    public Doctor createDoctor(String email, String password, String name, String telephone, long pictureId, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances) {
+        File picture = em.find(File.class, pictureId);
+        if(picture == null) return null;
         Doctor doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
         em.persist(doctor);
         return doctor;
     }
 
     @Override
-    public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Insurance> insurances) {
-        doctor.setTelephone(phoneNumber);
-        if (picture != null) {
-            doctor.setPicture(picture);
-        }
+    public void updateDoctor(long doctorId, String telephone, long pictureId, LocaleEnum mailLanguage, List<Insurance> insurances) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        File picture = em.find(File.class, pictureId);
+        if(doctor ==null || picture == null || (telephone == null || telephone.isEmpty()) ) return;
+        doctor.setTelephone(telephone);
         doctor.setLocale(mailLanguage);
         if (insurances == null) {
             insurances = Collections.emptyList();
         }
         doctor.setInsurances(insurances);
+        File oldPicture = doctor.getPicture();
+        boolean remove = false;
+        if(picture.getId()!=oldPicture.getId()){
+            doctor.setPicture(picture);
+            if(oldPicture.getId() != 1) remove = true;
+        }
         em.merge(doctor);
+        if(remove) em.remove(oldPicture);
     }
 
     @Override
@@ -82,16 +91,16 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     }
 
     @Override
-    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Insurance insurance,
+    public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, long insuranceId,
             WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
-        // Select all the posible doctors for "Doctor" entity
+        Insurance insurance = em.find(Insurance.class, insuranceId);
         if (name == null && specialty == null && insurance == null && weekday == null) {
             return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
                     .setFirstResult((page - 1) * pageSize)
                     .setMaxResults(pageSize)
                     .getResultList();
         }
-        // Build the query based on the parameters provided
+        
         StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
         buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, orderBy);
 
@@ -110,17 +119,19 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     }
 
     @Override
-    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, Insurance insuranceId,
+    public int getTotalDoctorsByParams(String name, SpecialtyEnum specialty, long insuranceId,
             WeekdayEnum weekday) {
                 // get the total number of doctors
-                return em
+
+            return em
             .createQuery("SELECT d FROM Doctor d", Doctor.class)
             .getResultList().size();
     }
 
     @Override
-    public List<Patient> searchAuthPatientsPageByDoctorAndName(Doctor doctor, String name, int page, int pageSize) {
-        if(page <= 0 || pageSize <= 0) return Collections.emptyList();
+    public List<Patient> searchAuthPatientsPageByDoctorAndName(long doctorId, String name, int page, int pageSize) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
         TypedQuery<Patient> query = em.createQuery(
                 "select distinct ad.patient from AuthDoctor as ad where ad.doctor = :doctor ", Patient.class);
@@ -136,7 +147,9 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
     }
 
     @Override
-    public int searchAuthPatientsCountByDoctorAndName(Doctor doctor, String name) {
+    public int searchAuthPatientsCountByDoctorAndName(long doctorId, String name) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
         String baseQuery = " select count(distinct ad.patient.id) from AuthDoctor as ad  where ad.doctor = :doctor ";
         if(name != null && !name.trim().isEmpty()) {
             baseQuery += " AND LOWER(ad.patient.name) LIKE :userName";

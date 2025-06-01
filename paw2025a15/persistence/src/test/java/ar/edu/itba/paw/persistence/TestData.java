@@ -31,45 +31,46 @@ public class TestData {
 
     public class Images{
         public static final File validImage = new File("D".getBytes(), FileTypeEnum.JPEG);
-        public static final long validImageId = 1L;
+        public static final Long validImageId = 1L;
         public static final File validImage2 = new File("O".getBytes(), FileTypeEnum.JPEG);
-        public static final long validImage2Id = 2L;
+        public static final Long validImage2Id = 2L;
         public static final File newImage = new File("N".getBytes(), FileTypeEnum.JPEG);
     }
 
     public class Insurances{
         public static final Insurance validInsurance = new Insurance("OSDE", Images.validImage);
-        public static final long validInsuranceId = 1L;
+        public static final Long validInsuranceId = 1L;
         public static final Insurance validInsurance2 = new Insurance("Galeno", Images.validImage);
-        public static final long validInsurance2Id = 2L;
+        public static final Long validInsurance2Id = 2L;
         public static final Insurance newInsurance = new Insurance("Swiss Medical", Images.validImage);
+        public static final Long newInsuranceId = 3L;
     }
 
     public class Studies{
         public static final Study validStudyWithDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
-        public static final long validStudyWithDateId = 1L;
+        public static final Long validStudyWithDateId = 1L;
         public static final Study validStudyWithoutDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
-        public static final long validStudyWithoutDateId = 2L;
+        public static final Long validStudyWithoutDateId = 2L;
         public static final Study extraStudy = new Study(StudyTypeEnum.PRESCRIPTION, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
-        public static final long extraStudyId = 3L;
+        public static final Long extraStudyId = 3L;
         public static final Study extraStudy2 = new Study(StudyTypeEnum.PRESCRIPTION, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
-        public static final long extraStudy2Id = 4L;
+        public static final Long extraStudy2Id = 4L;
         public static final Study newStudyWithDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.now(), LocalDate.parse("2025-04-09"));
         public static final Study newStudyWithoutDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.now(), LocalDate.now());
-        public static final long newStudyId = 3L;
+        public static final Long newStudyId = 3L;
     }
 
     public class Users{
         public static final Patient patient = new Patient("donna@example.com", "supersecret123", "donna", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
-        public static final long patientId = 1L;
+        public static final Long patientId = 1L;
         public static final Patient newPatient = new Patient("sophie@example.com", "supersecret123", "sophie", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
-        public static final long newPatientId = 3L;
+        public static final Long newPatientId = 3L;
         
 
         public static final Doctor doctor = new Doctor("membrillo@example.com", "supersecret123", "membrillo", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY, List.of());
-        public static final long doctorId = 2L;
+        public static final Long doctorId = 2L;
         public static final Doctor newDoctor = new Doctor("batata@example.com", "supersecret123", "batata", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, "med-licence", SpecialtyEnum.CARDIOLOGY, List.of());
-        public static final long newDoctorId = 3L;
+        public static final Long newDoctorId = 3L;
     }
 
     public class DoctorDetails{
@@ -81,25 +82,9 @@ public class TestData {
         public static final DoctorCoverage doctorCoverage2 = new DoctorCoverage(Users.doctor, Insurances.validInsurance2);
     }
 
-    // public class DoctorShifts{
-    //     public static final DoctorShift doctorShift = new DoctorShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"));
-    //     public static final long doctorShiftId = 1L;
-    //     public static final DoctorShift doctorShift2 = new DoctorShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:15:00"), LocalTime.parse("10:30:00"));
-    //     public static final long doctorShift2Id = 2L;
-    // }
-
-    // public class Appointments{
-    //     public static final Appointment appointment = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-10-09"));
-    //     public static final Appointment appointment2 = new Appointment(DoctorShifts.doctorShift2, Users.patient, LocalDate.parse("2025-10-09"));
-    //     public static final Appointment oldAppointment = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-04-09"));
-    //     public static final Appointment oldAppointment2 = new Appointment(DoctorShifts.doctorShift, Users.patient, LocalDate.parse("2025-04-09"));
-    //     public static final Appointment removedAppointment = new Appointment(DoctorShifts.doctorShift2, Users.patient, LocalDate.parse("2025-04-19"));
-    //     public static final Appointment removedAppointment2 = new Appointment(DoctorShifts.doctorShift, Users.doctor, LocalDate.parse("2025-04-19"));
-    // }
-
     public class DoctorSingleShifts{
         public static final DoctorSingleShift doctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:30:00"), 15);
-        public static final long doctorSingleShiftId = 1L;
+        public static final Long doctorSingleShiftId = 1L;
     }
 
     public class NewAppointments{
