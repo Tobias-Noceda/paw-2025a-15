@@ -66,7 +66,6 @@ public class StudyServiceImplTest {
     private static final List<Insurance> DOC_INSURANCES = new ArrayList<>();
     private static final Doctor DOC = new Doctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, FILE, DOC_CREATE_DATE, DOC_LOCALE, DOC_LICENCE, DOC_SPECIALTY, DOC_INSURANCES);
     
-    private static final long STUDY_ID = 1L;
     private static final StudyTypeEnum STUDYTYPE = StudyTypeEnum.OTHER;
     private static final String COMMENT = "comment";
     private static final LocalDateTime STUDY_UPLOAD_TIME = LocalDateTime.now();

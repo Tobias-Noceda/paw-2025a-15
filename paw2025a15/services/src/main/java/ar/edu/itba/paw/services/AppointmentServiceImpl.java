@@ -24,7 +24,6 @@ import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -65,7 +64,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         
         getAppointmentByShiftIdDateAndTime(shiftId, date, startTime, endTime).ifPresent(a -> {throw new AppointmentAlreadyTakenException("Shift already taken");});
 
-        AppointmentNew appointment = appointmentDao.addAppointment(shift, (User) patient, date, startTime, endTime);
+        AppointmentNew appointment = appointmentDao.addAppointment(shiftId, patientId, date, startTime, endTime);
         if(appointment == null){
             LOGGER.error("Failed to create appointment for patientId: {}, shiftId: {} and date: {} at {}", patientId, shiftId, date, LocalDateTime.now());
             throw new RuntimeException("Failed to create appointment for patientId: " + patientId +", shiftId: " + shiftId +" and date: " + date);
@@ -113,9 +112,9 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Transactional
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId) {
+        DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
         AppointmentNew appointment = getAppointmentByShiftIdDateAndTime(shiftId, date, startTime, endTime).orElseThrow(() -> new NotFoundException("Appointment with shiftId: " + shiftId + " and date: " + date + " does not exist!"));
         Patient patient = pds.getPatientById(appointment.getPatient().getId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatient().getId() + " does not exist!"));
-        DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
         Doctor doctor = dds.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
 
         if (cancellerId == patient.getId()) {

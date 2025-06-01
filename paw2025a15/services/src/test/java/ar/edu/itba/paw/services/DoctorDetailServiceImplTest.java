@@ -30,9 +30,6 @@ public class DoctorDetailServiceImplTest {
     private static final byte[] FILE_CONTENT = "Image".getBytes();
     private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
     private static final File FILE = new File(FILE_CONTENT, FILETYPE);
-
-    private static final byte[] FILE_CONTENT2 = "Image2".getBytes();
-    private static final File FILE2 = new File(FILE_CONTENT2, FILETYPE);
     
     private static final long DOC_ID = 1L;
     private static final String DOC_EMAIL = "sabrina@example.com";
@@ -48,12 +45,7 @@ public class DoctorDetailServiceImplTest {
 
     private static final long INSURANCE_ID = 1L;
     private static final long INSURANCE2_ID = 1L;
-    private static final String INSURANCE_NAME = "OSDE";
-    private static final String INSURANCE_NAME2 = "Galeno";
-    private static final Insurance INSURANCE = new Insurance(INSURANCE_NAME, FILE);
-    private static final Insurance INSURANCE2 = new Insurance(INSURANCE_NAME2, FILE2);
     private static final List<Long> INSURANCES = List.of(INSURANCE_ID, INSURANCE2_ID);
-    private static final List<Insurance> INSURANCESLIST = List.of(INSURANCE, INSURANCE2);
 
     @InjectMocks
     private DoctorDetailServiceImpl dds;
@@ -64,68 +56,22 @@ public class DoctorDetailServiceImplTest {
 
     @Test
     public void testUpdateDoctorCoveragesNonexistentDoctor(){
+        DOC.setId(DOC_ID);
         Mockito.when(doctorDetailDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            dds.updateDoctor(DOC, DOC_NAME, FILE, DOC_LOCALE, INSURANCES)
+            dds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
         );
-    }
-
-    // TODO: ver si se puede hacer de otra forma
-    // @Test
-    // public void testUpdateDoctorCoveragesDaoAddFailureWhenCurrentNull(){
-    //     int[] badResults = {1,0};
-    //     Mockito.when(doctorDetailDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-    //     Mockito.when(doctorDetailDaoMock.updateDoctor(Mockito.anyLong(), Mockito.anyString(), Mockito.any(File.class), Mockito.any(LocaleEnum.class), Mockito.anyList())).thenReturn(badResults);
-
-    //     Assert.assertThrows(RuntimeException.class, () -> 
-    //         dds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
-    //     );
-    // }
-
-    // TODO: ver si se puede hacer de otra forma
-    // @Test
-    // public void testUpdateDoctorCoveragesDaoAddFailureExistingCurrent(){
-    //     int[] badResults = {1,0};
-    //     Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-    //     Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(List.of(INSURANCE));
-    //     Mockito.when(doctorDetailDaoMock.addDoctorCoverages(Mockito.anyLong(), Mockito.anyList())).thenReturn(badResults);
-
-    //     Assert.assertThrows(RuntimeException.class, () -> 
-    //         dds.updateDoctorCoverages(DOC_ID, INSURANCES)
-    //     );
-    // }
+    }    
 
     @Test
     public void testSetDoctorCoveragesNonexistentDoc(){
+        DOC.setId(DOC_ID);
         Mockito.when(doctorDetailDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            dds.updateDoctor(DOC, DOC_NAME, FILE, DOC_LOCALE, INSURANCES)
+            dds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
         );
     }
 
-    // TODO: ver q onda esta, para mi con hibernate ya no tiene sentido
-    // @Test
-    // public void testCreateDoctorCoveragesExistentCoverages(){
-    //     Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-    //     Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(INSURANCESLIST);
-
-    //     Assert.assertThrows(AlreadyExistsException.class, () -> 
-    //         dds.createDoctorCoverages(DOC_ID, INSURANCES)
-    //     );
-    // }
-
-    // TODO: ver q onda esta, para mi con hibernate ya no tiene sentido
-    // @Test
-    // public void testCreateDoctorCoveragesNonexistentInsurance(){
-    //     int[] badResults = {1,0};
-    //     Mockito.when(doctorDetailDaoMock.getDetailByDoctorId(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC_DETAIL));
-    //     Mockito.when(doctorDetailDaoMock.getDoctorInsurancesById(Mockito.eq(DOC_ID))).thenReturn(Collections.emptyList());
-    //     Mockito.when(doctorDetailDaoMock.addDoctorCoverages(Mockito.anyLong(), Mockito.anyList())).thenReturn(badResults);
-
-    //     Assert.assertThrows(RuntimeException.class, () -> 
-    //         dds.createDoctorCoverages(DOC_ID, INSURANCES)
-    //     );
-    // }
 }

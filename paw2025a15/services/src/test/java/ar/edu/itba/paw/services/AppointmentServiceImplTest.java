@@ -70,8 +70,6 @@ public class AppointmentServiceImplTest {
     private static final String ADDRESS = "fake123";
     private static final LocalTime START_TIME = LocalTime.parse("10:00:00");
     private static final LocalTime END_TIME = LocalTime.parse("10:30:00");
-    private static final LocalTime WRONG_START_TIME = LocalTime.parse("11:00:00");
-    private static final LocalTime WRONG_END_TIME = LocalTime.parse("11:30:00");
     private static final int DURATION = 30; // in minutes
     private static final LocalDate APP_DATE = LocalDate.now().plusDays(1);
     private static final WeekdayEnum WEEKDAY = WeekdayEnum.fromInt(APP_DATE.getDayOfWeek().ordinal());
@@ -228,7 +226,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.empty());
-        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT), Mockito.eq(PATIENT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(null);
+        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT_ID), Mockito.eq(PATIENT_ID), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(null);
 
         Assert.assertThrows(RuntimeException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME)
@@ -244,7 +242,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.empty());
-        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT), Mockito.eq(PATIENT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(APP);
+        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT_ID), Mockito.eq(PATIENT_ID), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(APP);
         Mockito.doNothing().when(es).sendDoctorTakenShiftEmail(Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(APP), Mockito.eq(SHIFT));
         Mockito.doNothing().when(es).sendPatientTakenShiftEmail(Mockito.eq(PATIENT), Mockito.eq(DOC), Mockito.eq(APP), Mockito.eq(SHIFT));
         Mockito.doNothing().when(ads).toggleAuthDoctor(Mockito.eq(PATIENT_ID), Mockito.eq(DOC_ID));
@@ -257,6 +255,7 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testCancelAppointmentNonexistentApp(){
+        Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
@@ -268,6 +267,7 @@ public class AppointmentServiceImplTest {
     public void testCancelAppointmentNonexistentPatient(){
         DOC.setId(DOC_ID);
         PATIENT.setId(PATIENT_ID);
+        Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.of(APP));
         Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
@@ -278,10 +278,6 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testCancelAppointmentNonexistentShift(){
-        DOC.setId(DOC_ID);
-        PATIENT.setId(PATIENT_ID);
-        Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.of(APP));
-        Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 

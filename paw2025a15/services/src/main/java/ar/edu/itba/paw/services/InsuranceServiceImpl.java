@@ -49,6 +49,7 @@ public class InsuranceServiceImpl implements InsuranceService{
     public void edit(long id, String name, File picture) {
         Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
         if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        fs.findById(picture.getId()).orElseThrow(() -> new NotFoundException("Logo with id: " + picture.getId() + " does not exist!"));
         insurance.setName(name);
         insurance.setPicture(picture);
         LOGGER.info("Edited insurance information for insurance with id: {}", id);

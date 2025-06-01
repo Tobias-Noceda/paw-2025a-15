@@ -62,6 +62,7 @@ public class PatientDetailServiceImplTest {
 
     @Test
     public void testUpdatePatientDetailsNonexistent(){
+        PATIENT.setId(PATIENT_ID);
         Mockito.when(patientDetailDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 

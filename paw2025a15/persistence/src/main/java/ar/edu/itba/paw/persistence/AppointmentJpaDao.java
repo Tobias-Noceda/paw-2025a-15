@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.entities.User;
 
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
@@ -25,7 +24,10 @@ public class AppointmentJpaDao implements AppointmentDao{
     private EntityManager em;
 
     @Override
-    public AppointmentNew addAppointment(DoctorSingleShift shift, User patient, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        DoctorSingleShift shift = em.find(DoctorSingleShift.class, shiftId);
+        Patient patient = em.find(Patient.class, patientId);
+        if(shift==null || patient==null) return null;
         final AppointmentNew app = new AppointmentNew(shift, patient, date, startTime, endTime);
         em.persist(app);
         return app;

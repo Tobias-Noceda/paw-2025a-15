@@ -84,7 +84,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
         LocaleEnum mailLanguage,
         final List<Long> insurancesIds
     ) {
-        if (doctor == null) {
+        if (doctor == null || getDoctorById(doctor.getId()).isEmpty()) {
             throw new NotFoundException("Doctor not found!");
         }
         

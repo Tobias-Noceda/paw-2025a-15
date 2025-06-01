@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
-import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
@@ -43,8 +42,6 @@ public class AppointmentsJpaDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
     public void testAddAppointment(){
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
-        final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
-        final Patient PATIENT = TestData.Users.patient;
         final long PATIENT_ID = TestData.Users.patientId;
         final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
         final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
@@ -56,7 +53,7 @@ public class AppointmentsJpaDaoTest {
         APP.getPatient().setId(PATIENT_ID);
         APP.getPatient().getPicture().setId(TestData.Images.validImageId);
 
-        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT, PATIENT, APP_DATE, START_TIME, END_TIME);
+        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME);
         AppointmentNew appPersisted = em.find(AppointmentNew.class, appointment.getId());
 
         Assert.assertNotNull(appPersisted);
@@ -67,13 +64,12 @@ public class AppointmentsJpaDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql"})
     public void testAddAppointmentNonexistentShift(){
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
-        final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
         final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
         final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
-        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
         final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
 
-        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT, PATIENT, APP_DATE, START_TIME, END_TIME);
+        AppointmentNew appointment = appointmentDao.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME);
         AppointmentNew appPersisted = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, START_TIME, END_TIME));
 
         Assert.assertNull(appointment);
@@ -81,7 +77,7 @@ public class AppointmentsJpaDaoTest {
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
     public void testGetAppointmentsByShiftIdAndDate(){
         final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
@@ -107,7 +103,7 @@ public class AppointmentsJpaDaoTest {
     }
 /*
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetFutureAppointmentDataByPatientId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
@@ -143,7 +139,7 @@ public class AppointmentsJpaDaoTest {
     }*/
 /*
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetOldAppointmentDataByPatientId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
@@ -179,7 +175,7 @@ public class AppointmentsJpaDaoTest {
    }
 *//*
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetFutureAppointmentDataByDoctorId(){
         final long PATIENT_ID = TestData.Users.patientId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
@@ -215,7 +211,7 @@ public class AppointmentsJpaDaoTest {
     }*/
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetAppointmentsForDate(){
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final long PATIENT_ID = TestData.Users.patientId;
@@ -257,7 +253,7 @@ public class AppointmentsJpaDaoTest {
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testRemoveAppointment(){
         final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
@@ -281,7 +277,7 @@ public class AppointmentsJpaDaoTest {
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:appointments.sql", "classpath:oldAppointments.sql"})
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testRemoveAppointmentNonexistentAppointment(){
         final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final DoctorSingleShift fakeShift = TestData.DoctorSingleShifts.doctorSingleShift;

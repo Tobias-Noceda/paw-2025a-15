@@ -71,7 +71,6 @@ public class AuthDoctorServiceImplTest {
     @Test
     public void testToggleAuthDoctorNonexistentPatient(){
         Mockito.when(pds.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-        Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ads.toggleAuthDoctor(PATIENT_ID, DOC_ID)

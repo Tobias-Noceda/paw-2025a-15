@@ -73,7 +73,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
         String hobbies,
         String job
     ) {
-        if (patient == null) {
+        if (patient == null || getPatientById(patient.getId()).isEmpty()) {
             throw new NotFoundException("Patient does not exist!");
         }
         if (birthdate == null || height == null || weight == null) {

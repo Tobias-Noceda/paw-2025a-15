@@ -99,6 +99,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+        pds.getPatientById(patientId).orElseThrow(()-> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         List<AccessLevelEnum> toRemove;
         List<AccessLevelEnum> toAdd = new ArrayList<>(accessLevels);
         if(accessLevels==null || accessLevels.isEmpty()){
