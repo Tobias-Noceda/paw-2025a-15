@@ -11,6 +11,7 @@
   <title>
     <spring:message code="uploadStudies.title" arguments="${patient.name}" />
   </title>
+  <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
   <link rel="stylesheet" href="<c:url value='/css/main.css'/>" />
 
   <link rel="stylesheet" href="<c:url value='/css/file-charge.css'/>" />

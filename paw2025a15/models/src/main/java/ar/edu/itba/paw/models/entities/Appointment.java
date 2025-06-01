@@ -1,9 +1,17 @@
 package ar.edu.itba.paw.models.entities;
 
-import javax.persistence.*;
-
 import java.time.LocalDate;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+// TODO: Delete when we are sure
 @Entity
 @Table(name = "appointments")
 public class Appointment {

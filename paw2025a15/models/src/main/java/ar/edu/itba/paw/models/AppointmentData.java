@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+// TODO: delete
 public class AppointmentData {
     private long shiftId;
     private long patientId;

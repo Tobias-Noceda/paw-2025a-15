@@ -10,6 +10,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+// TODO: Unused -> delete (Probablemente esto esté directamente en patient cuando se use)
 @Entity
 @Table(name = "patient_coverages")
 public class PatientCoverage {

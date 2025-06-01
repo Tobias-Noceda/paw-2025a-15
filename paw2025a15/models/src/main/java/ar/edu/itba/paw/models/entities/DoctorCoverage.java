@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+// TODO: revisar si vale la pena. Se usa solo en tests, por ahi se puede actualizar tests y borrar
 @Entity
 @Table(name = "doctor_coverages")
 public class DoctorCoverage {
