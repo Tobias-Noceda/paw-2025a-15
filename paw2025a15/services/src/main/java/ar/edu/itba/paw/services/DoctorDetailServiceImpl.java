@@ -56,6 +56,11 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
         return doctorDetailDao.getDoctorById(id);
     }
 
+    @Override
+    public boolean licenceExists(String licence) {
+        return doctorDetailDao.licenceExists(licence);
+    }
+
     @Transactional
     @Override
     public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale) {

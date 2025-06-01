@@ -149,6 +149,15 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
         return query.getSingleResult().intValue();
     }
 
+    @Override
+    public boolean licenceExists(String licence) {
+        if(licence == null) return false;
+        return em.createQuery(
+                "SELECT COUNT(d) FROM Doctor d WHERE d.licence = :licence", Long.class)
+                .setParameter("licence", licence)
+                .getSingleResult().intValue() > 0;
+    }
+
     private String sanitize(String name) {
         if (name == null) return null;
         return name

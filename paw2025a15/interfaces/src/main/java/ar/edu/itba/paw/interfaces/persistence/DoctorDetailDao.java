@@ -26,4 +26,6 @@ public interface DoctorDetailDao {
     public List<Patient> searchAuthPatientsPageByDoctorAndName(Doctor doctor, String name, int page, int pageSize);
 
     public int searchAuthPatientsCountByDoctorAndName(Doctor doctor, String name);
+
+    public boolean licenceExists(String licence);
 }
