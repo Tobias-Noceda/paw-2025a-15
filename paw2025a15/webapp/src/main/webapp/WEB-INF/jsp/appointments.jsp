@@ -24,7 +24,7 @@
   <c:set var="cancelText">
     <spring:message code="appointments.dismiss"/>
   </c:set>
-  <c:if test="${user_data.role == 'PATIENT'}">
+  <c:if test="${user_data.role eq 'PATIENT'}">
     <div class="appointment-list-container">
       <h3 class="table-title"><spring:message code="appointments.future"/></h3>
       <div class="appointment-table-container">
@@ -139,7 +139,7 @@
     </div>
   </c:if>
 
-  <c:if test="${user_data.role == 'DOCTOR'}">
+  <c:if test="${user_data.role eq 'DOCTOR'}">
     <div class="appointment-list-container">
       <h3 class="table-title"><spring:message code="appointments.taken"/></h3>
       <div class="appointment-table-container">

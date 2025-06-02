@@ -144,7 +144,7 @@
               <option value=""><spring:message code="profileInfo.bloodType.select"/></option>
               <c:forEach var="bloodType" items="${bloodTypes}">
                 <option value="${bloodType.name()}"
-                        <c:if test="${patientDetails.bloodType == bloodType}">selected</c:if>>
+                        <c:if test="${patientDetails.bloodType eq bloodType}">selected</c:if>>
                     ${bloodType.getName()}
                 </option>
               </c:forEach>

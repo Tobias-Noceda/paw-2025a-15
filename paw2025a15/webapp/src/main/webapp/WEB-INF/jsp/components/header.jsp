@@ -26,12 +26,12 @@
       </div>
       <c:if test="${user_data != null}">
         <nav class="nav-links">
-          <c:if test="${user_data.role == 'PATIENT' || user_data.role == 'DOCTOR'}">
-            <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title == "appointments"}'>active</c:if>">
+          <c:if test="${user_data.role eq 'PATIENT' || user_data.role eq 'DOCTOR'}">
+            <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title eq "appointments"}'>active</c:if>">
               <spring:message code="header.appointments" />
             </a>
-            <c:if test="${user_data.role == 'PATIENT'}">
-              <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title == "studies"}'>active</c:if>">
+            <c:if test="${user_data.role eq 'PATIENT'}">
+              <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title eq "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
               </a>
             </c:if>
@@ -39,10 +39,10 @@
         </nav>
       </c:if>
       <c:set var="barPlaceholder">
-        <c:if test="${user_data.role == 'PATIENT' || user_data == null}">
+        <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
           <spring:message code="header.patient.placeholder"/>
         </c:if>
-        <c:if test="${user_data.role == 'DOCTOR' || user_data.role == 'LABORATORY'}">
+        <c:if test="${user_data.role eq 'DOCTOR' || user_data.role eq 'LABORATORY'}">
           <spring:message code="header.doctor.placeholder"/>
         </c:if>
       </c:set>
@@ -58,7 +58,7 @@
           <form:form modelAttribute="landingForm" action="${searchLink}" method="get" class="search-bar-form">
             <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
             <button type="submit" style="display: none;"></button>
-            <c:if test="${user_data.role == 'PATIENT' || user_data == null}">
+            <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
               <form:input type="hidden" path="insurances"/>
               <form:input type="hidden" path="weekday"/>
               <form:input type="hidden" path="specialty"/>

@@ -18,7 +18,7 @@
     <div class="page-container">
 
       <!-- FILTROS -->
-      <c:if test="${user_data.role=='PATIENT' || user_data == null}">
+      <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
         <div class="card filter-card" >
           <h2 class="section-title"><spring:message code="landing.filter.title"/></h2>
           <c:url value='/home' var="filterUrl"/>
@@ -39,7 +39,7 @@
                     <c:choose>
                       <c:when test="${landingForm.insurances > 0}">
                         <c:forEach var="insurance" items="${insurances}">
-                          <c:if test="${insurance.id == landingForm.insurances}">
+                          <c:if test="${insurance.id eq landingForm.insurances}">
                             ${insurance.name}
                           </c:if>
                         </c:forEach>
@@ -146,7 +146,7 @@
         </c:choose>
       </c:if>
 
-      <c:if test="${user_data.role == 'DOCTOR' || user_data.role == 'LABORATORY'}">
+      <c:if test="${user_data.role eq 'DOCTOR' || user_data.role eq 'LABORATORY'}">
         <div class="">
           <!-- 1) Título idéntico -->
           <h2 class="section-title">
@@ -238,7 +238,7 @@
             <spring:message code="landing.pagination.last"/>
           </button>
           <form:input type="hidden" path="query"/>
-          <c:if test="${user_data.role == 'PATIENT' || user_data == null}">
+          <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
             <form:input type="hidden" path="insurances"/>
             <form:input type="hidden" path="weekday"/>
             <form:input type="hidden" path="specialty"/>

@@ -76,7 +76,7 @@
       <c:url value="/" var="homeUrl" />
       <c:url value="/" var="loginUrl" />
       <c:choose>
-        <c:when test="${param.errorCode == '403'}">
+        <c:when test="${param.errorCode eq '403'}">
           <a href="${loginUrl}">
             <spring:message code="error.backToHome" />
           </a>

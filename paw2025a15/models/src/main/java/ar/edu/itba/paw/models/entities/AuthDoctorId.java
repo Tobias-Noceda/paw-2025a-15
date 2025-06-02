@@ -64,7 +64,7 @@ public class AuthDoctorId implements Serializable{
         if (!(other instanceof AuthDoctorId)) return false;
         AuthDoctorId o = (AuthDoctorId) other;
         return (doctorId.equals(o.doctorId)) && (patientId.equals(o.patientId))
-        && (accessLevel.ordinal() == o.accessLevel.ordinal());
+        && (accessLevel.equals(o.accessLevel));
     }
 
     @Override

@@ -87,7 +87,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
 
     @Override
     public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        if(accessLevel==AccessLevelEnum.VIEW_BASIC){
+        if(accessLevel.equals(AccessLevelEnum.VIEW_BASIC)) {
             unauthDoctorAllAccessLevels(patientId, doctorId);
             return;
         }

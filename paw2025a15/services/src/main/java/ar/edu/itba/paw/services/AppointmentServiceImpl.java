@@ -117,13 +117,13 @@ public class AppointmentServiceImpl implements AppointmentService{
         Patient patient = pds.getPatientById(appointment.getPatient().getId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatient().getId() + " does not exist!"));
         Doctor doctor = dds.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
 
-        if (cancellerId == patient.getId()) {
+        if (patient.getId().equals(cancellerId)) {
             if(appointmentDao.cancelAppointment(shift, date, startTime, endTime)){
                 LOGGER.info("Patient with id: {} has cancelled their appointment with doctor with id: {} on the shiftId:{} and date {}", patient.getId(), doctor.getId(), shiftId, date);
                 es.sendPatientCancellationConfirmationEmail(patient, doctor, appointment, shift);
                 es.sendDoctorCancelledAppointmentEmail(patient, doctor, appointment, shift);
             }
-        } else if (cancellerId == doctor.getId()) {
+        } else if (doctor.getId().equals(cancellerId)) {
             if(appointmentDao.cancelAppointment(shift, date, startTime, endTime)){
                 LOGGER.info("Doctor with id: {} has cancelled their appointment with patient with id: {} on the shiftId:{} and date {}", doctor.getId(), patient.getId(), shiftId, date);
                 es.sendDoctorCancellationConfirmationEmail(patient, doctor, appointment, shift);

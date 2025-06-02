@@ -88,7 +88,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
                     .setMaxResults(pageSize)
                     .getResultList();
 
-        if(orderBy != null && (orderBy == DoctorOrderEnum.M_POPULAR || orderBy == DoctorOrderEnum.L_POPULAR)) {
+        if(orderBy != null && (orderBy.equals(DoctorOrderEnum.M_POPULAR) || orderBy.equals(DoctorOrderEnum.L_POPULAR))) {
             sortByPopularity(doctors, orderBy);
         }
 
@@ -232,7 +232,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
                 """,
                 Long.class
             ).setParameter("doctor2", d2).getSingleResult().intValue();
-            if(orderBy == DoctorOrderEnum.M_POPULAR) {
+            if(orderBy.equals(DoctorOrderEnum.M_POPULAR)) {
                 // Sort by appointments count in descending order
                 return Integer.compare(count2, count1);
             }
