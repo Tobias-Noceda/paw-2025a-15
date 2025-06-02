@@ -54,8 +54,10 @@ public class AppointmentController {
             mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
         } else if (user instanceof Doctor) {
             mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
-            mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), LocalDate.now()));
+            LocalDate date = shiftsDayForm.getDate() != null ? shiftsDayForm.getDate() : LocalDate.now();
+            mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), date));
             mav.addObject("shiftsDayForm", shiftsDayForm);
+            mav.addObject("date", date);
         } else {
             return new ModelAndView("redirect:/login");
         }

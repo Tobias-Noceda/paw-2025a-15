@@ -7,6 +7,7 @@
 <head>
   <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
   <link rel="stylesheet" href="<c:url value="/css/appointments.css"/>">
+  <link rel="stylesheet" href="<c:url value="/css/main.css"/>">
 </head>
 <body>
 <c:set var="title">appointments</c:set>
@@ -202,7 +203,35 @@
       </div>
     </div>
     <div class="appointment-list-container">
-      <h3 class="table-title"><spring:message code="appointments.free"/></h3>
+      <div class="appointments-title-container">
+        <h3 class="table-title"><spring:message code="appointments.free"/></h3>
+        <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsDayForm">
+          <div class="flex-container">
+            <div>
+              <button
+                type="button"
+                class="navigation-button"
+                onclick="submitFormWithAction('previous')"
+                <c:if test="${!shiftsDayForm.hasPrevious()}">disabled</c:if>
+              >
+                <spring:message code="doctorDetail.previousWeek"/>
+              </button>
+            </div>
+            <div>
+              <form:input cssClass="input-field" id="dateSelector" path="date" type="date" min="${today}" onchange="submitFormWithAction('setDate')"/>
+            </div>
+            <div>
+              <button
+                type="button"
+                class="navigation-button"
+                onclick="submitFormWithAction('next')"
+              >
+                <spring:message code="doctorDetail.nextWeek"/>
+              </button>
+            </div>
+          </div>
+        </form:form>
+      </div>
       <c:if test="${not empty removeError}">
         <div class="error-box">
           <spring:message code="doctor.details.takenTurn"></spring:message>
@@ -268,5 +297,6 @@
 <%@include file="components/confirmDialog.jsp" %>
 <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
+<script src="<c:url value='/js/doctorDetailNav.js'/>"></script>
 </body>
 </html>

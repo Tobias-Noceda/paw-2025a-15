@@ -81,8 +81,6 @@
                 </c:set>
 
                 <div class="action-buttons">
-
-
                   <button
                     type="button"
                     name="action"
@@ -206,7 +204,6 @@
               <thead>
                 <tr>
                   <th><spring:message code="appointmentTable.weekdayColumn.title"></spring:message></th>
-                      <!--<th><spring:message code="appointmentTable.monthdayColumn.title"></spring:message></th>-->
                   <th><spring:message code="appointmentTable.timeColumn.title"></spring:message></th>
                 </tr>
               </thead>

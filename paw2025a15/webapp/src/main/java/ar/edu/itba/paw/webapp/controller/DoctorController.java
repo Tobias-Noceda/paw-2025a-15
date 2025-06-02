@@ -67,8 +67,8 @@ public class DoctorController {
         mav.addObject("date", shiftsDayForm.getDate());
 
         mav.addObject("landingForm", new LandingForm());
-
         mav.addObject("shiftsDayForm", shiftsDayForm);
+        
         return mav;
     }
 
