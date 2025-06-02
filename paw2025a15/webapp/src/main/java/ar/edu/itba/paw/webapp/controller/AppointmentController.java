@@ -50,11 +50,9 @@ public class AppointmentController {
         }
 
         if (user instanceof Patient) {
-            System.out.println("Patient appointments");
             mav.addObject("patientFutureAppointments", as.getFutureAppointmentDataByPatientId(user.getId()));
             mav.addObject("patientOldAppointments", as.getOldAppointmentDataByPatientId(user.getId()));
         } else if (user instanceof Doctor) {
-            System.out.println("Doctor appointments");
             mav.addObject("doctorTakenAppointments", as.getFutureAppointmentDataByDoctorId(user.getId()));
             mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), LocalDate.now()));
             mav.addObject("shiftsDayForm", shiftsDayForm);

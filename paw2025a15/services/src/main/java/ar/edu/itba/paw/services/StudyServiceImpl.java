@@ -115,7 +115,7 @@ public class StudyServiceImpl implements StudyService{
         return studyDao.findStudyById(id);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public boolean deleteStudy(long id) {
         return studyDao.deleteStudy(id);

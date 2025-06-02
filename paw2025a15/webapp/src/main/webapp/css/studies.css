@@ -416,4 +416,34 @@
     margin-bottom: 10px;
 }
 
+.delete-button {
+    margin-right: 7px;
+    text-decoration: none;
+    max-width: fit-content;
+    background-color: #e60202;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    appearance: auto;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.delete-button:hover {
+    margin-right: 7px;
+    text-decoration: none;
+    background-color: #b90101;
+}
+
 

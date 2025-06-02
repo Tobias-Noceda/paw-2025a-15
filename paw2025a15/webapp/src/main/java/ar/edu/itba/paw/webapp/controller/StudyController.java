@@ -141,12 +141,20 @@ public class StudyController {
         List<Doctor> doctors = patient.getAuthorizedDoctors();
 
         List<Doctor> studyAuthDoctors = study.getAuthDoctors();
-        System.out.println("Study Auth Doctors: " + studyAuthDoctors);
 
         mav.addObject("landingForm", new LandingForm());
         mav.addObject("study", study);
         mav.addObject("authDoctors", doctors);
         mav.addObject("studyAuthDoctors", studyAuthDoctors);
         return mav;
+    }
+
+    @RequestMapping(path = "/delete-study/{studyId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView deleteStudy(
+            @PathVariable("studyId") int studyId,
+            Locale locale
+    ){
+        ss.deleteStudy(studyId);
+        return new ModelAndView("redirect:/studies");
     }
 }

@@ -61,8 +61,6 @@ public class PatientController {
             throw new UnauthorizedException("User not found");
         }
 
-        System.out.println("Doctor with id: " + user.getId() + " has access levels: " + ads.getAuthAccessLevelEnums(patientId, user.getId()) + " for patient with id: " + patientId);
-
         mav.addObject("patient", patient);
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
