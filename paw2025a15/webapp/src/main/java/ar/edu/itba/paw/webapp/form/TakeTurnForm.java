@@ -3,7 +3,9 @@ package ar.edu.itba.paw.webapp.form;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,6 +29,9 @@ public class TakeTurnForm {
     @NotNull
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime endTime;
+
+    @Size(max = 500)
+    private String detail;
 
     public Long getDoctorId() {
         return doctorId;
@@ -67,4 +72,8 @@ public class TakeTurnForm {
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
+
+    public String getDetail() { return detail; }
+
+    public void setDetail(String detail) { this.detail = detail; }
 }

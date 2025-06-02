@@ -102,7 +102,7 @@ public class AppointmentController {
                 throw new UnauthorizedException("User not found");
             }
             try {
-                as.addAppointment(form.getShiftId(), user.getId(), form.getDate(), form.getStartTime(), form.getEndTime(), ""); // TODO: add detail to the appointment
+                as.addAppointment(form.getShiftId(), user.getId(), form.getDate(), form.getStartTime(), form.getEndTime(), form.getDetail());
             } catch (Exception e) {
                 throw new FormErrorException("Error in appointment form: " + e.getMessage());
             }
