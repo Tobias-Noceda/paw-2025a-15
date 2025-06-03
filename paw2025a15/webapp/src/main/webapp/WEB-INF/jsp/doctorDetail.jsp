@@ -244,7 +244,7 @@
                     </c:set>
 
                     <tr
-                      onclick="submitAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}', '${areaLabel}')"
+                      onclick="submitTextAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}', '${areaLabel}')"
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${date.dayOfWeek}"/></td>
@@ -257,7 +257,7 @@
                           <form:input type="hidden" path="doctorId" value="${doctor.id}"/>
                           <form:hidden path="startTime" value="${appointment.startTime}" />
                           <form:hidden path="endTime" value="${appointment.endTime}" />
-                          <form:input type="hidden" path="detail"/>
+                          <form:input type="hidden" id="detailText" path="detail"/>
                         </form:form>
                       </td>
                     </tr>

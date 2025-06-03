@@ -24,7 +24,7 @@
 
 
         <p id="areaLabel"></p>
-        <textarea id="txtDialogTextarea" class="field-container dialog-textarea"></textarea>
+        <input type="text" id="txtDialogTextarea" class="field-container dialog-textarea"/>
 
     </div>
 
@@ -50,7 +50,7 @@
 
                 class="btn confirm-button"
 
-                onclick="submitPendingForm(document.getElementById('txtDialogTextarea').textContent)"
+                onclick="submitPendingForm(document.getElementById('txtDialogTextarea').value)"
 
         ></button>
 

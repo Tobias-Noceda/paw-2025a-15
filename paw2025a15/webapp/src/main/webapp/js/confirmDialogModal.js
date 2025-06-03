@@ -1,4 +1,4 @@
-let pendingForm = null;
+var pendingForm = null;
 
 function openTextAreaDialog(form, message, secondaryMessage, accept, cancel, areaLabel) {
   pendingForm = form;
@@ -66,13 +66,18 @@ function closeConfirmDialog() {
   dialog.close();
 }
 
-
-function submitPendingForm(reason) {
+function submitPendingForm() {
   if (pendingForm) {
-    x = document.getElementById("detail");
-    x.textContent = reason;
-    x.value = reason;
-    console.log(pendingForm)
+    pendingForm.submit();
+    closeConfirmDialog();
+  }
+}
+
+function submitPendingTextForm(reason) {
+  console.log("sending pending text form")
+  if (pendingForm) {
+    console.log(reason)
+    document.getElementById("detailText").value = reason
     pendingForm.submit();
     closeConfirmDialog();
   }
