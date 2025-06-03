@@ -8,10 +8,6 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
-import ar.edu.itba.paw.webapp.form.LandingForm;
-import ar.edu.itba.paw.webapp.form.ProfileForm;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +31,10 @@ import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import ar.edu.itba.paw.webapp.controller.util.SelectItem;
+import ar.edu.itba.paw.webapp.form.LandingForm;
+import ar.edu.itba.paw.webapp.form.ProfileForm;
 
 @Controller
 public class UserController {
@@ -114,6 +114,10 @@ public class UserController {
         BindingResult result,
         Locale locale
     ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+        
         ModelAndView mav = new ModelAndView("profileInfo");
 
         if (profileForm.getPhoneNumber() == null) {

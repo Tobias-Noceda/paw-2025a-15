@@ -1,11 +1,16 @@
-package ar.edu.itba.paw.webapp.controller.Util;
+package ar.edu.itba.paw.webapp.controller.util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ar.edu.itba.paw.models.enums.*;
 import org.springframework.context.MessageSource;
+
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public class SelectItem {
 
