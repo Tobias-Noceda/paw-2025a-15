@@ -244,7 +244,7 @@
                     </c:set>
 
                     <tr
-                      onclick="submitTextAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}', '${areaLabel}')"
+                      onclick="submitTextAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}', '${areaLabel}', '${appointment.startTime}')"
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${date.dayOfWeek}"/></td>
@@ -257,7 +257,7 @@
                           <form:input type="hidden" path="doctorId" value="${doctor.id}"/>
                           <form:hidden path="startTime" value="${appointment.startTime}" />
                           <form:hidden path="endTime" value="${appointment.endTime}" />
-                          <form:input type="hidden" id="detailText" path="detail"/>
+                          <form:hidden id="detailText-${appointment.startTime}" path="detail" onchange="submitPendingForm()" />
                         </form:form>
                       </td>
                     </tr>
@@ -278,7 +278,7 @@
     <%@include file="components/confirmDialog.jsp" %>
     <%@include file="components/textAreaConfirmDialog.jsp" %>
 
-    <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
+    <script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
     <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
     <script src="<c:url value='/js/doctorDetailNav.js'/>"></script>

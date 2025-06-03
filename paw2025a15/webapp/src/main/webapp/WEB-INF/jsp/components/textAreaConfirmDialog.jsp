@@ -38,7 +38,7 @@
 
                 class="btn cancel-button"
 
-                onclick="closeConfirmDialog()"
+                onclick="closeConfirmTextDialog()"
 
         ></button>
 
@@ -50,13 +50,13 @@
 
                 class="btn confirm-button"
 
-                onclick="submitPendingForm(document.getElementById('txtDialogTextarea').value)"
+                onclick="submitPendingTextForm(document.getElementById('txtDialogTextarea').value)"
 
         ></button>
 
     </div>
 
 </dialog>
-<script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
+<script src="<c:url value='/js/textDialogModal.js'/>"></script>
 
 </html>

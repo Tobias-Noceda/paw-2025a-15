@@ -60,6 +60,9 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         AppointmentNew currentAppointment = it.hasNext() ? it.next() : null;
 
         LocalTime startTime = dss.getStartTime();
+        if (date.equals(LocalDate.now()) && dss.getEndTime().isBefore(LocalTime.now())) {
+            return Collections.emptyList();
+        }
 
         while (startTime.isBefore(dss.getEndTime())) {
             LocalTime endTime = startTime.plusMinutes(dss.getDuration());
@@ -72,17 +75,19 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
                 dss.getId()
             );
             boolean isAvailable = true;
+            if(date.equals(LocalDate.now()) && startTime.isBefore(LocalTime.now())) {
+                isAvailable = false;
+            }
 
-            while(currentAppointment != null) {
+            while(currentAppointment != null && isAvailable) {
                 if (currentAppointment.getId().getEndTime().isBefore(startTime)) {
                     // If the current appointment ends before the start time of the available turn, we can skip it
-                    currentAppointment = it.hasNext() ? it.next() : null;
                 } else if(currentAppointment.getId().getStartTime().equals(startTime)) {
                     isAvailable = false;
-                    break;
                 } else {
                     break;
                 }
+                currentAppointment = it.hasNext() ? it.next() : null;
             }
             if (isAvailable) {
                 availableTurns.add(availableTurn);
@@ -118,7 +123,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
                 FROM AppointmentNew a 
                 WHERE a.id.date = :date 
                 AND a.id.shiftId = :shiftId 
-                ORDER BY a.id.startTime
+                ORDER BY a.id.startTime ASC
             """,
             AppointmentNew.class)
                 .setParameter("date", date)
