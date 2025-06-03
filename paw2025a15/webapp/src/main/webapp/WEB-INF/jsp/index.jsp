@@ -3,6 +3,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -18,7 +20,7 @@
     <div class="page-container">
 
       <!-- FILTROS -->
-      <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
+      <sec:authorize access="not isAuthenticated() or hasRole('ROLE_PATIENT')">
         <div class="card filter-card" >
           <h2 class="section-title"><spring:message code="landing.filter.title"/></h2>
           <c:url value='/home' var="filterUrl"/>
@@ -144,9 +146,9 @@
             </div>
           </c:otherwise>
         </c:choose>
-      </c:if>
+      </sec:authorize>
 
-      <c:if test="${user_data.role eq 'DOCTOR' || user_data.role eq 'LABORATORY'}">
+      <sec:authorize access="hasRole('ROLE_DOCTOR') or hasRole('ROLE_LABORATORY')">
         <div class="">
           <!-- 1) Título idéntico -->
           <h2 class="section-title">
@@ -179,7 +181,7 @@
             </c:otherwise>
           </c:choose>
         </div>
-      </c:if>
+      </sec:authorize>
 
       <c:if test="${totalPages > 0}">
         <c:url value='/' var="pageUrl"/>
@@ -238,12 +240,12 @@
             <spring:message code="landing.pagination.last"/>
           </button>
           <form:input type="hidden" path="query"/>
-          <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
+          <sec:authorize access="not isAuthenticated() or hasRole('ROLE_PATIENT')">
             <form:input type="hidden" path="insurances"/>
             <form:input type="hidden" path="weekday"/>
             <form:input type="hidden" path="specialty"/>
             <form:input type="hidden" path="orderBy"/>
-          </c:if>
+          </sec:authorize>
         </form:form>
       </c:if>
     </div>

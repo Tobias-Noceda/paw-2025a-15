@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
   <head>
@@ -26,25 +27,25 @@
       </div>
       <c:if test="${user_data != null}">
         <nav class="nav-links">
-          <c:if test="${user_data.role eq 'PATIENT' || user_data.role eq 'DOCTOR'}">
+          <sec:authorize access="hasRole('ROLE_PATIENT') or hasRole('ROLE_DOCTOR')">
             <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title eq "appointments"}'>active</c:if>">
               <spring:message code="header.appointments" />
             </a>
-            <c:if test="${user_data.role eq 'PATIENT'}">
+            <sec:authorize access="hasRole('ROLE_PATIENT')">
               <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title eq "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
               </a>
-            </c:if>
-          </c:if>
+            </sec:authorize>
+          </sec:authorize>
         </nav>
       </c:if>
       <c:set var="barPlaceholder">
-        <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
+        <sec:authorize access="not isAuthenticated() or hasRole('ROLE_PATIENT')">
           <spring:message code="header.patient.placeholder"/>
-        </c:if>
-        <c:if test="${user_data.role eq 'DOCTOR' || user_data.role eq 'LABORATORY'}">
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_DOCTOR') or hasRole('ROLE_LABORATORY')">
           <spring:message code="header.doctor.placeholder"/>
-        </c:if>
+        </sec:authorize>
       </c:set>
       <c:set var="searchLink">
         <c:url value="/home" />
@@ -58,11 +59,11 @@
           <form:form modelAttribute="landingForm" action="${searchLink}" method="get" class="search-bar-form">
             <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
             <button type="submit" style="display: none;"></button>
-            <c:if test="${user_data == null || user_data.role eq 'PATIENT'}">
+            <sec:authorize access="not isAuthenticated() or hasRole('ROLE_PATIENT')">
               <form:input type="hidden" path="insurances"/>
               <form:input type="hidden" path="weekday"/>
               <form:input type="hidden" path="specialty"/>
-            </c:if>
+            </sec:authorize>
           </form:form>
         </div>
       </div>

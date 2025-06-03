@@ -3,6 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
   <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
@@ -25,7 +26,7 @@
   <c:set var="cancelText">
     <spring:message code="appointments.dismiss"/>
   </c:set>
-  <c:if test="${user_data.role eq 'PATIENT'}">
+  <sec:authorize access="hasRole('ROLE_PATIENT')">
     <div class="appointment-list-container">
       <h3 class="table-title"><spring:message code="appointments.future"/></h3>
       <div class="appointment-table-container">
@@ -138,9 +139,9 @@
         </c:if>
       </div>
     </div>
-  </c:if>
+  </sec:authorize>
 
-  <c:if test="${user_data.role eq 'DOCTOR'}">
+  <sec:authorize access="hasRole('ROLE_DOCTOR')">
     <div class="appointment-list-container">
       <h3 class="table-title"><spring:message code="appointments.taken"/></h3>
       <div class="appointment-table-container">
@@ -292,7 +293,7 @@
         </c:if>
       </div>
     </div>
-  </c:if>
+  </sec:authorize>
 </div>
 <%@include file="components/confirmDialog.jsp" %>
 <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>

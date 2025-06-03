@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -86,42 +86,43 @@
         </label>
         <form:input id="comment" type="text" path="comment"/>
       </div>
-
-      <c:if test="${user_data.userRole eq 'PATIENT' and not empty patient.authorizedDoctors}">
-            <div class="sf-field">
-              <label for="authDoctorIds">
-                <spring:message code="uploadStudies.doctor"/>
-              </label>
-              <div class="appointments-table-header">
-                <table class="appointments-table">
-                  <thead>
-                  <tr>
-                    <th><spring:message code="studies.authorizedDoctors"/></th>
-                    <th class="last-column">
-                    </th>
-                  </tr>
-                  </thead>
-                </table>
-              </div>
-
-              <div class="appointments-table-body">
-                <table class="appointments-table">
-                  <tbody>
-                  <c:forEach var="authDocs" items="${patient.authorizedDoctors}">
-                    <tr class="appointments-row">
-                      <td class="text-cell">
-                        <c:out value="${authDocs.name}"/>
-                      </td>
-                      <td class="checkbox-cell last-column">
-                        <form:checkbox path="authDoctorIds" value="${authDocs.id}"/>
-                      </td>
-                    </tr>
-                  </c:forEach>
-                  </tbody>
-                </table>
-              </div>
+      <sec:authorize access="hasRole('ROLE_PATIENT')">
+        <c:if test="${not empty patient.authorizedDoctors}">
+          <div class="sf-field">
+            <label for="authDoctorIds">
+              <spring:message code="uploadStudies.doctor"/>
+            </label>
+            <div class="appointments-table-header">
+              <table class="appointments-table">
+                <thead>
+                <tr>
+                  <th><spring:message code="studies.authorizedDoctors"/></th>
+                  <th class="last-column">
+                  </th>
+                </tr>
+                </thead>
+              </table>
             </div>
-          </c:if>
+
+            <div class="appointments-table-body">
+              <table class="appointments-table">
+                <tbody>
+                <c:forEach var="authDocs" items="${patient.authorizedDoctors}">
+                  <tr class="appointments-row">
+                    <td class="text-cell">
+                      <c:out value="${authDocs.name}"/>
+                    </td>
+                    <td class="checkbox-cell last-column">
+                      <form:checkbox path="authDoctorIds" value="${authDocs.id}"/>
+                    </td>
+                  </tr>
+                </c:forEach>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </c:if>
+      </sec:authorize>
 
       <button type="submit" class="sf-button">
         <spring:message code="uploadStudies.button"/>
