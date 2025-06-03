@@ -100,7 +100,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("phone", patient.getTelephone());
         templateModel.put("startTime", shift.getStartTime().toString());
         templateModel.put("uploadLink", baseURL + "appointments/");
-
+        templateModel.put("detail", appointment.getDetail());
         String subject = messageSource.getMessage("takenShift.subject", null, locale);
 
         try {
