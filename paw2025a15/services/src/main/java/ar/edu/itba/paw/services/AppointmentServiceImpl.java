@@ -70,7 +70,7 @@ public class AppointmentServiceImpl implements AppointmentService{
             throw new RuntimeException("Failed to create appointment for patientId: " + patientId +", shiftId: " + shiftId +" and date: " + date);
         }
         LOGGER.info("Successfully created appointment for patientId: {}, shiftId: {} and date: {}", patientId, shiftId, date);
-        if(patient.getId().equals(doctor.getId())) {
+        if(!patient.getId().equals(doctor.getId())) {
             es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
             es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
             

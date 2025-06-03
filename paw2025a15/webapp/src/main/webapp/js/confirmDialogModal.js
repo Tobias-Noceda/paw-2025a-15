@@ -1,4 +1,4 @@
-let pendingForm = null;
+var pendingForm = null;
 
 function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   pendingForm = form;
@@ -28,12 +28,12 @@ function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   return false;
 }
 
-
 function closeConfirmDialog() {
+  pendingForm = null;
+  document.body.classList.remove('dialog-opened');
   const dialog = document.getElementById('customConfirmDialog');
   dialog.close();
 }
-
 
 function submitPendingForm() {
   if (pendingForm) {
@@ -43,7 +43,7 @@ function submitPendingForm() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const dialog = document.getElementById('customConfirmDialog');
+  let dialog = document.getElementById('customConfirmDialog');
 
   if (window.dialogPolyfill) {
     dialogPolyfill.registerDialog(dialog);

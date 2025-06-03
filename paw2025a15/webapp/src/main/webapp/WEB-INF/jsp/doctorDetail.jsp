@@ -27,10 +27,7 @@
             <h2 class="doctor-name"><c:out value="${doctor.name}" escapeXml="true"/></h2>
             <div class="doctor-infopack">
               <div class="doctor-image">
-                <img 
-                  src="<c:url value='/supersecret/user-profile-pic/${doctor.id}'/>"
-                  alt="<spring:message code='image.alt.doctorProfile'/>"
-                />
+                <img  src="<c:url value='/supersecret/user-profile-pic/${doctor.id}'/>" alt="Doctor Image" />
               </div>
             </div>
             <p class="doctor-email"><c:out value="${doctor.email}" escapeXml="true"/></p>
@@ -168,7 +165,6 @@
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
         <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsDayForm">
           <div class="flex-container">
-            
             <div>
               <button
                 type="button"
@@ -243,8 +239,12 @@
                       <spring:message code="doctorDetail.confirmApp.confirm"/>
                     </c:set>
 
+                    <c:set var="areaLabel">
+                      <spring:message code="doctorDetail.confirmApp.motive"/>
+                    </c:set>
+
                     <tr
-                      onclick="submitAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}')"
+                      onclick="submitTextAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}', '${areaLabel}', '${appointment.startTime}')"
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${date.dayOfWeek}"/></td>
@@ -257,6 +257,7 @@
                           <form:input type="hidden" path="doctorId" value="${doctor.id}"/>
                           <form:hidden path="startTime" value="${appointment.startTime}" />
                           <form:hidden path="endTime" value="${appointment.endTime}" />
+                          <form:hidden id="detailText-${appointment.startTime}" path="detail" onchange="submitPendingForm()" />
                         </form:form>
                       </td>
                     </tr>
@@ -275,8 +276,9 @@
     </div>
 
     <%@include file="components/confirmDialog.jsp" %>
+    <%@include file="components/textAreaConfirmDialog.jsp" %>
 
-    <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
+    <script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
     <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
     <script src="<c:url value='/js/doctorDetailNav.js'/>"></script>
