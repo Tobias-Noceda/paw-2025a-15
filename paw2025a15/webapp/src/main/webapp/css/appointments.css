@@ -1,4 +1,7 @@
 /* For resolutions less than 1400px width */
+
+
+
 @media screen and (max-width: 1400px) {
     .appointment-list-container table {
         font-size: 12px;
@@ -187,3 +190,16 @@
     justify-content: start;
     margin-bottom: 5px;
 }
+
+
+.flex-container {
+    display: flex;
+}
+
+.flex-container > div {
+
+    align-content: center;
+    padding: 20px;
+}
+
+

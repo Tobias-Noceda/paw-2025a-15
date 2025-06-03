@@ -165,6 +165,7 @@
         <c:url value="/doctors/${doctor.id}" var="getPath"/>
         <form:form class="week-navigator-div" action="${getPath}" method="GET" modelAttribute="shiftsDayForm">
           <div class="flex-container">
+            
             <div>
               <button
                 type="button"
