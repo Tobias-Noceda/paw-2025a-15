@@ -18,7 +18,10 @@
           <h2 class="patient-name"><c:out value="${patient.name}" escapeXml="true"/></h2>
           <div class="doctor-infopack">
             <div class="patient-image">
-              <img src="<c:url value='/supersecret/user-profile-pic/${patient.id}'/>" alt="Patient Image" />
+              <img
+                src="<c:url value='/supersecret/user-profile-pic/${patient.id}'/>"
+                alt="<spring:message code='image.alt.patientProfile'/>"
+              />
             </div>
           </div>
           <div class="upload-button-div">

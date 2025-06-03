@@ -65,7 +65,7 @@
   <body>
     <div class="container">
       <c:url value="/resources/errorImage.png" var="errorImage" />
-      <img src="${errorImage}" alt="Error Illustration">
+      <img src="${errorImage}" alt="<spring:message code='image.alt.error'/>" />
           
       <h1>
         <spring:message code="error.title" arguments="${param.errorCode}" />

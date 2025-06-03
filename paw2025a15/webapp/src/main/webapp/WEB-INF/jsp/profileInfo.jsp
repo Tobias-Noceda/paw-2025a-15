@@ -48,7 +48,11 @@
         <div class="profile-header"> 
           <div class="profile-image">
             <div class="edit-image-wrapper">
-              <img id="prof-image" src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
+              <img
+                id="prof-image"
+                src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>"
+                alt="<spring:message code='image.alt.userProfile'/>"
+              />
               <button class="edit-button" type="button" onclick="handleImageChange()">
                 ✏️
               </button>

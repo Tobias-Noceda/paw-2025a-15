@@ -28,9 +28,11 @@
   <div class="login-card">
 
     <!-- Logo -->
-    <img src="<c:url value='/favicon.ico'/>"
-         alt="Caretrace Logo"
-         class="logo">
+    <img
+      src="<c:url value='/favicon.ico'/>"
+      alt="<spring:message code='image.alt.logo'/>"
+      class="logo"
+    >
 
     <!-- Título y subtítulo -->
     <h2 class="title"><spring:message code="login.title"/></h2>

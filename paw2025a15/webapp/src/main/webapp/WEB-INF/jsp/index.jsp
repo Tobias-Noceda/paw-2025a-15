@@ -61,7 +61,11 @@
 
                   <c:forEach var="insurance" items="${insurances}">
                     <li class="option" data-value="${insurance.id}">
-                      <img src="<c:url value='/supersecret/insurance-picture/${insurance.id}'/>" alt="${insurance.name}" class="option-image" />
+                      <img
+                        src="<c:url value='/supersecret/insurance-picture/${insurance.id}'/>"
+                        alt="${insurance.name}"
+                        class="option-image"
+                      />
                       <span class="option-text">${insurance.name}</span>
                     </li>
                   </c:forEach>

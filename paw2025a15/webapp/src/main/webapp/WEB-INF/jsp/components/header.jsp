@@ -22,7 +22,10 @@
     <div class="topbar">
       <div class="logo">
         <a href="<c:url value="/"/>" class="logo-link">
-          <img src="${imgSrc}" alt="Logo"/>
+          <img
+            src="${imgSrc}"
+            alt="<spring:message code="image.alt.logo" />"
+          />
         </a>
       </div>
       <c:if test="${user_data != null}">
@@ -71,7 +74,10 @@
       <c:if test="${user_data != null}">
         <button id="userBtn" class="user-btn" onclick="toggleUserDropdown()">
           <div class="user-image">
-            <img src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>" alt="User Image" />
+            <img
+              src="<c:url value='/supersecret/user-profile-pic/${user_data.id}'/>"
+              alt="<spring:message code='image.alt.userProfile'/>"
+            />
           </div>
           <div class="user-info">
             <p class="user-name"><c:out value="${user_data.name}" escapeXml="true"/></p>

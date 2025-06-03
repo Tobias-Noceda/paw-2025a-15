@@ -10,8 +10,10 @@
 
     <!-- Avatar -->
     <div class="doctor-card__avatar">
-      <img src="<c:url value='/supersecret/user-profile-pic/${param.id}'/>"
-           alt="Foto del doctor"/>
+      <img
+        src="<c:url value='/supersecret/user-profile-pic/${param.id}'/>"
+        alt="<spring:message code='image.alt.doctorProfile'/>"
+      />
     </div>
 
     <!-- Datos principales -->
