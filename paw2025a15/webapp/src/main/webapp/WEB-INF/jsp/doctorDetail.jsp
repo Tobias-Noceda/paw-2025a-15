@@ -239,12 +239,8 @@
                       <spring:message code="doctorDetail.confirmApp.confirm"/>
                     </c:set>
 
-                    <c:set var="areaLabel">
-                      <spring:message code="doctorDetail.confirmApp.motive"/>
-                    </c:set>
-
                     <tr
-                      onclick="submitAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}', '${areaLabel}')"
+                      onclick="submitAppointment(this, '${confirmMessage}', '${secondText}', '${confirmText}', '${cancelText}')"
                       class="appointment-row"
                     >
                       <td class="sticky-column"><spring:message code="weekday.${date.dayOfWeek}"/></td>
@@ -257,7 +253,6 @@
                           <form:input type="hidden" path="doctorId" value="${doctor.id}"/>
                           <form:hidden path="startTime" value="${appointment.startTime}" />
                           <form:hidden path="endTime" value="${appointment.endTime}" />
-                          <form:input type="hidden" path="detail"/>
                         </form:form>
                       </td>
                     </tr>
@@ -276,7 +271,6 @@
     </div>
 
     <%@include file="components/confirmDialog.jsp" %>
-    <%@include file="components/textAreaConfirmDialog.jsp" %>
 
     <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
     <script src="<c:url value='/js/authConfirmationModal.js'/>"></script>

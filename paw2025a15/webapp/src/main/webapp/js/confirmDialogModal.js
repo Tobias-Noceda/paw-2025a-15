@@ -1,37 +1,5 @@
 let pendingForm = null;
 
-function openTextAreaDialog(form, message, secondaryMessage, accept, cancel, areaLabel) {
-  pendingForm = form;
-
-
-  const dialog = document.getElementById('customTextAreaDialog');
-  const msgEl  = document.getElementById('txtDialogMessage');
-  const secEl  = document.getElementById('txtDialogSecondText');
-  const okBtn  = document.getElementById('txtConfirmButton');
-  const noBtn  = document.getElementById('txtCancelButton');
-  const areaLbl  = document.getElementById('areaLabel');
-
-  msgEl.textContent = message;
-  if (!secondaryMessage) {
-    secEl.style.display = 'none';
-  } else {
-    secEl.style.display = '';
-    secEl.innerHTML = secondaryMessage;
-  }
-  okBtn.textContent = accept;
-  noBtn.textContent = cancel;
-  areaLbl.textContent = areaLabel;
-
-  document.body.classList.add('dialog-opened');
-
-  setTimeout(() => {
-    dialog.showModal();
-  }, 0);
-
-  return false;
-}
-
-
 function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   pendingForm = form;
 
@@ -67,12 +35,8 @@ function closeConfirmDialog() {
 }
 
 
-function submitPendingForm(reason) {
+function submitPendingForm() {
   if (pendingForm) {
-    x = document.getElementById("detail");
-    x.textContent = reason;
-    x.value = reason;
-    console.log(pendingForm)
     pendingForm.submit();
     closeConfirmDialog();
   }
