@@ -87,7 +87,9 @@
           <p th:text="#{takenShift.firstRow(${doctorName})}"></p>
           <p th:text="#{takenShift.doctor.secondRow(${patientName}, ${dateNumber}, #{${monthName}}, ${startTime}, ${address})}"></p>
           <p th:text="#{takenShift.thirdRow(${email}, ${phone})}"></p>
+          <p th:text="#{TakenShift.detail(${detail})}" ></p>
           <p th:text="#{takenShift.doctor.fourthRow}"></p>
+
         </td>
       </tr>
       <tr>
