@@ -28,7 +28,7 @@
             <div class="doctor-infopack">
               <div class="doctor-image">
                 <img 
-                  src="<c:url value='/supersecret/user-profile-pic/10000'/>"
+                  src="<c:url value='/supersecret/user-profile-pic/${doctor.id}'/>"
                   alt="<spring:message code='image.alt.doctorProfile'/>"
                 />
               </div>

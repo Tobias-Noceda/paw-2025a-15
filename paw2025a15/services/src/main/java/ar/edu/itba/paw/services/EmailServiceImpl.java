@@ -12,6 +12,7 @@ import javax.mail.util.ByteArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -43,9 +44,11 @@ public class EmailServiceImpl implements EmailService{
     @Autowired
     private MessageSource messageSource;
 
-    private final String emailFromString = "caretracehealth@gmail.com";
+    @Value("${app.base-url}")
+    private String baseURL;
 
-    private final String baseURL = "http://pawserver.it.itba.edu.ar/paw-2025a-15/";
+    @Value("${app.email.from}")
+    private String emailFromString;
 
     private void sendSimpleMessageTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, Locale locale) throws MessagingException{
         Context context = new Context(locale);
