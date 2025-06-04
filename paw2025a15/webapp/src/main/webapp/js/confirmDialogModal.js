@@ -28,6 +28,31 @@ function openConfirmDialog(form, message, secondaryMessage, accept, cancel) {
   return false;
 }
 
+
+function openPatientDialog(name,details, patientUrl){
+
+  const dialog = document.getElementById('customPatientDialog');
+  const msgEl  = document.getElementById('patientDialogMessage');
+  const secEl  = document.getElementById('patientDialogSecondText');
+  const okBtn  = document.getElementById('patientConfirmButton');
+
+  msgEl.textContent = name;
+  secEl.textContent = details;
+
+  okBtn.onclick = function () {
+    window.location = patientUrl;
+  };
+
+  document.body.classList.add('dialog-opened');
+
+  dialog.showModal();
+
+  return false;
+
+}
+
+
+
 function closeConfirmDialog() {
   pendingForm = null;
   document.body.classList.remove('dialog-opened');

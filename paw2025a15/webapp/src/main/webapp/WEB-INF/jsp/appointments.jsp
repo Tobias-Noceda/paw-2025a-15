@@ -163,7 +163,7 @@
               <tbody>
               <c:forEach var="appointment" items="${doctorTakenAppointments}">
                 <c:url value="/patient/${appointment.patient.id}" var="patientUrl" />
-                <tr class="appointment-row" onclick="window.location='${patientUrl}'" style="cursor: pointer;">
+                <tr class="appointment-row" onclick="openPatientDialog( '${appointment.patient.name}','${appointment.detail}', '${patientUrl}')" style="cursor: pointer;">
                   <c:set var="day">
                     <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
                   </c:set>
@@ -296,6 +296,7 @@
   </sec:authorize>
 </div>
 <%@include file="components/confirmDialog.jsp" %>
+<%@include file="components/patientDialog.jsp" %>
 <script src="<c:url value='/js/turnConfirmationModal.js'/>"></script>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
 <script src="<c:url value='/js/doctorDetailNav.js'/>"></script>
