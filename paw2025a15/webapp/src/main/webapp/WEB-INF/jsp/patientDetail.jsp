@@ -46,8 +46,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.age"/>:</p>
               <c:choose>
-                <c:when test="${patientDetails.age != null}">
-                    <c:out value="${patientDetails.age}" escapeXml="true" />
+                <c:when test="${patientAge != null}">
+                    <c:out value="${patientAge}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -57,8 +57,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.bloodType"/>:</p>
               <c:choose>
-                <c:when test="${patientDetails.bloodType != null}">
-                    <c:out value="${patientDetails.bloodType.getName()}" escapeXml="true" />
+                <c:when test="${patient.bloodType != null}">
+                    <c:out value="${patient.bloodType.getName()}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -68,8 +68,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.height"/></p>
               <c:choose>
-                <c:when test="${patientDetails.height != null}">
-                    <c:out value="${patientDetails.height}" escapeXml="true" />
+                <c:when test="${patient.height != null}">
+                    <c:out value="${patient.height}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -79,8 +79,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.weight"/></p>
               <c:choose>
-                <c:when test="${patientDetails.weight != null}">
-                    <c:out value="${patientDetails.weight}" escapeXml="true" />
+                <c:when test="${patient.weight != null}">
+                    <c:out value="${patient.weight}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -96,8 +96,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.smokes"/></p>
               <c:choose>
-                <c:when test="${patientDetails.smokes != null}">
-                    <c:out value="${patientDetails.smokes}" escapeXml="true" />
+                <c:when test="${patient.smokes != null}">
+                    <c:out value="${patient.smokes}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -107,8 +107,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.drinks"/></p>
               <c:choose>
-                <c:when test="${patientDetails.drinks != null}">
-                    <c:out value="${patientDetails.drinks}" escapeXml="true" />
+                <c:when test="${patient.drinks != null}">
+                    <c:out value="${patient.drinks}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -118,8 +118,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.diet"/></p>
               <c:choose>
-                <c:when test="${not empty patientDetails.diet}">
-                    <c:out value="${patientDetails.diet}" escapeXml="true" />
+                <c:when test="${not empty patient.diet}">
+                    <c:out value="${patient.diet}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -135,8 +135,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.meds"/></p>
               <c:choose>
-                <c:when test="${not empty patientDetails.meds}">
-                    <c:out value="${patientDetails.meds}" escapeXml="true" />
+                <c:when test="${not empty patient.meds}">
+                    <c:out value="${patient.meds}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -146,8 +146,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.conditions"/></p>
               <c:choose>
-                <c:when test="${not empty patientDetails.conditions}">
-                    <c:out value="${patientDetails.conditions}" escapeXml="true" />
+                <c:when test="${not empty patient.conditions}">
+                    <c:out value="${patient.conditions}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -157,8 +157,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.allergies"/></p>
               <c:choose>
-                <c:when test="${not empty patientDetails.allergies}">
-                    <c:out value="${patientDetails.allergies}" escapeXml="true" />
+                <c:when test="${not empty patient.allergies}">
+                    <c:out value="${patient.allergies}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -174,8 +174,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.hobbies"/></p>
               <c:choose>
-                <c:when test="${not empty patientDetails.hobbies}">
-                    <c:out value="${patientDetails.hobbies}" escapeXml="true" />
+                <c:when test="${not empty patient.hobbies}">
+                    <c:out value="${patient.hobbies}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -185,8 +185,8 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.job"/></p>
               <c:choose>
-                <c:when test="${not empty patientDetails.job}">
-                    <c:out value="${patientDetails.job}" escapeXml="true" />
+                <c:when test="${not empty patient.job}">
+                    <c:out value="${patient.job}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>

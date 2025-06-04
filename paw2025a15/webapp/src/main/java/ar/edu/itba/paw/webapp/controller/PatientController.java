@@ -23,6 +23,8 @@ import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Locale;
 
 @Controller
@@ -60,8 +62,9 @@ public class PatientController {
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
-
+        System.out.println("patient altura:"+ patient.getHeight());
         mav.addObject("patient", patient);
+        mav.addObject("patientAge", Period.between(patient.getBirthdate(), LocalDate.now()).getYears());
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
         mav.addObject("patientStudies", ss.getFilteredStudiesByPatientIdAndDoctorId(patientId, user.getId(), filterForm.getType(), filterForm.getMostRecent()));
