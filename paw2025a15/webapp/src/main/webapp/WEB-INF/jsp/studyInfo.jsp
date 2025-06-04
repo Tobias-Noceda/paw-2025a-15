@@ -167,16 +167,17 @@
                                 <td class="deauthorize-cell">
                                     <form action="${updateAuthUrl}" method="post" id="toggleAuth_${doctor.id}">
                                         <button
-                                            type="submit"
-                                            name="action"
-                                            value="toggle"
-                                            class="${buttonClass}"
-                                            onclick="event.stopPropagation(); confirmToggleAuthDoctor('${confirmationText}', null, '${buttonLabel}', '${authCancelText}', this.name, this.value, ${doctor.id});"
+                                                type="submit"
+                                                name="action"
+                                                value="toggle"
+                                                class="${buttonClass}"
+                                                onclick="event.stopPropagation();"
                                         >
                                             <c:out value="${buttonLabel}" escapeXml="true"/>
                                         </button>
                                     </form>
                                 </td>
+
                             </tr>
                         </c:forEach>
 
