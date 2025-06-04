@@ -60,6 +60,7 @@ public class DoctorController {
         }
 
         mav.addObject("today", LocalDate.now());
+        mav.addObject("maxDate", LocalDate.now().plusDays(60));
         mav.addObject("doctor", doctor);
         mav.addObject("isAuthDoctor", ads.hasAuthDoctor(user.getId(), id));
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(user.getId(), id).stream().map(AccessLevelEnum::name).toList());

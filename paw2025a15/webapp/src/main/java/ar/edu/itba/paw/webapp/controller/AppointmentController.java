@@ -58,6 +58,8 @@ public class AppointmentController {
             mav.addObject("doctorFreeAppointments", dss.getAvailableTurnsByDoctorIdByDate(user.getId(), date));
             mav.addObject("shiftsDayForm", shiftsDayForm);
             mav.addObject("date", date);
+            mav.addObject("today", LocalDate.now());
+            mav.addObject("maxDate", LocalDate.now().plusDays(60));
         } else {
             return new ModelAndView("redirect:/login");
         }

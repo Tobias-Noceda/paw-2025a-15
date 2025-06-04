@@ -219,7 +219,7 @@
               </button>
             </div>
             <div>
-              <form:input cssClass="input-field" id="dateSelector" path="date" type="date" min="${today}" onchange="submitFormWithAction('setDate')"/>
+              <form:input cssClass="input-field" id="dateSelector" path="date" type="date" min="${today}" max="${maxDate}" onchange="submitFormWithAction('setDate')"/>
             </div>
             <div>
               <button
