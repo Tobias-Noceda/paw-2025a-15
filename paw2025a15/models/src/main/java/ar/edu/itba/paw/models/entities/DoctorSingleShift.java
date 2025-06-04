@@ -4,9 +4,22 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import javax.persistence.*;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Entity
 @Table(
@@ -163,7 +176,7 @@ public class DoctorSingleShift {
             return false;
         }
         LocalTime appointmentStart = this.startTime;
-        while (appointmentStart.isBefore(this.endTime.minusMinutes(this.duration))) {
+        while (appointmentStart.isBefore(this.endTime)) {
             if (appointmentStart.equals(startTime) || appointmentStart.equals(endTime.minusMinutes(this.duration))) {
                 return true;
             }

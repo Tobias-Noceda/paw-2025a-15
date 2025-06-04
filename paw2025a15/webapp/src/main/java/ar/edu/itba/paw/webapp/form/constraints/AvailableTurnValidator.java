@@ -1,16 +1,14 @@
 package ar.edu.itba.paw.webapp.form.constraints;
 
-import java.util.Optional;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 
 public class AvailableTurnValidator implements ConstraintValidator<AvailableTurn, TakeTurnForm>{
 
@@ -29,11 +27,11 @@ public class AvailableTurnValidator implements ConstraintValidator<AvailableTurn
         if (!as.getAppointmentByShiftIdDateAndTime(form.getShiftId(), form.getDate(), form.getStartTime(), form.getEndTime()).isEmpty()) {
             return false;
         }
-        Optional<DoctorSingleShift> maybeShift = dss.getShiftById(form.getShiftId());
-        if (maybeShift.isEmpty()) {
+        DoctorSingleShift shift = dss.getShiftById(form.getShiftId()).orElse(null);
+        if (shift == null) {
             return false;
         }
-        DoctorSingleShift shift = maybeShift.get();
+
         return form.getDoctorId().equals(shift.getDoctor().getId()) && 
                shift.isValidStartAndEndTime(form.getStartTime(), form.getEndTime()) &&
                shift.isValidDate(form.getDate());
