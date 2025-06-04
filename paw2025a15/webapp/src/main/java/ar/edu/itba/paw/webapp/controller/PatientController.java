@@ -64,7 +64,9 @@ public class PatientController {
         }
         System.out.println("patient altura:"+ patient.getHeight());
         mav.addObject("patient", patient);
-        mav.addObject("patientAge", Period.between(patient.getBirthdate(), LocalDate.now()).getYears());
+        if(patient.getBirthdate() != null) {
+            mav.addObject("patientAge", Period.between(patient.getBirthdate(), LocalDate.now()).getYears());
+        }
         mav.addObject("allowedAccessLevels", ads.getAuthAccessLevelEnums(patientId, user.getId()).stream().map(AccessLevelEnum::name).toList());
         mav.addObject("landingForm", new LandingForm());
         mav.addObject("patientStudies", ss.getFilteredStudiesByPatientIdAndDoctorId(patientId, user.getId(), filterForm.getType(), filterForm.getMostRecent()));
