@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.models.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
-import ar.edu.itba.paw.models.entities.AppointmentNew;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
-import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -51,10 +43,13 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Autowired
     private AuthDoctorService ads;
 
+    @Autowired
+    private UserService us;
+
     @Transactional
     @Override
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail) {
-        Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        User user = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("User with id: " + patientId + " does not exist!"));
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with id: " + shiftId + " not found"));
         Doctor doctor = dds.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
         
@@ -70,9 +65,9 @@ public class AppointmentServiceImpl implements AppointmentService{
             throw new RuntimeException("Failed to create appointment for patientId: " + patientId +", shiftId: " + shiftId +" and date: " + date);
         }
         LOGGER.info("Successfully created appointment for patientId: {}, shiftId: {} and date: {}", patientId, shiftId, date);
-        if(!patient.getId().equals(doctor.getId())) {
-            es.sendDoctorTakenShiftEmail(patient, doctor, appointment, shift);
-            es.sendPatientTakenShiftEmail(patient, doctor, appointment, shift);
+        if(!user.getId().equals(doctor.getId())) {
+            es.sendDoctorTakenShiftEmail((Patient) user, doctor, appointment, shift);
+            es.sendPatientTakenShiftEmail((Patient) user, doctor, appointment, shift);
             
             if(!ads.hasAuthDoctor(patientId, doctor.getId())) {
                 ads.toggleAuthDoctor(patientId, doctor.getId());//grant doctors access to the patient profile

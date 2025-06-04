@@ -9,14 +9,10 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import ar.edu.itba.paw.models.entities.*;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.models.entities.AppointmentNew;
-import ar.edu.itba.paw.models.entities.AppointmentNewId;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
-import ar.edu.itba.paw.models.entities.Patient;
 
 @Repository
 public class AppointmentJpaDao implements AppointmentDao{
@@ -27,9 +23,9 @@ public class AppointmentJpaDao implements AppointmentDao{
     @Override
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail) {
         DoctorSingleShift shift = em.find(DoctorSingleShift.class, shiftId);
-        Patient patient = em.find(Patient.class, patientId);
-        if(shift==null || patient==null) return null;
-        final AppointmentNew app = new AppointmentNew(shift, patient, date, startTime, endTime, detail);
+        User user = em.find(User.class, patientId);
+        if(shift==null || user==null) return null;
+        final AppointmentNew app = new AppointmentNew(shift, user, date, startTime, endTime, detail);
         em.persist(app);
         return app;
     }

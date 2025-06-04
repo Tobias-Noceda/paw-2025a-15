@@ -51,10 +51,14 @@ function closeConfirmTextDialog() {
 }
 
 function submitPendingTextForm(reason) {
-  if (pendingForm && reason) {
+  if (pendingForm) {
     const textField = document.getElementById(`detailText-${formStartTime}`);
     if (textField) {
-      textField.value = reason;
+      if (reason && reason.length > 0) {
+        textField.value = reason;
+      } else {
+        textField.value = 'N/A';
+      }
       pendingForm.submit();
       closeConfirmTextDialog();
     }
