@@ -41,12 +41,12 @@ public class DoctorJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql"})
     public void testCreate(){
-        final User DOC = TestData.Users.doctor;
+        final Doctor DOC = TestData.Users.doctor;
         final Long DOC_ID = TestData.Users.doctorId;
         DOC.setId(DOC_ID);
         final Long PIC_ID = TestData.Images.validImageId;
-        final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
-        final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
+        final String LICENCE = DOC.getLicence();
+        final SpecialtyEnum SPECIALTY = DOC.getSpecialty();
 
         Doctor doctor = doctorDao.createDoctor(
             "dulcedeleche@example.com",
@@ -74,12 +74,12 @@ public class DoctorJpaDaoTest {
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql"})
     public void testCreateExistentDetail(){
-        final User DOC = TestData.Users.doctor;
+        final Doctor DOC = TestData.Users.doctor;
         final Long DOC_ID = TestData.Users.doctorId;
         DOC.setId(DOC_ID);
         final Long PIC_ID = TestData.Images.validImageId;
-        final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
-        final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
+        final String LICENCE = DOC.getLicence();
+        final SpecialtyEnum SPECIALTY = DOC.getSpecialty();
 
         Assert.assertThrows(PersistenceException.class,()->{
             doctorDao.createDoctor(

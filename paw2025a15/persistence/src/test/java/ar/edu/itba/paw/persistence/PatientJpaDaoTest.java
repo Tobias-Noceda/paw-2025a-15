@@ -66,15 +66,15 @@ public class PatientJpaDaoTest {
         PATIENT.setId(TestData.Users.patientId);
         PATIENT.getPicture().setId(TestData.Images.validImageId);
 
-        final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.newPatientDetail.getBloodType();
-        final Boolean SMOKES = TestData.PatientDetails.patientDetail.getSmokes();
-        final Boolean DRINKS = TestData.PatientDetails.patientDetail.getDrinks();
-        final String MEDS = TestData.PatientDetails.patientDetail.getMeds();
-        final String CONDITIONS = TestData.PatientDetails.patientDetail.getConditions();
-        final String ALLERGIES = TestData.PatientDetails.patientDetail.getAllergies();
-        final String DIET = TestData.PatientDetails.patientDetail.getDiet();
-        final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
-        final String JOB = TestData.PatientDetails.patientDetail.getJob();
+        final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.BLOOD_TYPE_2;
+        final Boolean SMOKES = TestData.PatientDetails.SMOKES_1;
+        final Boolean DRINKS = TestData.PatientDetails.DRINKS_1;
+        final String MEDS = TestData.PatientDetails.MEDS;
+        final String CONDITIONS = TestData.PatientDetails.CONDITIONS;
+        final String ALLERGIES = TestData.PatientDetails.ALLERGIES;
+        final String DIET = TestData.PatientDetails.DIET;
+        final String HOBBIES = TestData.PatientDetails.HOBBIES;
+        final String JOB = TestData.PatientDetails.JOB_1;
 
         patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
 
@@ -117,15 +117,15 @@ public class PatientJpaDaoTest {
         PATIENT.setId(TestData.Users.patientId);
         PATIENT.getPicture().setId(TestData.Images.validImageId);
 
-        final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.patientDetail.getBloodType();
-        final Boolean SMOKES = TestData.PatientDetails.patientDetail.getSmokes();
-        final Boolean DRINKS = TestData.PatientDetails.patientDetail.getDrinks();
-        final String MEDS = TestData.PatientDetails.patientDetail.getMeds();
-        final String CONDITIONS = TestData.PatientDetails.patientDetail.getConditions();
-        final String ALLERGIES = TestData.PatientDetails.patientDetail.getAllergies();
-        final String DIET = TestData.PatientDetails.patientDetail.getDiet();
-        final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
-        final String JOB = TestData.PatientDetails.patientDetail.getJob();
+        final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.BLOOD_TYPE_1;
+        final Boolean SMOKES = TestData.PatientDetails.SMOKES_1;
+        final Boolean DRINKS = TestData.PatientDetails.DRINKS_1;
+        final String MEDS = TestData.PatientDetails.MEDS;
+        final String CONDITIONS = TestData.PatientDetails.CONDITIONS;
+        final String ALLERGIES = TestData.PatientDetails.ALLERGIES;
+        final String DIET = TestData.PatientDetails.DIET;
+        final String HOBBIES = TestData.PatientDetails.HOBBIES;
+        final String JOB = TestData.PatientDetails.JOB_1;
 
         patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
 
