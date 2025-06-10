@@ -90,7 +90,7 @@
           <table class="studies-table">
             <tbody>
             <c:forEach var="study" items="${patientStudies}">
-              <c:url value="/view-study/${study.id}" var="studyLink" />
+              <c:url value="/view-study/${study.id}/file/${study.files[0].id}" var="studyLink" />
               <c:url value="/study-info/${study.id}" var="studyDetailLink" />
               <c:set var="studyName">
                 <spring:message code="studyType.${study.type}"/>_${study.studyDate}

@@ -41,6 +41,22 @@ CREATE TABLE IF NOT EXISTS studies (
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS study_files (
+    study_id BIGINT NOT NULL,
+    file_id BIGINT NOT NULL,
+
+    PRIMARY KEY(study_id, file_id),
+    FOREIGN KEY (study_id) REFERENCES studies(study_id),
+    FOREIGN KEY (file_id) REFERENCES files(file_id)
+);
+
+-- -- update to new table structure
+-- INSERT INTO study_files (study_id, file_id)
+-- SELECT study_id, file_id FROM studies;
+
+-- -- remove old column
+-- ALTER TABLE studies DROP COLUMN file_id;
+
 CREATE TABLE IF NOT EXISTS patient_coverages (
     patient_id BIGINT PRIMARY KEY,
     insurance_id BIGINT NOT NULL,
@@ -48,6 +64,9 @@ CREATE TABLE IF NOT EXISTS patient_coverages (
     FOREIGN KEY (patient_id) REFERENCES users(user_id),
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
+
+-- -- remove patient_coverages table
+-- DROP TABLE IF EXISTS patient_coverage;
 
 CREATE TABLE IF NOT EXISTS doctor_coverages (
     doctor_id BIGINT NOT NULL,
@@ -58,30 +77,30 @@ CREATE TABLE IF NOT EXISTS doctor_coverages (
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
 
-CREATE TABLE IF NOT EXISTS doctor_shifts (
-    shift_id SERIAL PRIMARY KEY,
-    doctor_id BIGINT NOT NULL,
-    shift_weekday INT NOT NULL,
-    shift_address VARCHAR(50) NOT NULL,
-    shift_start_time TIME NOT NULL,
-    shift_end_time TIME NOT NULL,
+-- CREATE TABLE IF NOT EXISTS doctor_shifts (
+--     shift_id SERIAL PRIMARY KEY,
+--     doctor_id BIGINT NOT NULL,
+--     shift_weekday INT NOT NULL,
+--     shift_address VARCHAR(50) NOT NULL,
+--     shift_start_time TIME NOT NULL,
+--     shift_end_time TIME NOT NULL,
 
-    UNIQUE (doctor_id, shift_weekday, shift_start_time),
-    UNIQUE (doctor_id, shift_weekday, shift_end_time),
-    FOREIGN KEY (doctor_id) REFERENCES users(user_id),
+--     UNIQUE (doctor_id, shift_weekday, shift_start_time),
+--     UNIQUE (doctor_id, shift_weekday, shift_end_time),
+--     FOREIGN KEY (doctor_id) REFERENCES users(user_id),
 
-    CONSTRAINT valid_time_range CHECK (shift_start_time < shift_end_time)
-);
+--     CONSTRAINT valid_time_range CHECK (shift_start_time < shift_end_time)
+-- );
 
-CREATE TABLE IF NOT EXISTS appointments (
-    shift_id BIGINT NOT NULL,
-    patient_id BIGINT NOT NULL,
-    appointment_date DATE NOT NULL,
+-- CREATE TABLE IF NOT EXISTS appointments (
+--     shift_id BIGINT NOT NULL,
+--     patient_id BIGINT NOT NULL,
+--     appointment_date DATE NOT NULL,
 
-    PRIMARY KEY(shift_id, appointment_date),
-    FOREIGN KEY (shift_id) REFERENCES doctor_shifts(shift_id),
-    FOREIGN KEY (patient_id) REFERENCES users(user_id)
-);
+--     PRIMARY KEY(shift_id, appointment_date),
+--     FOREIGN KEY (shift_id) REFERENCES doctor_shifts(shift_id),
+--     FOREIGN KEY (patient_id) REFERENCES users(user_id)
+-- );
 
 CREATE TABLE IF NOT EXISTS doctor_single_shifts (
     shift_id SERIAL PRIMARY KEY,
@@ -91,8 +110,14 @@ CREATE TABLE IF NOT EXISTS doctor_single_shifts (
     shift_start_time TIME NOT NULL,
     shift_end_time TIME NOT NULL,
     shift_duration INT NOT NULL,
+    shift_is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
+
+-- -- add is_active column to doctor_single_shifts
+-- ALTER TABLE doctor_single_shifts
+-- ADD COLUMN IF NOT EXISTS shift_is_active BOOLEAN NOT NULL DEFAULT TRUE;
 
 CREATE TABLE IF NOT EXISTS appointments_new (
     shift_id BIGINT NOT NULL,
@@ -116,6 +141,15 @@ CREATE TABLE IF NOT EXISTS doctor_details (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS doctor_vacations (
+    doctor_id BIGINT NOT NULL,
+    vacation_start_date DATE NOT NULL,
+    vacation_end_date DATE NOT NULL,
+
+    PRIMARY KEY(doctor_id, vacation_start_date, vacation_end_date),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+);
+
 CREATE TABLE IF NOT EXISTS patient_details (
     patient_id BIGINT NOT NULL,
     patient_birthdate DATE,
@@ -130,10 +164,19 @@ CREATE TABLE IF NOT EXISTS patient_details (
     patient_diet VARCHAR(100),
     patient_hobbies VARCHAR(100),
     patient_job VARCHAR(50),
+    patient_insurance_id BIGINT,
+    patient_insurance_number VARCHAR(30),
 
     PRIMARY KEY(patient_id),
-    FOREIGN KEY(patient_id) REFERENCES users(user_id)
+    FOREIGN KEY(patient_id) REFERENCES users(user_id),
+    FOREIGN KEY (patient_insurance_id) REFERENCES insurances(insurance_id)
 );
+
+-- -- add patient insurance columns to patient_details
+-- ALTER TABLE patient_details
+-- ADD COLUMN patient_insurance_id BIGINT,
+-- ADD FOREIGN KEY (patient_insurance_id) REFERENCES insurances(insurance_id),
+-- ADD COLUMN patient_insurance_number VARCHAR(30);
 
 CREATE TABLE IF NOT EXISTS auth_doctors (
     doctor_id BIGINT NOT NULL,

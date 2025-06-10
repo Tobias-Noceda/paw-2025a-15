@@ -66,7 +66,7 @@ public class AuthStudiesServiceImplTest {
     private static final String COMMENT = "comment";
     private static final LocalDateTime STUDY_UPLOAD_TIME = LocalDateTime.now();
     private static final LocalDate STUDY_DATE = LocalDate.parse("2025-04-09");
-    private static final Study STUDY_WITH_DATE = new Study(STUDYTYPE, COMMENT, FILE, PATIENT, DOC, STUDY_UPLOAD_TIME, STUDY_DATE);
+    private static final Study STUDY_WITH_DATE = new Study(STUDYTYPE, COMMENT, List.of(FILE), PATIENT, DOC, STUDY_UPLOAD_TIME, STUDY_DATE);
     
     @InjectMocks
     private AuthStudiesServiceImpl ass;

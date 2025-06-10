@@ -68,6 +68,16 @@ public class WebUserAuthDecision {
         throw new NotFoundException("Study not found");
     }
 
+    public AuthorizationDecision hasFileAuth(Authentication auth, long studyId, long fileId) {
+        Boolean hasStudyAuth = hasStudyAuth(auth, studyId).isGranted();
+
+        if(hasStudyAuth) {
+            return new AuthorizationDecision(ss.isFileInStudy(studyId, fileId));
+        }
+
+        return new AuthorizationDecision(false);
+    }
+
     private boolean isAuthDoctor(User user, long patientId) {
         return user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(patientId, user.getId());
     }

@@ -93,7 +93,7 @@ public class StudyController {
             comment = createStudyForm.getComment();
         }
         File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        Study study = ss.create(createStudyForm.getType(), comment, file, patientId, user.getId(), createStudyForm.getDate());
+        Study study = ss.create(createStudyForm.getType(), comment, List.of(file), patientId, user.getId(), createStudyForm.getDate());
         ass.authStudyForDoctorIdList(createStudyForm.getAuthDoctorIds(), study.getId());
         if(patientId != user.getId()) {
             return new ModelAndView("redirect:/patient/" + patientId);

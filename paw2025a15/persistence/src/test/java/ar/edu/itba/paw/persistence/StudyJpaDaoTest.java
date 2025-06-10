@@ -46,20 +46,20 @@ public class StudyJpaDaoTest {
         STUDY.setId(TestData.Studies.newStudyId);
         final StudyTypeEnum TYPE = TestData.Studies.newStudyWithoutDate.getType();
         final String COMMENT = TestData.Studies.newStudyWithoutDate.getComment();
-        final File FILE = TestData.Images.validImage;
-        FILE.setId(TestData.Images.validImageId);
+        final List<File> FILES = List.of(TestData.Images.validImage);
+        FILES.get(0).setId(TestData.Images.validImageId);
         final Patient PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
         final User UPLOADER = TestData.Users.patient;
         UPLOADER.setId(TestData.Users.patientId);
 
-        Study study = studyDao.create(TYPE, COMMENT, FILE, PATIENT, UPLOADER);
+        Study study = studyDao.create(TYPE, COMMENT, FILES, PATIENT, UPLOADER);
         Study studyPersisted = em.find(Study.class, study.getId());
 
         Assert.assertNotNull(studyPersisted);
         Assert.assertEquals(STUDY.getType(), studyPersisted.getType());
         Assert.assertEquals(STUDY.getComment(), studyPersisted.getComment());
-        Assert.assertEquals(STUDY.getFile(), studyPersisted.getFile());
+        Assert.assertEquals(STUDY.getFiles(), studyPersisted.getFiles());
         Assert.assertEquals(STUDY.getPatient(), studyPersisted.getPatient());
         Assert.assertEquals(STUDY.getUploader(), studyPersisted.getUploader());
         Assert.assertEquals(STUDY.getStudyDate(), studyPersisted.getStudyDate());
@@ -71,22 +71,22 @@ public class StudyJpaDaoTest {
         STUDY.setId(TestData.Studies.validStudyWithDateId);
         final StudyTypeEnum TYPE = TestData.Studies.validStudyWithDate.getType();
         final String COMMENT = TestData.Studies.validStudyWithDate.getComment();
-        final File FILE = TestData.Images.validImage;
-        FILE.setId(TestData.Images.validImageId);
+        final List<File> FILES = List.of(TestData.Images.validImage);
+        FILES.get(0).setId(TestData.Images.validImageId);
         final Patient PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
         final User UPLOADER = TestData.Users.patient;
         UPLOADER.setId(TestData.Users.patientId);
         final LocalDate STUDY_DATE = TestData.Studies.validStudyWithDate.getStudyDate();
 
-        Study study = studyDao.create(TYPE, COMMENT, FILE, PATIENT, UPLOADER, STUDY_DATE);
+        Study study = studyDao.create(TYPE, COMMENT, FILES, PATIENT, UPLOADER, STUDY_DATE);
         Study studyPersisted = em.find(Study.class, study.getId());
 
         Assert.assertNotNull(study);
         Assert.assertNotNull(studyPersisted);
         Assert.assertEquals(STUDY.getType(), studyPersisted.getType());
         Assert.assertEquals(STUDY.getComment(), studyPersisted.getComment());
-        Assert.assertEquals(STUDY.getFile(), studyPersisted.getFile());
+        Assert.assertEquals(STUDY.getFiles(), studyPersisted.getFiles());
         Assert.assertEquals(STUDY.getPatient(), studyPersisted.getPatient());
         Assert.assertEquals(STUDY.getUploader(), studyPersisted.getUploader());
         Assert.assertEquals(STUDY.getStudyDate(), studyPersisted.getStudyDate());
@@ -97,7 +97,7 @@ public class StudyJpaDaoTest {
         final Study STUDY = TestData.Studies.validStudyWithDate;
         final long STUDY_ID = TestData.Studies.validStudyWithDateId;
         STUDY.setId(STUDY_ID);
-        STUDY.getFile().setId(TestData.Images.validImageId);
+        STUDY.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY.getPatient().setId(TestData.Users.patientId);
         STUDY.getUploader().setId(TestData.Users.patientId);
 
@@ -123,12 +123,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
         final Long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
@@ -155,12 +155,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
@@ -192,12 +192,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
@@ -217,12 +217,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
         final long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
@@ -251,12 +251,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 

@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
-import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 
@@ -31,7 +30,7 @@ public class FileController {
     private InsuranceService is;
 
     @Autowired
-    private StudyService ss;
+    private FileService fs;
 
     @RequestMapping(path = "/supersecret/user-profile-pic/{id:\\d+}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> getUserPicture(@PathVariable("id") long id){
@@ -61,10 +60,9 @@ public class FileController {
                 .body(content);
     }
 
-    @RequestMapping(method=RequestMethod.GET, path="/view-study/{id:\\d+}")
-    public @ResponseBody ResponseEntity<byte[]> getStudy(@PathVariable("id") long id){
-        Study study = ss.getStudyById(id).orElseThrow(() -> new NoSuchElementException("Study not found with ID: " + id));
-        File f = study.getFile();
+    @RequestMapping(method=RequestMethod.GET, path="/view-study/{id:\\d+}/file/{fileId:\\d+}")
+    public @ResponseBody ResponseEntity<byte[]> getStudyFile(@PathVariable("fileId") long id){
+        File f = fs.findById(id).orElseThrow(() -> new NoSuchElementException("File not found with ID: " + id));
         
         byte[] content = f.getContent();
         FileTypeEnum fileType = f.getType();

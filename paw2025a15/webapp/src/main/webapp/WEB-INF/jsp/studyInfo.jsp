@@ -64,7 +64,7 @@
         <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
 
         <div class="action-buttons">
-            <c:url value="/view-study/${study.id}" var="studyLink" />
+            <c:url value="/view-study/${study.id}/file/${study.files[0].id}" var="studyLink" />
             <c:set var="studyName" value="${study.comment}-${study.id}" />
 
             <!-- Botón ver -->
