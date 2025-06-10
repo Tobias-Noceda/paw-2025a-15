@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public class PatientDetailJpaDao implements PatientDetailDao {
+public class PatientJpaDao implements PatientDao {
 
     @PersistenceContext
     private EntityManager em;

@@ -11,9 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -23,12 +23,12 @@ import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
-public class PatientDetailServiceImpl implements PatientDetailService{
+public class PatientServiceImpl implements PatientService{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatientDetailServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
-    private PatientDetailDao patientDetailDao;
+    private PatientDao patientDao;
 
     @Autowired
     private UserService us;
@@ -42,7 +42,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     @Transactional
     @Override
     public Optional<Patient> getPatientById(long id) {
-        return patientDetailDao.getPatientById(id);
+        return patientDao.getPatientById(id);
     }
 
     @Transactional
@@ -50,7 +50,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));
-        return patientDetailDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
+        return patientDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
     }
 
     @Transactional
@@ -80,7 +80,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
             throw new IllegalArgumentException("Birthdate, height, and weight cannot be null!");
         }
 
-        patientDetailDao.updatePatient(
+        patientDao.updatePatient(
             patient,
             phoneNumber,
             picture,

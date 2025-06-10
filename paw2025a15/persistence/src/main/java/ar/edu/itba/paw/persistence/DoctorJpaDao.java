@@ -11,7 +11,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -22,7 +22,7 @@ import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
-public class DoctorDetailJpaDao implements DoctorDetailDao{
+public class DoctorJpaDao implements DoctorDao{
 
     @PersistenceContext
     private EntityManager em;

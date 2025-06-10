@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-// import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,18 +13,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-// import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DoctorDetailServiceImplTest {
+public class DoctorServiceImplTest {
 
     private static final byte[] FILE_CONTENT = "Image".getBytes();
     private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
@@ -48,29 +46,29 @@ public class DoctorDetailServiceImplTest {
     private static final List<Long> INSURANCES = List.of(INSURANCE_ID, INSURANCE2_ID);
 
     @InjectMocks
-    private DoctorDetailServiceImpl dds;
+    private DoctorServiceImpl ds;
 
     @Mock
-    private DoctorDetailDao doctorDetailDaoMock;
+    private DoctorDao doctorDaoMock;
 
 
     @Test
     public void testUpdateDoctorCoveragesNonexistentDoctor(){
         DOC.setId(DOC_ID);
-        Mockito.when(doctorDetailDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            dds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
+            ds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
         );
     }    
 
     @Test
     public void testSetDoctorCoveragesNonexistentDoc(){
         DOC.setId(DOC_ID);
-        Mockito.when(doctorDetailDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            dds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
+            ds.updateDoctor(DOC, DOC_TELEPHONE, FILE, DOC_LOCALE, INSURANCES)
         );
     }
 

@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -42,7 +42,7 @@ public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
     private FileService fs;
@@ -51,7 +51,7 @@ public class UserController {
     private InsuranceService is;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Autowired
     private MessageSource messageSource;
@@ -79,9 +79,9 @@ public class UserController {
         }
         
         if(user instanceof Doctor doctor) {
-            dds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
+            ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
         } else {
-            pds.updatePatient(
+            ps.updatePatient(
                 (Patient) user,
                 profileForm.getPhoneNumber(),
                 picture,
@@ -132,7 +132,7 @@ public class UserController {
                 doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
             );
         } else {
-            mav.addObject("patientDetails", pds.getPatientById(user.getId()).orElse(null));
+            mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());

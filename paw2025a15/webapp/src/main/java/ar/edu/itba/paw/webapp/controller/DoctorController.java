@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.User;
@@ -31,7 +31,7 @@ import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 public class DoctorController {
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Autowired
     private AuthDoctorService ads;
@@ -51,7 +51,7 @@ public class DoctorController {
             @ModelAttribute("takeTurnForm") final TakeTurnForm form,
             Locale locale
     ) {
-        Doctor doctor = dds.getDoctorById(id).orElseThrow(() -> new NotFoundException("Doctor does not exist"));
+        Doctor doctor = ds.getDoctorById(id).orElseThrow(() -> new NotFoundException("Doctor does not exist"));
 
         final ModelAndView mav = new ModelAndView("doctorDetail");
 
@@ -81,7 +81,7 @@ public class DoctorController {
         @RequestParam("action") String action, 
         @RequestParam(value = "accessLevels", required = false) List<String> accessLevels
     ) {
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor not found"));
         
         if (user == null) {
             throw new UnauthorizedException("User not found");

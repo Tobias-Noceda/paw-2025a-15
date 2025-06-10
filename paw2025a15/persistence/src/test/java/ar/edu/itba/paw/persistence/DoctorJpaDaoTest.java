@@ -30,10 +30,10 @@ import ar.edu.itba.paw.persistence.config.TestConfig;
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class DoctorDetailJpaDaoTest {
+public class DoctorJpaDaoTest {
     
     @Autowired
-    private DoctorDetailJpaDao doctorDetailDao;
+    private DoctorJpaDao doctorDao;
 
     @PersistenceContext
     private EntityManager em;
@@ -48,7 +48,7 @@ public class DoctorDetailJpaDaoTest {
         final String LICENCE = TestData.DoctorDetails.doctorDetail.getDoctorLicense();
         final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
 
-        Doctor doctor = doctorDetailDao.createDoctor(
+        Doctor doctor = doctorDao.createDoctor(
             "dulcedeleche@example.com",
             DOC.getPassword(),
             DOC.getName(),
@@ -82,7 +82,7 @@ public class DoctorDetailJpaDaoTest {
         final SpecialtyEnum SPECIALTY = TestData.DoctorDetails.doctorDetail.getSpecialty();
 
         Assert.assertThrows(PersistenceException.class,()->{
-            doctorDetailDao.createDoctor(
+            doctorDao.createDoctor(
             "dulcedeleche@example.com",
             DOC.getPassword(),
             DOC.getName(),
@@ -105,7 +105,7 @@ public class DoctorDetailJpaDaoTest {
         DOC.setId(DOC_ID);
         DOC.getPicture().setId(TestData.Images.validImageId);
 
-        Optional<Doctor> foundDoctor = doctorDetailDao.getDoctorById(DOC_ID);
+        Optional<Doctor> foundDoctor = doctorDao.getDoctorById(DOC_ID);
 
         Assert.assertNotNull(foundDoctor);
         Assert.assertTrue(foundDoctor.isPresent());
@@ -116,7 +116,7 @@ public class DoctorDetailJpaDaoTest {
     public void testGetDoctorByIdNonexistentDoc(){
         final long DOC_ID = TestData.Users.patientId;
 
-        Optional<Doctor> foundDoctor = doctorDetailDao.getDoctorById(DOC_ID);
+        Optional<Doctor> foundDoctor = doctorDao.getDoctorById(DOC_ID);
 
         Assert.assertNotNull(foundDoctor);
         Assert.assertFalse(foundDoctor.isPresent());
@@ -128,7 +128,7 @@ public class DoctorDetailJpaDaoTest {
         final Long DOC_ID = TestData.Users.doctorId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
 
-        int results = doctorDetailDao.searchAuthPatientsCountByDoctorAndName(DOC_ID, PATIENT_NAME);
+        int results = doctorDao.searchAuthPatientsCountByDoctorAndName(DOC_ID, PATIENT_NAME);
 
         Assert.assertEquals(1, results);
     }
@@ -139,7 +139,7 @@ public class DoctorDetailJpaDaoTest {
         final Long DOC_ID = TestData.Users.doctorId;
         final String PATIENT_NAME = null;
 
-        int results = doctorDetailDao.searchAuthPatientsCountByDoctorAndName(DOC_ID, PATIENT_NAME);
+        int results = doctorDao.searchAuthPatientsCountByDoctorAndName(DOC_ID, PATIENT_NAME);
 
         Assert.assertEquals(1, results);
     }
@@ -150,7 +150,7 @@ public class DoctorDetailJpaDaoTest {
         final Long DOC_ID = TestData.Users.doctorId;
         final String PATIENT_NAME = "";
 
-        int results = doctorDetailDao.searchAuthPatientsCountByDoctorAndName(DOC_ID, PATIENT_NAME);
+        int results = doctorDao.searchAuthPatientsCountByDoctorAndName(DOC_ID, PATIENT_NAME);
 
         Assert.assertEquals(1, results);
     }
@@ -163,7 +163,7 @@ public class DoctorDetailJpaDaoTest {
         final User PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
 
-        List<Patient> results = doctorDetailDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 2);
+        List<Patient> results = doctorDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 2);
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
@@ -176,7 +176,7 @@ public class DoctorDetailJpaDaoTest {
         final Long DOC_ID = TestData.Users.doctorId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
 
-        List<Patient> results = doctorDetailDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 0, 2);
+        List<Patient> results = doctorDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 0, 2);
 
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
@@ -188,7 +188,7 @@ public class DoctorDetailJpaDaoTest {
         final Long DOC_ID = TestData.Users.doctorId;
         final String PATIENT_NAME = TestData.Users.patient.getName();
 
-        List<Patient> results = doctorDetailDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 0);
+        List<Patient> results = doctorDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 0);
 
         Assert.assertNotNull(results);
         Assert.assertTrue(results.isEmpty());
@@ -202,7 +202,7 @@ public class DoctorDetailJpaDaoTest {
         final User PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
 
-        List<Patient> results = doctorDetailDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 2);
+        List<Patient> results = doctorDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 2);
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
@@ -217,7 +217,7 @@ public class DoctorDetailJpaDaoTest {
         final User PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
 
-        List<Patient> results = doctorDetailDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 2);
+        List<Patient> results = doctorDao.searchAuthPatientsPageByDoctorAndName(DOC_ID, PATIENT_NAME, 1, 2);
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());

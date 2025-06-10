@@ -11,7 +11,7 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
-public interface DoctorDetailService {
+public interface DoctorService {
 
     public Doctor createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale);
 

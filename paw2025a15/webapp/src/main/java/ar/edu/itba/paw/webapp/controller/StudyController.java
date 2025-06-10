@@ -19,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
@@ -42,7 +42,7 @@ public class StudyController {
     private StudyService ss;
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
     private AuthStudiesService ass;
@@ -62,7 +62,7 @@ public class StudyController {
         Locale locale,
         @ModelAttribute("user_data") User user
     ){
-        Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
+        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new NotFoundException("Patient not found");

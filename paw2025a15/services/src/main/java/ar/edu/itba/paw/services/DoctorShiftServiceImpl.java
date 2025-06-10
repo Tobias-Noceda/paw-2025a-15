@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.entities.Doctor;
@@ -30,13 +30,13 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     private DoctorShiftDao doctorShiftDao;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Transactional
     @Override
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
         if(!startTime.isBefore(endTime)) throw new IllegalArgumentException("Start time of a shift must be before the end time");
-        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));//TODO:changed for hibernate check
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));//TODO:changed for hibernate check
         List<DoctorSingleShift> shifts = new ArrayList<>();
         for (WeekdayEnum weekday : weekdays) {
             shifts.add(new DoctorSingleShift(
@@ -61,7 +61,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Transactional(readOnly = true)
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
-        Doctor doctor = dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorShiftDao.getAvailableTurnsByDoctorByDate(doctor, date);
     }
 }

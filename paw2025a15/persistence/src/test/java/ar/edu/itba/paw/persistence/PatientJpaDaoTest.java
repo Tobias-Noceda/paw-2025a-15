@@ -26,10 +26,10 @@ import ar.edu.itba.paw.persistence.config.TestConfig;
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class PatientDetailJpaDaoTest {
+public class PatientJpaDaoTest {
 
     @Autowired
-    private PatientDetailJpaDao patientDetailDao;
+    private PatientJpaDao patientDao;
 
     @PersistenceContext
     private EntityManager em;
@@ -41,7 +41,7 @@ public class PatientDetailJpaDaoTest {
         PATIENT.setId(PATIENT_ID);
         PATIENT.getPicture().setId(TestData.Images.validImageId);
 
-        Patient patient = patientDetailDao.createPatient(
+        Patient patient = patientDao.createPatient(
             "created-patient-test@example.com",
             PATIENT.getPassword(),
             PATIENT.getName(),
@@ -76,7 +76,7 @@ public class PatientDetailJpaDaoTest {
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
 
-        patientDetailDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
 
         Assert.assertEquals(PATIENT.getBloodType(), BLOOD_TYPE);
         Assert.assertEquals(PATIENT.getSmokes(), SMOKES);
@@ -97,7 +97,7 @@ public class PatientDetailJpaDaoTest {
         PATIENT.getPicture().setId(TestData.Images.validImageId);
         
         Assert.assertThrows(PersistenceException.class,()->{
-            patientDetailDao.createPatient(
+            patientDao.createPatient(
                 PATIENT.getEmail(),
                 PATIENT.getPassword(),
                 PATIENT.getName(),
@@ -127,7 +127,7 @@ public class PatientDetailJpaDaoTest {
         final String HOBBIES = TestData.PatientDetails.patientDetail.getHobbies();
         final String JOB = TestData.PatientDetails.patientDetail.getJob();
 
-        patientDetailDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
 
         Assert.assertEquals(PATIENT.getBloodType(), BLOOD_TYPE);
         Assert.assertEquals(PATIENT.getSmokes(), SMOKES);
@@ -148,7 +148,7 @@ public class PatientDetailJpaDaoTest {
         PATIENT.setId(TestData.Users.patientId);
         PATIENT.getPicture().setId(TestData.Images.validImageId);
 
-        Optional<Patient> foundPatient = patientDetailDao.getPatientById(PATIENT_ID);
+        Optional<Patient> foundPatient = patientDao.getPatientById(PATIENT_ID);
 
         Assert.assertNotNull(foundPatient);
         Assert.assertTrue(foundPatient.isPresent());

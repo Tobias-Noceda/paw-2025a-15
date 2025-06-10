@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -31,7 +31,7 @@ public class GeneralController {
     private final static int PAGE_SIZE = 10;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
     
     @Autowired
     private InsuranceService is;
@@ -65,12 +65,12 @@ public class GeneralController {
             } else {
                 insuranceId = null;
             }
-            List<Doctor> doctors = dds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insuranceId, landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
-            totalLength = dds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insuranceId, landingForm.getWeekday());
+            List<Doctor> doctors = ds.getDoctorsPageByParams(landingForm.getQuery(), landingForm.getSpecialty(), insuranceId, landingForm.getWeekday(), landingForm.getOrderBy(),page, PAGE_SIZE);
+            totalLength = ds.getTotalDoctorsByParams(landingForm.getQuery(), landingForm.getSpecialty(), insuranceId, landingForm.getWeekday());
             mav.addObject("docList", doctors);
         } else {
-            List<Patient> patients = dds.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);
-            totalLength = dds.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getQuery());
+            List<Patient> patients = ds.getAuthPatientsPageByDoctorIdAndName(user.getId(), landingForm.getQuery(), page, PAGE_SIZE);
+            totalLength = ds.getAuthPatientsCountByDoctorIdAndName(user.getId(), landingForm.getQuery());
             mav.addObject("patients", patients);
         }
 

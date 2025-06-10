@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -30,11 +30,11 @@ public class DoctorShiftServiceImplTest {
     private DoctorShiftServiceImpl dss;
 
     @Mock
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Test
     public void testCreateShiftsNonexistentDoc(){
-        Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, SLOT)
@@ -51,7 +51,7 @@ public class DoctorShiftServiceImplTest {
     // TODO: ver, pero no creo q tenga sentido con los nuevos shifts
     // @Test
     // public void testCreateShiftsBatchFailure(){
-    //     Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
+    //     Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
     //     Mockito.when(doctorShiftDaoMock.batchCreate(Mockito.eq(SHIFT))).thenReturn(new int[]{1, 0});
 
     //     Assert.assertThrows(RuntimeException.class, () -> 

@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -22,7 +22,7 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PatientDetailServiceImplTest {
+public class PatientServiceImplTest {
 
     private static final byte[] FILE_CONTENT = "Image".getBytes();
     private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
@@ -51,10 +51,10 @@ public class PatientDetailServiceImplTest {
     private static final Patient PATIENT = new Patient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, FILE, PAT_CREATE_DATE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT);
 
     @InjectMocks
-    private PatientDetailServiceImpl pds;
+    private PatientServiceImpl ps;
 
     @Mock
-    private PatientDetailDao patientDetailDaoMock;
+    private PatientDao patientDaoMock;
 
     @Mock
     private UserService us;
@@ -63,10 +63,10 @@ public class PatientDetailServiceImplTest {
     @Test
     public void testUpdatePatientDetailsNonexistent(){
         PATIENT.setId(PATIENT_ID);
-        Mockito.when(patientDetailDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            pds.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
         );
     }
 

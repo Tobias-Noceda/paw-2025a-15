@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -29,12 +29,12 @@ import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
-public class DoctorDetailServiceImpl implements DoctorDetailService {
+public class DoctorServiceImpl implements DoctorService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DoctorDetailServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoctorServiceImpl.class);
 
     @Autowired
-    private DoctorDetailDao doctorDetailDao;
+    private DoctorDao doctorDao;
 
     @Autowired
     private UserService us;
@@ -51,12 +51,12 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
     @Transactional
     @Override
     public Optional<Doctor> getDoctorById(long id) {
-        return doctorDetailDao.getDoctorById(id);
+        return doctorDao.getDoctorById(id);
     }
 
     @Override
     public boolean licenceExists(String licence) {
-        return doctorDetailDao.licenceExists(licence);
+        return doctorDao.licenceExists(licence);
     }
 
     @Transactional
@@ -75,7 +75,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
                 insuranceEntities.add(insurance);
             }
         }
-        return doctorDetailDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
+        return doctorDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
     }
 
     @Transactional
@@ -97,7 +97,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
                     .orElseThrow(() -> new NotFoundException("Insurance with id: " + insurance + " does not exist!"));
             insurances.add(insuranceEntity);
         }
-        doctorDetailDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances);
+        doctorDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances);
         LOGGER.info("Updated doctor with id: {}", doctor.getId());
     }
 
@@ -107,7 +107,7 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
         if (insuranceId != null) {
             is.getInsuranceById(insuranceId).orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
         }
-        return doctorDetailDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
+        return doctorDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
     }
 
     @Transactional(readOnly = true)
@@ -116,22 +116,22 @@ public class DoctorDetailServiceImpl implements DoctorDetailService {
         if (insuranceId != null) {
             is.getInsuranceById(insuranceId).orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
         }
-        return doctorDetailDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
+        return doctorDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
 
     @Transactional
     @Override
     public List<Patient> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
-        doctorDetailDao.getDoctorById(doctorId)
+        doctorDao.getDoctorById(doctorId)
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDetailDao.searchAuthPatientsPageByDoctorAndName(doctorId, name, page, pageSize);
+        return doctorDao.searchAuthPatientsPageByDoctorAndName(doctorId, name, page, pageSize);
     }
 
     @Transactional
     @Override
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
-        doctorDetailDao.getDoctorById(doctorId)
+        doctorDao.getDoctorById(doctorId)
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDetailDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
+        return doctorDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
     }
 }

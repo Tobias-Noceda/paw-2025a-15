@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
@@ -36,10 +36,10 @@ public class StudyServiceImpl implements StudyService{
     private StudyDao studyDao;
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Autowired
     private AuthDoctorService ads;
@@ -59,13 +59,13 @@ public class StudyServiceImpl implements StudyService{
         if(fs.findById(file.getId()).isEmpty()) throw new NotFoundException("File not found with ID: " + file.getId());
         Study study = null;
         Doctor doctor = null;
-        Patient patient = pds.getPatientById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + " does not exist!"));
+        Patient patient = ps.getPatientById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + " does not exist!"));
         if(userId==uploaderId){
             if(studyDate == null) study = studyDao.create(type, comment, file, patient, patient);
             else study = studyDao.create(type, comment, file, patient, patient, studyDate);
         }
         else{
-            doctor = dds.getDoctorById(uploaderId).orElseThrow(() -> new NotFoundException("Doctor with id: " + uploaderId + " does not exist!"));
+            doctor = ds.getDoctorById(uploaderId).orElseThrow(() -> new NotFoundException("Doctor with id: " + uploaderId + " does not exist!"));
             if(!ads.hasAuthDoctor(userId, uploaderId)) throw new UnauthorizedException("Doctor with id: " + uploaderId + " isnt able to upload!");
             if(studyDate == null) study = studyDao.create(type, comment, file, patient, doctor);
             else study = studyDao.create(type, comment, file, patient, doctor, studyDate);   
@@ -88,12 +88,12 @@ public class StudyServiceImpl implements StudyService{
         if(fs.findById(file.getId()).isEmpty()) throw new NotFoundException("File not found with ID: " + file.getId());
         Study study = null;
         Doctor doctor = null;
-        Patient patient = pds.getPatientById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + " does not exist!"));
+        Patient patient = ps.getPatientById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + " does not exist!"));
         if(userId==uploaderId){
             study = studyDao.create(type, comment, file, patient, patient);
         }
         else{
-            doctor = dds.getDoctorById(uploaderId).orElseThrow(() -> new NotFoundException("Doctor with id: " + uploaderId + " does not exist!"));
+            doctor = ds.getDoctorById(uploaderId).orElseThrow(() -> new NotFoundException("Doctor with id: " + uploaderId + " does not exist!"));
             if(!ads.hasAuthDoctor(userId, uploaderId)) throw new UnauthorizedException("Doctor with id: " + uploaderId + " isnt able to upload!");
             study = studyDao.create(type, comment, file, patient, doctor);  
         }
@@ -124,15 +124,15 @@ public class StudyServiceImpl implements StudyService{
     @Transactional(readOnly = true)
     @Override
     public List<Study> getFilteredStudies(long patientId, StudyTypeEnum type, boolean mostRecent) {
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return studyDao.getFilteredStudiesByPatient(patientId, type, mostRecent);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
 
         return studyDao.getFilteredStudiesByPatientAndDoctor(patientId, doctorId, type, mostRecent);
     }

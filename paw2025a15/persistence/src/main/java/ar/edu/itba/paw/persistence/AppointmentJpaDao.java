@@ -108,7 +108,7 @@ public class AppointmentJpaDao implements AppointmentDao{
 
     @Override
     public void clearRemovedAppointmentBeforeDate(LocalDate date) {
-        em.createQuery("DELETE FROM Appointment a WHERE a.appointmentDate < :date AND a.patient.id = a.shift.doctor.id")
+        em.createQuery("DELETE FROM AppointmentNew a WHERE a.appointmentDate < :date AND a.patient.id = a.shift.doctor.id")
             .setParameter("date", date)
             .executeUpdate();
     }
