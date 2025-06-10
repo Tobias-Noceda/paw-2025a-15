@@ -42,7 +42,7 @@ public class Doctor extends User {
     )
     private List<Insurance> insurances;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "doctor", fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = false, mappedBy = "doctor", fetch = FetchType.LAZY)
     private List<DoctorSingleShift> singleShifts;
 
     public Doctor() {

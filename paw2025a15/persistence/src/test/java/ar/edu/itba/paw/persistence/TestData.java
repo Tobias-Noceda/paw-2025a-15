@@ -16,13 +16,10 @@ import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorCoverage;
-import ar.edu.itba.paw.models.entities.DoctorDetail;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.entities.PatientDetail;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
@@ -73,15 +70,6 @@ public class TestData {
         public static final Long newDoctorId = 3L;
     }
 
-    public class DoctorDetails{
-        public static final DoctorDetail doctorDetail = new DoctorDetail(Users.doctor, "med-licence", SpecialtyEnum.CARDIOLOGY);
-    }
-
-    public class DoctorCoverages{
-        public static final DoctorCoverage doctorCoverage = new DoctorCoverage(Users.doctor, Insurances.validInsurance);
-        public static final DoctorCoverage doctorCoverage2 = new DoctorCoverage(Users.doctor, Insurances.validInsurance2);
-    }
-
     public class DoctorSingleShifts{
         public static final DoctorSingleShift doctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:30:00"), 15);
         public static final Long doctorSingleShiftId = 1L;
@@ -97,10 +85,22 @@ public class TestData {
     }
 
     public class PatientDetails{
-        public static final PatientDetail patientDetail = new PatientDetail(Users.patient, LocalDate.parse("2000-01-01"), null, 1.75, 89.00, null, null, null, null, null, null, null, "carpenter");
-        public static final PatientDetail newPatientDetail = new PatientDetail(Users.patient, LocalDate.parse("2000-01-01"), BloodTypeEnum.AB_POSITIVE, 1.75, 89.00, false, true, null, null, null, null, null, null);
-        public static final PatientDetail newPatientDetailNotNullValues = new PatientDetail(Users.patient, LocalDate.parse("2000-01-01"), BloodTypeEnum.AB_POSITIVE, 1.75, 89.00, false, true, "a", "a", "a", "a", "a", "a");
-        public static final PatientDetail newPatientDetailNullValues = new PatientDetail(Users.patient, null, null, null, null, null, null, null, null, null, null, null, null);
+        public static final LocalDate BIRTHDATE = LocalDate.parse("2000-01-01");
+        public static final BloodTypeEnum BLOOD_TYPE_1 = null;
+        public static final BloodTypeEnum BLOOD_TYPE_2 = BloodTypeEnum.AB_POSITIVE;
+        public static final BigDecimal HEIGHT = BigDecimal.valueOf(1.75);
+        public static final BigDecimal WEIGHT = BigDecimal.valueOf(89.00);
+        public static final Boolean SMOKES_1 = null;
+        public static final Boolean SMOKES_2 = false;
+        public static final Boolean DRINKS_1 = null;
+        public static final Boolean DRINKS_2 = true;
+        public static final String MEDS = null;
+        public static final String CONDITIONS = null;
+        public static final String ALLERGIES = null;
+        public static final String DIET = null;
+        public static final String HOBBIES = null;
+        public static final String JOB_1 = "carpenter";
+        public static final String JOB_2 = null;
     }
 
     public class AuthDoctors{
