@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -14,5 +15,24 @@ public interface PatientService {
 
     public Optional<Patient> getPatientById(long id);
 
-    public void updatePatient(Patient patient, String phoneNumber, File picture, LocaleEnum mailLanguage, LocalDate birthdate, BloodTypeEnum bloodType, BigDecimal height, BigDecimal weight, Boolean smokes, Boolean drinks, String meds, String conditions, String allergies, String diet, String hobbies, String job);
+    public void updatePatient(
+        Patient patient,
+        String phoneNumber,
+        File picture,
+        LocaleEnum mailLanguage,
+        LocalDate birthdate,
+        BloodTypeEnum bloodType,
+        BigDecimal height,
+        BigDecimal weight,
+        Boolean smokes,
+        Boolean drinks,
+        String meds,
+        String conditions,
+        String allergies,
+        String diet,
+        String hobbies,
+        String job,
+        Insurance insurance,
+        String insuranceNumber
+    );
 }

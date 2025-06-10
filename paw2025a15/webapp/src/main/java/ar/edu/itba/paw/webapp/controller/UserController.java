@@ -97,7 +97,9 @@ public class UserController {
                 profileForm.getAllergies(),
                 profileForm.getDiet(),
                 profileForm.getHobbies(),
-                profileForm.getJob()
+                profileForm.getJob(),
+                null,
+                null
             );
         }
         LOGGER.info("User with id: {} updated!", user.getId());

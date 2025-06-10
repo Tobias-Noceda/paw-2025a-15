@@ -66,7 +66,7 @@ public class PatientServiceImplTest {
         Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB)
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
         );
     }
 

@@ -16,6 +16,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -71,7 +72,9 @@ public class PatientServiceImpl implements PatientService{
         String allergies,
         String diet,
         String hobbies,
-        String job
+        String job,
+        Insurance insurance,
+        String insuranceNumber
     ) {
         if (patient == null || getPatientById(patient.getId()).isEmpty()) {
             throw new NotFoundException("Patient does not exist!");
@@ -96,7 +99,9 @@ public class PatientServiceImpl implements PatientService{
             allergies,
             diet,
             hobbies,
-            job
+            job,
+            insurance,
+            insuranceNumber
         );        
         LOGGER.info("Updated patient with id: {}", patient.getId());
     }
