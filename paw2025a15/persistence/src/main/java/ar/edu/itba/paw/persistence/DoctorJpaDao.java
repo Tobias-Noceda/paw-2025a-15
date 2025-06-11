@@ -272,4 +272,29 @@ public class DoctorJpaDao implements DoctorDao{
         em.persist(vacation);
         return vacation;
     }
+
+    @Override
+    public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if (doctor == null || startDate == null || endDate == null) return;
+
+        // Find the DoctorVacation entity to delete
+        DoctorVacation vacation = em.createQuery(
+            """
+                FROM DoctorVacation dv
+                WHERE dv.doctor = :doctor
+                AND dv.id.startDate = :startDate
+                AND dv.id.endDate = :endDate
+            """,
+            DoctorVacation.class
+        )
+            .setParameter("doctor", doctor)
+            .setParameter("startDate", startDate)
+            .setParameter("endDate", endDate)
+            .getSingleResult();
+
+        if (vacation != null) {
+            em.remove(vacation);
+        }
+    }
 }

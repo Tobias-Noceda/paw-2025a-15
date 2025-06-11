@@ -1,10 +1,10 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,5 +164,20 @@ public class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
         return doctorDao.createDoctorVacation(doctor.getId(), startDate, endDate);
+    }
+
+    @Transactional
+    @Override
+    public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
+        if (doctorId <= 0) {
+            throw new IllegalArgumentException("Doctor ID must be greater than zero.");
+        }
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("Start date and end date cannot be null.");
+        }
+        Doctor doctor = doctorDao.getDoctorById(doctorId)
+                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        doctorDao.deleteDoctorVacation(doctor.getId(), startDate, endDate);
+        LOGGER.info("Deleted vacation for doctor with id: {}", doctorId);
     }
 }
