@@ -2,8 +2,11 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
@@ -27,4 +30,8 @@ public interface DoctorDao {
     public int searchAuthPatientsCountByDoctorAndName(long doctorId, String name);
 
     public boolean licenceExists(String licence);
+
+    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
+
+    public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 }
