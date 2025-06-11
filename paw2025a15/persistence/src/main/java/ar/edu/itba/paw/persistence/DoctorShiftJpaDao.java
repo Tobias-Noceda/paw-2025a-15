@@ -1,17 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
-import ar.edu.itba.paw.models.AvailableTurn;
-import ar.edu.itba.paw.models.entities.AppointmentNew;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
-import ar.edu.itba.paw.models.enums.WeekdayEnum;
-
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -19,6 +7,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
+
+import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
+import ar.edu.itba.paw.models.AvailableTurn;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
 public class DoctorShiftJpaDao implements DoctorShiftDao{
@@ -99,12 +100,40 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorByDate(Doctor doctor, LocalDate date) {
+        if (doctor == null || date == null) {
+            return Collections.emptyList();
+        }
+        if (date.isBefore(LocalDate.now())) {
+            return Collections.emptyList();
+        }
+        if (date.isEqual(LocalDate.now()) && LocalTime.now().isAfter(LocalTime.of(23, 59))) {
+            return Collections.emptyList();
+        }
+        if (doctor.getSingleShifts() == null || doctor.getSingleShifts().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final DoctorVacation vacation = em.createQuery(
+            """
+                FROM DoctorVacation dv 
+                WHERE dv.doctor = :doctor 
+                AND dv.id.startDate <= :date 
+                AND dv.id.endDate >= :date
+            """, 
+        DoctorVacation.class
+        ).setParameter("doctor", doctor).setParameter("date", date).getSingleResult();
+        
+        if (vacation != null) {
+            return Collections.emptyList();
+        }
+
         WeekdayEnum weekday = WeekdayEnum.fromString(date.getDayOfWeek().name());
 
         final List<DoctorSingleShift> shiftsList = em.createQuery(
             """
                 FROM DoctorSingleShift dss 
                 WHERE dss.doctor = :doctor 
+                AND dss.isActive = true
                 AND :weekday = dss.weekday
             """, 
             DoctorSingleShift.class)

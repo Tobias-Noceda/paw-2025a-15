@@ -45,6 +45,9 @@ public class Doctor extends User {
     @OneToMany(orphanRemoval = false, mappedBy = "doctor", fetch = FetchType.LAZY)
     private List<DoctorSingleShift> singleShifts;
 
+    @OneToMany(orphanRemoval = true, mappedBy = "doctor", fetch = FetchType.LAZY)
+    private List<DoctorVacation> vacations;
+
     public Doctor() {
         super();
     }
@@ -107,11 +110,22 @@ public class Doctor extends User {
     }
 
     public List<DoctorSingleShift> getSingleShifts() {
-        return singleShifts;
+        return singleShifts.stream()
+                .filter(shift -> shift.getIsActive())
+                .toList();
     }
 
     public void setSingleShifts(List<DoctorSingleShift> singleShifts) {
         this.singleShifts = singleShifts;
+    }
+
+    public void addSingleShift(DoctorSingleShift singleShift) {
+        if (singleShifts == null) {
+            singleShifts = new ArrayList<>();
+        }
+        if (singleShift != null && !singleShifts.contains(singleShift)) {
+            singleShifts.add(singleShift);
+        }
     }
 
     public List<WeekdayEnum> getAvailableDays() {
@@ -126,5 +140,22 @@ public class Doctor extends User {
                 .map(Insurance::getName)
                 .distinct()
                 .toList();
+    }
+
+    public List<DoctorVacation> getVacations() {
+        return vacations;
+    }
+
+    public void setVacations(List<DoctorVacation> vacations) {
+        this.vacations = vacations;
+    }
+
+    public void addVacation(DoctorVacation vacation) {
+        if (vacations == null) {
+            vacations = new ArrayList<>();
+        }
+        if (vacation != null && !vacations.contains(vacation)) {
+            vacations.add(vacation);
+        }
     }
 }

@@ -44,16 +44,16 @@ public class TestData {
     }
 
     public class Studies{
-        public static final Study validStudyWithDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study validStudyWithDate = new Study(StudyTypeEnum.OTHER, "simple image", List.of(Images.validImage), Users.patient, Users.patient, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
         public static final Long validStudyWithDateId = 1L;
-        public static final Study validStudyWithoutDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study validStudyWithoutDate = new Study(StudyTypeEnum.OTHER, "simple image", List.of(Images.validImage), Users.patient, Users.patient, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
         public static final Long validStudyWithoutDateId = 2L;
-        public static final Study extraStudy = new Study(StudyTypeEnum.PRESCRIPTION, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study extraStudy = new Study(StudyTypeEnum.PRESCRIPTION, "simple image", List.of(Images.validImage), Users.patient, Users.patient, LocalDateTime.parse("2025-04-10 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
         public static final Long extraStudyId = 3L;
-        public static final Study extraStudy2 = new Study(StudyTypeEnum.PRESCRIPTION, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
+        public static final Study extraStudy2 = new Study(StudyTypeEnum.PRESCRIPTION, "simple image", List.of(Images.validImage), Users.patient, Users.patient, LocalDateTime.parse("2025-04-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDate.parse("2025-04-09"));
         public static final Long extraStudy2Id = 4L;
-        public static final Study newStudyWithDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.now(), LocalDate.parse("2025-04-09"));
-        public static final Study newStudyWithoutDate = new Study(StudyTypeEnum.OTHER, "simple image", Images.validImage, Users.patient, Users.patient, LocalDateTime.now(), LocalDate.now());
+        public static final Study newStudyWithDate = new Study(StudyTypeEnum.OTHER, "simple image", List.of(Images.validImage), Users.patient, Users.patient, LocalDateTime.now(), LocalDate.parse("2025-04-09"));
+        public static final Study newStudyWithoutDate = new Study(StudyTypeEnum.OTHER, "simple image", List.of(Images.validImage), Users.patient, Users.patient, LocalDateTime.now(), LocalDate.now());
         public static final Long newStudyId = 3L;
     }
 

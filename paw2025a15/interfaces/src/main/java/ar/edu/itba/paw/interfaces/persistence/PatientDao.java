@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -28,7 +29,9 @@ public interface PatientDao {
         String allergies,
         String diet,
         String hobbies,
-        String job
+        String job,
+        Insurance insurance,
+        String insuranceNumber
     );
 
     public Optional<Patient> getPatientById(long patientId);

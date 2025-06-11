@@ -76,7 +76,7 @@ public class PatientJpaDaoTest {
         final String HOBBIES = TestData.PatientDetails.HOBBIES;
         final String JOB = TestData.PatientDetails.JOB_1;
 
-        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null);
 
         Assert.assertEquals(PATIENT.getBloodType(), BLOOD_TYPE);
         Assert.assertEquals(PATIENT.getSmokes(), SMOKES);
@@ -127,7 +127,7 @@ public class PatientJpaDaoTest {
         final String HOBBIES = TestData.PatientDetails.HOBBIES;
         final String JOB = TestData.PatientDetails.JOB_1;
 
-        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB);
+        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null);
 
         Assert.assertEquals(PATIENT.getBloodType(), BLOOD_TYPE);
         Assert.assertEquals(PATIENT.getSmokes(), SMOKES);

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -54,7 +55,9 @@ public class PatientJpaDao implements PatientDao {
         String allergies,
         String diet,
         String hobbies,
-        String job
+        String job,
+        Insurance insurance,
+        String insuranceNumber
     ) {
         patient.setTelephone(phoneNumber);
         if (picture != null) {
@@ -73,6 +76,8 @@ public class PatientJpaDao implements PatientDao {
         patient.setDiet(diet);
         patient.setHobbies(hobbies);
         patient.setJob(job);
+        patient.setInsurance(insurance);
+        patient.setInsuranceNumber(insuranceNumber);
         em.merge(patient);
     }
 

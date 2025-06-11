@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -133,5 +136,33 @@ public class DoctorServiceImpl implements DoctorService {
         doctorDao.getDoctorById(doctorId)
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
+    }
+
+    @Transactional
+    @Override
+    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        doctorDao.updateShifts(doctorId, newShifts);
+        LOGGER.info("Updated shifts for doctor with id: {}", doctorId);
+    }
+
+    @Transactional
+    @Override
+    public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
+        if (doctorId <= 0) {
+            throw new IllegalArgumentException("Doctor ID must be greater than zero.");
+        }
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("Start date and end date cannot be null.");
+        }
+        if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Start date and end date cannot be in the past.");
+        }
+        Doctor doctor = doctorDao.getDoctorById(doctorId)
+                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+        return doctorDao.createDoctorVacation(doctor.getId(), startDate, endDate);
     }
 }

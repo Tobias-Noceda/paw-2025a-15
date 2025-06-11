@@ -53,6 +53,13 @@ public class Patient extends User {
     @Column(name = "patient_job", length = 50)
     private String job;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_insurance_id", referencedColumnName = "insurance_id")
+    private Insurance insurance;
+
+    @Column(name = "patient_insurance_number", length = 30)
+    private String insuranceNumber;
+
     @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinTable(
         name = "auth_doctors",
@@ -187,5 +194,21 @@ public class Patient extends User {
 
     public void setAuthorizedDoctors(List<Doctor> authorizedDoctors) {
         this.authorizedDoctors = authorizedDoctors;
+    }
+
+    public Insurance getInsurance() {
+        return insurance;
+    }
+
+    public void setInsurance(Insurance insurance) {
+        this.insurance = insurance;
+    }
+
+    public String getInsuranceNumber() {
+        return insuranceNumber;
+    }
+
+    public void setInsuranceNumber(String insuranceNumber) {
+        this.insuranceNumber = insuranceNumber;
     }
 }
