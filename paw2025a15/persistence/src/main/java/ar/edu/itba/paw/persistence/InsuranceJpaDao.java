@@ -28,6 +28,7 @@ public class InsuranceJpaDao implements InsuranceDao{
 
     @Override
     public Insurance edit(Insurance insurance, String name, File picture) {
+        if(insurance==null) return insurance;
         if (name != null && !name.isEmpty()) {
             insurance.setName(name);
         }

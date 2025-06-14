@@ -1,191 +1,217 @@
-// package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence;
 
-// import java.util.List;
-// import java.util.Optional;
+import java.util.List;
+import java.util.Optional;
 
-// import javax.persistence.EntityManager;
-// import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-// import org.junit.Assert;
-// import org.junit.Test;
-// import org.junit.runner.RunWith;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.test.annotation.Rollback;
-// import org.springframework.test.context.ContextConfiguration;
-// import org.springframework.test.context.jdbc.Sql;
-// import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-// import org.springframework.transaction.annotation.Transactional;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-// import ar.edu.itba.paw.models.entities.File;
-// import ar.edu.itba.paw.models.entities.Insurance;
-// import ar.edu.itba.paw.persistence.config.TestConfig;
+import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.persistence.config.TestConfig;
 
-// @Sql("classpath:images.sql")
-// @Sql("classpath:insurances.sql")
-// @Transactional
-// @Rollback
-// @RunWith(SpringJUnit4ClassRunner.class)
-// @ContextConfiguration(classes = TestConfig.class)
-// public class InsuranceJpaDaoTest {
+@Sql("classpath:images.sql")
+@Sql("classpath:insurances.sql")
+@Transactional
+@Rollback
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = TestConfig.class)
+public class InsuranceJpaDaoTest {
     
-//     @Autowired
-//     private InsuranceJpaDao insuranceDao;
+    @Autowired
+    private InsuranceJpaDao insuranceDao;
 
-//     @PersistenceContext
-//     private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-//     @Test
-//     public void testCreate(){
-//         final String NAME = TestData.Insurances.newInsurance.getName();
-//         final File PICTURE = TestData.Insurances.newInsurance.getPicture();
+    @Test
+    public void testCreate(){
+        final String NAME = TestData.Insurances.newInsurance.getName();
+        final File PICTURE = TestData.Insurances.newInsurance.getPicture();
+        final Long PIC_ID = TestData.Images.validImageId;
 
-//         Insurance insurance = insuranceDao.create(NAME, PICTURE);
-//         Insurance insurancePersisted = em.find(Insurance.class, insurance.getId());
+        Insurance insurance = insuranceDao.create(NAME, PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, insurance.getId());
 
-//         Assert.assertNotNull(insurancePersisted);
-//         Assert.assertEquals(NAME, insurancePersisted.getName());
-//         Assert.assertEquals(PICTURE, insurancePersisted.getPicture());
-//     }
+        Assert.assertNotNull(insurancePersisted);
+        Assert.assertEquals(NAME, insurancePersisted.getName());
+        Assert.assertEquals(PIC_ID, insurancePersisted.getPicture().getId());
+    }
 
-//     @Test
-//     public void testEdit(){
-//         final Insurance INSURANCE_OLD = TestData.Insurances.validInsurance;
-//         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-//         INSURANCE_OLD.setId(INSURANCE_ID);
-//         INSURANCE_OLD.getPicture().setId(TestData.Images.validImageId);
-//         final String NEW_NAME = TestData.Insurances.newInsurance.getName();
-//         final File NEW_PICTURE = TestData.Images.validImage2;
-//         NEW_PICTURE.setId(TestData.Images.validImage2Id);
-//         final Insurance INSURANCE_NEW = new Insurance(NEW_NAME, NEW_PICTURE);
-//         INSURANCE_NEW.setId(INSURANCE_ID);
+    @Test
+    public void testEdit(){
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final Insurance INS = new Insurance(INSURANCE.getName(), INSURANCE.getPicture());
+        final String NEW_NAME = TestData.Insurances.newInsurance.getName();
+        final File NEW_PICTURE = TestData.Images.validImage2;
+        NEW_PICTURE.setId(TestData.Images.validImage2Id);
+        INS.setId(INSURANCE_ID);
 
-//         insuranceDao.edit(INSURANCE_NEW, NEW_NAME, NEW_PICTURE);
-//         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
+        Insurance insurance = insuranceDao.edit(INS, NEW_NAME, NEW_PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
-//         Assert.assertNotNull(insurancePersisted);
-//         Assert.assertEquals(INSURANCE_NEW.getId(), insurancePersisted.getId());
-//         Assert.assertEquals(INSURANCE_NEW.getName(), insurancePersisted.getName()); 
-//         Assert.assertEquals(INSURANCE_NEW.getPicture().getId(), insurancePersisted.getPicture().getId());  
-//     }
+        Assert.assertNotNull(insurancePersisted);
+        Assert.assertEquals(insurance.getId(), insurancePersisted.getId());
+        Assert.assertEquals(insurance.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(insurance.getPicture().getId(), insurancePersisted.getPicture().getId());  
+    }
 
-//     @Test
-//     public void testEditNonexistentInsurance(){
-//         final Insurance INSURANCE = TestData.Insurances.newInsurance;
-//         final long INSURANCE_ID = TestData.Insurances.newInsuranceId;
-//         final String NEW_NAME = TestData.Insurances.validInsurance.getName();
-//         final File NEW_PICTURE = TestData.Images.validImage2;
-//         NEW_PICTURE.setId(TestData.Images.validImage2Id);
+    @Test
+    public void testEditNullInsurance(){
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final String NEW_NAME = TestData.Insurances.newInsurance.getName();
+        final File NEW_PICTURE = TestData.Images.validImage2;
+        NEW_PICTURE.setId(TestData.Images.validImage2Id);
 
-//         insuranceDao.edit(INSURANCE, NEW_NAME, NEW_PICTURE);
-//         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
+        Insurance insurance = insuranceDao.edit(null, NEW_NAME, NEW_PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
-//         Assert.assertNull(insurancePersisted);
-//     }
+        Assert.assertNotNull(insurancePersisted);
+        Assert.assertNull(insurance);
+    }
 
-//     @Test
-//     public void testEditNameOnly(){
-//         final Insurance INSURANCE_OLD = TestData.Insurances.validInsurance;
-//         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-//         INSURANCE_OLD.setId(INSURANCE_ID);
-//         INSURANCE_OLD.getPicture().setId(TestData.Images.validImageId);
-//         final String NEW_NAME = TestData.Insurances.newInsurance.getName();
-//         final File PICTURE = INSURANCE_OLD.getPicture();
-//         final Insurance INSURANCE_NEW = new Insurance(NEW_NAME, PICTURE);
-//         INSURANCE_NEW.setId(INSURANCE_ID);
+    @Test
+    public void testEditNullName(){
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final Insurance INS = new Insurance(INSURANCE.getName(), INSURANCE.getPicture());
+        final String NEW_NAME = null;
+        final File NEW_PICTURE = TestData.Images.validImage2;
+        NEW_PICTURE.setId(TestData.Images.validImage2Id);
+        INS.setId(INSURANCE_ID);
 
-//         insuranceDao.edit(INSURANCE_OLD, NEW_NAME, PICTURE);
-//         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
+        Insurance insurance = insuranceDao.edit(INS, NEW_NAME, NEW_PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
-//         Assert.assertNotNull(insurancePersisted);
-//         Assert.assertEquals(INSURANCE_NEW.getId(), insurancePersisted.getId());
-//         Assert.assertEquals(INSURANCE_NEW.getName(), insurancePersisted.getName()); 
-//         Assert.assertEquals(INSURANCE_OLD.getPicture().getId(), insurancePersisted.getPicture().getId());     
-//     }
+        Assert.assertNotNull(insurancePersisted);
+        Assert.assertEquals(insurance.getId(), insurancePersisted.getId());
+        Assert.assertEquals(INSURANCE.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(insurance.getPicture().getId(), insurancePersisted.getPicture().getId());  
+    }
 
-//     @Test
-//     public void testEditPicOnly(){
-//         final Insurance INSURANCE_OLD = TestData.Insurances.validInsurance;
-//         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-//         INSURANCE_OLD.setId(INSURANCE_ID);
-//         INSURANCE_OLD.getPicture().setId(TestData.Images.validImageId);
-//         final String NAME = TestData.Insurances.validInsurance.getName();
-//         final File NEW_PICTURE = TestData.Images.validImage2;
-//         NEW_PICTURE.setId(TestData.Images.validImage2Id);
-//         final Insurance INSURANCE_NEW = new Insurance(NAME, NEW_PICTURE);
-//         INSURANCE_NEW.setId(INSURANCE_ID);
+    @Test
+    public void testEditEmptyName(){
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final Insurance INS = new Insurance(INSURANCE.getName(), INSURANCE.getPicture());
+        final String NEW_NAME = "";
+        final File NEW_PICTURE = TestData.Images.validImage2;
+        NEW_PICTURE.setId(TestData.Images.validImage2Id);
+        INS.setId(INSURANCE_ID);
 
-//         insuranceDao.edit(INSURANCE_OLD, NAME, NEW_PICTURE);
-//         Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
+        Insurance insurance = insuranceDao.edit(INS, NEW_NAME, NEW_PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
-//         Assert.assertNotNull(insurancePersisted);
-//         Assert.assertEquals(INSURANCE_NEW.getId(), insurancePersisted.getId());
-//         Assert.assertEquals(INSURANCE_OLD.getName(), insurancePersisted.getName()); 
-//         Assert.assertEquals(INSURANCE_NEW.getPicture().getId(), insurancePersisted.getPicture().getId());    
-//     }
+        Assert.assertNotNull(insurancePersisted);
+        Assert.assertEquals(insurance.getId(), insurancePersisted.getId());
+        Assert.assertEquals(INSURANCE.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(insurance.getPicture().getId(), insurancePersisted.getPicture().getId());  
+    }
 
-//     @Test
-//     public void testGetInsuranceById(){
-//         final Insurance INSURANCE = TestData.Insurances.validInsurance;
-//         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-//         INSURANCE.setId(INSURANCE_ID);
-//         INSURANCE.getPicture().setId(TestData.Images.validImageId);
+    @Test
+    public void testEditNullPic(){
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final Insurance INS = new Insurance(INSURANCE.getName(), INSURANCE.getPicture());
+        final String NEW_NAME = TestData.Insurances.newInsurance.getName();
+        final File NEW_PICTURE = null;
+        INS.setId(INSURANCE_ID);
 
-//         Optional<Insurance> foundInsurance = insuranceDao.getInsuranceById(INSURANCE_ID);
+        Insurance insurance = insuranceDao.edit(INS, NEW_NAME, NEW_PICTURE);
+        Insurance insurancePersisted = em.find(Insurance.class, INSURANCE_ID);
 
-//         Assert.assertNotNull(foundInsurance);
-//         Assert.assertTrue(foundInsurance.isPresent());
-//         Assert.assertEquals(INSURANCE.getId(), foundInsurance.get().getId());
-//         Assert.assertEquals(INSURANCE.getName(), foundInsurance.get().getName());
-//         Assert.assertEquals(INSURANCE.getPicture().getId(), foundInsurance.get().getPicture().getId());
-//     }
+        Assert.assertNotNull(insurancePersisted);
+        Assert.assertEquals(insurance.getId(), insurancePersisted.getId());
+        Assert.assertEquals(insurance.getName(), insurancePersisted.getName()); 
+        Assert.assertEquals(INSURANCE.getPicture().getId(), insurancePersisted.getPicture().getId());  
+    }
 
-//     @Test
-//     public void testGetInsuranceByIdNonexistentInsurance(){
-//         final long INSURANCE_ID = 0;
+    @Test
+    public void testGetInsuranceById(){
+        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        INSURANCE.setId(INSURANCE_ID);
+        INSURANCE.getPicture().setId(TestData.Images.validImageId);
 
-//         Optional<Insurance> foundInsurance = insuranceDao.getInsuranceById(INSURANCE_ID);
+        Optional<Insurance> foundInsurance = insuranceDao.getInsuranceById(INSURANCE_ID);
 
-//         Assert.assertNotNull(foundInsurance);
-//         Assert.assertFalse(foundInsurance.isPresent());
-//     }
+        Assert.assertNotNull(foundInsurance);
+        Assert.assertTrue(foundInsurance.isPresent());
+        Assert.assertEquals(INSURANCE.getId(), foundInsurance.get().getId());
+        Assert.assertEquals(INSURANCE.getName(), foundInsurance.get().getName());
+        Assert.assertEquals(INSURANCE.getPicture().getId(), foundInsurance.get().getPicture().getId());
+    }
 
-//     @Test
-//     public void testGetAllInsurances(){
-//         final Insurance INSURANCE1 = TestData.Insurances.validInsurance;
-//         INSURANCE1.setId(TestData.Insurances.validInsuranceId);
-//         final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
-//         INSURANCE2.setId(TestData.Insurances.validInsurance2Id);
+    @Test
+    public void testGetInsuranceByIdNonexistentInsurance(){
+        final Long INSURANCE_ID = 0L;
 
-//         List<Insurance> foundInsurances = insuranceDao.getAllInsurances();
+        Optional<Insurance> foundInsurance = insuranceDao.getInsuranceById(INSURANCE_ID);
 
-//         Assert.assertFalse(foundInsurances.isEmpty());
-//         Assert.assertEquals(2, foundInsurances.size());
-//         Assert.assertTrue(foundInsurances.contains(INSURANCE1));
-//         Assert.assertTrue(foundInsurances.contains(INSURANCE2));
-//     }
+        Assert.assertNotNull(foundInsurance);
+        Assert.assertFalse(foundInsurance.isPresent());
+    }
 
-//     @Test
-//     public void testGetInsuranceByName(){
-//         final Insurance INSURANCE = TestData.Insurances.validInsurance;
-//         final long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-//         INSURANCE.setId(INSURANCE_ID);
-//         INSURANCE.getPicture().setId(TestData.Images.validImageId);
+    @Test
+    public void testGetAllInsurances(){
+        final Insurance INSURANCE1 = TestData.Insurances.validInsurance;
+        INSURANCE1.setId(TestData.Insurances.validInsuranceId);
+        final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
+        INSURANCE2.setId(TestData.Insurances.validInsurance2Id);
 
-//         Optional<Insurance> insurance = insuranceDao.getInsuranceByName(INSURANCE.getName());
+        List<Insurance> foundInsurances = insuranceDao.getAllInsurances();
 
-//         Assert.assertNotNull(insurance);
-//         Assert.assertTrue(insurance.isPresent());
-//         Assert.assertEquals(INSURANCE, insurance.get());
-//     }
+        Assert.assertFalse(foundInsurances.isEmpty());
+        Assert.assertEquals(2, foundInsurances.size());
+        Assert.assertTrue(foundInsurances.contains(INSURANCE1));
+        Assert.assertTrue(foundInsurances.contains(INSURANCE2));
+    }
 
-//     @Test
-//     public void testGetInsuranceByNameNull(){
-//         final String INSURANCE_NAME = null;
+    @Test
+    public void testGetInsuranceByName(){
+        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+        INSURANCE.setId(INSURANCE_ID);
+        INSURANCE.getPicture().setId(TestData.Images.validImageId);
 
-//         Optional<Insurance> foundInsurance = insuranceDao.getInsuranceByName(INSURANCE_NAME);
+        Optional<Insurance> insurance = insuranceDao.getInsuranceByName(INSURANCE.getName());
 
-//         Assert.assertNotNull(foundInsurance);
-//         Assert.assertFalse(foundInsurance.isPresent());
-//     }    
+        Assert.assertNotNull(insurance);
+        Assert.assertTrue(insurance.isPresent());
+        Assert.assertEquals(INSURANCE.getId(), insurance.get().getId());
+        Assert.assertEquals(INSURANCE.getName(), insurance.get().getName());
+        Assert.assertEquals(INSURANCE.getPicture().getId(), insurance.get().getPicture().getId());
+    }
 
-// }
+    @Test
+    public void testGetInsuranceByNameNull(){
+        final String INSURANCE_NAME = null;
+
+        Optional<Insurance> foundInsurance = insuranceDao.getInsuranceByName(INSURANCE_NAME);
+
+        Assert.assertNotNull(foundInsurance);
+        Assert.assertFalse(foundInsurance.isPresent());
+    }    
+
+    @Test
+    public void testGetInsuranceByNameEmpty(){
+        final String INSURANCE_NAME = "";
+
+        Optional<Insurance> foundInsurance = insuranceDao.getInsuranceByName(INSURANCE_NAME);
+
+        Assert.assertNotNull(foundInsurance);
+        Assert.assertFalse(foundInsurance.isPresent());
+    }   
+
+}
