@@ -35,12 +35,11 @@ CREATE TABLE studies (
     study_type INT NOT NULL DEFAULT 0,
     study_date DATE NOT NULL,
 
-    FOREIGN KEY (file_id) REFERENCES files(file_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS study_files (
+CREATE TABLE study_files (
     study_id BIGINT NOT NULL,
     file_id BIGINT NOT NULL,
 
@@ -71,7 +70,7 @@ CREATE TABLE doctor_single_shifts (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS appointments_new (
+CREATE TABLE appointments_new (
     shift_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,
     appointment_date DATE NOT NULL,
@@ -93,7 +92,7 @@ CREATE TABLE doctor_details (
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS doctor_vacations (
+CREATE TABLE doctor_vacations (
     doctor_id BIGINT NOT NULL,
     vacation_start_date DATE NOT NULL,
     vacation_end_date DATE NOT NULL,
@@ -120,7 +119,8 @@ CREATE TABLE patient_details (
     patient_insurance_number VARCHAR(30),
 
     PRIMARY KEY(patient_id),
-    FOREIGN KEY(patient_id) REFERENCES users(user_id)
+    FOREIGN KEY(patient_id) REFERENCES users(user_id),
+    FOREIGN KEY (patient_insurance_id) REFERENCES insurances(insurance_id)
 );
 
 CREATE TABLE auth_doctors (
