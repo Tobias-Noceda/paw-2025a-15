@@ -24,10 +24,10 @@
             id="patientCancelButton"
             type="button"
             class="cancel-button"
-            onclick="closeConfirmDialog()"
+            onclick="closeAppointmentDetailDialog()"
     ><spring:message code="doctorDetail.update.cancelButton"/></button>
   </form>
 </dialog>
-<script src="<c:url value='/js/confirmDialogModal.js'/>"></script>
+<script src="<c:url value='/js/appointmentDetailModal.js'/>"></script>
 
 </html>

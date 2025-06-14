@@ -279,7 +279,7 @@ public class DoctorJpaDao implements DoctorDao{
         if (doctor == null || startDate == null || endDate == null) return;
 
         // Find the DoctorVacation entity to delete
-        DoctorVacation vacation = em.createQuery(
+        List<DoctorVacation> vacations = em.createQuery(
             """
                 FROM DoctorVacation dv
                 WHERE dv.doctor = :doctor
@@ -291,10 +291,10 @@ public class DoctorJpaDao implements DoctorDao{
             .setParameter("doctor", doctor)
             .setParameter("startDate", startDate)
             .setParameter("endDate", endDate)
-            .getSingleResult();
+            .getResultList();
 
-        if (vacation != null) {
-            em.remove(vacation);
+        if (vacations != null && !vacations.isEmpty()) {
+            em.remove(vacations);
         }
     }
 }

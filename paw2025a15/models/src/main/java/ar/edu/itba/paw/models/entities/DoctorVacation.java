@@ -19,7 +19,7 @@ public class DoctorVacation {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @MapsId("doctorId")
-    @JoinColumn(name = "doctor_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
     private Doctor doctor;
 
     public DoctorVacation() {

@@ -113,7 +113,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
             return Collections.emptyList();
         }
 
-        final DoctorVacation vacation = em.createQuery(
+        final List<DoctorVacation> vacations = em.createQuery(
             """
                 FROM DoctorVacation dv 
                 WHERE dv.doctor = :doctor 
@@ -121,9 +121,9 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
                 AND dv.id.endDate >= :date
             """, 
         DoctorVacation.class
-        ).setParameter("doctor", doctor).setParameter("date", date).getSingleResult();
+        ).setParameter("doctor", doctor).setParameter("date", date).getResultList();
         
-        if (vacation != null) {
+        if (vacations != null && !vacations.isEmpty()) {
             return Collections.emptyList();
         }
 
