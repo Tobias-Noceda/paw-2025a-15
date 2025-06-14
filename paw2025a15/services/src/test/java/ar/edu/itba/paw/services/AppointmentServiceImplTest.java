@@ -264,7 +264,7 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, START_TIME, END_TIME, PATIENT_ID)
-        ).getMessage().contains("Patient");
+        );
     }
 
     @Test
@@ -273,7 +273,7 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, START_TIME, END_TIME, PATIENT_ID)
-        ).getMessage().contains("Shift not found");
+        );
     }
 
     @Test
@@ -287,7 +287,7 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, START_TIME, END_TIME, PATIENT_ID)
-        ).getMessage().contains("Doctor");
+        );
     }
 
     @Test
@@ -320,6 +320,42 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(UnauthorizedException.class, () -> 
             as.removeAppointment(SHIFT_ID, APP_DATE, 100L, START_TIME, END_TIME)
+        );
+    }
+
+    @Test
+    public void testGetAppointmentByShiftIdDateAndTimeNonexistentShift(){
+        Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getAppointmentByShiftIdDateAndTime(SHIFT_ID, APP_DATE, START_TIME, END_TIME)
+        );
+    }
+
+    @Test
+    public void testGetFutureAppointmentDataByPatientIdNonexistentPatient(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getFutureAppointmentDataByPatientId(PATIENT_ID)
+        );
+    }
+
+    @Test
+    public void testGetOldAppointmentDataByPatientIdNonexistentPatient(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getOldAppointmentDataByPatientId(PATIENT_ID)
+        );
+    }
+
+    @Test
+    public void testGetFutureAppointmentDataByDoctorIdNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getFutureAppointmentDataByDoctorId(DOC_ID)
         );
     }
 

@@ -121,7 +121,7 @@ public class StudyServiceImpl implements StudyService{
         return studyDao.deleteStudy(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public boolean isFileInStudy(long studyId, long fileId) {
         return studyDao.isFileInStudy(studyId, fileId);

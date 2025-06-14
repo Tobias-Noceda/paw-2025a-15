@@ -122,7 +122,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorDao.getTotalDoctorsByParams(name, specialty, insuranceId, weekday);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<Patient> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
         doctorDao.getDoctorById(doctorId)
@@ -130,7 +130,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorDao.searchAuthPatientsPageByDoctorAndName(doctorId, name, page, pageSize);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
         doctorDao.getDoctorById(doctorId)
@@ -149,29 +149,24 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
-        if (doctorId <= 0) {
-            throw new IllegalArgumentException("Doctor ID must be greater than zero.");
-        }
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Start date and end date cannot be null.");
         }
         if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Start date and end date cannot be in the past.");
         }
-        Doctor doctor = doctorDao.getDoctorById(doctorId)
-                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
+        Doctor doctor = doctorDao.getDoctorById(doctorId)
+                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        
         return doctorDao.createDoctorVacation(doctor.getId(), startDate, endDate);
     }
 
     @Transactional
     @Override
     public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
-        if (doctorId <= 0) {
-            throw new IllegalArgumentException("Doctor ID must be greater than zero.");
-        }
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Start date and end date cannot be null.");
         }

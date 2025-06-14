@@ -29,7 +29,6 @@ CREATE TABLE users (
 CREATE TABLE studies (
     study_id SERIAL PRIMARY KEY,
     study_comment VARCHAR(100),
-    file_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     uploader_id BIGINT NOT NULL,
     upload_date TIMESTAMP NOT NULL,
@@ -41,12 +40,13 @@ CREATE TABLE studies (
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE patient_coverages (
-    patient_id BIGINT PRIMARY KEY,
-    insurance_id BIGINT NOT NULL,
+CREATE TABLE IF NOT EXISTS study_files (
+    study_id BIGINT NOT NULL,
+    file_id BIGINT NOT NULL,
 
-    FOREIGN KEY (patient_id) REFERENCES users(user_id),
-    FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
+    PRIMARY KEY(study_id, file_id),
+    FOREIGN KEY (study_id) REFERENCES studies(study_id),
+    FOREIGN KEY (file_id) REFERENCES files(file_id)
 );
 
 CREATE TABLE doctor_coverages (
@@ -58,32 +58,7 @@ CREATE TABLE doctor_coverages (
     FOREIGN KEY (insurance_id) REFERENCES insurances(insurance_id)
 );
 
-CREATE TABLE doctor_shifts (
-    shift_id SERIAL PRIMARY KEY,
-    doctor_id BIGINT NOT NULL,
-    shift_weekday INT NOT NULL,
-    shift_address VARCHAR(50) NOT NULL,
-    shift_start_time TIME NOT NULL,
-    shift_end_time TIME NOT NULL,
-
-    UNIQUE (doctor_id, shift_weekday, shift_start_time),
-    UNIQUE (doctor_id, shift_weekday, shift_end_time),
-    FOREIGN KEY (doctor_id) REFERENCES users(user_id),
-
-    CONSTRAINT valid_time_range CHECK (shift_start_time < shift_end_time)
-);
-
-CREATE TABLE appointments (
-    shift_id BIGINT NOT NULL,
-    patient_id BIGINT NOT NULL,
-    appointment_date DATE NOT NULL,
-
-    PRIMARY KEY(shift_id, appointment_date),
-    FOREIGN KEY (shift_id) REFERENCES doctor_shifts(shift_id),
-    FOREIGN KEY (patient_id) REFERENCES users(user_id)
-);
-
-CREATE TABLE IF NOT EXISTS doctor_single_shifts (
+CREATE TABLE doctor_single_shifts (
     shift_id SERIAL PRIMARY KEY,
     doctor_id INT NOT NULL,
     shift_weekday INT NOT NULL,
@@ -91,6 +66,8 @@ CREATE TABLE IF NOT EXISTS doctor_single_shifts (
     shift_start_time TIME NOT NULL,
     shift_end_time TIME NOT NULL,
     shift_duration INT NOT NULL,
+    shift_is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
@@ -100,6 +77,7 @@ CREATE TABLE IF NOT EXISTS appointments_new (
     appointment_date DATE NOT NULL,
     appointment_start_time TIME NOT NULL,
     appointment_end_time TIME NOT NULL,
+    appointment_detail VARCHAR(500),
 
     PRIMARY KEY(shift_id, appointment_date, appointment_start_time, appointment_end_time),
     FOREIGN KEY (shift_id) REFERENCES doctor_single_shifts(shift_id),
@@ -112,6 +90,15 @@ CREATE TABLE doctor_details (
     doctor_specialty INT NOT NULL,
 
     PRIMARY KEY(doctor_id),
+    FOREIGN KEY (doctor_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE IF NOT EXISTS doctor_vacations (
+    doctor_id BIGINT NOT NULL,
+    vacation_start_date DATE NOT NULL,
+    vacation_end_date DATE NOT NULL,
+
+    PRIMARY KEY(doctor_id, vacation_start_date, vacation_end_date),
     FOREIGN KEY (doctor_id) REFERENCES users(user_id)
 );
 
@@ -129,6 +116,8 @@ CREATE TABLE patient_details (
     patient_diet VARCHAR(100),
     patient_hobbies VARCHAR(100),
     patient_job VARCHAR(50),
+    patient_insurance_id BIGINT,
+    patient_insurance_number VARCHAR(30),
 
     PRIMARY KEY(patient_id),
     FOREIGN KEY(patient_id) REFERENCES users(user_id)
@@ -154,8 +143,7 @@ CREATE TABLE auth_studies (
 );
 
 CREATE SEQUENCE files_file_id_seq START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE doctor_shifts_shift_id_seq START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE doctor_single_shifts_shift_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE insurances_insurance_id_seq START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE studies_study_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE users_user_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE studies_study_id_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE doctor_single_shifts_shift_id_seq START WITH 1 INCREMENT BY 1;

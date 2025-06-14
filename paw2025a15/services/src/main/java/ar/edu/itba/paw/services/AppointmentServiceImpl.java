@@ -43,13 +43,10 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Autowired
     private AuthDoctorService ads;
 
-    @Autowired
-    private UserService us;
-
     @Transactional
     @Override
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail) {
-        User user = us.getUserById(patientId).orElseThrow(() -> new NotFoundException("User with id: " + patientId + " does not exist!"));
+        Patient user = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with id: " + shiftId + " not found"));
         Doctor doctor = ds.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
         

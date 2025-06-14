@@ -13,12 +13,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,14 +61,72 @@ public class PatientServiceImplTest {
     @Mock
     private UserService us;
 
+    @Mock
+    private FileService fs;
 
     @Test
-    public void testUpdatePatientDetailsNonexistent(){
+    public void testCreatePatientExistentEmail(){
+        Mockito.when(us.getUserByEmail(Mockito.eq(PAT_EMAIL))).thenReturn(Optional.of(PATIENT));
+
+        Assert.assertThrows(AlreadyExistsException.class, () -> 
+            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT)
+        );
+    }
+
+    @Test
+    public void testCreatePatientNonexistentDefaultPic(){
+        Mockito.when(us.getUserByEmail(Mockito.eq(PAT_EMAIL))).thenReturn(Optional.empty());
+        Mockito.when(fs.findById(1)).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNullPatient(){
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ps.updatePatient(null, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNonexistentPatient(){
         PATIENT.setId(PATIENT_ID);
         Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNullBirthdate(){
+        PATIENT.setId(PATIENT_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, null, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNullHeight(){
+        PATIENT.setId(PATIENT_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, null, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNullWeight(){
+        PATIENT.setId(PATIENT_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, null, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
         );
     }
 

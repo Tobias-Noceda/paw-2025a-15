@@ -138,40 +138,30 @@ public class AuthStudiesServiceImplTest {
     }
 
     @Test
-    public void testUnauthStudyForDoctorIdNonexistentStudy() {
+    public void testAuthStudyForDoctorIdListNonexistentStudy() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ass.unauthStudyForDoctorId(STUDY_ID, DOC_ID)
+            ass.authStudyForDoctorIdList(List.of(DOC_ID), STUDY_ID)
         );
     }
 
     @Test
-    public void testUnauthStudyForDoctorIdNonexistentDoc() {
+    public void testHasAuthStudyNonexistentStudy() {
+        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ass.hasAuthStudy(STUDY_ID, DOC_ID)
+        );
+    }
+
+    @Test
+    public void testHasAuthStudydNonexistentDoc() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
         Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ass.unauthStudyForDoctorId(STUDY_ID, DOC_ID)
-        );
-    }
-
-    @Test
-    public void testToggleStudyForDoctorIdNonexistentStudy(){
-        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            ass.toggleStudyForDoctorId(STUDY_ID, DOC_ID)
-        );
-    }
-
-    @Test
-    public void testToggleStudyForDoctorIdNonexistentDoctor(){
-        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.of(STUDY_WITH_DATE));
-        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            ass.toggleStudyForDoctorId(STUDY_ID, DOC_ID)
+            ass.hasAuthStudy(STUDY_ID, DOC_ID)
         );
     }
 

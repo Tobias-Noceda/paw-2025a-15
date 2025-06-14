@@ -294,5 +294,33 @@ public class StudyServiceImplTest {
         Assert.assertNotNull(study);
         Assert.assertEquals(STUDY_WITHOUT_DATE, study);
     }
+
+    @Test
+    public void testGetFilteredStudiesNonexistentPatient(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ss.getFilteredStudies(PATIENT_ID, STUDYTYPE, false)
+        );
+    }
+
+    @Test
+    public void testGetFilteredStudiesByPatientIdAndDoctorIdNonexistentPatient(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ss.getFilteredStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID, STUDYTYPE, false)
+        );
+    }
+
+    @Test
+    public void testGetFilteredStudiesByPatientIdAndDoctorIdNonexistentDoc(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ss.getFilteredStudiesByPatientIdAndDoctorId(PATIENT_ID, DOC_ID, STUDYTYPE, false)
+        );
+    }
     
 }

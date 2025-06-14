@@ -65,8 +65,6 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
         if(!hasAuthStudy(studyId, doctorId)) return;
-        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
-        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         authStudiesDao.unauthStudyForDoctor(studyId, doctorId);
         LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
     }
