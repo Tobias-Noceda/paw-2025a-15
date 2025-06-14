@@ -93,7 +93,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -122,7 +122,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -152,7 +152,7 @@ public class EmailServiceImpl implements EmailService{
         Map<String, Object> templateModel;
         templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
@@ -189,7 +189,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancelledAppointmentEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -218,7 +218,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancellationConfirmationEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -246,7 +246,7 @@ public class EmailServiceImpl implements EmailService{
         Map<String, Object> templateModel = new HashMap<>();
 
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -275,7 +275,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientCancellationConfirmationEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -302,7 +302,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPasswordResetEmail(User user, String token) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("userName", user.getName());
 
         String recoveryLink = baseURL + "change-password/" + token + "/" + user.getId();
@@ -327,7 +327,7 @@ public class EmailServiceImpl implements EmailService{
         
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -356,7 +356,7 @@ public class EmailServiceImpl implements EmailService{
 
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("patientName", patient.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
