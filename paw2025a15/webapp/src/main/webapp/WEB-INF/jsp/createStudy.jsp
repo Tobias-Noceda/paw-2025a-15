@@ -36,17 +36,18 @@
             enctype="multipart/form-data"
             class="study-form">
 
-      <!-- File -->
+      <!-- Files -->
       <div class="sf-field">
-        <label for="file">
+        <label for="files">
           <spring:message code="uploadStudies.fileLabel"/>:
         </label>
-        <form:input id="file"
-               type="file"
-               path="file"
-               accept=".png,.jpg,.jpeg,.pdf"
+        <form:input id="files"
+          type="file"
+          path="files"
+          accept=".png,.jpg,.jpeg,.pdf"
+          multiple="multiple"
         />
-        <form:errors path="file" cssClass="sf-error"/>
+        <form:errors path="files" cssClass="sf-error"/>
       </div>
 
       <!-- Type -->
@@ -56,9 +57,10 @@
         </label>
         <form:select id="type" cssClass="filter-select" path="type">
           <form:options
-                  items="${studyTypeSelectItems}"
-                  itemLabel="label"
-                  itemValue="value"/>
+            items="${studyTypeSelectItems}"
+            itemLabel="label"
+            itemValue="value"
+          />
         </form:select>
         <form:errors path="type" cssClass="sf-error"/>
       </div>

@@ -251,7 +251,6 @@
                   <th><spring:message code="studyTable.detailsColumn.title"></spring:message></th>
                   <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
                   <th><spring:message code="studyTable.uploadDateColumn.title"></spring:message></th>
-                  <th class="studies-last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
                 </tr>
               </thead>
             </table>
@@ -261,50 +260,19 @@
               <table class="studies-table">
                 <tbody>
                   <c:forEach var="study" items="${patientStudies}">
-                    <c:url value="/view-study/${study.id}/file/${study.files[0].id}" var="studyLink" />
-                    <c:set var="studyName">
-                      <spring:message code="studyType.${study.type}"/>_${study.studyDate}
-                    </c:set>
+                    <c:url value="/study-info/${study.id}" var="studyLink" />
                     <tr class="study-row"
-                      onclick="window.open('${studyLink}', '_blank')"
+                      onclick="window.location.href='${studyLink}';"
                     >
-                      <c:set var="studyDay">
-                        <fmt:formatNumber value="${study.studyDate.dayOfMonth}" pattern="00" />
-                      </c:set>
-                      <c:set var="studyMonth">
-                        <fmt:formatNumber value="${study.studyDate.monthValue}" pattern="00" />
-                      </c:set>
-                      <c:set var="studyYear" value="${study.studyDate.year}" />
-
-                      <c:set var="uploadDay">
-                        <fmt:formatNumber value="${study.uploadDate.dayOfMonth}" pattern="00" />
-                      </c:set>
-                      <c:set var="uploadMonth">
-                        <fmt:formatNumber value="${study.uploadDate.monthValue}" pattern="00" />
-                      </c:set>
-                      <c:set var="uploadYear" value="${study.uploadDate.year}" />
-
                       <td class="text-cell">
                         <spring:message code="studyType.${study.type}"/>
                       </td>
                       <td class="text-cell"><c:out value="${study.comment}" escapeXml="true"/></td>
                       <td class="text-cell">
-                        <spring:message code="dateFormat" arguments="${studyDay},${studyMonth},${studyYear}"/>
+                        <fmt:formatDate value="${study.studyDateAsDate}" dateStyle="short"/>
                       </td>
                       <td class="text-cell">
-                        <spring:message code="dateFormat" arguments="${uploadDay},${uploadMonth},${uploadYear}"/>
-                      </td>
-                      <td class="download-cell">
-                        <a
-                          class="download-button"
-                          href="${studyLink}"
-                          download="${studyName}"
-                          onclick="event.stopPropagation();"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M12 16a1 1 0 0 1-.7-.29l-4-4a1 1 0 0 1 1.41-1.41L11 12.59V4a1 1 0 0 1 2 0v8.59l2.29-2.29a1 1 0 0 1 1.41 1.41l-4 4a1 1 0 0 1-.7.29zM19 14a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3a1 1 0 0 0-2 0v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3a1 1 0 0 0-1-1z"/>
-                          </svg>
-                        </a>
+                        <fmt:formatDate value="${study.uploadDateAsDate}" dateStyle="short"/>
                       </td>
                     </tr>
                   </c:forEach>

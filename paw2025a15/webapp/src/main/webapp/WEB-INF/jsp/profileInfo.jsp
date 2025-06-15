@@ -97,7 +97,6 @@
         </div>
 
         <c:if test="${patientDetails == null}">
-
           <div class="field-container full-width">
             <div class="insurance-toggle-group">
               <form:label path="insurances">
@@ -120,10 +119,7 @@
               <form:errors path="insurances" cssClass="error-box" element="div"/>
             </div>
           </div>
-
-      </c:if>
-
-
+        </c:if>
         <c:if test="${patientDetails != null}">
           <form:hidden path="insurances" value=""/>
           <div class="field-container">
