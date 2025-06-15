@@ -2,12 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,10 @@ public class UserController {
         
         if(user instanceof Doctor doctor) {
             ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
+            ds.updateShiftsWrapper(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount());
+            for (WeekdayEnum day : profileForm.getSchedules().getWeekday()){
+                System.out.println(day.getName());
+            }
         } else {
             ps.updatePatient(
                 (Patient) user,
@@ -88,8 +94,8 @@ public class UserController {
                 profileForm.getMailLanguage(),
                 profileForm.getBirthDate(),
                 profileForm.getBloodType(),
-                BigDecimal.valueOf(profileForm.getHeight()),
-                BigDecimal.valueOf(profileForm.getWeight()),
+                profileForm.getHeight() != null ? BigDecimal.valueOf(profileForm.getHeight()) : null,
+                profileForm.getWeight() != null ? BigDecimal.valueOf(profileForm.getWeight()) : null,
                 profileForm.getSmokes(),
                 profileForm.getDrinks(),
                 profileForm.getMeds(),
@@ -138,6 +144,8 @@ public class UserController {
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
         mav.addObject("landingForm", new LandingForm());
