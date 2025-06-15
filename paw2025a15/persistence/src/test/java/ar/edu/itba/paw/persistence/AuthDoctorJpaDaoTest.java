@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,12 @@ public class AuthDoctorJpaDaoTest {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Before
+    public void setup() {
+        TestData.Users.patient.setId(TestData.Users.patientId); // Ensure ID is set before creating AuthDoc
+        TestData.Users.doctor.setId(TestData.Users.doctorId); // Ensure ID is set before creating AuthDoc
+    }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql"})
@@ -450,6 +457,42 @@ public class AuthDoctorJpaDaoTest {
         Assert.assertEquals(PATIENT, adSocialFound.getPatient());
         Assert.assertEquals(DOC, adSocialFound.getDoctor());
         Assert.assertEquals(ACCES_LEVEL2, adSocialFound.getAccessLevel());
+    }
+
+    @Test
+    public void testAuthDoctorWithLevelsNonexistentDoc(){
+        final Long PATIENT_ID = TestData.Users.patientId;
+        final Patient PATIENT = TestData.Users.patient;
+        PATIENT.setId(PATIENT_ID);
+        final Long DOC_ID = 0L;
+        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
+        final AccessLevelEnum ACCES_LEVEL2 = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
+        final List<AccessLevelEnum> ACCESS_LEVELS = List.of(ACCES_LEVEL, ACCES_LEVEL2);
+
+        authDoctorDao.authDoctorWithLevels(PATIENT_ID, DOC_ID, ACCESS_LEVELS);
+        AuthDoctor adBasicFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
+        AuthDoctor adSocialFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL2));
+
+        Assert.assertNull(adBasicFound);
+        Assert.assertNull(adSocialFound);
+    }
+
+    @Test
+    public void testAuthDoctorWithLevelsNonexistentPatient(){
+        final Long PATIENT_ID = 0L;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Doctor DOC = TestData.Users.doctor;
+        DOC.setId(DOC_ID);
+        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
+        final AccessLevelEnum ACCES_LEVEL2 = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
+        final List<AccessLevelEnum> ACCESS_LEVELS = List.of(ACCES_LEVEL, ACCES_LEVEL2);
+
+        authDoctorDao.authDoctorWithLevels(PATIENT_ID, DOC_ID, ACCESS_LEVELS);
+        AuthDoctor adBasicFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
+        AuthDoctor adSocialFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL2));
+
+        Assert.assertNull(adBasicFound);
+        Assert.assertNull(adSocialFound);
     }
 
     @Test
