@@ -7,6 +7,7 @@ import java.util.Optional;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
+import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
@@ -35,5 +36,5 @@ public interface DoctorDao {
 
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
-    public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
+    public void deleteDoctorVacation(DoctorVacationId dvId);
 }

@@ -21,6 +21,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
+import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -138,7 +139,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
     }
 
-    @Transactional//TODO:esto se usa?
+    @Transactional
     @Override
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
         doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
@@ -172,7 +173,7 @@ public class DoctorServiceImpl implements DoctorService {
         }
         Doctor doctor = doctorDao.getDoctorById(doctorId)
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        doctorDao.deleteDoctorVacation(doctor.getId(), startDate, endDate);
+        doctorDao.deleteDoctorVacation(new DoctorVacationId(doctor.getId(), startDate, endDate));
         LOGGER.info("Deleted vacation for doctor with id: {}", doctorId);
     }
 }

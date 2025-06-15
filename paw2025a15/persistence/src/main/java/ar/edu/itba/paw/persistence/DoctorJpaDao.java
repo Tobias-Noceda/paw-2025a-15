@@ -16,6 +16,7 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
+import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -253,7 +254,7 @@ public class DoctorJpaDao implements DoctorDao{
     @Override
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
         Doctor doctor = em.find(Doctor.class, doctorId);
-        if (doctor == null || newShifts == null) return;
+        if (doctor == null || newShifts == null || newShifts.isEmpty()) return;
 
         // setAll existing shifts' isActive to false
         for (DoctorSingleShift shift : doctor.getSingleShifts()) {
@@ -262,7 +263,13 @@ public class DoctorJpaDao implements DoctorDao{
         
         // Add new shifts
         for (DoctorSingleShift shift : newShifts) {
+            shift.setIsActive(true);
             shift.setDoctor(doctor);
+            if (shift.getId() == null) {
+                em.persist(shift);
+            } else {
+                em.merge(shift);
+            }
             doctor.addSingleShift(shift);
         }
         
@@ -273,6 +280,8 @@ public class DoctorJpaDao implements DoctorDao{
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
         Doctor doctor = em.find(Doctor.class, doctorId);
         if (doctor == null || startDate == null || endDate == null) return null;
+        if(endDate.isBefore(startDate)) return null;
+        if(startDate.isBefore(LocalDate.now())) return null;
 
         // Create a new DoctorVacation entity
         DoctorVacation vacation = new DoctorVacation(doctor, startDate, endDate);
@@ -281,27 +290,10 @@ public class DoctorJpaDao implements DoctorDao{
     }
 
     @Override
-    public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
-        Doctor doctor = em.find(Doctor.class, doctorId);
-        if (doctor == null || startDate == null || endDate == null) return;
-
-        // Find the DoctorVacation entity to delete
-        List<DoctorVacation> vacations = em.createQuery(
-            """
-                FROM DoctorVacation dv
-                WHERE dv.doctor = :doctor
-                AND dv.id.startDate = :startDate
-                AND dv.id.endDate = :endDate
-            """,
-            DoctorVacation.class
-        )
-            .setParameter("doctor", doctor)
-            .setParameter("startDate", startDate)
-            .setParameter("endDate", endDate)
-            .getResultList();
-
-        if (vacations != null && !vacations.isEmpty()) {
-            em.remove(vacations);
-        }
+    public void deleteDoctorVacation(DoctorVacationId dvId) {
+        DoctorVacation dv = em.find(DoctorVacation.class, dvId);
+        if (dv == null) return;
+        em.remove(dv);
     }
+
 }

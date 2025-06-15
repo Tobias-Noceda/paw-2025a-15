@@ -1,8 +1,12 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -105,6 +110,32 @@ public class DoctorJpaDaoTest {
             );
             em.flush();
         });
+    }
+
+    @Test
+    @Sql({"classpath:images.sql"})
+    public void testCreateWithNonexistentPic(){
+        final Doctor DOC = TestData.Users.doctor;
+        final Long DOC_ID = TestData.Users.doctorId;
+        DOC.setId(DOC_ID);
+        final Long PIC_ID = 0L;
+        final String LICENCE = DOC.getLicence();
+        final SpecialtyEnum SPECIALTY = DOC.getSpecialty();
+        final String EMAIL = "dulcedeleche@example.com";
+
+        Doctor doctor = doctorDao.createDoctor(
+            EMAIL,
+            DOC.getPassword(),
+            DOC.getName(),
+            DOC.getTelephone(),
+            PIC_ID,
+            DOC.getLocale(),
+            LICENCE,
+            SPECIALTY,
+            new ArrayList<>()
+        );
+
+        Assert.assertNull(doctor);
     }
 
     @Test
@@ -445,6 +476,55 @@ public class DoctorJpaDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsNullSpecialty(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, null, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 1, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertFalse(doctors.isEmpty());
+        Assert.assertEquals(1, doctors.size());
+        Assert.assertEquals(DOC_ID, doctors.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsNonexistentInsurance(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = 0L;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 1, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertFalse(doctors.isEmpty());
+        Assert.assertEquals(1, doctors.size());
+        Assert.assertEquals(DOC_ID, doctors.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsNullWeekday(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, null, DoctorOrderEnum.M_POPULAR, 1, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertFalse(doctors.isEmpty());
+        Assert.assertEquals(1, doctors.size());
+        Assert.assertEquals(DOC_ID, doctors.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
     public void testGetDoctorsPageByParamsWrongPage(){
         final String DOC_NAME = TestData.Users.doctor.getName();
         final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
@@ -531,6 +611,192 @@ public class DoctorJpaDaoTest {
         int doctors = doctorDao.getTotalDoctorsByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, null);
 
         Assert.assertEquals(1, doctors);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacation(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final LocalDate START_DATE = LocalDate.now();
+        final LocalDate END_DATE = LocalDate.now().plusDays(1);
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+        DoctorVacation dvPersisted = em.find(DoctorVacation.class, dv.getId());
+
+        Assert.assertNotNull(dvPersisted);
+        Assert.assertEquals(DOC_ID, dvPersisted.getId().getDoctorId());
+        Assert.assertEquals(START_DATE, dvPersisted.getId().getStartDate());
+        Assert.assertEquals(END_DATE, dvPersisted.getId().getEndDate());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacationDameDay(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final LocalDate START_DATE = LocalDate.now();
+        final LocalDate END_DATE = LocalDate.now();
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+        DoctorVacation dvPersisted = em.find(DoctorVacation.class, dv.getId());
+
+        Assert.assertNotNull(dvPersisted);
+        Assert.assertEquals(DOC_ID, dvPersisted.getId().getDoctorId());
+        Assert.assertEquals(START_DATE, dvPersisted.getId().getStartDate());
+        Assert.assertEquals(END_DATE, dvPersisted.getId().getEndDate());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacationPastDates(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final LocalDate START_DATE = LocalDate.now().minusDays(5);
+        final LocalDate END_DATE = LocalDate.now().minusDays(2);
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+
+        Assert.assertNull(dv);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacationWrongDates(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final LocalDate START_DATE = LocalDate.now().plusDays(5);
+        final LocalDate END_DATE = LocalDate.now().plusDays(2);
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+
+        Assert.assertNull(dv);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacationNonexistentDOc(){
+        final Long DOC_ID =0L;
+        final LocalDate START_DATE = LocalDate.now();
+        final LocalDate END_DATE = LocalDate.now().plusDays(1);
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+
+        Assert.assertNull(dv);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacationNullStartDate(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final LocalDate START_DATE = null;
+        final LocalDate END_DATE = LocalDate.now().plusDays(1);
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+
+        Assert.assertNull(dv);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testCreateDoctorVacationNullEndDate(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final LocalDate START_DATE = LocalDate.now();
+        final LocalDate END_DATE = null;
+
+        DoctorVacation dv = doctorDao.createDoctorVacation(DOC_ID, START_DATE, END_DATE);
+
+        Assert.assertNull(dv);
+    }
+
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql"})
+    public void testDeleteDoctorVacation(){
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+
+        doctorDao.deleteDoctorVacation(DV.getId());
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+
+        Assert.assertNull(dvFound);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testDeleteDoctorVacationNonexistentDv(){
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+
+        doctorDao.deleteDoctorVacation(DV.getId());
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+
+        Assert.assertNull(dvFound);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void updateShifts(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorSingleShift NEW_SHIFT = TestData.DoctorSingleShifts.newDoctorSingleShift;
+        final DoctorSingleShift OLD_SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
+        final Long OLD_SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+
+        doctorDao.updateShifts(DOC_ID, List.of(NEW_SHIFT));
+        Doctor DOC = em.find(Doctor.class, DOC_ID);
+        DoctorSingleShift OLD_SHIFT_PERSISTED = em.find(DoctorSingleShift.class, OLD_SHIFT_ID);
+
+        Assert.assertNotNull(DOC);
+        Assert.assertEquals(1, DOC.getSingleShifts().size());
+        Assert.assertTrue(DOC.getSingleShifts().get(0).getIsActive());
+        Assert.assertEquals(NEW_SHIFT.getDoctor().getId(), DOC.getSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(NEW_SHIFT.getWeekday(), DOC.getSingleShifts().get(0).getWeekday());
+        Assert.assertEquals(NEW_SHIFT.getAddress(), DOC.getSingleShifts().get(0).getAddress());
+        Assert.assertEquals(NEW_SHIFT.getStartTime(), DOC.getSingleShifts().get(0).getStartTime());
+        Assert.assertEquals(NEW_SHIFT.getEndTime(), DOC.getSingleShifts().get(0).getEndTime());
+        Assert.assertEquals(NEW_SHIFT.getDuration(), DOC.getSingleShifts().get(0).getDuration());
+        Assert.assertNotNull(OLD_SHIFT_PERSISTED);
+        Assert.assertFalse(OLD_SHIFT_PERSISTED.getIsActive());
+        Assert.assertEquals(OLD_SHIFT.getDoctor().getId(), OLD_SHIFT_PERSISTED.getDoctor().getId());
+        Assert.assertEquals(OLD_SHIFT.getWeekday(), OLD_SHIFT_PERSISTED.getWeekday());
+        Assert.assertEquals(OLD_SHIFT.getAddress(), OLD_SHIFT_PERSISTED.getAddress());
+        Assert.assertEquals(OLD_SHIFT.getStartTime(), OLD_SHIFT_PERSISTED.getStartTime());
+        Assert.assertEquals(OLD_SHIFT.getEndTime(), OLD_SHIFT_PERSISTED.getEndTime());
+        Assert.assertEquals(OLD_SHIFT.getDuration(), OLD_SHIFT_PERSISTED.getDuration());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void updateShiftsNoNewShiftsNull(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorSingleShift OLD_SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
+
+        doctorDao.updateShifts(DOC_ID, null);
+        Doctor DOC = em.find(Doctor.class, DOC_ID);
+    
+        Assert.assertNotNull(DOC);
+        Assert.assertEquals(1, DOC.getSingleShifts().size());
+        Assert.assertTrue(DOC.getSingleShifts().get(0).getIsActive());
+        Assert.assertEquals(OLD_SHIFT.getDoctor().getId(), DOC.getSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(OLD_SHIFT.getWeekday(), DOC.getSingleShifts().get(0).getWeekday());
+        Assert.assertEquals(OLD_SHIFT.getAddress(), DOC.getSingleShifts().get(0).getAddress());
+        Assert.assertEquals(OLD_SHIFT.getStartTime(), DOC.getSingleShifts().get(0).getStartTime());
+        Assert.assertEquals(OLD_SHIFT.getEndTime(), DOC.getSingleShifts().get(0).getEndTime());
+        Assert.assertEquals(OLD_SHIFT.getDuration(), DOC.getSingleShifts().get(0).getDuration());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void updateShiftsNoNewShiftsEmpty(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorSingleShift OLD_SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
+
+        doctorDao.updateShifts(DOC_ID, Collections.emptyList());
+        Doctor DOC = em.find(Doctor.class, DOC_ID);
+    
+        Assert.assertNotNull(DOC);
+        Assert.assertEquals(1, DOC.getSingleShifts().size());
+        Assert.assertTrue(DOC.getSingleShifts().get(0).getIsActive());
+        Assert.assertEquals(OLD_SHIFT.getDoctor().getId(), DOC.getSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(OLD_SHIFT.getWeekday(), DOC.getSingleShifts().get(0).getWeekday());
+        Assert.assertEquals(OLD_SHIFT.getAddress(), DOC.getSingleShifts().get(0).getAddress());
+        Assert.assertEquals(OLD_SHIFT.getStartTime(), DOC.getSingleShifts().get(0).getStartTime());
+        Assert.assertEquals(OLD_SHIFT.getEndTime(), DOC.getSingleShifts().get(0).getEndTime());
+        Assert.assertEquals(OLD_SHIFT.getDuration(), DOC.getSingleShifts().get(0).getDuration());
     }
 
 }

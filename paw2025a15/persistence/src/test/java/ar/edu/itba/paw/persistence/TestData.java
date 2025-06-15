@@ -17,6 +17,7 @@ import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -92,6 +93,8 @@ public class TestData {
     public class DoctorSingleShifts{
         public static final DoctorSingleShift doctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:30:00"), 15);
         public static final Long doctorSingleShiftId = 1L;
+        public static final DoctorSingleShift newDoctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.MONDAY, "Los Patos", LocalTime.parse("15:00:00"), LocalTime.parse("17:00:00"), 30);
+        public static final Long newDoctorSingleShiftId = 2L;
     }
 
     public class NewAppointments{
@@ -106,5 +109,9 @@ public class TestData {
     public class AuthDoctors{
         public static final AuthDoctor authDoctor = new AuthDoctor(Users.doctor, Users.patient, AccessLevelEnum.VIEW_BASIC);
         public static final AuthDoctor authDoctorSocialLevel = new AuthDoctor(Users.doctor, Users.patient, AccessLevelEnum.VIEW_SOCIAL);
+    }
+
+    public class DocVacations{
+        public static final DoctorVacation docVacation = new DoctorVacation(Users.doctor, LocalDate.now().plusDays(2), LocalDate.now().plusDays(5));
     }
 }
