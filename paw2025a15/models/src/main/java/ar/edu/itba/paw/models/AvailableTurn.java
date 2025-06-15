@@ -8,7 +8,7 @@ public class AvailableTurn {
     private LocalTime startTime;
     private LocalTime endTime;
     private String address;
-    private long shiftId;
+    private Long shiftId;
 
     public AvailableTurn(){
         //just for hibernate
@@ -45,7 +45,7 @@ public class AvailableTurn {
         return address;
     }
 
-    public long getShiftId() {
+    public Long getShiftId() {
         return shiftId;
     }
 
