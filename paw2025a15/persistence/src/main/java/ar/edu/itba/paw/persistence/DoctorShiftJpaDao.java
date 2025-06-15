@@ -46,10 +46,11 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public void doctorSetShifts(Doctor doctor, List<DoctorSingleShift> shifts) {
+        List<DoctorSingleShift> managedShifts = new ArrayList<>();
         for (DoctorSingleShift shift : shifts) {
-            em.persist(shift);
+            managedShifts.add(em.merge(shift));
         }
-        doctor.setSingleShifts(shifts);
+        doctor.setSingleShifts(managedShifts);
         em.merge(doctor);
     }
 
