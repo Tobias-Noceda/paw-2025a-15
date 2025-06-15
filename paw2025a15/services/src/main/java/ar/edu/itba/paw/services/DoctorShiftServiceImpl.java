@@ -37,7 +37,7 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int slot) {
         if(startTime==null || endTime==null) throw new IllegalArgumentException("Start time and end time cannot be null");
         if(!startTime.isBefore(endTime)) throw new IllegalArgumentException("Start time of a shift must be before the end time");
-        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));//TODO:changed for hibernate check
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         List<DoctorSingleShift> shifts = new ArrayList<>();
         for (WeekdayEnum weekday : weekdays) {
             shifts.add(new DoctorSingleShift(

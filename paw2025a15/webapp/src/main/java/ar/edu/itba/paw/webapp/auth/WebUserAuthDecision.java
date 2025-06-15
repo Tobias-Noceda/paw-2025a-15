@@ -59,7 +59,7 @@ public class WebUserAuthDecision {
 
         Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found"));
 
-        if(user.getId().equals(study.getPatient().getId())) {//TODO:changed when migrating jpa, check later
+        if(user.getId().equals(study.getPatient().getId())) {//TODO:changed when migrating jpa, check later (mostly using directly .getId() without checking first)
             return new AuthorizationDecision(true);
         } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
             return new AuthorizationDecision(true);

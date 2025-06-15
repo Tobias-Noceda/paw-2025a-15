@@ -35,8 +35,8 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Transactional
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));//TODO:check change for hibernate
-        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));
 
         if(hasAuthStudy(studyId, doctorId)) return true;
         boolean result = authStudiesDao.authStudyForDoctor(studyId, doctorId);
