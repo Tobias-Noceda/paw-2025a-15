@@ -66,8 +66,10 @@ public class UserController {
         RedirectAttributes redirectAttrs,
         Locale locale
     ) throws IOException {
-
+        System.out.println("Posteando profile...");
+        System.out.println(result.toString());
         if (result.hasErrors()) {
+            System.out.println("Error en el formulario de profile");
             return profile(user, profileForm, result, locale);
         }
 
@@ -83,6 +85,7 @@ public class UserController {
         if(user instanceof Doctor doctor) {
             ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
             ds.updateShiftsWrapper(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount());
+            System.out.println("Dias seleccionados: ");
             for (WeekdayEnum day : profileForm.getSchedules().getWeekday()){
                 System.out.println(day.getName());
             }
@@ -139,6 +142,15 @@ public class UserController {
             profileForm.setInsurances(
                 doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
             );
+            profileForm.setSchedules(doctor.getSchedules());
+            profileForm.setAmount(doctor.getSingleShifts().getFirst().getDuration());
+            List<String> selectedDays = doctor.getSchedules().getWeekday()
+                    .stream()
+                    .map(Enum::name)
+                    .toList();
+
+            mav.addObject("selectedDays", selectedDays);
+
         } else {
             mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }

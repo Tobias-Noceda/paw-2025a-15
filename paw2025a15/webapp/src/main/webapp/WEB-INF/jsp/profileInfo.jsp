@@ -121,6 +121,12 @@
           </div>
 
           <h3 class="section-title"><spring:message code="doctorForm.schedule"/></h3>
+
+          <div class="field-container full-width">
+            <label class="field-label"><spring:message code="doctorForm.address"/></label>
+            <form:input path="address" type="text" cssClass="login-input"/>
+            <form:errors path="address" cssClass="error-box" element="div"/>
+          </div>
           <div class="field-container full-width">
             <label class="field-label"><spring:message code="doctorForm.schedules.weekday"/></label>
             <div class="weekday-toggle-group">
@@ -130,7 +136,7 @@
                          value="${day.value}" class="weekday-checkbox"/>
                   <label for="day-${day.value}" class="weekday-label">
                     <spring:message code="weekday.${day.value}.initial"/>
-                  </label>
+                    </label>
                 </div>
               </c:forEach>
             </div>

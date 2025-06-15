@@ -15,7 +15,13 @@ public class Schedule {
     public Schedule(){
         //just for hibernate
     }
-
+    public Schedule(List<WeekdayEnum> weekday, String startTime, String endTime, String address, int shiftCount) {
+        this.weekday = weekday;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.address = address;
+        this.shiftCount = shiftCount;
+    }
     public List<WeekdayEnum> getWeekday() {
         return weekday;
     }
