@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,13 +46,18 @@ public class DoctorJpaDao implements DoctorDao{
         if(doctor ==null || picture == null || (telephone == null || telephone.isEmpty()) ) return;
         doctor.setTelephone(telephone);
         doctor.setLocale(mailLanguage);
-        if (insurances == null) {
-            insurances = Collections.emptyList();
+        List<Insurance> toAdd;
+        if (insurances == null) toAdd = Collections.emptyList();
+        else{
+            toAdd = new ArrayList<>();
+            for(Insurance insurance:insurances){
+                toAdd.add(em.merge(insurance));
+            }
         }
-        doctor.setInsurances(insurances);
+        doctor.setInsurances(toAdd);
         File oldPicture = doctor.getPicture();
         boolean remove = false;
-        if(picture.getId().equals(oldPicture.getId())){
+        if(!picture.getId().equals(oldPicture.getId())){
             doctor.setPicture(picture);
             if(oldPicture.getId() != 1) remove = true;
         }
@@ -86,7 +92,7 @@ public class DoctorJpaDao implements DoctorDao{
         TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
         setQueryParameters(query, name, specialty, insurance, weekday);
 
-        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
+        List<Doctor> doctors = query.setFirstResult((page<=0? 0:page - 1) * pageSize)
                     .setMaxResults(pageSize)
                     .getResultList();
 
