@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +21,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -258,22 +263,6 @@ public class DoctorJpaDaoTest {
         Assert.assertFalse(foundDoctor.isPresent());
     }    
 
-    // @Test
-    // @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
-    // public void testGetDoctorsPageByParams(){
-    //     final String DOC_NAME = TestData.Users.doctor.getName();
-    //     final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
-    //     final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
-    //     final Insurance INSURANCE = TestData.Insurances.validInsurance;
-    //     final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-
-    //     List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 0, 0);
-
-    //     Assert.assertEquals(1, doctors.size());
-    //     Assert.assertNotNull();
-    //     Assert.assertNotNull();
-    // }
-
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
     public void testSearchAuthPatientsCountByDoctorIdAndName(){
@@ -403,6 +392,145 @@ public class DoctorJpaDaoTest {
         boolean result = doctorDao.licenceExists(null);
 
         Assert.assertFalse(result);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParams(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 1, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertFalse(doctors.isEmpty());
+        Assert.assertEquals(1, doctors.size());
+        Assert.assertEquals(DOC_ID, doctors.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsNullName(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(null, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 1, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertFalse(doctors.isEmpty());
+        Assert.assertEquals(1, doctors.size());
+        Assert.assertEquals(DOC_ID, doctors.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsEmptyName(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams("", DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 1, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertFalse(doctors.isEmpty());
+        Assert.assertEquals(1, doctors.size());
+        Assert.assertEquals(DOC_ID, doctors.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsWrongPage(){
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 0, 2);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertTrue(doctors.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetDoctorsPageByParamsWrongPageSize(){
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY, DoctorOrderEnum.M_POPULAR, 1, 0);
+
+        Assert.assertNotNull(doctors);
+        Assert.assertTrue(doctors.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetTotalDoctorsByParams(){
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        int doctors = doctorDao.getTotalDoctorsByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY);
+
+        Assert.assertEquals(1, doctors);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetTotalDoctorsByParamsNullName(){
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        int doctors = doctorDao.getTotalDoctorsByParams(null, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY);
+
+        Assert.assertEquals(1, doctors);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetTotalDoctorsByParamsNullSpecialty(){
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        int doctors = doctorDao.getTotalDoctorsByParams(DOC_NAME, null, INSURANCE_ID, WEEKDAY);
+
+        Assert.assertEquals(1, doctors);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetTotalDoctorsByParamsNullInsurance(){
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
+        final Long INSURANCE_ID = 0L;
+
+        int doctors = doctorDao.getTotalDoctorsByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, WEEKDAY);
+
+        Assert.assertEquals(1, doctors);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetTotalDoctorsByParamsNullWeekday(){
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final SpecialtyEnum DOC_SPECIALTY = TestData.Users.doctor.getSpecialty();
+        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
+
+        int doctors = doctorDao.getTotalDoctorsByParams(DOC_NAME, DOC_SPECIALTY, INSURANCE_ID, null);
+
+        Assert.assertEquals(1, doctors);
     }
 
 }

@@ -138,7 +138,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
     }
 
-    @Transactional
+    @Transactional//TODO:esto se usa?
     @Override
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
         doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));

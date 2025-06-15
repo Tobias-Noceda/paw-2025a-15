@@ -73,6 +73,7 @@ public class DoctorJpaDao implements DoctorDao{
 
     @Override
     public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        if (page < 1 || pageSize <= 0) return Collections.emptyList();
         Insurance insurance;
         if (insuranceId != null) {
             insurance = em.find(Insurance.class, insuranceId);
@@ -92,7 +93,7 @@ public class DoctorJpaDao implements DoctorDao{
         TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
         setQueryParameters(query, name, specialty, insurance, weekday);
 
-        List<Doctor> doctors = query.setFirstResult((page<=0? 0:page - 1) * pageSize)
+        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
                     .setMaxResults(pageSize)
                     .getResultList();
 
