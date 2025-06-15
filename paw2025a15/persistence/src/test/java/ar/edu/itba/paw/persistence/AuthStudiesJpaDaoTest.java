@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -132,6 +134,20 @@ public class AuthStudiesJpaDaoTest {
 
         Assert.assertNull(asPersisted);
         Assert.assertNull(as2Persisted);
+    }
+
+    @Test
+    public void testAuthStudyForDoctorIdList(){
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
+        final Long DOC_ID = TestData.Users.doctorId;
+        List<Long> IDS =List.of(DOC_ID);
+
+        authStudiesDao.authStudyForDoctorIdList(IDS, STUDY_ID);
+        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
+
+        Assert.assertNotNull(asPersisted);
+        Assert.assertEquals(DOC_ID, asPersisted.getDoctor().getId());
+        Assert.assertEquals(STUDY_ID, asPersisted.getStudy().getId());
     }
 
 }
