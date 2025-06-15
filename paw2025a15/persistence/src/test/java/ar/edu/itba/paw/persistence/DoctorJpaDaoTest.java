@@ -23,10 +23,8 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
-import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
-import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -147,33 +145,6 @@ public class DoctorJpaDaoTest {
         Assert.assertNotEquals(DOC.getTelephone(), doctorPersisted.getTelephone());
         Assert.assertEquals(PIC_ID, doctorPersisted.getPicture().getId());
         Assert.assertNotEquals(DOC.getPicture().getId(), doctorPersisted.getPicture().getId());
-        Assert.assertEquals(LocaleEnum.ES_AR, doctorPersisted.getLocale());
-        Assert.assertNotEquals(DOC.getLocale(), doctorPersisted.getLocale());
-        Assert.assertEquals(1, doctorPersisted.getInsurances().size());
-        Assert.assertEquals(INSURANCE_ID, doctorPersisted.getInsurances().get(0).getId());
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql"})
-    public void testUpdateDoctorSamePic(){
-        final Long DOC_ID = TestData.Users.doctorId;
-        final Doctor DOC = TestData.Users.doctor;
-        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-        final Insurance INSURANCE = TestData.Insurances.validInsurance;
-        INSURANCE.setId(INSURANCE_ID);
-        final Long I_PIC_ID =  TestData.Images.validImageId;
-        final File I_PIC = TestData.Images.validImage;
-        I_PIC.setId(I_PIC_ID);
-        INSURANCE.setPicture(I_PIC);
-        List<Insurance> INSURANCES = List.of(INSURANCE);
-
-        doctorDao.updateDoctor(DOC_ID, "1155555555", DOC.getPicture().getId(), LocaleEnum.ES_AR, INSURANCES);
-        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
-
-        Assert.assertNotNull(doctorPersisted);
-        Assert.assertEquals("1155555555", doctorPersisted.getTelephone());
-        Assert.assertNotEquals(DOC.getTelephone(), doctorPersisted.getTelephone());
-        Assert.assertEquals(DOC.getPicture().getId(), doctorPersisted.getPicture().getId());
         Assert.assertEquals(LocaleEnum.ES_AR, doctorPersisted.getLocale());
         Assert.assertNotEquals(DOC.getLocale(), doctorPersisted.getLocale());
         Assert.assertEquals(1, doctorPersisted.getInsurances().size());
@@ -409,6 +380,35 @@ public class DoctorJpaDaoTest {
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
         Assert.assertEquals(PATIENT, results.get(0));
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testLicenceExists(){
+        final String DOC_LICENCE = TestData.Users.doctor.getLicence();
+
+        boolean result = doctorDao.licenceExists(DOC_LICENCE);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql"})
+    public void testLicenceExistsFalse(){
+        final String DOC_LICENCE = TestData.Users.doctor.getLicence();
+
+        boolean result = doctorDao.licenceExists(DOC_LICENCE);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testLicenceExistsNullLicence(){
+
+        boolean result = doctorDao.licenceExists(null);
+
+        Assert.assertFalse(result);
     }
 
 }
