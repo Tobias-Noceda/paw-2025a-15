@@ -2,6 +2,8 @@ package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
@@ -120,12 +122,20 @@ public class Study {
         return uploadDate;
     }
 
+    public Date getUploadDateAsDate(){
+        return Date.from(uploadDate.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
     public void setUploadDate(LocalDateTime uploadDate){
         this.uploadDate = uploadDate;
     }
 
     public LocalDate getStudyDate(){
         return studyDate;
+    }
+
+    public Date getStudyDateAsDate(){
+        return Date.from(studyDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     public void setStudyDate(LocalDate studyDate){

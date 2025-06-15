@@ -62,7 +62,6 @@ public class PatientController {
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
-        System.out.println("patient altura:"+ patient.getHeight());
         mav.addObject("patient", patient);
         if(patient.getBirthdate() != null) {
             mav.addObject("patientAge", Period.between(patient.getBirthdate(), LocalDate.now()).getYears());

@@ -3,6 +3,8 @@ package ar.edu.itba.paw.models.entities;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -45,6 +47,10 @@ public class AppointmentNewId implements Serializable {
 
     public LocalDate getDate(){
         return date;
+    }
+
+    public Date getDateAsDate() {
+        return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     public void setDate(LocalDate date){

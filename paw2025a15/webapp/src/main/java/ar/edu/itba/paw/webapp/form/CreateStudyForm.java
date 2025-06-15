@@ -17,7 +17,7 @@ public class CreateStudyForm {
 
     @NotNull(message = "${uploadStudies.file.errorMessage}")
     @ValidStudyFile
-    private MultipartFile file;
+    private List<MultipartFile> files;
 
     @NotNull(message = "${uploadStudies.type.errorMessage}")
     private StudyTypeEnum type;
@@ -35,12 +35,12 @@ public class CreateStudyForm {
 
     public void setAuthDoctorIds(List<Long> authDoctorIds) { AuthDoctorIds = authDoctorIds; }
 
-    public MultipartFile getFile(){
-        return file;
+    public List<MultipartFile> getFiles(){
+        return files;
     }
 
-    public void setFile(MultipartFile file){
-        this.file = file;
+    public void setFiles(List<MultipartFile> files){
+        this.files = files;
     }
 
     public StudyTypeEnum getType(){
