@@ -66,10 +66,8 @@ public class UserController {
         RedirectAttributes redirectAttrs,
         Locale locale
     ) throws IOException {
-        System.out.println("Posteando profile...");
         System.out.println(result.toString());
         if (result.hasErrors()) {
-            System.out.println("Error en el formulario de profile");
             return profile(user, profileForm, result, locale);
         }
 
@@ -85,10 +83,6 @@ public class UserController {
         if(user instanceof Doctor doctor) {
             ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
             ds.updateShiftsWrapper(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount());
-            System.out.println("Dias seleccionados: ");
-            for (WeekdayEnum day : profileForm.getSchedules().getWeekday()){
-                System.out.println(day.getName());
-            }
         } else {
             ps.updatePatient(
                 (Patient) user,
