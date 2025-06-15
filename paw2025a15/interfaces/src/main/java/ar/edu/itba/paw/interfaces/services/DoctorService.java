@@ -22,7 +22,7 @@ public interface DoctorService {
 
     public boolean licenceExists(String licence);
 
-    public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Long> insurances);
+    public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Long> insurances, SpecialtyEnum specialty);
     
     public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);
 

@@ -79,7 +79,7 @@ public class UserController {
         }
         
         if(user instanceof Doctor doctor) {
-            ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
+            ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances(), profileForm.getSpecialty());
         } else {
             ps.updatePatient(
                 (Patient) user,
@@ -133,6 +133,9 @@ public class UserController {
             profileForm.setInsurances(
                 doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
             );
+            if (profileForm.getSpecialty() == null) {
+                profileForm.setSpecialty(doctor.getSpecialty());
+            }
         } else {
             mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }
@@ -140,6 +143,7 @@ public class UserController {
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
+        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
         mav.addObject("landingForm", new LandingForm());
         return mav;
     }

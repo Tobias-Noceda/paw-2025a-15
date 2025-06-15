@@ -98,6 +98,14 @@
 
         <c:if test="${patientDetails == null}">
           <div class="field-container full-width">
+            <form:label path="specialty"><spring:message code="doctorForm.specialty"/></form:label>
+            <form:select path="specialty" cssClass="input-field filter-select">
+              <form:options items="${specialtySelectItems}" itemValue="value" itemLabel="label"/>
+            </form:select>
+            <form:errors path="specialty" cssClass="error-box" element="div"/>
+          </div>
+          
+          <div class="field-container full-width">
             <div class="insurance-toggle-group">
               <form:label path="insurances">
                 <spring:message code="doctor.details.insurances.label"/>

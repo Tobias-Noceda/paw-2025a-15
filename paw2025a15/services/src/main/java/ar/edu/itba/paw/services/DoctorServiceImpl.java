@@ -89,7 +89,8 @@ public class DoctorServiceImpl implements DoctorService {
         String phoneNumber,
         File picture,
         LocaleEnum mailLanguage,
-        final List<Long> insurancesIds
+        final List<Long> insurancesIds,
+        SpecialtyEnum specialty
     ) {
         if (doctor == null || getDoctorById(doctor.getId()).isEmpty()) {
             throw new NotFoundException("Doctor not found!");
@@ -101,7 +102,7 @@ public class DoctorServiceImpl implements DoctorService {
                     .orElseThrow(() -> new NotFoundException("Insurance with id: " + insurance + " does not exist!"));
             insurances.add(insuranceEntity);
         }
-        doctorDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances);
+        doctorDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances, specialty);
         LOGGER.info("Updated doctor with id: {}", doctor.getId());
     }
 
