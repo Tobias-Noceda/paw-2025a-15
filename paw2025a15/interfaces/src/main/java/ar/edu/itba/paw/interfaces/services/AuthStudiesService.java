@@ -15,4 +15,8 @@ public interface AuthStudiesService {
     public void toggleStudyForDoctorId(long studyId, long doctorId);
 
     public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId);
+    
+    public void authorizeAllDoctorsForStudy(long studyId);
+    
+    public void deauthorizeAllDoctorsForStudy(long studyId);
 }

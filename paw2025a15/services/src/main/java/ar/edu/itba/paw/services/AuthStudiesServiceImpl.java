@@ -87,5 +87,38 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         authStudiesDao.unauthAllStudiesForDoctorAndPatient(patientId, doctorId);
         LOGGER.info("Removed all authorizations of all studies of patient with id: {} for doctor: {}", patientId, doctorId);
     }
+    
+    @Transactional
+    @Override
+    public void authorizeAllDoctorsForStudy(long studyId) {
+        ar.edu.itba.paw.models.entities.Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        
+        // Obtener todos los doctores autorizados del paciente
+        ar.edu.itba.paw.models.entities.Patient patient = study.getPatient();
+        List<ar.edu.itba.paw.models.entities.Doctor> authorizedDoctors = patient.getAuthorizedDoctors();
+        
+        for (ar.edu.itba.paw.models.entities.Doctor doctor : authorizedDoctors) {
+            if (!hasAuthStudy(studyId, doctor.getId())) {
+                authStudiesDao.authStudyForDoctor(studyId, doctor.getId());
+                LOGGER.info("Given authorization of study with id:{} to doctor: {}", studyId, doctor.getId());
+            }
+        }
+        LOGGER.info("Authorized all doctors for study with id: {}", studyId);
+    }
+    
+    @Transactional
+    @Override
+    public void deauthorizeAllDoctorsForStudy(long studyId) {
+        ar.edu.itba.paw.models.entities.Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        
+        // Obtener todos los doctores autorizados para este estudio
+        List<ar.edu.itba.paw.models.entities.Doctor> studyAuthDoctors = study.getAuthDoctors();
+        
+        for (ar.edu.itba.paw.models.entities.Doctor doctor : studyAuthDoctors) {
+            authStudiesDao.unauthStudyForDoctor(studyId, doctor.getId());
+            LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctor.getId());
+        }
+        LOGGER.info("Deauthorized all doctors for study with id: {}", studyId);
+    }
 
 }

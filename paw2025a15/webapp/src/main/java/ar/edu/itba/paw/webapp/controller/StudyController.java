@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -168,5 +169,30 @@ public class StudyController {
     ){
         ss.deleteStudy(studyId);
         return new ModelAndView("redirect:/studies");
+    }
+
+    @RequestMapping(value = "/authAllStudyDoctors/{studyId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView authAllDoctorsForStudy(
+            @ModelAttribute("user_data") User user,
+            @PathVariable("studyId") long studyId,
+            @RequestParam("action") String action
+    ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+
+        // Verificar que el estudio pertenece al usuario
+        Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found with id: " + studyId));
+        if (!study.getPatient().getId().equals(user.getId())) {
+            throw new UnauthorizedException("User not authorized to modify this study");
+        }
+
+        if (action.equals("authorize")) {
+            ass.authorizeAllDoctorsForStudy(studyId);
+        } else if (action.equals("deauthorize")) {
+            ass.deauthorizeAllDoctorsForStudy(studyId);
+        }
+
+        return new ModelAndView("redirect:/study-info/" + studyId);
     }
 }

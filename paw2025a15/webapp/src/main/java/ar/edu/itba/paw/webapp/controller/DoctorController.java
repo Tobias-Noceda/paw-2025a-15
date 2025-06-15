@@ -108,4 +108,27 @@ public class DoctorController {
         ass.toggleStudyForDoctorId(studyId, doctorId);
         return new ModelAndView("redirect:/study-info/" + studyId);
     }
+    
+    @RequestMapping(value = "/patientAuthAllDoctors", method = RequestMethod.POST)
+    public ModelAndView authAllDoctors(
+        @ModelAttribute("user_data") User user,
+        @RequestHeader(value = "Referer", required = false) String referer, 
+        @RequestParam("action") String action
+    ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+        
+        if (action.equals("authorize")) {
+            ads.authorizeAllDoctors(user.getId());
+        } else if (action.equals("deauthorize")) {
+            ads.deauthorizeAllDoctors(user.getId());
+        }
+
+        if (referer != null) {
+            return new ModelAndView("redirect:" + referer);
+        }
+
+        return new ModelAndView("redirect:/studies");        
+    }
 }

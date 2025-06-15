@@ -129,11 +129,11 @@
 
 .studies-table .deauthorize-cell {
     padding: 5px 7.5px;
-    text-align: left;
-    overflow: hidden;
-    width: 115px;
-    max-width: 115px;
-    min-width: 115px;
+    text-align: center;
+    overflow: visible;
+    width: 140px;
+    max-width: 140px;
+    min-width: 140px;
     box-sizing: border-box;
 }
 
@@ -191,9 +191,9 @@
 }
 
 .doctors-last-column {
-    width: 115px;
-    min-width: 115px;
-    max-width: 115px;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
     box-sizing: border-box;
 }
 
@@ -285,15 +285,18 @@
 
 
 .deauthorize-button {
-    margin: 0 5px;
-    padding: 8px 10px;
+    margin: 0;
+    padding: 6px 10px;
     background-color: #e60202;
     color: white;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 12px;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Suaviza el efecto hover */
+    min-width: 90px;
+    text-align: center;
+    transition: background-color 0.3s ease;
     box-sizing: border-box;
 }
 
@@ -398,18 +401,72 @@
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 140px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.btn-red:hover {
+    background-color: #c82333;
 }
 
 .btn-green {
     background-color: #28a745;
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 140px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.btn-green:hover {
+    background-color: #218838;
+}
+
+/* Contenedor para botones de acciones masivas */
+.bulk-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.bulk-actions form {
+    margin: 0;
+}
+
+/* Estilos para botones dentro de celdas de tabla */
+.studies-table .btn-red,
+.studies-table .btn-green {
+    margin: 0;
+    padding: 6px 10px;
+    font-weight: 600;
+    font-size: 12px;
+    border-radius: 4px;
+    min-width: 90px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.studies-table .btn-red:hover {
+    background-color: #c82333;
+}
+
+.studies-table .btn-green:hover {
+    background-color: #218838;
 }
 
 .info-text {

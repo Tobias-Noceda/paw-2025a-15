@@ -119,6 +119,28 @@
         <!-- Panel derecho: Otro contenido (por ejemplo, doctores autorizados) -->
         <div class="study-list-container" style="flex: 1;">
           <h3 class="table-title"><spring:message code="studies.authorizedDoctors"/></h3>
+          
+          <!-- Botones de autorizar/desautorizar todos -->
+          <c:if test="${not empty authDoctors}">
+            <div class="bulk-actions" style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+              <c:url value="/authAllStudyDoctors/${study.id}" var="authActionsUrl" />
+                             <form action="${authActionsUrl}" method="post" style="display: inline;">
+                 <button type="button" class="btn-green" 
+                         onclick="confirmBulkAction('<spring:message code="studies.authorizeAll.confirm"/>', this.form, 'authorize', '<spring:message code="confirmDialog.yes"/>', '<spring:message code="confirmDialog.no"/>')">
+                   <spring:message code="studies.authorizeAll"/>
+                 </button>
+               </form>
+               <c:if test="${not empty study.authDoctors}">
+                 <form action="${authActionsUrl}" method="post" style="display: inline;">
+                   <button type="button" class="btn-red" 
+                           onclick="confirmBulkAction('<spring:message code="studies.deauthorizeAll.confirm"/>', this.form, 'deauthorize', '<spring:message code="confirmDialog.yes"/>', '<spring:message code="confirmDialog.no"/>')">
+                     <spring:message code="studies.deauthorizeAll"/>
+                   </button>
+                 </form>
+               </c:if>
+            </div>
+          </c:if>
+          
           <div class="study-table-container">
             <div class="studies-table-header">
               <table class="studies-table">
@@ -149,7 +171,6 @@
                     <c:forEach var="doctor" items="${authDoctors}">
                       <c:set var="hasAuth" value="${study.authDoctors.contains(doctor)}"/>
                       <c:set var="buttonClass" value="${hasAuth ? 'btn-red' : 'btn-green'}"/>
-                      <c:set var="buttonLabel" value="${hasAuth ? 'Desautorizar' : 'Autorizar'}"/>
 
                       <c:url value="/doctors/${doctor.id}" var="doctorUrl"/>
                       <c:url value="/authFileDoctor/${doctor.id}/${study.id}" var="updateAuthUrl" />
@@ -170,7 +191,14 @@
                               class="${buttonClass}"
                               onclick="event.stopPropagation();"
                             >
-                              <c:out value="${buttonLabel}" escapeXml="true"/>
+                              <c:choose>
+                                <c:when test="${hasAuth}">
+                                  <spring:message code="doctorDetail.toggleButton.deauthorize"/>
+                                </c:when>
+                                <c:otherwise>
+                                  <spring:message code="doctorDetail.toggleButton.authorize"/>
+                                </c:otherwise>
+                              </c:choose>
                             </button>
                           </form>
                         </td>
@@ -194,6 +222,7 @@
     <script src="<c:url value='/js/studyAuthModal.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
     <script src="<c:url value='/js/deleteFileConfirmationModal.js'/>"></script>
+    <script src="<c:url value='/js/deauthConfirmationModal.js'/>"></script>
 
   </body>
 </html>
