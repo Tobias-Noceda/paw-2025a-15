@@ -132,8 +132,15 @@
             <div class="weekday-toggle-group">
               <c:forEach var="day" items="${weekdaySelectItems}">
                 <div class="weekday-btn">
-                  <input type="checkbox" id="day-${day.value}" name="schedules.weekday"
-                         value="${day.value}" class="weekday-checkbox"/>
+                  <input type="checkbox"
+                         id="day-${day.value}"
+                         name="schedules.weekday"
+                         value="${day.value}"
+                         class="weekday-checkbox"
+                         <c:forEach var="selected" items="${selectedDays}">
+                            <c:if test="${selected eq day.value}">checked</c:if>
+                         </c:forEach>
+                   />
                   <label for="day-${day.value}" class="weekday-label">
                     <spring:message code="weekday.${day.value}.initial"/>
                     </label>

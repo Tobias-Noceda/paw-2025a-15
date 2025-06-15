@@ -148,9 +148,8 @@ public class UserController {
                     .stream()
                     .map(Enum::name)
                     .toList();
-
             mav.addObject("selectedDays", selectedDays);
-
+            profileForm.setAddress(doctor.getSchedules().getAddress());
         } else {
             mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }
