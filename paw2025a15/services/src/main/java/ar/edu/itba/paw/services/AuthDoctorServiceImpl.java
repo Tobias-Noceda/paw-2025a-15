@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,15 +54,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         if(accessLevels==null || accessLevels.isEmpty()) return;
         ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        int[] results = authDoctorDao.authDoctorWithLevels(patientId, doctorId, accessLevels);
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] > 0) {
-                LOGGER.info("Giving authorization for doctor with id: {} of patient with id: {} with level:{}", doctorId, patientId, accessLevels.get(i).name());
-            } else {
-                LOGGER.error("Failed to authorize doctor with id: {} of patient with id: {} with level:{} at {}", doctorId, patientId, accessLevels.get(i).name(), LocalDateTime.now());
-                throw new RuntimeException("Failed to authorize doctor with id: " + doctorId + " of patient with id: " + patientId + " with level:" + accessLevels.get(i).name());
-            }
-        }
+        authDoctorDao.authDoctorWithLevels(patientId, doctorId, accessLevels);
+        LOGGER.info("Giving authorizations for doctor with id: {} of patient with id: {}", doctorId, patientId);
     }
 
     private void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
@@ -75,15 +67,8 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
             LOGGER.info("Removing all specific authorizations for doctor with id: {} for patient with id: {}", doctorId, patientId);
             return;
         }
-        int[] results = authDoctorDao.unauthDoctorForLevels(patientId, doctorId, accessLevels);
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] > 0) {
-                LOGGER.info("Removing authorization for doctor with id: {} of patient with id: {} with level:{}", doctorId, patientId, accessLevels.get(i).name());
-            } else {
-                LOGGER.error("Failed to remove authorization of doctor with id: {} of patient with id: {} with level:{} at {}", doctorId, patientId, accessLevels.get(i).name(), LocalDateTime.now());
-                throw new RuntimeException("Failed to remove authorization of doctor with id: " + doctorId + " of patient with id: " + patientId + " with level:" + accessLevels.get(i).name());
-            }
-        }
+        authDoctorDao.unauthDoctorForLevels(patientId, doctorId, accessLevels);
+        LOGGER.info("Removing authorizations for doctor with id: {} of patient with id: {}", doctorId, patientId);
     }
 
     @Transactional(readOnly = true)

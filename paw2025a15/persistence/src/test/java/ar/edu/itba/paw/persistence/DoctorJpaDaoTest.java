@@ -131,10 +131,11 @@ public class DoctorJpaDaoTest {
         final Long PIC_ID = TestData.Images.validImage2Id;
         final Long DOC_ID = TestData.Users.doctorId;
         final Doctor DOC = TestData.Users.doctor;
-        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-        final Insurance INSURANCE = TestData.Insurances.validInsurance;
+        DOC.getPicture().setId(TestData.Images.validImageId);
+        Insurance INSURANCE = TestData.Insurances.validInsurance;
         final Long I_PIC_ID =  TestData.Images.validImageId;
         INSURANCE.setPicture(em.find(File.class, I_PIC_ID));
+        INSURANCE = em.merge(INSURANCE); 
         List<Insurance> INSURANCES = List.of(INSURANCE);
 
         doctorDao.updateDoctor(DOC_ID, "1155555555", PIC_ID, LocaleEnum.ES_AR, INSURANCES);
@@ -148,7 +149,7 @@ public class DoctorJpaDaoTest {
         Assert.assertEquals(LocaleEnum.ES_AR, doctorPersisted.getLocale());
         Assert.assertNotEquals(DOC.getLocale(), doctorPersisted.getLocale());
         Assert.assertEquals(1, doctorPersisted.getInsurances().size());
-        Assert.assertEquals(INSURANCE_ID, doctorPersisted.getInsurances().get(0).getId());
+        Assert.assertEquals(INSURANCE.getId(), doctorPersisted.getInsurances().get(0).getId());
     }
 
     @Test
@@ -157,6 +158,7 @@ public class DoctorJpaDaoTest {
         final Long PIC_ID = TestData.Images.validImage2Id;
         final Long DOC_ID = TestData.Users.doctorId;
         final Doctor DOC = TestData.Users.doctor;
+        DOC.getPicture().setId(TestData.Images.validImageId);
 
         doctorDao.updateDoctor(DOC_ID, "1155555555", PIC_ID, LocaleEnum.ES_AR, null);
         Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
@@ -176,9 +178,8 @@ public class DoctorJpaDaoTest {
     public void testUpdateDoctorNonexistentDoctor(){
         final Long PIC_ID = TestData.Images.validImage2Id;
         final Long DOC_ID = 0L;
-        List<Insurance> INSURANCES = List.of(TestData.Insurances.validInsurance);
 
-        doctorDao.updateDoctor(DOC_ID, "1155555555", PIC_ID, LocaleEnum.ES_AR, INSURANCES);
+        doctorDao.updateDoctor(DOC_ID, "1155555555", PIC_ID, LocaleEnum.ES_AR, null);
         Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
 
         Assert.assertNull(doctorPersisted);
@@ -190,16 +191,9 @@ public class DoctorJpaDaoTest {
         final Long PIC_ID = 0L;
         final Long DOC_ID = TestData.Users.doctorId;
         final Doctor DOC = TestData.Users.doctor;
-        final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
-        final Insurance INSURANCE = TestData.Insurances.validInsurance;
-        INSURANCE.setId(INSURANCE_ID);
-        final Long I_PIC_ID =  TestData.Images.validImageId;
-        final File I_PIC = TestData.Images.validImage;
-        I_PIC.setId(I_PIC_ID);
-        INSURANCE.setPicture(I_PIC);
-        List<Insurance> INSURANCES = List.of(INSURANCE);
+        DOC.getPicture().setId(TestData.Images.validImageId);
 
-        doctorDao.updateDoctor(DOC_ID, "1155555555", PIC_ID, LocaleEnum.ES_AR, INSURANCES);
+        doctorDao.updateDoctor(DOC_ID, "1155555555", PIC_ID, LocaleEnum.ES_AR, null);
         Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
 
         Assert.assertNotNull(doctorPersisted);
@@ -218,9 +212,9 @@ public class DoctorJpaDaoTest {
         final Long PIC_ID = TestData.Images.validImage2Id;
         final Long DOC_ID = TestData.Users.doctorId;
         final Doctor DOC = TestData.Users.doctor;
-        List<Insurance> INSURANCES = List.of(TestData.Insurances.validInsurance);
+        DOC.getPicture().setId(TestData.Images.validImageId);
 
-        doctorDao.updateDoctor(DOC_ID, null, PIC_ID, LocaleEnum.ES_AR, INSURANCES);
+        doctorDao.updateDoctor(DOC_ID, null, PIC_ID, LocaleEnum.ES_AR, null);
         Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
 
         Assert.assertNotNull(doctorPersisted);
@@ -239,9 +233,9 @@ public class DoctorJpaDaoTest {
         final Long PIC_ID = TestData.Images.validImage2Id;
         final Long DOC_ID = TestData.Users.doctorId;
         final Doctor DOC = TestData.Users.doctor;
-        List<Insurance> INSURANCES = List.of(TestData.Insurances.validInsurance);
+        DOC.getPicture().setId(TestData.Images.validImageId);
 
-        doctorDao.updateDoctor(DOC_ID, "", PIC_ID, LocaleEnum.ES_AR, INSURANCES);
+        doctorDao.updateDoctor(DOC_ID, "", PIC_ID, LocaleEnum.ES_AR, null);
         Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
 
         Assert.assertNotNull(doctorPersisted);

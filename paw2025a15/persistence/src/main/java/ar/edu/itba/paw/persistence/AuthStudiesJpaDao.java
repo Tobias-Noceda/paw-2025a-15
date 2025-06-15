@@ -68,7 +68,7 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
         query.setParameter("patientId", patientId);
         List<Study> studies = query.getResultList();
 
-        for(Study study : studies){//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
+        for(Study study : studies){
             AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, study.getId()));
             if(as!=null) em.remove(as);
         }
