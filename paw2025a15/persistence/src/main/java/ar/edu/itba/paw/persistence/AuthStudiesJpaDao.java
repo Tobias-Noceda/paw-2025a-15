@@ -78,7 +78,7 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
 
     @Override
     public void unauthAllStudiesForAllDocsForPatientId(long patientId) {
-        em.createQuery("DELETE FROM AuthStudy ad WHERE ad.study.patient.id = :patientId")
+        em.createQuery("DELETE FROM AuthStudy ad WHERE ad.study.id IN (SELECT s.id FROM Study s WHERE s.patient.id = :patientId)")
             .setParameter("patientId", patientId)
             .executeUpdate();
     }
