@@ -109,7 +109,7 @@
           </c:if>
           <c:if test="${empty study.files}">
             <div class="no-studies-container">
-              <h4 class="no-studies-text"><spring:message code="filess.empty"/></h4>
+              <h4 class="no-studies-text"><spring:message code="files.empty"/></h4>
             </div>
           </c:if>
         </div>
