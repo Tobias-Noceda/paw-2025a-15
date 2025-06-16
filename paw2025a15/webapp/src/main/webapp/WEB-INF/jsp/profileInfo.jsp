@@ -180,9 +180,9 @@
             <form:errors path="amount" cssClass="error-box" element="div"/>
           </div>
 
-          <div class="field-container">
-            <form:label path="keepTurns"></form:label>
-            <form:checkbox  path="keepTurns" value="true" label="keep turns?" checked="true"/>
+          <div class="">
+            <form:checkbox  path="keepTurns" value="true" checked="true"/>
+            <form:label path="keepTurns"><spring:message code="profile.keep"/></form:label>
           </div>
 
         </c:if>
