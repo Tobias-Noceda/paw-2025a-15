@@ -127,7 +127,7 @@
     <!-- Botón de desautorizar todos -->
     <c:if test="${not empty patient.authorizedDoctors}">
       <div class="bulk-actions" style="margin-bottom: 1rem;">
-        <c:url value="/patientAuthAllDoctors" var="authActionsUrl" />
+        <c:url value="/patientDeAuthAllDoctors" var="authActionsUrl" />
         <form action="${authActionsUrl}" method="post" style="display: inline;">
           <button type="button" class="deauthorize-button" 
                   onclick="confirmBulkAction('<spring:message code="studies.deauthorizeAll.confirm"/>', this.form, 'deauthorize', '<spring:message code="confirmDialog.yes"/>', '<spring:message code="confirmDialog.no"/>')">
