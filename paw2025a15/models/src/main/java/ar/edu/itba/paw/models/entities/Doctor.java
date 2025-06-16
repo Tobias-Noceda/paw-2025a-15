@@ -148,6 +148,7 @@ public class Doctor extends User {
 
     public List<WeekdayEnum> getAvailableDays() {
         return singleShifts.stream()
+                .filter(DoctorSingleShift::getIsActive)
                 .map(DoctorSingleShift::getWeekday)
                 .distinct()
                 .toList();
