@@ -64,6 +64,15 @@ body {
     font-weight: 600;
     margin-bottom: 16px;
     color: var(--clr-primary);
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: black;
+    text-align: left;
 }
 
 .field-grid {
