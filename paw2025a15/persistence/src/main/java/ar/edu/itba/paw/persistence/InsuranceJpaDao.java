@@ -56,4 +56,24 @@ public class InsuranceJpaDao implements InsuranceDao{
         return em.createQuery("from Insurance as i",Insurance.class).getResultList();
     }
     
+    @Override
+    public int getInsurancesCount() {
+        final TypedQuery<Long> query = em.createQuery("select count(i) from Insurance as i", Long.class);
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<Insurance> getInsurancesPage(int page, int pageSize) {
+        final TypedQuery<Insurance> query = em.createQuery("from Insurance as i", Insurance.class);
+        query.setFirstResult(page == 0 ? 0 : (page - 1) * pageSize);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public void delete(Insurance insurance) {
+        if (insurance != null) {
+            em.remove(em.contains(insurance) ? insurance : em.merge(insurance));
+        }
+    }
 }
