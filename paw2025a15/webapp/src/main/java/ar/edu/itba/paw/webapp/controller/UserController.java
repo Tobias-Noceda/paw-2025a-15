@@ -81,7 +81,8 @@ public class UserController {
         
         if(user instanceof Doctor doctor) {
             ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
-            ds.updateShifts(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount(), false);
+            System.out.println(profileForm.getKeepTurns());
+            ds.updateShifts(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount(), profileForm.getKeepTurns());
         } else {
             ps.updatePatient(
                 (Patient) user,
