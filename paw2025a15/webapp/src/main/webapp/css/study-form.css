@@ -121,3 +121,37 @@
 .sf-field input[type="file"]::file-selector-button:hover {
     background-color: var(--sf-clr-primary-hover);
 }
+
+/* Estilos para los botones de selección de doctores */
+.doctor-selection-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: flex-start;
+}
+
+.doctor-action-btn {
+    padding: 10px 12px;
+    background: var(--sf-clr-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--sf-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--sf-transition);
+    min-width: 120px;
+    text-align: center;
+}
+
+.doctor-action-btn:hover {
+    background: var(--sf-clr-primary-hover);
+}
+
+.doctor-action-btn--deselect {
+    background: #6c757d;
+}
+
+.doctor-action-btn--deselect:hover {
+    background: #5a6268;
+}

@@ -94,6 +94,16 @@
             <label for="authDoctorIds">
               <spring:message code="uploadStudies.doctor"/>
             </label>
+            <!-- Botones de seleccionar todos -->
+            <div class="doctor-selection-controls">
+              <button type="button" id="selectAllDoctors" class="doctor-action-btn">
+                <spring:message code="uploadStudies.selectAll"/>
+              </button>
+              <button type="button" id="deselectAllDoctors" class="doctor-action-btn doctor-action-btn--deselect">
+                <spring:message code="uploadStudies.deselectAll"/>
+              </button>
+            </div>
+            
             <div class="appointments-table-header">
               <table class="appointments-table">
                 <thead>
@@ -115,7 +125,7 @@
                       <c:out value="${authDocs.name}"/>
                     </td>
                     <td class="checkbox-cell last-column">
-                      <form:checkbox path="authDoctorIds" value="${authDocs.id}"/>
+                      <form:checkbox path="authDoctorIds" value="${authDocs.id}" cssClass="doctor-checkbox"/>
                     </td>
                   </tr>
                 </c:forEach>
@@ -133,6 +143,31 @@
   </div>
 </div>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllBtn = document.getElementById('selectAllDoctors');
+    const deselectAllBtn = document.getElementById('deselectAllDoctors');
+    
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('.doctor-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+    }
+    
+    if (deselectAllBtn) {
+        deselectAllBtn.addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('.doctor-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+    }
+});
+</script>
 
 </body>
 </html>
