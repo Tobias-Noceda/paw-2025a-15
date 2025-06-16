@@ -33,7 +33,7 @@ public interface DoctorService {
 
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 
-    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);
+    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount, boolean keepTurns);
 
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
 

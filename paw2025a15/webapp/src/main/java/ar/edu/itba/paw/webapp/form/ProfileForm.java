@@ -78,6 +78,12 @@ public class ProfileForm {
 
     private LocaleEnum mailLanguage;
 
+    private boolean keepTurns;
+
+    public boolean getKeepTurns() { return keepTurns; }
+
+    public void setKeepTurns(boolean keepTurns) { this.keepTurns = keepTurns; }
+
     public LocaleEnum getMailLanguage() {
         return mailLanguage;
     }

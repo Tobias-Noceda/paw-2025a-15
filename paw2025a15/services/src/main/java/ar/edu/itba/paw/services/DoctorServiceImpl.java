@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.models.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
-import ar.edu.itba.paw.models.entities.DoctorVacation;
-import ar.edu.itba.paw.models.entities.DoctorVacationId;
-import ar.edu.itba.paw.models.entities.File;
-import ar.edu.itba.paw.models.entities.Insurance;
-import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
@@ -52,6 +43,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AppointmentService as;
 
     @Transactional
     @Override
@@ -142,7 +136,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount) {
+    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount, boolean keepTurns) {
         List<DoctorSingleShift> shifts = new ArrayList<>();
         Doctor doctor = getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         for (WeekdayEnum weekday : weekdays) {
@@ -156,6 +150,12 @@ public class DoctorServiceImpl implements DoctorService {
             ));
         }
         updateShifts(doctorId, shifts);
+        if(!keepTurns){
+            List<AppointmentNew> appointments = as.getFutureAppointmentDataByDoctorId(doctorId);
+            for(AppointmentNew ap : appointments){
+                as.cancelAppointment(ap.getId().getShiftId(),ap.getDate(),ap.getShift().getStartTime(), ap.getShift().getEndTime(), doctorId);
+            }
+        }
     }
 
     //@Transactional
