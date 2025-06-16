@@ -120,7 +120,7 @@
             </div>
           </div>
 
-          <h3 class="section-title"><spring:message code="doctorForm.schedule"/></h3>
+          <h3 class="section-subtitle"><spring:message code="doctorForm.schedule"/></h3>
 
           <div class="field-container full-width">
             <label class="field-label"><spring:message code="doctorForm.address"/></label>

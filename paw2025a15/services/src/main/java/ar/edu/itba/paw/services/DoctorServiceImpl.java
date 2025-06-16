@@ -142,7 +142,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateShiftsWrapper(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount) {
+    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount) {
         List<DoctorSingleShift> shifts = new ArrayList<>();
         Doctor doctor = getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         for (WeekdayEnum weekday : weekdays) {
