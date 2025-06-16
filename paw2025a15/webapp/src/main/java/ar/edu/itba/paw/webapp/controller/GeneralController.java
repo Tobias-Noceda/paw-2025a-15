@@ -21,7 +21,7 @@ import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
-import ar.edu.itba.paw.webapp.controller.util.SelectItem;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import ar.edu.itba.paw.webapp.form.LandingForm;
 
 

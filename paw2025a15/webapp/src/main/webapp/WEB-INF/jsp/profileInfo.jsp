@@ -70,7 +70,8 @@
             <p class="email"><c:out value="${user_data.email}" escapeXml="true"/></p>
             <p class="role"><spring:message code="profile.role.label"/>: <spring:message code="role.${user_data.role}"/></p>
             <c:if test="${user_data.userRole eq 'DOCTOR'}">
-              <p class="role"><spring:message code="doctor.details.license.label"/> <c:out value="${doctorDetail.doctorLicense}" escapeXml="true"/></p>
+              <p class="role"><spring:message code="doctor.details.license.label"/> <c:out value="${doctorDetail.licence}" escapeXml="true"/></p>
+              <p class="role"><spring:message code="doctor.details.specialty.label"/> <spring:message code="specialty.${doctorDetail.specialty}"/></p>
             </c:if>
           </div>
         </div>
@@ -97,14 +98,6 @@
         </div>
 
         <c:if test="${patientDetails == null}">
-          <div class="field-container full-width">
-            <form:label path="specialty"><spring:message code="doctorForm.specialty"/></form:label>
-            <form:select path="specialty" cssClass="input-field filter-select">
-              <form:options items="${specialtySelectItems}" itemValue="value" itemLabel="label"/>
-            </form:select>
-            <form:errors path="specialty" cssClass="error-box" element="div"/>
-          </div>
-          
           <div class="field-container full-width">
             <div class="insurance-toggle-group">
               <form:label path="insurances">

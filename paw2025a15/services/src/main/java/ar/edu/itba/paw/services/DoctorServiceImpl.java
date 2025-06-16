@@ -84,13 +84,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateDoctor(
-        Doctor doctor, 
+        public void updateDoctor(
+        Doctor doctor,
         String phoneNumber,
         File picture,
         LocaleEnum mailLanguage,
-        final List<Long> insurancesIds,
-        SpecialtyEnum specialty
+        final List<Long> insurancesIds
     ) {
         if (doctor == null || getDoctorById(doctor.getId()).isEmpty()) {
             throw new NotFoundException("Doctor not found!");
@@ -102,7 +101,7 @@ public class DoctorServiceImpl implements DoctorService {
                     .orElseThrow(() -> new NotFoundException("Insurance with id: " + insurance + " does not exist!"));
             insurances.add(insuranceEntity);
         }
-        doctorDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances, specialty);
+        doctorDao.updateDoctor(doctor.getId(), phoneNumber, picture.getId(), mailLanguage, insurances);
         LOGGER.info("Updated doctor with id: {}", doctor.getId());
     }
 

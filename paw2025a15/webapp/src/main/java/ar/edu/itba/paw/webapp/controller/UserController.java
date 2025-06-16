@@ -32,7 +32,7 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
-import ar.edu.itba.paw.webapp.controller.util.SelectItem;
+import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
 import ar.edu.itba.paw.webapp.form.LandingForm;
 import ar.edu.itba.paw.webapp.form.ProfileForm;
 
@@ -79,7 +79,7 @@ public class UserController {
         }
         
         if(user instanceof Doctor doctor) {
-            ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances(), profileForm.getSpecialty());
+            ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
         } else {
             ps.updatePatient(
                 (Patient) user,
@@ -133,9 +133,7 @@ public class UserController {
             profileForm.setInsurances(
                 doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
             );
-            if (profileForm.getSpecialty() == null) {
-                profileForm.setSpecialty(doctor.getSpecialty());
-            }
+            mav.addObject("doctorDetail", doctor);
         } else {
             mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }
@@ -143,7 +141,6 @@ public class UserController {
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
-        mav.addObject("specialtySelectItems", SelectItem.getListOfSpecialties(messageSource, locale));
         mav.addObject("landingForm", new LandingForm());
         return mav;
     }

@@ -12,7 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -67,8 +66,6 @@ public class ProfileForm {
     private List<Long> insurances;
 
     private LocaleEnum mailLanguage;
-
-    private SpecialtyEnum specialty;
 
     public LocaleEnum getMailLanguage() {
         return mailLanguage;
@@ -202,7 +199,5 @@ public class ProfileForm {
 
     public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
 
-    public SpecialtyEnum getSpecialty() { return specialty; }
 
-    public void setSpecialty(SpecialtyEnum specialty) { this.specialty = specialty; }
 }

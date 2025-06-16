@@ -41,7 +41,7 @@ public class DoctorJpaDao implements DoctorDao{
     }
 
     @Override
-    public void updateDoctor(long doctorId, String telephone, long pictureId, LocaleEnum mailLanguage, List<Insurance> insurances, SpecialtyEnum specialty) {
+    public void updateDoctor(long doctorId, String telephone, long pictureId, LocaleEnum mailLanguage, List<Insurance> insurances) {
         Doctor doctor = em.find(Doctor.class, doctorId);
         File picture = em.find(File.class, pictureId);
         if(doctor ==null || picture == null || (telephone == null || telephone.isEmpty()) ) return;
@@ -56,9 +56,6 @@ public class DoctorJpaDao implements DoctorDao{
             }
         }
         doctor.setInsurances(toAdd);
-        if (specialty != null) {
-            doctor.setSpecialty(specialty);
-        }
         File oldPicture = doctor.getPicture();
         boolean remove = false;
         if(!picture.getId().equals(oldPicture.getId())){

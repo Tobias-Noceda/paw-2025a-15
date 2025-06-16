@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller.util;
+package ar.edu.itba.paw.webapp.controller.Util;
 
 import java.util.ArrayList;
 import java.util.List;
