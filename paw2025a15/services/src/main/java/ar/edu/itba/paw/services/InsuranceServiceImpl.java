@@ -48,7 +48,10 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public void edit(long id, String name, File picture) {
         Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
-        if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        Insurance insuranceSameName = getInsuranceByName(name).orElse(null);
+        if (insuranceSameName != null && insuranceSameName.getId() != id) {
+            throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        }
         fs.findById(picture.getId()).orElseThrow(() -> new NotFoundException("Logo with id: " + picture.getId() + " does not exist!"));
         insurance.setName(name);
         insurance.setPicture(picture);
@@ -71,5 +74,28 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public List<Insurance> getAllInsurances() {
         return insuranceDao.getAllInsurances();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getInsurancesCount() {
+        return insuranceDao.getInsurancesCount();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Insurance> getInsurancesPage(int page, int pageSize) {
+        if (page < 0 || pageSize <= 0) {
+            throw new IllegalArgumentException("Page and page size must be non-negative and positive respectively.");
+        }
+        return insuranceDao.getInsurancesPage(page, pageSize);
+    }
+
+    @Transactional
+    @Override
+    public void delete(long id) {
+        Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
+        insuranceDao.delete(insurance);
+        LOGGER.info("Deleted insurance with id: {}", id);
     }
 }

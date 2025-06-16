@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.models.entities.Admin;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
@@ -47,6 +48,10 @@ public class GeneralController {
         @RequestParam(defaultValue = "1") int page,
         Locale locale
     ) {
+        if(user != null && user instanceof Admin) {
+            return new ModelAndView("redirect:/admin/home");
+        }
+
         if(errors.hasErrors()) {
             return new ModelAndView("redirect:/home");
         }

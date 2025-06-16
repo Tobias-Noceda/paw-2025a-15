@@ -97,6 +97,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.hasFileAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")), Long.parseLong(c.getVariables().get("fileId"))))//TODO:check using get() directly
                 .requestMatchers("/upload-study/{patientId}")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))//TODO:check using get() directly
+                // admin
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 // temporary
                 .requestMatchers("/**").permitAll()
             )

@@ -16,4 +16,10 @@ public interface InsuranceDao {
     public Optional<Insurance> getInsuranceByName(String name);
 
     public List<Insurance> getAllInsurances();
+
+    public int getInsurancesCount();
+
+    public List<Insurance> getInsurancesPage(int page, int pageSize);
+
+    public void delete(Insurance insurance);
 }

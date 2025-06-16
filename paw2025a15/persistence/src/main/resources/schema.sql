@@ -172,6 +172,13 @@ CREATE TABLE IF NOT EXISTS patient_details (
     FOREIGN KEY (patient_insurance_id) REFERENCES insurances(insurance_id)
 );
 
+CREATE TABLE IF NOT EXISTS admin_details (
+    admin_id BIGINT NOT NULL,
+
+    PRIMARY KEY(admin_id),
+    FOREIGN KEY (admin_id) REFERENCES users(user_id)
+);
+
 -- -- add patient insurance columns to patient_details
 -- ALTER TABLE patient_details
 -- ADD COLUMN patient_insurance_id BIGINT,
