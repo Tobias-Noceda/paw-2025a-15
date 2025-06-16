@@ -179,6 +179,7 @@
         </c:if>
         <c:if test="${patientDetails != null}">
           <form:hidden path="insurances" value=""/>
+          <form:hidden path="address" value="N/A"/>
           <div class="field-container">
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
             <form:input

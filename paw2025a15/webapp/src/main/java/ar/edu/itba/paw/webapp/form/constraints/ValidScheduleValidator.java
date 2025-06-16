@@ -5,14 +5,17 @@ import java.time.LocalTime;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Schedule;
+import ar.edu.itba.paw.models.entities.User;
 
 public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule, Schedule> {
 
     @Override
     public boolean isValid(Schedule schedule, ConstraintValidatorContext context) {
+
         if (schedule == null) {
-            return false;
+            return true;
         }
 
         if(schedule.getWeekday() == null || schedule.getWeekday().isEmpty() || 

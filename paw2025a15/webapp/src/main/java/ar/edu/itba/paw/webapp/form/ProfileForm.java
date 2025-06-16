@@ -68,7 +68,6 @@ public class ProfileForm {
     private List<Long> insurances;
 
 
-    @NotNull(message = "{form.schedules.notNull}")
     @ValidSchedule
     private Schedule schedules;
 

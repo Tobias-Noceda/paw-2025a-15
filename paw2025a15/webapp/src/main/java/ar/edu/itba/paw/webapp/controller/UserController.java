@@ -65,8 +65,8 @@ public class UserController {
         RedirectAttributes redirectAttrs,
         Locale locale
     ) throws IOException {
-        System.out.println(result.toString());
         if (result.hasErrors()) {
+            System.out.println(result.toString());
             return profile(user, profileForm, result, locale);
         }
 
