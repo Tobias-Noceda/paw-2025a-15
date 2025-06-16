@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller.Util;
+package ar.edu.itba.paw.webapp.controller.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,4 +100,4 @@ public class SelectItem {
         return locales;
     }
 
-}
+} 

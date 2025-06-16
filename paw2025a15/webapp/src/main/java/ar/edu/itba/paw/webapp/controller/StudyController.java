@@ -33,7 +33,7 @@ import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
-import ar.edu.itba.paw.webapp.controller.Util.SelectItem;
+import ar.edu.itba.paw.webapp.controller.util.SelectItem;
 import ar.edu.itba.paw.webapp.form.CreateStudyForm;
 import ar.edu.itba.paw.webapp.form.FileFilterForm;
 import ar.edu.itba.paw.webapp.form.LandingForm;
