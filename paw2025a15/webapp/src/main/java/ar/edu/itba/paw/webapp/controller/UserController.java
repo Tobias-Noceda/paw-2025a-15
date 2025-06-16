@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -64,8 +65,8 @@ public class UserController {
         RedirectAttributes redirectAttrs,
         Locale locale
     ) throws IOException {
-
         if (result.hasErrors()) {
+            System.out.println(result.toString());
             return profile(user, profileForm, result, locale);
         }
 
@@ -80,6 +81,7 @@ public class UserController {
         
         if(user instanceof Doctor doctor) {
             ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
+            ds.updateShifts(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount());
         } else {
             ps.updatePatient(
                 (Patient) user,
@@ -88,8 +90,8 @@ public class UserController {
                 profileForm.getMailLanguage(),
                 profileForm.getBirthDate(),
                 profileForm.getBloodType(),
-                BigDecimal.valueOf(profileForm.getHeight()),
-                BigDecimal.valueOf(profileForm.getWeight()),
+                profileForm.getHeight() != null ? BigDecimal.valueOf(profileForm.getHeight()) : null,
+                profileForm.getWeight() != null ? BigDecimal.valueOf(profileForm.getWeight()) : null,
                 profileForm.getSmokes(),
                 profileForm.getDrinks(),
                 profileForm.getMeds(),
@@ -133,12 +135,22 @@ public class UserController {
             profileForm.setInsurances(
                 doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
             );
+            profileForm.setSchedules(doctor.getSchedules());
+            profileForm.setAmount(doctor.getSingleShifts().getFirst().getDuration());
+            List<String> selectedDays = doctor.getSchedules().getWeekday()
+                    .stream()
+                    .map(Enum::name)
+                    .toList();
+            mav.addObject("selectedDays", selectedDays);
+            profileForm.setAddress(doctor.getSchedules().getAddress());
             mav.addObject("doctorDetail", doctor);
         } else {
             mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
         mav.addObject("landingForm", new LandingForm());

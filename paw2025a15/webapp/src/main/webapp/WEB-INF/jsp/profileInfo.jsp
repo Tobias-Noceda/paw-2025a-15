@@ -120,9 +120,66 @@
               <form:errors path="insurances" cssClass="error-box" element="div"/>
             </div>
           </div>
+
+          <h3 class="section-subtitle"><spring:message code="doctorForm.schedule"/></h3>
+
+          <div class="field-container full-width">
+            <label class="field-label"><spring:message code="doctorForm.address"/></label>
+            <form:input path="address" type="text" cssClass="login-input"/>
+            <form:errors path="address" cssClass="error-box" element="div"/>
+          </div>
+          <div class="field-container full-width">
+            <label class="field-label"><spring:message code="doctorForm.schedules.weekday"/></label>
+            <div class="weekday-toggle-group">
+              <c:forEach var="day" items="${weekdaySelectItems}">
+                <div class="weekday-btn">
+                  <input type="checkbox"
+                         id="day-${day.value}"
+                         name="schedules.weekday"
+                         value="${day.value}"
+                         class="weekday-checkbox"
+                         <c:forEach var="selected" items="${selectedDays}">
+                            <c:if test="${selected eq day.value}">checked</c:if>
+                         </c:forEach>
+                   />
+                  <label for="day-${day.value}" class="weekday-label">
+                    <spring:message code="weekday.${day.value}.initial"/>
+                    </label>
+                </div>
+              </c:forEach>
+            </div>
+          </div>
+
+          <div class="field-container">
+            <label class="field-label"><spring:message code="doctorForm.schedules.startTime"/></label>
+            <form:select path="schedules.startTime" cssClass="input-field filter-select"
+                         items="${hoursSelectItems}" itemLabel="label" itemValue="value"/>
+          </div>
+
+          <div class="field-container">
+            <label class="field-label"><spring:message code="doctorForm.schedules.endTime"/></label>
+            <form:select path="schedules.endTime" cssClass="input-field filter-select"
+                         items="${hoursSelectItems}" itemLabel="label" itemValue="value"/>
+          </div>
+
+          <form:errors path="schedules" cssClass="error-box" element="div"/>
+
+          <!-- Amount field -->
+          <div class="field-container">
+            <label class="field-label"><spring:message code="doctorForm.amount"/></label>
+            <form:select path="amount" cssClass="input-field filter-select">
+              <form:option value="15" label="15"/>
+              <form:option value="30" label="30"/>
+              <form:option value="45" label="45"/>
+              <form:option value="60" label="60"/>
+            </form:select>
+            <form:errors path="amount" cssClass="error-box" element="div"/>
+          </div>
+
         </c:if>
         <c:if test="${patientDetails != null}">
           <form:hidden path="insurances" value=""/>
+          <form:hidden path="address" value="N/A"/>
           <div class="field-container">
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
             <form:input

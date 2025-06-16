@@ -2,11 +2,13 @@ package ar.edu.itba.paw.webapp.form;
 
 import javax.validation.constraints.*;
 
+import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 import ar.edu.itba.paw.webapp.form.constraints.ValidProfileImage;
 
+import ar.edu.itba.paw.webapp.form.constraints.ValidSchedule;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,6 +66,15 @@ public class ProfileForm {
 
     @NotNull(message = "{form.insurances.notNull}")
     private List<Long> insurances;
+
+
+    @ValidSchedule
+    private Schedule schedules;
+
+    @NotEmpty(message = "{form.address.notEmpty}")
+    private String address;
+
+    private int amount;
 
     private LocaleEnum mailLanguage;
 
@@ -199,5 +210,15 @@ public class ProfileForm {
 
     public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
 
+    public Schedule getSchedules() { return schedules; }
 
+    public void setSchedules(Schedule schedules) { this.schedules = schedules; }
+
+    public String getAddress() { return address; }
+
+    public void setAddress(String address) { this.address = address; }
+
+    public int getAmount() {return amount; }
+
+    public void setAmount(int amount) { this.amount = amount;}
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -140,6 +141,24 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Transactional
+    @Override
+    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount) {
+        List<DoctorSingleShift> shifts = new ArrayList<>();
+        Doctor doctor = getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        for (WeekdayEnum weekday : weekdays) {
+            shifts.add(new DoctorSingleShift(
+                doctor,
+                weekday,
+                address,
+                startTime,
+                endTime,
+                amount
+            ));
+        }
+        updateShifts(doctorId, shifts);
+    }
+
+    //@Transactional
     @Override
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
         doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
