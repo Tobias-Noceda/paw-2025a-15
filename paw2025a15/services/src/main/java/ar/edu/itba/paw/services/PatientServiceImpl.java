@@ -79,9 +79,6 @@ public class PatientServiceImpl implements PatientService{
         if (patient == null || getPatientById(patient.getId()).isEmpty()) {
             throw new NotFoundException("Patient does not exist!");
         }
-//        if (birthdate == null || height == null || weight == null) {
-//            throw new IllegalArgumentException("Birthdate, height, and weight cannot be null!");
-//        }
 
         patientDao.updatePatient(
             patient,

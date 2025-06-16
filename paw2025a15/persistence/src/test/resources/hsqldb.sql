@@ -123,6 +123,13 @@ CREATE TABLE patient_details (
     FOREIGN KEY (patient_insurance_id) REFERENCES insurances(insurance_id)
 );
 
+CREATE TABLE admin_details (
+    admin_id BIGINT NOT NULL,
+
+    PRIMARY KEY(admin_id),
+    FOREIGN KEY (admin_id) REFERENCES users(user_id)
+);
+
 CREATE TABLE auth_doctors (
     doctor_id BIGINT NOT NULL,
     patient_id BIGINT NOT NULL,

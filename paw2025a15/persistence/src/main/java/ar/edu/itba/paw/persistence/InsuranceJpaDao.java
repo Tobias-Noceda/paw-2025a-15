@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,7 @@ public class InsuranceJpaDao implements InsuranceDao{
 
     @Override
     public List<Insurance> getInsurancesPage(int page, int pageSize) {
+        if (page < 1 || pageSize <= 0) return Collections.emptyList();
         final TypedQuery<Insurance> query = em.createQuery("from Insurance as i", Insurance.class);
         query.setFirstResult(page == 0 ? 0 : (page - 1) * pageSize);
         query.setMaxResults(pageSize);
