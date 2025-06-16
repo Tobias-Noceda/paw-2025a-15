@@ -120,7 +120,7 @@ public class DoctorController {
         }
         
         if (action.equals("authorize")) {
-            ads.authorizeAllDoctors(user.getId());
+            //ads.authorizeAllDoctors(user.getId());
         } else if (action.equals("deauthorize")) {
             ads.deauthorizeAllDoctors(user.getId());
         }

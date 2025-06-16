@@ -116,4 +116,11 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                             .setParameter("patientId", patientId)
                             .getResultList();
     }
+
+    @Override
+    public void deauthorizeAllDoctors(long patientId) {
+        em.createQuery("DELETE FROM AuthDoctor ad WHERE ad.patient.id = :patientId")
+            .setParameter("patientId", patientId)
+            .executeUpdate();
+    }
 }

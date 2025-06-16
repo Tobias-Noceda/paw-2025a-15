@@ -75,5 +75,36 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
         em.flush();
         em.clear();
     }
+
+    @Override
+    public void unauthAllStudiesForAllDocsForPatientId(long patientId) {
+        em.createQuery("DELETE FROM AuthStudy ad WHERE ad.study.patient.id = :patientId")
+            .setParameter("patientId", patientId)
+            .executeUpdate();
+    }
+
+    @Override
+    public void authStudyForAllAuthDoctors(long studyId) {
+        Study study = em.find(Study.class, studyId);
+        if (study == null) return;
+        List<Long> doctorIds = em.createQuery(
+            "SELECT ad.doctor.id FROM AuthDoctor ad WHERE ad.patient.id = :patientId",
+            Long.class)
+            .setParameter("patientId", study.getPatient().getId())
+            .getResultList();
+        if (doctorIds.isEmpty()) return;
+        for (Long doctorId : doctorIds) {
+            Doctor doctor = em.find(Doctor.class, doctorId);
+            AuthStudy authStudy = new AuthStudy(doctor, study);
+            em.persist(authStudy);
+        }
+    }
+
+    @Override
+    public void deauthStudyForAllDoctors(long studyId) {
+        em.createQuery("DELETE FROM AuthStudy ad WHERE ad.study.id = :studyId")
+            .setParameter("studyId", studyId)
+            .executeUpdate();
+    }
     
 }

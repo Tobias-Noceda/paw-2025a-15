@@ -19,4 +19,6 @@ public interface AuthStudiesService {
     public void authorizeAllDoctorsForStudy(long studyId);
     
     public void deauthorizeAllDoctorsForStudy(long studyId);
+
+    public void unauthAllStudiesForAllDocsForPatientId(long patientId);
 }
