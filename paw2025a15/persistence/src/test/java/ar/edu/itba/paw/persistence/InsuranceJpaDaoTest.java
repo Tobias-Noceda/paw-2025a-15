@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -213,5 +214,81 @@ public class InsuranceJpaDaoTest {
         Assert.assertNotNull(foundInsurance);
         Assert.assertFalse(foundInsurance.isPresent());
     }   
+
+    @Test
+    public void testGetInsurancesCount(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final int INS_AMOUNT = 2;//in insurances.sql
+
+        int result = insuranceDao.getInsurancesCount();
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertEquals(INS_AMOUNT, result);
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testGetInsurancesPage(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+
+        List<Insurance> insurances = insuranceDao.getInsurancesPage(1, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertEquals(2, insurances.size());
+        Assert.assertTrue(insurances.contains(insurance2Persisted));
+        Assert.assertTrue(insurances.contains(insurance1Persisted));
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testGetInsurancesPageWrongPage(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+
+        List<Insurance> insurances = insuranceDao.getInsurancesPage(0, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertEquals(0, insurances.size());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testGetInsurancesPageWrongPageSize(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+
+        List<Insurance> insurances = insuranceDao.getInsurancesPage(1, 0);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertEquals(0, insurances.size());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testDelete(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        Insurance insurance1 = em.find(Insurance.class, INS1_ID);
+
+        insuranceDao.delete(insurance1);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
 
 }
