@@ -153,7 +153,8 @@ public class DoctorServiceImpl implements DoctorService {
         if(!keepTurns){
             List<AppointmentNew> appointments = as.getFutureAppointmentDataByDoctorId(doctorId);
             for(AppointmentNew ap : appointments){
-                as.cancelAppointment(ap.getId().getShiftId(),ap.getDate(),ap.getShift().getStartTime(), ap.getShift().getEndTime(), doctorId);
+
+                as.cancelAppointment(ap.getId().getShiftId(),ap.getDate(),ap.getId().getStartTime(), ap.getId().getEndTime(), doctorId);
             }
         }
     }

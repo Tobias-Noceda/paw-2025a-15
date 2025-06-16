@@ -109,6 +109,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Transactional
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId) {
+        System.out.println("Canceling: " + shiftId + " " + date + " " + startTime + " " + endTime + " " + cancellerId);
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
         AppointmentNew appointment = getAppointmentByShiftIdDateAndTime(shiftId, date, startTime, endTime).orElseThrow(() -> new NotFoundException("Appointment with shiftId: " + shiftId + " and date: " + date + " does not exist!"));
         Patient patient = ps.getPatientById(appointment.getPatient().getId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatient().getId() + " does not exist!"));
