@@ -795,4 +795,40 @@ public class DoctorJpaDaoTest {
         Assert.assertEquals(OLD_SHIFT.getDuration(), DOC.getSingleShifts().get(0).getDuration());
     }
 
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsPast(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+        final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPast(DOC_ID);
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+        DoctorVacation dvpFound = em.find(DoctorVacation.class, DVP.getId());
+
+        Assert.assertNotNull(vacas);
+        Assert.assertEquals(1, vacas.size());
+        Assert.assertEquals(dvpFound.getId(), vacas.get(0).getId());
+        Assert.assertNotNull(dvFound);        
+        Assert.assertNotNull(dvpFound);        
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFuture(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+        final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuture(DOC_ID);
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+        DoctorVacation dvpFound = em.find(DoctorVacation.class, DVP.getId());
+
+        Assert.assertNotNull(vacas);
+        Assert.assertEquals(1, vacas.size());
+        Assert.assertEquals(dvFound.getId(), vacas.get(0).getId());
+        Assert.assertNotNull(dvFound);        
+        Assert.assertNotNull(dvpFound);        
+    }
+
 }

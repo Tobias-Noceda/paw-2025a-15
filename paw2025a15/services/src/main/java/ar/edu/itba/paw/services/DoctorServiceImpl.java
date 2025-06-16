@@ -158,7 +158,7 @@ public class DoctorServiceImpl implements DoctorService {
         updateShifts(doctorId, shifts);
     }
 
-    //@Transactional
+    @Transactional
     @Override
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
         doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
@@ -194,5 +194,19 @@ public class DoctorServiceImpl implements DoctorService {
                 .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         doctorDao.deleteDoctorVacation(new DoctorVacationId(doctor.getId(), startDate, endDate));
         LOGGER.info("Deleted vacation for doctor with id: {}", doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsPast(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsFuture(doctorId);
     }
 }
