@@ -183,4 +183,31 @@ public class AuthStudiesServiceImplTest {
             ass.unauthAllStudiesForDoctorIdAndPatientId(PATIENT_ID, DOC_ID)
         );
     }
+
+    @Test
+    public void testAuthorizeAllDoctorsForStudy(){
+        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ass.authorizeAllDoctorsForStudy(STUDY_ID)
+        );
+    }
+
+    @Test
+    public void testDeauthorizeAllDoctorsForStudy(){
+        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ass.deauthorizeAllDoctorsForStudy(STUDY_ID)
+        );
+    }
+
+    @Test
+    public void testUnauthAllStudiesForAllDocsForPatientId(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ass.unauthAllStudiesForAllDocsForPatientId(PATIENT_ID)
+        );
+    }
 }

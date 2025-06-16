@@ -120,4 +120,13 @@ public class InsuranceServiceImplTest {
             is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2)
         );
     }
+
+    @Test
+    public void testDelete(){
+        Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            is.delete(INSURANCE_ID)
+        );
+    }
 }

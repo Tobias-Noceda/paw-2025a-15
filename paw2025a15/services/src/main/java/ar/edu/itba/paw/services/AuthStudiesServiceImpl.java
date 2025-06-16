@@ -104,6 +104,7 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         LOGGER.info("Deauthorized all doctors for study with id: {}", studyId);
     }
 
+    @Transactional
     @Override
     public void unauthAllStudiesForAllDocsForPatientId(long patientId) {
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));

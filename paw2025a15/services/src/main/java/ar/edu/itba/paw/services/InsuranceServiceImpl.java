@@ -83,9 +83,6 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional(readOnly = true)
     @Override
     public List<Insurance> getInsurancesPage(int page, int pageSize) {
-        if (page < 0 || pageSize <= 0) {
-            throw new IllegalArgumentException("Page and page size must be non-negative and positive respectively.");
-        }
         return insuranceDao.getInsurancesPage(page, pageSize);
     }
 
