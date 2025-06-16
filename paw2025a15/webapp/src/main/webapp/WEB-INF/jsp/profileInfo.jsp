@@ -121,13 +121,14 @@
             </div>
           </div>
 
-          <h3 class="section-subtitle"><spring:message code="doctorForm.schedule"/></h3>
 
           <div class="field-container full-width">
             <label class="field-label"><spring:message code="doctorForm.address"/></label>
             <form:input path="address" type="text" cssClass="login-input"/>
             <form:errors path="address" cssClass="error-box" element="div"/>
           </div>
+          <h3 class="section-subtitle"><spring:message code="doctorForm.schedule"/></h3>
+
           <div class="field-container full-width">
             <label class="field-label"><spring:message code="doctorForm.schedules.weekday"/></label>
             <div class="weekday-toggle-group">
