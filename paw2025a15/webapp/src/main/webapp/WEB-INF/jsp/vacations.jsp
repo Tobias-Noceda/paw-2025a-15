@@ -40,6 +40,7 @@
             <div class="vacation-form">
 
 
+            <form:errors path="*" cssClass="error-box"/>
                 <div class="form-group">
 
                     <form:label path="startDate">
