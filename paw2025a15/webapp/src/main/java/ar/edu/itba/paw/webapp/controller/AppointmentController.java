@@ -151,7 +151,7 @@ public class AppointmentController {
     @RequestMapping(value = "/vacations")
     public ModelAndView vacations(
             @ModelAttribute("vacationForm") VacationForm vacationForm,
-            BindingResult result,   
+            BindingResult result,
             @ModelAttribute("user_data") User user,
             Locale locale
     ) {
@@ -201,15 +201,16 @@ public class AppointmentController {
         return new ModelAndView("redirect:/vacations");
     }
 
-    @RequestMapping(value="/removeVacation", method = RequestMethod.POST)
+    @RequestMapping(value="/cancelVacation", method = RequestMethod.POST)
     public ModelAndView removeAppointments(
+            @Valid @ModelAttribute("vacationForm") final VacationForm vacationForm,
             @ModelAttribute("user_data") User user,
             Locale locale
            ) {
         if (user == null) {
             throw new UnauthorizedException("User not found");
         }
-        //ds.deleteDoctorVacation(user.getId(), );
+        ds.deleteDoctorVacation(user.getId(),vacationForm.getStartDate(), vacationForm.getEndDate());
         return new ModelAndView("redirect:/vacations");
     }
 }

@@ -11,6 +11,8 @@ import java.time.LocalTime;
 @ValidVacation(message = "{form.vacation.invalid}")
 public class VacationForm {
 
+    private boolean canceling = false;
+
     private Long doctorId;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -19,6 +21,9 @@ public class VacationForm {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
+    public boolean isCanceling() { return canceling; }
+
+    public void setCanceling(boolean canceling) { this.canceling = canceling; }
 
     public Long getDoctorId() { return doctorId; }
 

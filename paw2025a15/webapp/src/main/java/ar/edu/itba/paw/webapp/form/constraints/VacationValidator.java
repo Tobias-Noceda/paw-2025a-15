@@ -14,6 +14,8 @@ public class VacationValidator implements ConstraintValidator<ValidVacation, Vac
     public VacationValidator(DoctorService ds) {this.ds = ds;}
     @Override
     public boolean isValid(VacationForm form, ConstraintValidatorContext context) {
+        if(form.isCanceling()) return true;
+
         if (form.getStartDate() == null || form.getEndDate() == null) {
             return false;
         }
