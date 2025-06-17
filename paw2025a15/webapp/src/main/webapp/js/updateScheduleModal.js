@@ -1,11 +1,10 @@
 var pendingForm = null;
 
 function updateScheduleModal(form, message, secondaryMessage, cancelAppointments, keepAppointments, cancel) {
-  console.log('updateScheduleModal called');
-  pendingForm = form;
   const updatesSchedule = form && form.updateSchedules && form.updateSchedules.value === 'true';
-
+  
   if (updatesSchedule) {
+    pendingForm = form;
     const dialog = document.getElementById('updateConfirmDialog');
     const msgEl  = document.getElementById('updateDialogMessage');
     const secEl  = document.getElementById('updateDialogSecondText');

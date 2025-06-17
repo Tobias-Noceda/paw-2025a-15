@@ -2,16 +2,15 @@ package ar.edu.itba.paw.webapp.form.constraints;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.webapp.form.VacationForm;
-import ar.edu.itba.paw.webapp.form.constraints.ValidVacation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class VacationValidator implements ConstraintValidator<ValidVacation, VacationForm> {
-    private DoctorService ds;
     @Autowired
-    public VacationValidator(DoctorService ds) {this.ds = ds;}
+    private DoctorService ds;
+        
     @Override
     public boolean isValid(VacationForm form, ConstraintValidatorContext context) {
         if(form.isCanceling()) return true;

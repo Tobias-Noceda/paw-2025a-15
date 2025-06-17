@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
@@ -36,6 +37,9 @@ public class PatientServiceImpl implements PatientService{
 
     @Autowired
     private FileService fs;
+
+    @Autowired
+    private InsuranceService is;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -73,12 +77,21 @@ public class PatientServiceImpl implements PatientService{
         String diet,
         String hobbies,
         String job,
-        Insurance insurance,
+        Long insuranceId,
         String insuranceNumber
     ) {
         if (patient == null || getPatientById(patient.getId()).isEmpty()) {
             throw new NotFoundException("Patient does not exist!");
         }
+        Insurance insurance = null;
+        String realInsuranceNumber = null;
+        if (insuranceId != null) {
+            insurance = is.getInsuranceById(insuranceId)
+                .orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
+            realInsuranceNumber = insuranceNumber;
+        }
+
+        
 
         patientDao.updatePatient(
             patient,
@@ -98,7 +111,7 @@ public class PatientServiceImpl implements PatientService{
             hobbies,
             job,
             insurance,
-            insuranceNumber
+            realInsuranceNumber
         );        
         LOGGER.info("Updated patient with id: {}", patient.getId());
     }

@@ -288,7 +288,7 @@
 
       window.addEventListener("scroll", () => {
         document.querySelectorAll('.options-list').forEach(o => {
-          list.classList.remove('show');
+          o.classList.remove('show');
         });
       });
     </script>

@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.form.constraints.ValidVacation;
+import java.time.LocalDate;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import ar.edu.itba.paw.webapp.form.constraints.ValidVacation;
 
 @ValidVacation(message = "{form.vacation.invalid}")
 public class VacationForm {

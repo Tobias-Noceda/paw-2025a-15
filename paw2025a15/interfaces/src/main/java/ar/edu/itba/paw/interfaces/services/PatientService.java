@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.File;
-import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -32,7 +31,7 @@ public interface PatientService {
         String diet,
         String hobbies,
         String job,
-        Insurance insurance,
+        Long insuranceId,
         String insuranceNumber
     );
 }
