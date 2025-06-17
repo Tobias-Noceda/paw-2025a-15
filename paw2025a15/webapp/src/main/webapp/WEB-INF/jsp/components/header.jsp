@@ -34,6 +34,12 @@
             <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title eq "appointments"}'>active</c:if>">
               <spring:message code="header.appointments" />
             </a>
+            <sec:authorize access="hasRole('ROLE_DOCTOR')">
+              <a href="<c:url value="/vacations"/>" class="nav-item">
+                <spring:message code="header.vacations" />
+              </a>
+            </sec:authorize>
+
             <sec:authorize access="hasRole('ROLE_PATIENT')">
               <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title eq "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
