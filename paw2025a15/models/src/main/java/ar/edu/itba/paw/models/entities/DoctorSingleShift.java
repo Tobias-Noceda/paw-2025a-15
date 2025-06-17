@@ -31,8 +31,8 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 )
 public class DoctorSingleShift {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_shifts_shift_id_seq")
-    @SequenceGenerator(sequenceName = "doctor_shifts_shift_id_seq", name = "doctor_shifts_shift_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "doctor_single_shifts_shift_id_seq")
+    @SequenceGenerator(sequenceName = "doctor_single_shifts_shift_id_seq", name = "doctor_shifts_shift_id_seq", allocationSize = 1)
     @Column(name = "shift_id")
     private Long id;
 
