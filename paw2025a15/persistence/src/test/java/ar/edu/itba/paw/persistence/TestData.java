@@ -113,5 +113,6 @@ public class TestData {
 
     public class DocVacations{
         public static final DoctorVacation docVacation = new DoctorVacation(Users.doctor, LocalDate.now().plusDays(2), LocalDate.now().plusDays(5));
+        public static final DoctorVacation docVacationPast = new DoctorVacation(Users.doctor, LocalDate.now().minusDays(2), LocalDate.now());
     }
 }

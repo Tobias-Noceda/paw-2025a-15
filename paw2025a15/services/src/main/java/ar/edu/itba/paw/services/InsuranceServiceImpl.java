@@ -47,11 +47,9 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional
     @Override
     public void edit(long id, String name, File picture) {
+        if(name==null) throw new IllegalArgumentException("Insurance name cannot be null");
         Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
-        Insurance insuranceSameName = getInsuranceByName(name).orElse(null);
-        if (insuranceSameName != null && insuranceSameName.getId() != id) {
-            throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
-        }
+        if((!name.equals(insurance.getName())) && (getInsuranceByName(name).isPresent())) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
         fs.findById(picture.getId()).orElseThrow(() -> new NotFoundException("Logo with id: " + picture.getId() + " does not exist!"));
         insurance.setName(name);
         insurance.setPicture(picture);
@@ -85,9 +83,6 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional(readOnly = true)
     @Override
     public List<Insurance> getInsurancesPage(int page, int pageSize) {
-        if (page < 0 || pageSize <= 0) {
-            throw new IllegalArgumentException("Page and page size must be non-negative and positive respectively.");
-        }
         return insuranceDao.getInsurancesPage(page, pageSize);
     }
 

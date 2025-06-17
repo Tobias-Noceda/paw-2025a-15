@@ -13,4 +13,10 @@ public interface AuthStudiesDao {
     public void unauthStudyForDoctor(long studyId, long doctorId);
 
     public void unauthAllStudiesForDoctorAndPatient(long patientId, long doctorId);
+
+    public void unauthAllStudiesForAllDocsForPatientId(long patientId);
+
+    public void authStudyForAllAuthDoctors(long studyId);
+
+    public void deauthStudyForAllDoctors(long studyId);
 }

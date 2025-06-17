@@ -516,4 +516,20 @@ public class AuthDoctorJpaDaoTest {
         Assert.assertNull(adSocialFound);
     }
 
+    @Test
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
+    public void testDeauthorizeAllDoctors(){
+        final Long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
+        final AccessLevelEnum ACCES_LEVEL2 = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
+
+        authDoctorDao.deauthorizeAllDoctors(PATIENT_ID);
+        AuthDoctor adBasicFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
+        AuthDoctor adSocialFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL2));
+
+        Assert.assertNull(adBasicFound);
+        Assert.assertNull(adSocialFound);
+    }
+
 }

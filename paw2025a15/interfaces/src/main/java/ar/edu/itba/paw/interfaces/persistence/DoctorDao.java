@@ -37,4 +37,8 @@ public interface DoctorDao {
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
     public void deleteDoctorVacation(DoctorVacationId dvId);
+
+    public List<DoctorVacation> getDoctorVacationsPast(long doctorId);
+
+    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);
 }

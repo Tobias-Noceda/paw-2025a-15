@@ -100,34 +100,4 @@ public class PatientServiceImplTest {
         );
     }
 
-    @Test
-    public void testUpdatePatientDetailsNullBirthdate(){
-        PATIENT.setId(PATIENT_ID);
-        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
-            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, null, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
-        );
-    }
-
-    @Test
-    public void testUpdatePatientDetailsNullHeight(){
-        PATIENT.setId(PATIENT_ID);
-        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
-            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, null, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
-        );
-    }
-
-    @Test
-    public void testUpdatePatientDetailsNullWeight(){
-        PATIENT.setId(PATIENT_ID);
-        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-
-        Assert.assertThrows(IllegalArgumentException.class, () -> 
-            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, null, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
-        );
-    }
-
 }

@@ -40,4 +40,8 @@ public interface DoctorService {
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
     public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
+
+    public List<DoctorVacation> getDoctorVacationsPast(long doctorId);
+
+    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);
 }

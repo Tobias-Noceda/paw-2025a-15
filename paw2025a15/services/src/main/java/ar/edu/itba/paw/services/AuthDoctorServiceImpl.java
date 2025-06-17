@@ -109,46 +109,14 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return authDoctorDao.getAuthAccessLevelEnums(patientId, doctorId);
-    }
-    
-    @Transactional
-    @Override
-    public void authorizeAllDoctors(long patientId) {
-        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        
-        // Obtener todos los doctores del sistema con paginación
-        int page = 0;
-        int pageSize = 1000; // Un tamaño grande para obtener todos
-        List<ar.edu.itba.paw.models.entities.Doctor> allDoctors;
-        
-        do {
-            allDoctors = ds.getDoctorsPageByParams(null, null, null, null, null, page, pageSize);
-            for (ar.edu.itba.paw.models.entities.Doctor doctor : allDoctors) {
-                if (!hasAuthDoctor(patientId, doctor.getId())) {
-                    authDoctorDao.authDoctor(patientId, doctor.getId(), AccessLevelEnum.VIEW_BASIC);
-                    LOGGER.info("Giving basic authorization for doctor with id: {} of patient with id: {}", doctor.getId(), patientId);
-                }
-            }
-            page++;
-        } while (allDoctors.size() == pageSize);
-        
-        LOGGER.info("Authorized all doctors for patient with id: {}", patientId);
-    }
+    }   
     
     @Transactional
     @Override
     public void deauthorizeAllDoctors(long patientId) {
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        
-        // Obtener todos los doctores autorizados del paciente
-        ar.edu.itba.paw.models.entities.Patient patient = ps.getPatientById(patientId).get();
-        List<ar.edu.itba.paw.models.entities.Doctor> authorizedDoctors = patient.getAuthorizedDoctors();
-        
-        for (ar.edu.itba.paw.models.entities.Doctor doctor : authorizedDoctors) {
-            authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctor.getId());
-            ass.unauthAllStudiesForDoctorIdAndPatientId(patientId, doctor.getId());
-            LOGGER.info("Removing authorization of doctor with id: {} for patient with id: {}", doctor.getId(), patientId);
-        }
+        authDoctorDao.deauthorizeAllDoctors(patientId);
+        ass.unauthAllStudiesForAllDocsForPatientId(patientId);
         LOGGER.info("Deauthorized all doctors for patient with id: {}", patientId);
     }
 }
