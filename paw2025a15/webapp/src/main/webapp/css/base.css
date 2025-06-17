@@ -558,3 +558,700 @@ body {
     transition: border-color var(--transition);
     resize:none;
 }
+
+
+
+.admin-container {
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+    background: var(--clr-card);
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: var(--radius);
+
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+
+}
+
+
+.admin-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid #d0d5dd;
+
+}
+
+
+/* Buttons */
+
+.btn-primary {
+
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    font-weight: 600;
+
+    font-size: 1rem;
+
+    color: var(--clr-card);
+
+    background-color: var(--clr-primary);
+
+    border: none;
+
+    border-radius: var(--radius);
+
+    cursor: pointer;
+
+    transition: background-color var(--transition);
+
+    text-decoration: none;
+
+}
+
+.btn-primary:hover {
+
+    background-color: var(--clr-primary-hover);
+
+}
+
+
+.btn-secondary {
+
+    display: inline-block;
+
+    padding: 8px 16px;
+
+    font-weight: 500;
+
+    font-size: 0.9rem;
+
+    color: var(--clr-text);
+
+    background: var(--clr-card);
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: var(--radius);
+
+    cursor: pointer;
+
+    transition: background-color var(--transition), border-color var(--transition);
+
+    text-decoration: none;
+
+    margin-right: 5px;
+
+}
+
+.btn-secondary:hover {
+
+    background-color: #f5f5f5;
+
+}
+
+
+.btn-danger {
+
+    display: inline-block;
+
+    padding: 8px 16px;
+
+    font-weight: 500;
+
+    font-size: 0.9rem;
+
+    color: var(--clr-card);
+
+    background-color: var(--clr-error-text);
+
+    border: none;
+
+    border-radius: var(--radius);
+
+    cursor: pointer;
+
+    transition: background-color var(--transition);
+
+    text-decoration: none;
+
+}
+
+.btn-danger:hover {
+
+    background-color: #96211e; /* slightly darker red */
+
+}
+
+
+/* Insurance Cards */
+
+.insurance-card {
+
+    width: 100%;
+
+    max-width: 280px;
+
+    background: var(--clr-card);
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: var(--radius);
+
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+
+    transition: transform var(--transition), box-shadow var(--transition);
+
+    overflow: hidden;
+
+}
+
+.insurance-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+
+}
+
+
+.insurance-card__content {
+
+    padding: 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+}
+
+
+.insurance-card__logo {
+
+    width: 120px;
+
+    height: 120px;
+
+    margin-bottom: 16px;
+
+    background: var(--clr-card);
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: var(--radius);
+
+    overflow: hidden;
+
+}
+
+.insurance-card__logo img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+/* Info & Actions */
+
+.insurance-card__info {
+
+    margin-bottom: 20px;
+
+}
+
+.insurance-card__name {
+
+    font-size: 1.3rem;
+
+    font-weight: 600;
+
+    color: var(--clr-primary);
+
+    margin: 0 0 8px;
+
+}
+
+.insurance-card__id {
+
+    font-size: 0.9rem;
+
+    color: var(--clr-text-muted);
+
+}
+
+
+
+
+/* Messages */
+
+.message {
+
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid transparent;
+
+    border-radius: var(--radius);
+
+    font-size: 0.9rem;
+
+}
+
+
+.success {
+
+    background-color: var(--clr-card);
+
+    color: var(--clr-primary);
+
+    border-color: var(--clr-primary);
+
+}
+
+.error {
+
+    background-color: var(--clr-error-bg);
+
+    color: var(--clr-error-text);
+
+    border-color: var(--clr-error-text);
+
+}
+
+
+/* Pagination */
+
+.page-navigator-div {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 20px 0 5px;
+
+}
+
+
+.page-navigation-button {
+
+    display: inline-block;
+
+    width: 90px;
+
+    padding: 8px 12px;
+
+    margin: 0 5px;
+
+    font-size: 0.875rem;
+
+    font-weight: 700;
+
+    color: var(--clr-card);
+
+    background-color: var(--clr-primary);
+
+    border: none;
+
+    border-radius: var(--radius);
+
+    cursor: pointer;
+
+    transition: background-color var(--transition);
+
+    text-decoration: none;
+
+}
+
+.page-navigation-button:hover:not(:disabled) {
+
+    background-color: var(--clr-primary-hover);
+
+}
+
+.page-navigation-button:disabled {
+
+    background-color: #ccc;
+
+    color: var(--clr-text-muted);
+
+    cursor: not-allowed;
+
+}
+
+
+.page-button {
+
+    display: inline-block;
+
+    padding: 8px 10px;
+
+    margin: 0 3px;
+
+    font-size: 0.875rem;
+
+    font-weight: 700;
+
+    color: var(--clr-primary);
+
+    background: var(--clr-card);
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: var(--radius);
+
+    cursor: pointer;
+
+    transition: background-color var(--transition), color var(--transition);
+
+    text-decoration: none;
+
+}
+
+.page-button:hover {
+
+    background-color: var(--clr-primary);
+
+    color: var(--clr-card);
+}
+
+
+/* 1) Make the heading larger, friendlier and give it an icon */
+
+.admin-header h1 {
+
+    position: relative;
+
+    font-size: 2.25rem;
+
+    font-weight: 700;
+
+    color: var(--clr-primary);
+
+    margin: 0;
+
+    padding-left: 3.5rem;
+
+    letter-spacing: 0.5px;
+
+}
+
+
+
+
+/* A little underline “pill” below the title */
+
+.admin-header h1::after {
+
+    content: "";
+
+    display: block;
+
+    width: 60px;
+
+    height: 4px;
+
+    background-color: var(--clr-primary-hover);
+
+    border-radius: var(--radius);
+
+    margin-top: 6px;
+
+}
+
+
+/* 2) Give the “New Insurance” button a bubble-gum look */
+
+.btn-primary {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    padding: 0.75rem 1.5rem;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    background-image: linear-gradient(135deg, #89c2f5 0%, var(--clr-primary) 100%);
+
+    color: var(--clr-card);
+
+    border-radius: 999px;
+
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+
+    transition: transform var(--transition), box-shadow var(--transition);
+
+}
+
+
+/* Add a “+” icon via pseudo */
+
+
+
+
+/* Hover effect */
+
+.btn-primary:hover {
+
+    transform: translateY(-2px) scale(1.05);
+
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+}
+
+
+/* admin-form-overrides.css */
+
+/* 1) Page header styling */
+.page-header h1 {
+    position: relative;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--clr-primary);
+    margin-bottom: 1rem;
+    padding-left: 3rem;
+}
+
+
+
+.page-header h1::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 4px;
+    background: var(--clr-primary-hover);
+    border-radius: var(--radius);
+    margin-top: 6px;
+}
+
+/* 2) Form container “card” */
+.form-container {
+    background: var(--clr-card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+}
+
+/* 3) Labels & groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+.form-group label,
+form\\:label {
+    display: block;
+    font-weight: 600;
+    color: var(--clr-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* 4) Inputs */
+.form-control,
+form\\:input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d0d5dd;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    background: #fff;
+}
+.form-control:focus {
+    outline: none;
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 3px rgba(79, 131, 204, 0.25);
+}
+
+/* 5) File input — dashed box style */
+input[type="file"] {
+    border: 2px dashed var(--clr-primary);
+    padding: 1rem;
+    border-radius: var(--radius);
+    background: #f8faff;
+    cursor: pointer;
+}
+input[type="file"]::-webkit-file-upload-button {
+    visibility: hidden;
+}
+input[type="file"]::before {
+    content: " Choose file";
+    display: inline-block;
+    background: var(--clr-primary);
+    color: var(--clr-card);
+    padding: 0.4rem 0.8rem;
+    margin-right: 0.5rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+input[type="file"]:hover::before {
+    background: var(--clr-primary-hover);
+}
+
+/* 6) Current‐image preview box */
+.current-image {
+    background: #f3f9ff;
+    border: 1px solid var(--clr-primary);
+    padding: 1rem;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.current-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid #d0d5dd;
+}
+
+/* 7) Action buttons */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-image: linear-gradient(135deg, #89c2f5 0%, var(--clr-primary) 100%);
+    color: var(--clr-card);
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--clr-card);
+    color: var(--clr-primary);
+    border: 2px solid var(--clr-primary);
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background var(--transition), color var(--transition);
+}
+
+
+
+.btn-secondary:hover {
+    background: var(--clr-primary);
+    color: var(--clr-card);
+}
+
+/* 8) Form‐actions spacing */
+.form-actions {
+    margin-top: 2rem;
+}
+
+
+/* ─── Make “Edit” & “New Insurance” match the Delete button ─── */
+
+
+/* 1) Scope the override to only
+
+     • the action buttons inside an insurance-card
+
+     • and the “New Insurance” button in the admin header */
+
+.insurance-card__actions .btn-primary,
+
+.admin-header .btn-primary {
+
+    display: inline-block;               /* same as delete */
+
+    padding: 8px 16px;                   /* match delete */
+
+    font-size: 0.9rem;                   /* match delete */
+
+    font-weight: 500;                    /* match delete */
+
+    background-image: none;              /* remove gradient */
+
+    background-color: var(--clr-primary);
+
+    color: var(--clr-card);
+
+    border: none;
+
+    border-radius: var(--radius);        /* same as delete */
+
+    box-shadow: none;                    /* remove pill shadow */
+
+    transition: background-color var(--transition);
+
+    transform: none;                     /* remove scale/translate */
+
+}
+
+
+/* 2) Hover state: same as delete */
+
+.insurance-card__actions .btn-primary:hover,
+
+.admin-header .btn-primary:hover {
+
+    background-color: var(--clr-primary-hover);
+
+}
+
+
+/* 3) If you’re still seeing the old “pill” styles, add !important: */
+
+.insurance-card__actions .btn-primary,
+
+.admin-header .btn-primary {
+
+    /* uncomment these if you need to force the override */
+
+    /* padding: 8px 16px !important; */
+
+    /* border-radius: var(--radius) !important; */
+
+    /* background-image: none !important; */
+
+    /* box-shadow: none !important; */
+
+    /* transform: none !important; */
+
+}
