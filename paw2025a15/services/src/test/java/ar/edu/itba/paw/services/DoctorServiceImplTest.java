@@ -238,4 +238,21 @@ public class DoctorServiceImplTest {
         );
     }
 
+    @Test
+    public void testGetDoctorVacationsFutureNonexistentDoc(){
+        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ds.getDoctorVacationsFuture(DOC_ID)
+        );
+    }
+    @Test
+    public void testGetDoctorVacationsPastNonexistentDoc(){
+        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ds.getDoctorVacationsPast(DOC_ID)
+        );
+    }
+
 }

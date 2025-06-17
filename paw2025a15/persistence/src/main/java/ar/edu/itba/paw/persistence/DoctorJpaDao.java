@@ -299,7 +299,7 @@ public class DoctorJpaDao implements DoctorDao{
     @Override
     public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
     LocalDate today = LocalDate.now();
-        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.startDate <= :today", DoctorVacation.class)
+        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today", DoctorVacation.class)
              .setParameter("doctorId", doctorId)
              .setParameter("today", today)
              .getResultList();
@@ -308,7 +308,7 @@ public class DoctorJpaDao implements DoctorDao{
     @Override
     public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
     LocalDate today = LocalDate.now();
-        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.startDate > :today", DoctorVacation.class)
+        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today", DoctorVacation.class)
              .setParameter("doctorId", doctorId)
              .setParameter("today", today)
              .getResultList();
