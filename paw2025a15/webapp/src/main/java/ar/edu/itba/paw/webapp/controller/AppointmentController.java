@@ -190,6 +190,8 @@ public class AppointmentController {
             Doctor doctor = ds.getDoctorById(user.getId())
                     .orElseThrow(() -> new NotFoundException("Doctor does not exist"));
 
+            mav.addObject("futureVacations", ds.getDoctorVacationsFuture(user.getId()));
+            mav.addObject("pastVacations", ds.getDoctorVacationsPast(user.getId()));
             mav.addObject("vacations", doctor.getVacations());
             mav.addObject("landingForm", new LandingForm()); // si lo necesita el header
 

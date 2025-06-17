@@ -233,6 +233,16 @@ body {
     color: white;
 }
 
+.error-box {
+    background-color: var(--clr-error-bg);
+    color: var(--clr-error-text);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
 .form-error {
     color: red;
     font-size: 12px;

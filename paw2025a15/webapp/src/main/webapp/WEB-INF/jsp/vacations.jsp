@@ -28,7 +28,7 @@
         </h3>
 
 
-        <c:url var="saveVacationUrl" value="/vacations/create"/>
+        <c:url var="saveVacationUrl" value="/createVacations"/>
 
         <form:form modelAttribute="vacationForm"
 
@@ -40,7 +40,7 @@
             <div class="vacation-form">
 
 
-            <form:errors path="*" cssClass="error-box"/>
+            <form:errors path="*" cssClass="error-box" element="div"/>
                 <div class="form-group">
 
                     <form:label path="startDate">
@@ -117,15 +117,16 @@
                             <c:forEach items="${futureVacations}" var="vac">
                                 <tr class="appointment-row">
                                     <td class="text-cell">
-                                        <fmt:formatDate value="${vac.startDate}" pattern="yyyy-MM-dd"/>
+                                        <c:out value="${vac.id.startDate}" default="-" />
                                     </td>
                                     <td class="text-cell">
-                                        <fmt:formatDate value="${vac.endDate}"   pattern="yyyy-MM-dd"/>
+                                        <c:out value="${vac.id.endDate}" default="-" />
                                     </td>
                                 </tr>
                             </c:forEach>
+
                             </tbody>
-                        </table>
+                        </table>|
                     </div>
                 </c:if>
                 <c:if test="${empty futureVacations}">
