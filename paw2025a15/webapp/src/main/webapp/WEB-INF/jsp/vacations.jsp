@@ -22,7 +22,7 @@
         <h3 class="table-title">
             <spring:message code="vacations.create.title" text="Registrar Nueva Vacación"/>
         </h3>
-        <c:url var="saveVacationUrl" value="/vacations/create"/>
+        <c:url var="saveVacationUrl" value="/createVacations"/>
         <form:form modelAttribute="vacationForm" action="${saveVacationUrl}" method="post" cssClass="create-vacation-form">
             <div class="flex-container" style="gap:1rem; align-items:flex-end;">
                 <div class="form-group">

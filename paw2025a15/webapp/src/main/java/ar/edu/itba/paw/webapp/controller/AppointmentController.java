@@ -174,5 +174,17 @@ public class AppointmentController {
         return mav;
     }
 
+    @RequestMapping(value="/createVacations", method = RequestMethod.POST)
+    public ModelAndView createVacation(
+            @Valid @ModelAttribute("vacationForm") final VacationForm vacationForm,
+            @ModelAttribute("user_data") User user,
+            Locale locale
+    ) {
+        System.out.println("Creating vacation for doctor " + user.getId() + " from " + vacationForm.getStartDate() + " to " + vacationForm.getEndDate());
+        ds.createDoctorVacation(user.getId(), vacationForm.getStartDate(), vacationForm.getEndDate());
+
+        return new ModelAndView("redirect:/vacations");
+    }
+
 }
 

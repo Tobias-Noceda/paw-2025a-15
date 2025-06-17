@@ -8,11 +8,17 @@ import java.time.LocalTime;
 
 public class VacationForm {
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull
     private LocalDate startDate;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull
     private LocalDate endDate;
+
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 
     public LocalDate getStartDate() {
         return startDate;
