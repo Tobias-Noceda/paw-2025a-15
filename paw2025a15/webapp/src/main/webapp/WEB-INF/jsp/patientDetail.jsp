@@ -58,7 +58,7 @@
               <p class="patient-email-label"><spring:message code="profileInfo.bloodType"/>:</p>
               <c:choose>
                 <c:when test="${patient.bloodType != null}">
-                    <c:out value="${patient.bloodType.getName()}" escapeXml="true" />
+                  <c:out value="${patient.bloodType.getName()}" escapeXml="true" />
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -87,6 +87,23 @@
                 </c:otherwise>
               </c:choose>
             </div>
+            <div class="patient-email-div">
+              <p class="patient-email-label"><spring:message code="patient.details.insurance.label"/></p>
+              <c:choose>
+                <c:when test="${patient.insurance != null}">
+                  <c:out value="${patient.insurance.name}" escapeXml="true" />
+                </c:when>
+                <c:otherwise>
+                  <spring:message code="profileInfo.notProvided"/>
+                </c:otherwise>
+              </c:choose>
+            </div>
+            <c:if test="${patient.insurance != null}">
+              <div class="patient-email-div">
+                <p class="patient-email-label"><spring:message code="patient.details.insuranceNumber.label"/></p>
+                <c:out value="${patient.insuranceNumber}" escapeXml="true"/>
+              </div>
+            </c:if>
           </div>
           </c:if>
           <c:if test="${allowedAccessLevels.contains('VIEW_HABITS')}">
