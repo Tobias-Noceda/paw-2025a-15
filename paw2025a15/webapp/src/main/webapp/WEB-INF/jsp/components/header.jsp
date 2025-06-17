@@ -90,8 +90,10 @@
           </div>
         </button>
         <div id="userDropdownMenu" class="user-dropdown-menu">
-          <c:url value="/profile" var="profile"/>
-          <a href="${profile}"><spring:message code="header.profile"/></a>
+          <sec:authorize access="!hasRole('ROLE_ADMIN')">
+            <c:url value="/profile" var="profile"/>
+            <a href="${profile}"><spring:message code="header.profile"/></a>
+          </sec:authorize>
           <c:url value="/logout" var="logout"/>
           <a href="${logout}"><spring:message code="header.logout"/></a>
         </div>

@@ -67,6 +67,7 @@ public class ProfileForm {
     @NotNull(message = "{form.insurances.notNull}")
     private List<Long> insurances;
 
+    private Boolean updateSchedules;
 
     @ValidSchedule
     private Schedule schedules;
@@ -216,6 +217,10 @@ public class ProfileForm {
 
     public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
 
+    public Boolean getUpdateSchedules() { return updateSchedules; }
+
+    public void setUpdateSchedules(Boolean updateSchedules) { this.updateSchedules = updateSchedules; }
+    
     public Schedule getSchedules() { return schedules; }
 
     public void setSchedules(Schedule schedules) { this.schedules = schedules; }

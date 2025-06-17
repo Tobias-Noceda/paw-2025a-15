@@ -6,7 +6,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
   <head>
     <meta charset="UTF-8">
     <title>CareTrace</title>
