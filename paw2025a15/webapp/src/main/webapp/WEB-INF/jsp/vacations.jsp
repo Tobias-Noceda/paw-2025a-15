@@ -21,6 +21,12 @@
 <c:set var="cancelText">
     <spring:message code="appointments.dismiss"/>
 </c:set>
+<c:set var="confirmationVacationMessage">
+    <spring:message code="vacations.createConfirm" />
+</c:set>
+<c:set var="confirmVacationText">
+    <spring:message code="vacations.create.ok"/>
+</c:set>
 <jsp:include page="components/header.jsp">
     <jsp:param name="title" value="${title}"/>
 </jsp:include>
@@ -78,7 +84,7 @@
 
                 <!-- Submit -->
 
-                <button type="submit" class="navigation-button">
+                <button type="button" class="navigation-button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationVacationMessage}', null, '${confirmVacationText}', '${cancelText}')">
 
                     <spring:message code="vacations.create.submit" text="Submit vacation"/>
 
