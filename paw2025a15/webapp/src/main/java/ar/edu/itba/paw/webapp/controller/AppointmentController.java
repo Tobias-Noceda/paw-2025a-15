@@ -197,7 +197,7 @@ public class AppointmentController {
         }
 
         ds.createDoctorVacation(user.getId(), vacationForm.getStartDate(), vacationForm.getEndDate());
-
+        as.cancelAppointmentRange(user.getId(), vacationForm.getStartDate(), vacationForm.getEndDate());
         return new ModelAndView("redirect:/vacations");
     }
 

@@ -117,5 +117,19 @@ public class AppointmentJpaDao implements AppointmentDao{
             .setParameter("date", date)
             .executeUpdate();
     }
-    
+
+    @Override
+    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AppointmentNew> toRemove =  em.createQuery("from AppointmentNew a where a.id.date >= :startDate and a.id.date <= :endDate and a.shift.doctor.id = :doctorId", AppointmentNew.class)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .setParameter("doctorId", doctorId)
+                .getResultList();
+        for (AppointmentNew appointment : toRemove) {
+            em.remove(appointment);
+        }
+        em.flush();
+        em.clear();
+    }
+
 }

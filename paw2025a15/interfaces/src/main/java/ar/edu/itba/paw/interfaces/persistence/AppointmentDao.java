@@ -26,4 +26,6 @@ public interface AppointmentDao {
     public List<AppointmentNew> getAppointmentsForDate(LocalDate date);
 
     public void clearRemovedAppointmentBeforeDate(LocalDate date);
+
+    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate);
 }
