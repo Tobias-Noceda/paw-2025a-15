@@ -46,10 +46,33 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public void doctorSetShifts(Doctor doctor, List<DoctorSingleShift> shifts) {
+        List<DoctorSingleShift> shiftsToAdd = new ArrayList<>(shifts);
         List<DoctorSingleShift> managedShifts = new ArrayList<>();
-        for (DoctorSingleShift shift : shifts) {
+        for(DoctorSingleShift shift : doctor.getSingleShifts()) {
+            if (!shiftsToAdd.contains(shift)) {
+                // If the shift is not in the new list, we deactivate it
+                shift.setIsActive(false);
+                em.merge(shift);
+            } else {
+                // If it is in the new list, we remove it from the list to avoid re-adding it
+                shiftsToAdd.remove(shift);
+                managedShifts.add(shift);
+            }
+        }
+        for (DoctorSingleShift shift : shiftsToAdd) {
             managedShifts.add(em.merge(shift));
         }
+        managedShifts.sort((s1, s2) -> {
+            int weekdayComparison = s1.getWeekday().compareTo(s2.getWeekday());
+            if (weekdayComparison != 0) {
+                return weekdayComparison;
+            }
+            int startTimeComparison = s1.getStartTime().compareTo(s2.getStartTime());
+            if (startTimeComparison != 0) {
+                return startTimeComparison;
+            }
+            return s1.getEndTime().compareTo(s2.getEndTime());
+        });
         doctor.setSingleShifts(managedShifts);
         em.merge(doctor);
     }
