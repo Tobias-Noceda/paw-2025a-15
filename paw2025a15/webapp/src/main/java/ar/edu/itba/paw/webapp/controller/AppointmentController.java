@@ -153,7 +153,7 @@ public class AppointmentController {
 
     @RequestMapping(value = "/vacations")
     public ModelAndView vacations(
-            @Valid @ModelAttribute("vacationForm") final VacationForm vacationForm,
+            @ModelAttribute("vacationForm") VacationForm vacationForm,
             @ModelAttribute("user_data") User user,
             Locale locale
     ) {
@@ -168,7 +168,6 @@ public class AppointmentController {
         ModelAndView mav = new ModelAndView("vacations");
         // Esto es lo que te faltaba
 
-        mav.addObject("vacationForm", vacationForm);
         mav.addObject("vacations", vacations);
         // Para que header.jsp no rompa
         mav.addObject("landingForm", new LandingForm());
