@@ -85,6 +85,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/403").permitAll()
                 // appointments
                 .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
+                .requestMatchers("/vacations").hasRole("DOCTOR")
+                .requestMatchers("/vacations/**").hasRole("DOCTOR")
                 .requestMatchers("/cancelAppointment").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/takeAppointment").hasRole("PATIENT")
                 .requestMatchers("/removeAppointment").hasRole("DOCTOR")

@@ -17,125 +17,171 @@
 
 <div class="container">
 
-    <!-- FORMULARIO DE CREACIÓN -->
-    <div class="appointment-list-container" style="margin-bottom:2rem;">
+    <!-- FORMULARIO DE NUEVA VACACIÓN EN “vacation-card” -->
+
+    <div class="vacation-card">
+
         <h3 class="table-title">
-            <spring:message code="vacations.create.title" text="Registrar Nueva Vacación"/>
+
+            <spring:message code="vacations.create.title" text="Register a new vacation"/>
+
         </h3>
+
+
         <c:url var="saveVacationUrl" value="/vacations/create"/>
-        <form:form modelAttribute="vacationForm" action="${saveVacationUrl}" method="post" cssClass="create-vacation-form">
-            <div class="flex-container" style="gap:1rem; align-items:flex-end;">
+
+        <form:form modelAttribute="vacationForm"
+
+                   action="${saveVacationUrl}"
+
+                   method="post">
+
+
+            <div class="vacation-form">
+
+
                 <div class="form-group">
+
                     <form:label path="startDate">
-                        <spring:message code="vacations.table.startDate" text="Desde"/>
+
+                        <spring:message code="vacations.table.startDate" text="Start Date"/>
+
                     </form:label>
+
                     <form:input path="startDate" type="date" cssClass="input-field"/>
+
                     <form:errors path="startDate" cssClass="error-text"/>
+
                 </div>
+
+
+
                 <div class="form-group">
+
                     <form:label path="endDate">
-                        <spring:message code="vacations.table.endDate" text="Hasta"/>
+
+                        <spring:message code="vacations.table.endDate" text="End Date"/>
+
                     </form:label>
+
                     <form:input path="endDate" type="date" cssClass="input-field"/>
+
                     <form:errors path="endDate" cssClass="error-text"/>
+
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="navigation-button">
-                        <spring:message code="vacations.create.submit" text="Crear"/>
-                    </button>
-                </div>
+
+
+                <!-- Submit -->
+
+                <button type="submit" class="navigation-button">
+
+                    <spring:message code="vacations.create.submit" text="Submit vacation"/>
+
+                </button>
+
             </div>
+
+
         </form:form>
+
     </div>
 
-    <!-- VACACIONES FUTURAS -->
-    <div class="appointment-list-container">
-        <h3 class="table-title">
-            <spring:message code="vacations.future.title" text="Vacaciones Futuras"/>
-        </h3>
-        <div class="appointment-table-container">
-            <div class="appointments-table-header">
-                <table class="appointments-table">
-                    <thead>
-                    <tr>
-                        <th><spring:message code="vacations.table.startDate" text="Desde"/></th>
-                        <th><spring:message code="vacations.table.endDate"   text="Hasta"/></th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-            <c:if test="${not empty futureVacations}">
-                <div class="appointments-table-body">
+    <!-- DOS TABLAS EN 2 COLUMNAS: FUTURAS Y PASADAS -->
+    <div class="page-container appointments-div" style="display:flex; flex-direction:row; gap:2rem;">
+
+
+
+
+
+        <!-- VACACIONES FUTURAS -->
+        <div class="appointment-list-container">
+            <h3 class="table-title">
+                <spring:message code="vacations.future.title" text="Vacaciones Futuras"/>
+            </h3>
+            <div class="appointment-table-container">
+                <div class="appointments-table-header">
                     <table class="appointments-table">
-                        <tbody>
-                        <c:forEach items="${futureVacations}" var="vac">
-                            <tr class="appointment-row">
-                                <td class="text-cell">
-                                    <fmt:formatDate value="${vac.startDate}" pattern="yyyy-MM-dd"/>
-                                </td>
-                                <td class="text-cell">
-                                    <fmt:formatDate value="${vac.endDate}"   pattern="yyyy-MM-dd"/>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
+                        <thead>
+                        <tr>
+                            <th><spring:message code="vacations.table.startDate" text="Desde"/></th>
+                            <th><spring:message code="vacations.table.endDate"   text="Hasta"/></th>
+                        </tr>
+                        </thead>
                     </table>
                 </div>
-            </c:if>
-            <c:if test="${empty futureVacations}">
-                <div class="no-appointments-container">
-                    <h4 class="no-appointments-text">
-                        <spring:message code="vacations.future.empty" text="No hay vacaciones futuras."/>
-                    </h4>
-                </div>
-            </c:if>
-        </div>
-    </div>
-
-    <!-- VACACIONES PASADAS -->
-    <div class="appointment-list-container" style="margin-top:2rem;">
-        <h3 class="table-title">
-            <spring:message code="vacations.past.title" text="Vacaciones Pasadas"/>
-        </h3>
-        <div class="appointment-table-container">
-            <div class="appointments-table-header">
-                <table class="appointments-table">
-                    <thead>
-                    <tr>
-                        <th><spring:message code="vacations.table.startDate" text="Desde"/></th>
-                        <th><spring:message code="vacations.table.endDate"   text="Hasta"/></th>
-                    </tr>
-                    </thead>
-                </table>
+                <c:if test="${not empty futureVacations}">
+                    <div class="appointments-table-body">
+                        <table class="appointments-table">
+                            <tbody>
+                            <c:forEach items="${futureVacations}" var="vac">
+                                <tr class="appointment-row">
+                                    <td class="text-cell">
+                                        <fmt:formatDate value="${vac.startDate}" pattern="yyyy-MM-dd"/>
+                                    </td>
+                                    <td class="text-cell">
+                                        <fmt:formatDate value="${vac.endDate}"   pattern="yyyy-MM-dd"/>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </c:if>
+                <c:if test="${empty futureVacations}">
+                    <div class="no-appointments-container">
+                        <h4 class="no-appointments-text">
+                            <spring:message code="vacations.future.empty" text="No hay vacaciones futuras."/>
+                        </h4>
+                    </div>
+                </c:if>
             </div>
-            <c:if test="${not empty pastVacations}">
-                <div class="appointments-table-body">
+        </div>
+
+        <!-- VACACIONES PASADAS -->
+        <div class="appointment-list-container">
+            <h3 class="table-title">
+                <spring:message code="vacations.past.title" text="Vacaciones Pasadas"/>
+            </h3>
+            <div class="appointment-table-container">
+                <div class="appointments-table-header">
                     <table class="appointments-table">
-                        <tbody>
-                        <c:forEach items="${pastVacations}" var="vac">
-                            <tr class="appointment-row">
-                                <td class="text-cell">
-                                    <fmt:formatDate value="${vac.startDate}" pattern="yyyy-MM-dd"/>
-                                </td>
-                                <td class="text-cell">
-                                    <fmt:formatDate value="${vac.endDate}"   pattern="yyyy-MM-dd"/>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
+                        <thead>
+                        <tr>
+                            <th><spring:message code="vacations.table.startDate" text="Desde"/></th>
+                            <th><spring:message code="vacations.table.endDate"   text="Hasta"/></th>
+                        </tr>
+                        </thead>
                     </table>
                 </div>
-            </c:if>
-            <c:if test="${empty pastVacations}">
-                <div class="no-appointments-container">
-                    <h4 class="no-appointments-text">
-                        <spring:message code="vacations.past.empty" text="No hay vacaciones pasadas."/>
-                    </h4>
-                </div>
-            </c:if>
+                <c:if test="${not empty pastVacations}">
+                    <div class="appointments-table-body">
+                        <table class="appointments-table">
+                            <tbody>
+                            <c:forEach items="${pastVacations}" var="vac">
+                                <tr class="appointment-row">
+                                    <td class="text-cell">
+                                        <fmt:formatDate value="${vac.startDate}" pattern="yyyy-MM-dd"/>
+                                    </td>
+                                    <td class="text-cell">
+                                        <fmt:formatDate value="${vac.endDate}"   pattern="yyyy-MM-dd"/>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </c:if>
+                <c:if test="${empty pastVacations}">
+                    <div class="no-appointments-container">
+                        <h4 class="no-appointments-text">
+                            <spring:message code="vacations.past.empty" text="No hay vacaciones pasadas."/>
+                        </h4>
+                    </div>
+                </c:if>
+            </div>
         </div>
-    </div>
 
+    </div>
 </div>
 </body>
 </html>

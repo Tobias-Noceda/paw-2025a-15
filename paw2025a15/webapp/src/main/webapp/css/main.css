@@ -1,3 +1,10 @@
+:root {
+
+    --page-side-padding: 24px;    /* el padding que tiene .container a los lados */
+
+
+}
+
 body {
     flex-grow: 1;
     font-family: Arial, sans-serif;
@@ -549,4 +556,143 @@ dialog {
 }
 .confirmation-dialog .cancel-button:hover {
     background-color: #b90101;
+}
+
+
+
+
+
+/* 1) que los hijos de .page-container ocupen el 100% de ancho */
+
+.landing-page .page-container {
+
+    align-items: stretch;   /* en lugar de center */
+
+    padding: 20px;
+
+}
+
+
+/* 2) que .filter-card no tenga max-width */
+
+.landing-page .filter-card {
+
+    width: 100%;            /* ocupa todo el ancho del contenedor */
+
+    max-width: none;        /* quita cualquier límite */
+
+    margin-bottom: 30px;    /* separación con el listado */
+
+}
+
+
+/* Si quieres en pantallas enormes añadir un padding lateral */
+
+.landing-page .filter-card {
+
+    padding: 30px;
+
+}
+
+
+/* 3) mantiene tu estilo de card de base.css */
+
+.card {
+
+    background: var(--clr-card);
+
+    border-radius: var(--radius);
+
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+
+    /* padding lo pones aquí o en .filter-card */
+
+}
+
+
+
+
+/* —————————————————————————————–
+
+  1) La tarjeta blanca del formulario
+
+  —————————————————————————————— */
+
+.vacation-card {
+
+    background: #ffffff;
+
+    border-radius: 8px;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+    padding: 24px;
+
+    /* reproducimos el mismo padding/margen que tu .container y tablas */
+
+    margin: 0 auto 32px;
+
+
+}
+
+
+/* —————————————————————————————–
+
+  2) El form en línea
+
+  —————————————————————————————— */
+
+.vacation-form {
+
+    display: flex;
+
+    flex-wrap: wrap;       /* baja si cabe en móviles */
+
+    align-items: center;
+
+    gap: 1.5rem;
+
+}
+
+
+/* cada par label+input en fila */
+
+.vacation-form .form-group {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+}
+
+
+/* forzamos altura y padding idéntico a inputs/tablas */
+
+.vacation-card .input-field {
+
+    height: 36px;
+
+    padding: 0 8px;
+
+    font-size: 0.95rem;
+
+    border: 1px solid #CED4DA;
+
+    border-radius: 4px;
+
+}
+
+
+/* botón igual que en nav/tables */
+
+.vacation-card .navigation-button {
+
+    height: 36px;
+
+    padding: 0 16px;
+
+    font-size: 0.95rem;
+
 }

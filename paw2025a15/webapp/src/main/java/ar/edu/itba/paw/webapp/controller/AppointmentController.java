@@ -168,7 +168,8 @@ public class AppointmentController {
         ModelAndView mav = new ModelAndView("vacations");
         // Esto es lo que te faltaba
 
-        mav.addObject("vacations", vacations);
+        mav.addObject("futureVacations", ds.getDoctorVacationsFuture(user.getId()));
+        mav.addObject("pastVacations", ds.getDoctorVacationsPast(user.getId()));
         // Para que header.jsp no rompa
         mav.addObject("landingForm", new LandingForm());
         return mav;
