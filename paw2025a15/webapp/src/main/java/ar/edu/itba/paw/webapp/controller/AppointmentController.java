@@ -15,10 +15,7 @@ import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -173,6 +170,7 @@ public class AppointmentController {
         mav.addObject("pastVacations", ds.getDoctorVacationsPast(user.getId()));
         // Para que header.jsp no rompa
         mav.addObject("landingForm", new LandingForm());
+        vacationForm.setDoctorId(user.getId());
         return mav;
     }
 
@@ -203,5 +201,16 @@ public class AppointmentController {
         return new ModelAndView("redirect:/vacations");
     }
 
+    @RequestMapping(value="/removeVacation", method = RequestMethod.POST)
+    public ModelAndView removeAppointments(
+            @ModelAttribute("user_data") User user,
+            Locale locale
+           ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+        //ds.deleteDoctorVacation(user.getId(), );
+        return new ModelAndView("redirect:/vacations");
+    }
 }
 

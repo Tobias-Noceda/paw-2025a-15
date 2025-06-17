@@ -41,4 +41,6 @@ public interface DoctorDao {
     public List<DoctorVacation> getDoctorVacationsPast(long doctorId);
 
     public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);
+
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate);
 }

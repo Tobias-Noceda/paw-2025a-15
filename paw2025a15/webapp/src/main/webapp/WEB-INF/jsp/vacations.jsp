@@ -29,14 +29,10 @@
 
 
         <c:url var="saveVacationUrl" value="/createVacations"/>
-
         <form:form modelAttribute="vacationForm"
-
                    action="${saveVacationUrl}"
-
                    method="post">
-
-
+            <form:hidden path="doctorId" />
             <div class="vacation-form">
 
 
@@ -162,10 +158,10 @@
                             <c:forEach items="${pastVacations}" var="vac">
                                 <tr class="appointment-row">
                                     <td class="text-cell">
-                                        <fmt:formatDate value="${vac.startDate}" pattern="yyyy-MM-dd"/>
+                                        <c:out value="${vac.id.startDate}" default="-" />
                                     </td>
                                     <td class="text-cell">
-                                        <fmt:formatDate value="${vac.endDate}"   pattern="yyyy-MM-dd"/>
+                                        <c:out value="${vac.id.endDate}" default="-" />
                                     </td>
                                 </tr>
                             </c:forEach>

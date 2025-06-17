@@ -210,4 +210,9 @@ public class DoctorServiceImpl implements DoctorService {
         doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorDao.getDoctorVacationsFuture(doctorId);
     }
+
+    @Override
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
+        return doctorDao.vacationExists(doctorId, startDate, endDate);
+    }
 }

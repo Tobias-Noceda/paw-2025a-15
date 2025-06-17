@@ -11,11 +11,18 @@ import java.time.LocalTime;
 @ValidVacation(message = "{form.vacation.invalid}")
 public class VacationForm {
 
+    private Long doctorId;
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
+
+
+    public Long getDoctorId() { return doctorId; }
+
+    public void setDoctorId(Long doctorId) { this.doctorId = doctorId; }
 
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 
