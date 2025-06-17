@@ -141,6 +141,12 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Transactional
+    @Override
+    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        appointmentDao.cancelAppointmentRange(doctorId,startDate, endDate);
+    }
+
+    @Transactional
     @Scheduled(cron = "0 0 3 * * *", zone = "America/Argentina/Buenos_Aires")
     public void clearRemovedAppointmentBeforeDate() {
         LocalDate date = LocalDate.now().minusDays(1);
