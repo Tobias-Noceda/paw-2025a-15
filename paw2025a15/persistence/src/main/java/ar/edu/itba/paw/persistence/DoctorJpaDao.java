@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.File;
@@ -249,31 +248,6 @@ public class DoctorJpaDao implements DoctorDao{
             // Sort by appointments count in ascending order
             return Integer.compare(count1, count2);
         });
-    }
-
-    @Override
-    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
-        Doctor doctor = em.find(Doctor.class, doctorId);
-        if (doctor == null || newShifts == null || newShifts.isEmpty()) return;
-
-        // setAll existing shifts' isActive to false
-        for (DoctorSingleShift shift : doctor.getSingleShifts()) {
-            shift.setIsActive(false);
-        }
-        
-        // Add new shifts
-        for (DoctorSingleShift shift : newShifts) {
-            shift.setIsActive(true);
-            shift.setDoctor(doctor);
-            if (shift.getId() == null) {
-                em.persist(shift);
-            } else {
-                em.merge(shift);
-            }
-            doctor.addSingleShift(shift);
-        }
-        
-        em.merge(doctor);
     }
 
     @Override

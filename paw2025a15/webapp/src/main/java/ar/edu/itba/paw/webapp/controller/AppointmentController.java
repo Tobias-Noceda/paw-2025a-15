@@ -1,31 +1,34 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import javax.print.Doc;
 import javax.validation.Valid;
 
-import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.models.entities.DoctorVacation;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
-import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
+import ar.edu.itba.paw.webapp.form.AppointmentForm;
+import ar.edu.itba.paw.webapp.form.LandingForm;
+import ar.edu.itba.paw.webapp.form.ShiftsDayForm;
+import ar.edu.itba.paw.webapp.form.TakeTurnForm;
+import ar.edu.itba.paw.webapp.form.VacationForm;
 
 @Controller
 public class AppointmentController {
@@ -159,9 +162,9 @@ public class AppointmentController {
             throw new UnauthorizedException("User not found");
         }
 
-        Doctor doctor = ds.getDoctorById(user.getId())
-                .orElseThrow(() -> new NotFoundException("Doctor does not exist"));
-        List<DoctorVacation> vacations = doctor.getVacations();
+        if (!(user instanceof Doctor)) {
+            throw new UnauthorizedException("User is not a doctor");
+        }
 
         ModelAndView mav = new ModelAndView("vacations");
         // Esto es lo que te faltaba

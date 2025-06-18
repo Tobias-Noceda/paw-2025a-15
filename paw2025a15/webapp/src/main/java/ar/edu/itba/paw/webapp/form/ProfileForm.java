@@ -26,6 +26,17 @@ import ar.edu.itba.paw.webapp.form.constraints.ValidSchedule;
 @ValidInsuranceNumber
 public class ProfileForm {
 
+    public ProfileForm() {
+        this.insuranceId = null;
+        this.insuranceNumber = "";
+        this.insurances = List.of();
+        this.updateSchedules = false;
+        this.schedules = new Schedule();
+        this.address = "";
+        this.amount = 0;
+        this.keepTurns = false;
+    }
+
     // general
     @ValidProfileImage
     MultipartFile profileImage;
@@ -94,10 +105,6 @@ public class ProfileForm {
     private int amount;
 
     private boolean keepTurns;
-
-    public boolean getKeepTurns() { return keepTurns; }
-
-    public void setKeepTurns(boolean keepTurns) { this.keepTurns = keepTurns; }
 
     // Getters
     public MultipartFile getProfileImage() {
@@ -179,6 +186,11 @@ public class ProfileForm {
     public Boolean getUpdateSchedules() {
         return updateSchedules;
     }
+
+    public boolean getKeepTurns() {
+        return keepTurns;
+    }
+
     
     public Schedule getSchedules() {
         return schedules;
@@ -283,5 +295,9 @@ public class ProfileForm {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public void setKeepTurns(boolean keepTurns) {
+        this.keepTurns = keepTurns;
     }
 }

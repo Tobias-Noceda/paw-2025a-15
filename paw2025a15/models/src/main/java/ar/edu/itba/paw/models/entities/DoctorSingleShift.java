@@ -156,7 +156,12 @@ public class DoctorSingleShift {
 
         DoctorSingleShift o = (DoctorSingleShift) other;
 
-        return (this.id.equals(o.id));
+        return doctor.getId().equals(o.doctor.getId()) &&
+            weekday.equals(o.weekday) &&
+            address.equals(o.address) &&
+            startTime.equals(o.startTime) &&
+            endTime.equals(o.endTime) &&
+            duration == o.duration;
     }
 
     @Override

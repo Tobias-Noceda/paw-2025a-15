@@ -17,5 +17,7 @@ public interface DoctorShiftDao {
 
     public void doctorSetShifts(Doctor doctor, List<DoctorSingleShift> shifts);
 
+    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
+
     public List <AvailableTurn> getAvailableTurnsByDoctorByDate(Doctor doctor, LocalDate date);
 }

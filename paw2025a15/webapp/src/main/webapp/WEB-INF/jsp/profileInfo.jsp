@@ -125,13 +125,17 @@
 
               <div class="field-container full-width">
                 <h3 class="section-subtitle"><spring:message code="doctorProfile.updateSchedule"/></h3>
-                <form:checkbox
-                  path="updateSchedules"
+                <input 
+                  type="checkbox"
                   cssClass="switch-checkbox"
-                  value="false"
-                  id="updateScheduleSwitch"
                   onclick="setUpdateScheduleFields()"
                 />
+                <form:hidden
+                  path="updateSchedules"
+                  id="updateScheduleSwitch"
+                  value="${profileForm.updateSchedules ? 'true' : 'false'}"
+                />
+
               
                 <div style="display: none; flex-direction: column; align-items: left; max-height: fit-content;" id="new-schedule-fields">
                   <h3 class="section-subtitle"><spring:message code="doctorForm.schedule"/></h3>
@@ -507,16 +511,19 @@
         if (toast) {
           // auto-dismiss a los 3 segundos
           setTimeout(closeToast, 3000);
+          document.getElementById("updateScheduleSwitch").value = "false";
         }
       });
 
       function setUpdateScheduleFields() {
         const updateScheduleSwitch = document.getElementById("updateScheduleSwitch");
         const newScheduleFields = document.getElementById("new-schedule-fields");
-        if (updateScheduleSwitch.checked) {
+        if (updateScheduleSwitch.value === "false") {
           newScheduleFields.style.display = "block";
+          updateScheduleSwitch.value = "true";
         } else {
           newScheduleFields.style.display = "none";
+          updateScheduleSwitch.value = "false";
         }
       }
 
