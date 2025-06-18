@@ -387,7 +387,7 @@
 
             <div class="field-container full-width">
               <form:label path="diet"><spring:message code="profileInfo.diet"/></form:label>
-              <textarea id="patient-diet" name="diet" class="input-field" rows="2" maxlength="100">${user_data.diet}</textarea>
+              <textarea id="patient-diet" name="diet" class="input-field" rows="2" maxlength="100"><c:out value="${user_data.diet}" escapeXml="true"/></textarea>
             </div>
           </div>
         </div>
@@ -398,15 +398,15 @@
           <div class="field-grid">
             <div class="field-container full-width">
               <form:label path="meds"><spring:message code="profileInfo.meds"/></form:label>
-              <textarea id="patient-meds" name="meds" class="input-field" rows="2" maxlength="250">${user_data.meds}</textarea>
+              <textarea id="patient-meds" name="meds" class="input-field" rows="2" maxlength="250"><c:out value="${user_data.meds}" escapeXml="true"/></textarea>
             </div>
             <div class="field-container full-width">
               <form:label path="conditions"><spring:message code="profileInfo.conditions"/></form:label>
-              <textarea id="patient-conditions" name="conditions" class="input-field" rows="2" maxlength="250">${user_data.conditions}</textarea>
+              <textarea id="patient-conditions" name="conditions" class="input-field" rows="2" maxlength="250"><c:out value="${user_data.conditions}" escapeXml="true"/></textarea>
             </div>
             <div class="field-container full-width">
               <form:label path="allergies"><spring:message code="profileInfo.allergies"/></form:label>
-              <textarea id="patient-allergies" name="allergies" class="input-field" rows="2" maxlength="250">${user_data.allergies}</textarea>
+              <textarea id="patient-allergies" name="allergies" class="input-field" rows="2" maxlength="250"><c:out value="${user_data.allergies}" escapeXml="true"/></textarea>
             </div>
           </div>
         </div>
@@ -417,11 +417,11 @@
           <div class="field-grid">
             <div class="field-container full-width">
               <form:label path="hobbies"><spring:message code="profileInfo.hobbies"/></form:label>
-              <textarea id="patient-hobbies" name="hobbies" class="input-field" rows="2" maxlength="100">${user_data.hobbies}</textarea>
+              <textarea id="patient-hobbies" name="hobbies" class="input-field" rows="2" maxlength="100"><c:out value="${user_data.hobbies}" escapeXml="true"/></textarea>
             </div>
             <div class="field-container full-width">
               <form:label path="job"><spring:message code="profileInfo.job"/></form:label>
-              <textarea id="patient-job" name="job" class="input-field" rows="1" maxlength="50">${user_data.job}</textarea>
+              <textarea id="patient-job" name="job" class="input-field" rows="1" maxlength="50"><c:out value="${user_data.job}" escapeXml="true"/></textarea>
             </div>
           </sec:authorize>
         </div>

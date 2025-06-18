@@ -208,7 +208,7 @@
           <c:forEach var="insurance" items="${obrasSocialesItems}">
             <div class="insurance-btn">
               <input type="checkbox" id="insurance-${insurance.id}" name="ObrasSociales" value="${insurance.id}" class="insurance-checkbox"/>
-              <label for="insurance-${insurance.id}" class="insurance-label">${insurance.name}</label>
+              <label for="insurance-${insurance.id}" class="insurance-label"><c:out value="${insurance.name}" escapeXml="true"/></label>
             </div>
           </c:forEach>
           <form:errors path="ObrasSociales" cssClass="error-box" element="div"/>

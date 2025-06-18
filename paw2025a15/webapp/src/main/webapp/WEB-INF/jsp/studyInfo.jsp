@@ -46,7 +46,7 @@
           <!--Subido por-->
           <div class="study-detail">
             <strong><spring:message code="studyTable.uploader"/></strong>
-            <span><c:out value="${study.uploader.name}"/></span>
+            <span><c:out value="${study.uploader.name}" escapeXml="true"/></span>
           </div>
           <sec:authorize access="hasRole('ROLE_PATIENT')">
             <c:url var="deleteUrl" value="/delete-study/${study.id}"/>
