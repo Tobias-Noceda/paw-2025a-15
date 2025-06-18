@@ -80,7 +80,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
                 .requestMatchers("/patient/{patientId}")
-                    .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))//TODO:check using get() directly
+                    .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
                 .requestMatchers("/login", "/register", "/forgot-password", "/change-password/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
                 .requestMatchers("/403").permitAll()
                 // appointments
@@ -93,13 +93,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // studies
                 .requestMatchers("/studies").hasRole("PATIENT")
                 .requestMatchers("/study-info/{studyId}")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))//TODO:check using get() directly
-                    // .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")))) // TODO: update to this //TODO:check using get() directly
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
+                    // .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
                 .requestMatchers("/authFileDoctor/{doctorId}/{studyId}").hasRole("PATIENT")
                 .requestMatchers("/view-study/{studyId}/file/{fileId}")
-                    .access((a, c) -> ad.hasFileAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")), Long.parseLong(c.getVariables().get("fileId"))))//TODO:check using get() directly
+                    .access((a, c) -> ad.hasFileAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")), Long.parseLong(c.getVariables().get("fileId"))))
                 .requestMatchers("/upload-study/{patientId}")
-                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))//TODO:check using get() directly
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
                 // admin
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // temporary

@@ -46,8 +46,40 @@
           <!--Subido por-->
           <div class="study-detail">
             <strong><spring:message code="studyTable.uploader"/></strong>
-            <span><c:out value="${study.uploader.name}"/></span>
+            <span><c:out value="${study.uploader.name}" escapeXml="true"/></span>
           </div>
+          <sec:authorize access="hasRole('ROLE_PATIENT')">
+            <c:url var="deleteUrl" value="/delete-study/${study.id}"/>
+            <c:set var="studyDate">
+              <fmt:formatDate value="${study.studyDateAsDate}" dateStyle="short"/>
+            </c:set>
+            <c:choose>
+              <c:when test="${not empty study.comment}">
+                <c:set var="studyComment" value="${study.comment}" />
+              </c:when>
+              <c:otherwise>
+                <c:set var="studyComment">
+                  <spring:message code="profileInfo.notProvided"/>
+                </c:set>
+              </c:otherwise>
+            </c:choose>
+            <c:set var="dateText">
+              <spring:message code="study.delete.date" arguments="${studyDate}"/>
+            </c:set>
+            <c:set var="commentText">
+              <spring:message code="study.delete.comment" arguments="${studyComment}"/>
+            </c:set>
+            <button
+              class="cancel-button"
+              style="margin-top: 20px;"
+              onclick="event.stopPropagation(); confirmStudyDelete('${deleteUrl}', '${dateText}', '${commentText}')"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+                <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
+              </svg>
+              <spring:message code="study.delete.confirmation.ok"/>
+            </button>
+          </sec:authorize>
         </div>
       </div>
 
@@ -219,6 +251,7 @@
     </div>
 
     <%@include file="components/confirmDialog.jsp" %>
+    <%@include file="components/studyDeleteDialog.jsp" %>
     <script src="<c:url value='/js/studyAuthModal.js'/>"></script>
     <script src="<c:url value='/js/buttonControl.js'/>"></script>
     <script src="<c:url value='/js/deleteFileConfirmationModal.js'/>"></script>

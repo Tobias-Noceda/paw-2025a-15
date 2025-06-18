@@ -77,7 +77,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/js/**").addResourceLocations("/js/");
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
         registry.addResourceHandler("/favicon.ico").addResourceLocations("/favicon/favicon.ico");
-        registry.addResourceHandler("/logo").addResourceLocations("/resources/icono.jpg");
     }
 
     @Bean

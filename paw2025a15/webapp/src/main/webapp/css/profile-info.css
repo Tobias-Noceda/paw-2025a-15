@@ -157,23 +157,28 @@ body {
 }
 
 
-.btn-primary {
-    width: 100%;
-    padding: 14px;
-    background-color: var(--clr-primary);
-    color: var(--clr-card);
-    font-size: 1rem;
+.save-button {
+    background-color: #007bff;
+    color: white;
     font-weight: 600;
     border: none;
-    border-radius: var(--radius);
+    padding: 4px 8px; /* Espaciado compacto */
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color var(--transition);
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    line-height: 1;
+}
+.save-button:hover {
+    background-color: #0056b3;
 }
 
-.btn-primary:hover {
-    background-color: var(--clr-primary-hover);
+.save-button-div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
-
 .save-container {
     text-align: center;
 }
@@ -446,4 +451,50 @@ body {
     /* tamaño, márgenes, etc. */
     margin-left: 1rem;
     /* cualquier otro estilo que necesites */
+}
+
+    /* contenedor de nuevos campos de schedule */
+
+    .new-schedule-fields {
+
+        display: none;              /* lo activas con JS cuando toque */
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 1.5rem;                /* espacio vertical automático */
+
+        align-items: flex-start;
+
+        padding-top: 1rem;
+
+    }
+
+/* Espacio entre cada grupo de campos */
+
+#new-schedule-fields .field-container {
+
+    margin-bottom: 1rem;  /* ajusta el valor a tu gusto */
+
+}
+
+
+/* Espacio entre cada botón de día */
+
+#new-schedule-fields .weekday-btn {
+
+    margin-right: 0.75rem;
+
+    margin-bottom: 0.5rem;
+
+}
+
+
+/* Si quieres un poco de margen arriba/bajo del título */
+
+#new-schedule-fields h3 {
+
+    margin: 0 0 1rem 0;
+
 }

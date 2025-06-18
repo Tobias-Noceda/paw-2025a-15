@@ -6,8 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
@@ -48,7 +57,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail) {
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with id: " + shiftId + " not found"));
         Doctor doctor = ds.getDoctorById(shift.getDoctor().getId()).orElseThrow(() -> new NotFoundException("Doctor with id: " + shift.getDoctor().getId() + " does not exist!"));
-        User user = null;
+        User user;
         if(patientId!=doctor.getId()) {
             user =(Patient) ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         } else {
@@ -109,7 +118,6 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Transactional
     @Override
     public void cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId) {
-        System.out.println("Canceling: " + shiftId + " " + date + " " + startTime + " " + endTime + " " + cancellerId);
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
         AppointmentNew appointment = getAppointmentByShiftIdDateAndTime(shiftId, date, startTime, endTime).orElseThrow(() -> new NotFoundException("Appointment with shiftId: " + shiftId + " and date: " + date + " does not exist!"));
         Patient patient = ps.getPatientById(appointment.getPatient().getId()).orElseThrow(() -> new NotFoundException("Patient with id: " + appointment.getPatient().getId() + " does not exist!"));
@@ -134,7 +142,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public void removeAppointment(long shiftId, LocalDate date, long doctorId, LocalTime startTime, LocalTime endTime) {
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
-        if(shift.getDoctor().getId() != doctorId) throw new UnauthorizedException("User not authorized to remove this appointment");//TODO:check changed for hibernate(mostly using directly .getId() without checking first)
+        if(shift.getDoctor().getId() != doctorId) throw new UnauthorizedException("User not authorized to remove this appointment");
 
         addAppointment(shiftId, doctorId, date, startTime, endTime, null);//recreate the appointment with null detail to remove it from the free appointments list
         LOGGER.info("Doctor with id: {} has removed an appointment from their free appointments at shiftId: {} and date: {}", doctorId, shiftId, date);

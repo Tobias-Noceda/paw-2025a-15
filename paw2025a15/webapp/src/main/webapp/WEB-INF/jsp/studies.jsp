@@ -81,6 +81,7 @@
               <th><spring:message code="studyTable.detailsColumn.title"></spring:message></th>
               <th><spring:message code="appointmentTable.dateColumn.title"></spring:message></th>
               <th><spring:message code="studyTable.uploadDateColumn.title"></spring:message></th>
+              <th class="studies-last-column"><spring:message code="appointmentTable.actionColumn.title"></spring:message></th>
             </tr>
           </thead>
         </table>
@@ -91,21 +92,55 @@
             <tbody>
               <c:forEach var="study" items="${patientStudies}">
                 <c:url value="/study-info/${study.id}" var="studyDetailLink" />
+                <c:url var="deleteUrl" value="/delete-study/${study.id}"/>
                 <c:set var="studyName">
                   <spring:message code="studyType.${study.type}"/>_${study.studyDate}
                 </c:set>
+                <c:set var="studyDate">
+                  <fmt:formatDate value="${study.studyDateAsDate}" dateStyle="short"/>
+                </c:set>
+                <c:set var="studyUploadDate">
+                  <fmt:formatDate value="${study.uploadDateAsDate}" dateStyle="short"/>
+                </c:set>
+
+                <c:choose>
+                  <c:when test="${not empty study.comment}">
+                    <c:set var="studyComment" value="${study.comment}" />
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="studyComment">
+                      <spring:message code="profileInfo.notProvided"/>
+                    </c:set>
+                  </c:otherwise>
+                </c:choose>
                 <tr class="study-row"
                     onclick="window.location='${studyDetailLink}'"
                 >
                   <td class="text-cell">
                     <spring:message code="studyType.${study.type}"/>
                   </td>
-                  <td class="text-cell"><c:out value="${study.comment}" escapeXml="true"/></td>
+                  <td class="text-cell">${studyComment}</td>
                   <td class="text-cell">
-                    <fmt:formatDate value="${study.studyDateAsDate}" dateStyle="short"/>
+                    <c:out value="${studyDate}" escapeXml="true"/>
                   </td>
                   <td class="text-cell">
-                    <fmt:formatDate value="${study.uploadDateAsDate}" dateStyle="short"/>
+                    <c:out value="${studyUploadDate}" escapeXml="true"/>
+                  </td>
+                  <td class="download-cell">
+                    <c:set var="dateText">
+                      <spring:message code="study.delete.date" arguments="${studyDate}"/>
+                    </c:set>
+                    <c:set var="commentText">
+                      <spring:message code="study.delete.comment" arguments="${studyComment}"/>
+                    </c:set>
+                    <button
+                      class="cancel-button"
+                      onclick="event.stopPropagation(); confirmStudyDelete('${deleteUrl}', '${dateText}', '${commentText}')"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+                        <path d="M3 6h18v2H3V6zm2 3h14l-1.5 13h-11L5 9zm5 2v8h2v-8H10zm4 0v8h2v-8h-2zM9 4V3h6v1h5v2H4V4h5z"/>
+                      </svg>
+                    </button>
                   </td>
                 </tr>
               </c:forEach>
@@ -125,13 +160,22 @@
     <p class="info-text"><spring:message code="studies.info.clickDoctorToManage"/></p>
     
     <!-- Botón de desautorizar todos -->
+    <c:set var="confirmationMessage">
+      <spring:message code="studies.deauthorizeAll.confirm" />
+    </c:set>
+    <c:set var="confirmText">
+      <spring:message code="confirmDialog.yes"/>
+    </c:set>
+    <c:set var="cancelText">
+      <spring:message code="confirmDialog.no"/>
+    </c:set>
     <c:if test="${not empty patient.authorizedDoctors}">
       <div class="bulk-actions" style="margin-bottom: 1rem;">
         <c:url value="/patientDeAuthAllDoctors" var="authActionsUrl" />
         <form action="${authActionsUrl}" method="post" style="display: inline;">
-          <button type="button" class="deauthorize-button" 
-                  onclick="confirmBulkAction('<spring:message code="studies.deauthorizeAll.confirm"/>', this.form, 'deauthorize', '<spring:message code="confirmDialog.yes"/>', '<spring:message code="confirmDialog.no"/>')">
-            <spring:message code="studies.deauthorizeAll"/>
+          <button type="button" class="deauthorize-button"
+              onclick="openConfirmDialog(this.form, '${confirmationMessage}',null, '${confirmText}', '${cancelText}')">
+          <spring:message code="studies.deauthorizeAll"/>
           </button>
         </form>
       </div>
@@ -218,6 +262,7 @@
 </div>
 
 <%@include file="components/confirmDialog.jsp" %>
+<%@include file="components/studyDeleteDialog.jsp" %>
 <script src="<c:url value='/js/deauthConfirmationModal.js'/>"></script>
 <script src="<c:url value='/js/buttonControl.js'/>"></script>
 

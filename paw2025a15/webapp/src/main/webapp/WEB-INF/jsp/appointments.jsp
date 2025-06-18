@@ -150,7 +150,7 @@
               <tbody>
               <c:forEach var="appointment" items="${doctorTakenAppointments}">
                 <c:url value="/patient/${appointment.patient.id}" var="patientUrl" />
-                <tr class="appointment-row" onclick="openPatientDialog( '${appointment.patient.name}','${appointment.detail}', '${patientUrl}')" style="cursor: pointer;">
+                <tr class="appointment-row" onclick="openPatientDialog( '<c:out value="${appointment.patient.name}" escapeXml="true"/>','<c:out value="${appointment.detail}" escapeXml="true"/>', '${patientUrl}')" style="cursor: pointer;">
                   <c:set var="formattedDate">
                     <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>

@@ -69,7 +69,7 @@ function submitPendingForm() {
 
 // Función para bulk actions
 function confirmBulkAction(message, form, action, acceptText, cancelText) {
-  console.log('confirmBulkAction called');
+
   
   // Crear el input hidden para la acción si no existe
   let actionInput = form.querySelector('input[name="action"]');
