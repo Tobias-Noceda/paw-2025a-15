@@ -30,7 +30,7 @@
             </a>
           </div>
           <p class="section-title" ><spring:message code="profileInfo.basic"/></p>
-          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" />
           <div class="patient-email-div">
             <p class="patient-email-label"><spring:message code="patient.details.email.label"/></p>
             <p class="patient-email"><c:out value="${patient.email}" escapeXml="true"/></p>
@@ -40,7 +40,7 @@
             <p class="patient-telephone"><c:out value="${patient.telephone}" escapeXml="true"/></p>
           </div>
         </div>
-        <div class="patient-info"><!--TODO: just a placeholder for patientDetails, needs proper styling-->
+        <div class="patient-info">
           <c:if test="${allowedAccessLevels.contains('VIEW_BASIC')}">
           <div class="basic">
             <div class="patient-email-div">
@@ -108,7 +108,7 @@
           </c:if>
           <c:if test="${allowedAccessLevels.contains('VIEW_HABITS')}">
           <p class="section-title" ><spring:message code="profileInfo.habits"/></p>
-          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" />
           <div class="habits">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.smokes"/></p>
@@ -153,7 +153,7 @@
           </c:if>
           <c:if test="${allowedAccessLevels.contains('VIEW_MEDICAL')}">
           <p class="section-title"><spring:message code="profileInfo.medical"/></p>
-          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" />
           <div class="med">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.meds"/></p>
@@ -192,7 +192,7 @@
           </c:if>
           <c:if test="${allowedAccessLevels.contains('VIEW_SOCIAL')}">
           <p class="section-title"><spring:message code="profileInfo.social"/></p>
-          <hr style="border: 1px solid #ccc; margin: 20px 0;" /><!--TODO: ver siesta bien esto con el estilo aca-->
+          <hr style="border: 1px solid #ccc; margin: 20px 0;" />
           <div class="lifestyle">
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.hobbies"/></p>

@@ -142,7 +142,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public void removeAppointment(long shiftId, LocalDate date, long doctorId, LocalTime startTime, LocalTime endTime) {
         DoctorSingleShift shift = dss.getShiftById(shiftId).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + shiftId + " does not exist!"));
-        if(shift.getDoctor().getId() != doctorId) throw new UnauthorizedException("User not authorized to remove this appointment");//TODO:check changed for hibernate(mostly using directly .getId() without checking first)
+        if(shift.getDoctor().getId() != doctorId) throw new UnauthorizedException("User not authorized to remove this appointment");
 
         addAppointment(shiftId, doctorId, date, startTime, endTime, null);//recreate the appointment with null detail to remove it from the free appointments list
         LOGGER.info("Doctor with id: {} has removed an appointment from their free appointments at shiftId: {} and date: {}", doctorId, shiftId, date);
