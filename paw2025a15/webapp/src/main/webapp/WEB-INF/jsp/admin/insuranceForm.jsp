@@ -16,86 +16,9 @@
     <link rel="icon" type="image/png" href="<c:url value='/favicon.ico'/>" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/css/base.css'/>">
+    <link rel="stylesheet" href="<c:url value='/css/insurance.css'/>">
     <style>
-        .admin-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0,123,255,.25);
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-right: 10px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .btn:hover {
-            opacity: 0.9;
-        }
-        .current-image {
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f8f9fa;
-        }
-        .current-image img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        .form-actions {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-        }
-        .page-header {
-            margin-bottom: 30px;
-        }
-        .page-header h1 {
-            color: #333;
-            margin-bottom: 5px;
-        }
+
 
     </style>
   </head>
@@ -113,7 +36,7 @@
       </div>
 
       <!-- Formulario -->
-      <div class="form-container">
+      <div class="insurance-form-container">
         <c:set var="formURL">
           <c:choose>
             <c:when test='${isEdit}'><c:url value='/admin/insurances/edit/${insurance.id}'/></c:when>
@@ -183,7 +106,7 @@
 
           <!-- Botones de acción -->
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="save-button">
               <c:choose>
                 <c:when test="${isEdit}"><spring:message code="admin.insurance.form.button.save"/></c:when>
                 <c:otherwise><spring:message code="admin.insurance.form.button.create"/></c:otherwise>
