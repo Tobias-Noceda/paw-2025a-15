@@ -152,13 +152,22 @@
     <p class="info-text"><spring:message code="studies.info.clickDoctorToManage"/></p>
     
     <!-- Botón de desautorizar todos -->
+    <c:set var="confirmationMessage">
+      <spring:message code="studies.deauthorizeAll.confirm" />
+    </c:set>
+    <c:set var="confirmText">
+      <spring:message code="confirmDialog.yes"/>
+    </c:set>
+    <c:set var="cancelText">
+      <spring:message code="confirmDialog.no"/>
+    </c:set>
     <c:if test="${not empty patient.authorizedDoctors}">
       <div class="bulk-actions" style="margin-bottom: 1rem;">
         <c:url value="/patientDeAuthAllDoctors" var="authActionsUrl" />
         <form action="${authActionsUrl}" method="post" style="display: inline;">
           <button type="button" class="deauthorize-button" 
-                  onclick="confirmBulkAction('<spring:message code="studies.deauthorizeAll.confirm"/>', this.form, 'deauthorize', '<spring:message code="confirmDialog.yes"/>', '<spring:message code="confirmDialog.no"/>')">
-            <spring:message code="studies.deauthorizeAll"/>
+              onclick="openConfirmDialog(this.form, '${confirmationMessage}',null, '${confirmText}', '${cancelText}')">
+          <spring:message code="studies.deauthorizeAll"/>
           </button>
         </form>
       </div>
