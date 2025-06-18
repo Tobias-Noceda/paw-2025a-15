@@ -39,7 +39,7 @@
         <!-- Cabecera -->
         <div class="image-header" style="display: flex; flex-direction: column; align-items: left;">
           <div class="card" style="display: flex; flex-direction: column; align-items: left;">
-            <div class="profile-header"> 
+            <div class="profile-header">
               <div class="profile-image">
                 <div class="edit-image-wrapper">
                   <img
@@ -100,6 +100,11 @@
                   </form:label>
                   <c:forEach var="insurance" items="${obrasSocialesItems}">
                     <div class="insurance-btn">
+
+
+
+
+
                       <form:checkbox
                         path="insurances"
                         id="insurance-${insurance.id}"
@@ -123,21 +128,22 @@
                 <form:errors path="address" cssClass="error-box" element="div"/>
               </div>
 
-              <div class="section-header  ">
+
                 <h3 class="section-subtitle">
                   <spring:message code="doctorProfile.updateSchedule"/>
                 </h3>
-                <input
-                        type="checkbox"
-                        class="switch-checkbox"
-                        onclick="setUpdateScheduleFields()"
-                />
+
+                <label class="switch">
+                  <input type="checkbox"  onclick="setUpdateScheduleFields()">
+                  <span class="slider round"></span>
+                </label>
+
                 <form:hidden
                         path="updateSchedules"
                         id="updateScheduleSwitch"
                         value="${profileForm.updateSchedules ? 'true' : 'false'}"
                 />
-              </div>
+
 
 
               <div class="field-container full-width">
@@ -207,7 +213,7 @@
 
               <form:hidden path="keepTurns" id="keepTurnsCheckBox" value="true" checked="true"/>
             </sec:authorize>
-          
+
             <sec:authorize access="hasRole('ROLE_PATIENT')">
               <form:hidden path="insurances" value=""/>
               <form:hidden path="address" value="N/A"/>
@@ -442,10 +448,10 @@
           <spring:message code="doctorProfile.updateSchedule.cancel"/>
         </c:set>
         <!-- Botón guardar -->
-        <div class="save-container" style="margin-top: 15px;">
+          <div class="save-container" style="margin-top: 15px;">
           <button
+            class="filter-button"
             type="button"
-            class="btn-primary"
             onclick="updateScheduleModal(this.form, '${updatePrimaryText}', '${updateSecondaryText}', '${updateRemoveText}', '${updateCancelRemoveText}', '${cancelUpdateText}')"
           >
             <spring:message code="profile.save.button"/>
