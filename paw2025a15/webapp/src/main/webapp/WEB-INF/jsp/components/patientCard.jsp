@@ -2,10 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 
 <c:set var="redirectLink"
-       value="${pageContext.request.contextPath}/patient/<c:out value='${param.id}' escapeXml='true' />" />
+       value="${pageContext.request.contextPath}/patient/${param.id}" />
 
 <div class="doctor-card patient-card">
-  <a href="<c:out value='${redirectLink}' escapeXml='true' />" class="doctor-card__link">
+  <a href="${redirectLink}" class="doctor-card__link">
 
     <!-- Avatar -->
     <div class="doctor-card__avatar">

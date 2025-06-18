@@ -54,7 +54,7 @@
                type="text"
                class="login-input"
                placeholder="you@example.com"
-               value="<c:out value='${param.username}' escapeXml='true' />" />
+               value="${param.username}" />
       </div>
 
       <!-- Password -->

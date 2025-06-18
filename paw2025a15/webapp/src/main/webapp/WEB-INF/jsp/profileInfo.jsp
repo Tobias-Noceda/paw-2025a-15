@@ -184,7 +184,7 @@
           <div class="field-container">
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
             <form:input
-                    value="<c:out value='${patientDetails.birthdate}' escapeXml='true' />"
+                    value="${patientDetails.birthdate}"
                     cssClass="input-field"
                     id="birthDate"
                     path="birthDate"

@@ -71,9 +71,7 @@
                 <tbody>
                   <c:forEach var="file" items="${study.files}">
                     <c:url value="/view-study/${study.id}/file/${file.id}" var="studyLink" />
-                    <c:set var="studyName">
-                      <spring:message code="studyType.${study.type}"/>_<c:out value="${study.studyDate}" escapeXml="true" />
-                    </c:set>
+                    <c:set var="studyName" value="${study.type}_${study.studyDate}" />
                     <tr class="study-row">
                       <td class="text-cell">
                         <spring:message code="fileType.${file.type}"/>
@@ -92,8 +90,8 @@
                         </a>
                         <a
                           class="download-button"
-                          href="<c:out value='${studyLink}' escapeXml='true' />"
-                          download="<c:out value='${studyName}' escapeXml='true' />"
+                          href="${studyLink}"
+                          download="${studyName}"
                           onclick="event.stopPropagation();"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">

@@ -60,10 +60,10 @@
                   </li>
 
                   <c:forEach var="insurance" items="${insurances}">
-                    <li class="option" data-value="<c:out value='${insurance.id}' escapeXml='true' />">
+                    <li class="option" data-value="${insurance.id}">
                       <img
                         src="<c:url value='/supersecret/insurance-picture/${insurance.id}'/>"
-                        alt="<c:out value='${insurance.name}' escapeXml='true' />"
+                        alt="${insurance.name}"
                         class="option-image"
                       />
                       <span class="option-text"><c:out value="${insurance.name}" escapeXml="true" /></span>

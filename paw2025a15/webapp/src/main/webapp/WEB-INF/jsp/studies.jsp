@@ -91,9 +91,7 @@
             <tbody>
               <c:forEach var="study" items="${patientStudies}">
                 <c:url value="/study-info/${study.id}" var="studyDetailLink" />
-                <c:set var="studyName">
-                  <spring:message code="studyType.${study.type}"/>_<c:out value="${study.studyDate}" escapeXml="true" />
-                </c:set>
+                <c:set var="studyName" value="${study.type}_${study.studyDate}" />
                 <tr class="study-row"
                     onclick="window.location='${studyDetailLink}'"
                 >
@@ -186,8 +184,8 @@
                 <td class="deauthorize-cell">
                   <c:url value="/patientAuthDoctor/${doctor.id}" var="deauthDoctorUrl" />
                   <form
-                    id="deauthDoctor_<c:out value='${doctor.id}' escapeXml='true' />"
-                    action="<c:out value='${deauthDoctorUrl}' escapeXml='true' />"
+                    id="deauthDoctor_${doctor.id}"
+                    action="${deauthDoctorUrl}"
                     method="post"
                   >
                     <button
@@ -195,10 +193,10 @@
                       name="action"
                       value="toggle"
                       class="deauthorize-button"
-                      data-confirmation="<c:out value='${confirmationText}' escapeXml='true'/>"
-                      data-button-text="<c:out value='${buttonText}' escapeXml='true'/>"
-                      data-cancel-text="<c:out value='${authCancelText}' escapeXml='true'/>"
-                      data-doctor-id="<c:out value='${doctor.id}' escapeXml='true'/>"
+                      data-confirmation="${confirmationText}"
+                      data-button-text="${buttonText}"
+                      data-cancel-text="${authCancelText}"
+                      data-doctor-id="${doctor.id}"
                       onclick="event.stopPropagation(); confirmDeauthDoctor(this.dataset.confirmation, null, this.dataset.buttonText, this.dataset.cancelText, this.name, this.value, this.dataset.doctorId);"
                     >
                       <c:out value="${buttonText}" escapeXml="true"/>

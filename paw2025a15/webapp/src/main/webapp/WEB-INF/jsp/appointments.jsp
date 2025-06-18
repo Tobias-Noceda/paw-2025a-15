@@ -151,9 +151,9 @@
               <c:forEach var="appointment" items="${doctorTakenAppointments}">
                 <c:url value="/patient/${appointment.patient.id}" var="patientUrl" />
                 <tr class="appointment-row" 
-                    data-patient-name="<c:out value='${appointment.patient.name}' escapeXml='true'/>"
-                    data-appointment-detail="<c:out value='${appointment.detail}' escapeXml='true'/>"
-                    data-patient-url="<c:out value='${patientUrl}' escapeXml='true'/>"
+                    data-patient-name="${appointment.patient.name}"
+                    data-appointment-detail="${appointment.detail}"
+                    data-patient-url="${patientUrl}"
                     onclick="openPatientDialog(this.dataset.patientName, this.dataset.appointmentDetail, this.dataset.patientUrl)" 
                     style="cursor: pointer;">
                   <c:set var="formattedDate">
