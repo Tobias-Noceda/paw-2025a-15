@@ -429,3 +429,21 @@ body {
     border-color: var(--clr-primary-hover);
     color: var(--clr-card);
 }
+
+.section-header {
+    display: flex;
+    align-items: center;      /* Alinea verticalmente al centro */
+    justify-content: space-between;  /* Empuja el h3 a la izquierda y el checkbox a la derecha */
+}
+
+.section-subtitle {
+    margin: 0;                /* Elimina márgenes por defecto */
+    /* si quieres un espacio fijo entre el texto y el checkbox, usa margin-right */
+    /* margin-right: 1rem; */
+}
+
+.switch-checkbox {
+    /* tamaño, márgenes, etc. */
+    margin-left: 1rem;
+    /* cualquier otro estilo que necesites */
+}
