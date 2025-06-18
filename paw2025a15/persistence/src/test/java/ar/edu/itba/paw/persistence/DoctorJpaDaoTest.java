@@ -758,4 +758,30 @@ public class DoctorJpaDaoTest {
         Assert.assertNotNull(dvpFound);        
     }
 
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql"})
+    public void testVacationsExists(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+
+        boolean result = doctorDao.vacationExists(DOC_ID, DV.getId().getStartDate(), DV.getId().getEndDate());
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+
+        Assert.assertTrue(result);
+        Assert.assertNotNull(dvFound);        
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testVacationsExistsNonexistent(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+
+        boolean result = doctorDao.vacationExists(DOC_ID, DV.getId().getStartDate(), DV.getId().getEndDate());
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+
+        Assert.assertFalse(result);
+        Assert.assertNull(dvFound);        
+    }
+
 }

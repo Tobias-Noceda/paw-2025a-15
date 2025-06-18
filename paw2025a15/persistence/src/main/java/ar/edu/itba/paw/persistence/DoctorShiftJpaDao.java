@@ -80,11 +80,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         for (DoctorSingleShift shift : shiftsToAdd) {
             shift.setIsActive(true);
             shift.setDoctor(doctor);
-            if (shift.getId() == null) {
-                em.persist(shift);
-            } else {
-                em.merge(shift);
-            }
+            em.persist(shift);
             doctor.addSingleShift(shift);
         }
         

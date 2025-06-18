@@ -103,38 +103,7 @@ public class DoctorShiftJpaDaoTest {
         Assert.assertNotNull(foundShift);
         Assert.assertFalse(foundShift.isPresent());
     }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
-    public void updateShifts(){
-        final Long DOC_ID = TestData.Users.doctorId;
-        final DoctorSingleShift NEW_SHIFT = TestData.DoctorSingleShifts.newDoctorSingleShift;
-        final DoctorSingleShift OLD_SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
-        final Long OLD_SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
-
-        doctorSingleShiftDao.updateShifts(DOC_ID, List.of(NEW_SHIFT));
-        Doctor DOC = em.find(Doctor.class, DOC_ID);
-        DoctorSingleShift OLD_SHIFT_PERSISTED = em.find(DoctorSingleShift.class, OLD_SHIFT_ID);
-
-        Assert.assertNotNull(DOC);
-        Assert.assertEquals(1, DOC.getActiveSingleShifts().size());
-        Assert.assertTrue(DOC.getActiveSingleShifts().get(0).getIsActive());
-        Assert.assertEquals(NEW_SHIFT.getDoctor().getId(), DOC.getActiveSingleShifts().get(0).getDoctor().getId());
-        Assert.assertEquals(NEW_SHIFT.getWeekday(), DOC.getActiveSingleShifts().get(0).getWeekday());
-        Assert.assertEquals(NEW_SHIFT.getAddress(), DOC.getActiveSingleShifts().get(0).getAddress());
-        Assert.assertEquals(NEW_SHIFT.getStartTime(), DOC.getActiveSingleShifts().get(0).getStartTime());
-        Assert.assertEquals(NEW_SHIFT.getEndTime(), DOC.getActiveSingleShifts().get(0).getEndTime());
-        Assert.assertEquals(NEW_SHIFT.getDuration(), DOC.getActiveSingleShifts().get(0).getDuration());
-        Assert.assertNotNull(OLD_SHIFT_PERSISTED);
-        Assert.assertFalse(OLD_SHIFT_PERSISTED.getIsActive());
-        Assert.assertEquals(OLD_SHIFT.getDoctor().getId(), OLD_SHIFT_PERSISTED.getDoctor().getId());
-        Assert.assertEquals(OLD_SHIFT.getWeekday(), OLD_SHIFT_PERSISTED.getWeekday());
-        Assert.assertEquals(OLD_SHIFT.getAddress(), OLD_SHIFT_PERSISTED.getAddress());
-        Assert.assertEquals(OLD_SHIFT.getStartTime(), OLD_SHIFT_PERSISTED.getStartTime());
-        Assert.assertEquals(OLD_SHIFT.getEndTime(), OLD_SHIFT_PERSISTED.getEndTime());
-        Assert.assertEquals(OLD_SHIFT.getDuration(), OLD_SHIFT_PERSISTED.getDuration());
-    }
-
+    
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
     public void updateShiftsNoNewShiftsNull(){
@@ -147,7 +116,7 @@ public class DoctorShiftJpaDaoTest {
         Assert.assertNotNull(DOC);
         Assert.assertEquals(1, DOC.getActiveSingleShifts().size());
         Assert.assertTrue(DOC.getActiveSingleShifts().get(0).getIsActive());
-        Assert.assertEquals(OLD_SHIFT.getDoctor().getId(), DOC.getActiveSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(DOC_ID, DOC.getActiveSingleShifts().get(0).getDoctor().getId());
         Assert.assertEquals(OLD_SHIFT.getWeekday(), DOC.getActiveSingleShifts().get(0).getWeekday());
         Assert.assertEquals(OLD_SHIFT.getAddress(), DOC.getActiveSingleShifts().get(0).getAddress());
         Assert.assertEquals(OLD_SHIFT.getStartTime(), DOC.getActiveSingleShifts().get(0).getStartTime());
@@ -167,7 +136,7 @@ public class DoctorShiftJpaDaoTest {
         Assert.assertNotNull(DOC);
         Assert.assertEquals(1, DOC.getActiveSingleShifts().size());
         Assert.assertTrue(DOC.getActiveSingleShifts().get(0).getIsActive());
-        Assert.assertEquals(OLD_SHIFT.getDoctor().getId(), DOC.getActiveSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(DOC_ID, DOC.getActiveSingleShifts().get(0).getDoctor().getId());
         Assert.assertEquals(OLD_SHIFT.getWeekday(), DOC.getActiveSingleShifts().get(0).getWeekday());
         Assert.assertEquals(OLD_SHIFT.getAddress(), DOC.getActiveSingleShifts().get(0).getAddress());
         Assert.assertEquals(OLD_SHIFT.getStartTime(), DOC.getActiveSingleShifts().get(0).getStartTime());

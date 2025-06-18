@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
@@ -32,7 +33,7 @@ public class DoctorShiftServiceImplTest {
     private DoctorShiftServiceImpl dss;
 
     @Mock
-    private DoctorDao doctorDaoMock;
+    private DoctorShiftDao doctorDaoMock;
 
     @Mock
     private DoctorService ds;
@@ -69,7 +70,7 @@ public class DoctorShiftServiceImplTest {
 
     @Test
     public void testUpdateShiftsNonexistentDoc(){
-        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             dss.updateShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, SLOT, false)
