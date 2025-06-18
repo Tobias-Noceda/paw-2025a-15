@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +19,6 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.File;
@@ -142,32 +140,6 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount) {
-        List<DoctorSingleShift> shifts = new ArrayList<>();
-        Doctor doctor = getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        for (WeekdayEnum weekday : weekdays) {
-            shifts.add(new DoctorSingleShift(
-                doctor,
-                weekday,
-                address,
-                startTime,
-                endTime,
-                amount
-            ));
-        }
-        updateShifts(doctorId, shifts);
-    }
-
-    @Transactional
-    @Override
-    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
-        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        doctorDao.updateShifts(doctorId, newShifts);
-        LOGGER.info("Updated shifts for doctor with id: {}", doctorId);
-    }
-
-    @Transactional
-    @Override
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Start date and end date cannot be null.");
@@ -208,5 +180,10 @@ public class DoctorServiceImpl implements DoctorService {
     public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
         doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorDao.getDoctorVacationsFuture(doctorId);
+    }
+
+    @Override
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
+        return doctorDao.vacationExists(doctorId, startDate, endDate);
     }
 }

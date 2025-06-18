@@ -111,13 +111,18 @@ public class Doctor extends User {
     }
 
     public List<DoctorSingleShift> getSingleShifts() {
+        return singleShifts;
+    }
+
+    public List<DoctorSingleShift> getActiveSingleShifts() {
         return singleShifts.stream()
-                .filter(shift -> shift.getIsActive())
+                .filter(DoctorSingleShift::getIsActive)
+                .sorted((shift1, shift2) -> shift1.getWeekday().compareTo(shift2.getWeekday()))
                 .toList();
     }
 
     public Schedule getSchedules(){
-        List<DoctorSingleShift> shifts = getSingleShifts();
+        List<DoctorSingleShift> shifts = getActiveSingleShifts();
         List<WeekdayEnum> weekdays = new ArrayList<>();
         for(DoctorSingleShift shift : shifts){
             if(!weekdays.contains(shift.getWeekday()))
@@ -148,6 +153,7 @@ public class Doctor extends User {
 
     public List<WeekdayEnum> getAvailableDays() {
         return singleShifts.stream()
+                .filter(DoctorSingleShift::getIsActive)
                 .map(DoctorSingleShift::getWeekday)
                 .distinct()
                 .toList();

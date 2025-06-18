@@ -62,8 +62,7 @@ public class AvailableTurn {
         AvailableTurn o = (AvailableTurn) other;
 
         return (this.date.equals(o.date)) && (this.startTime.equals(o.startTime))
-        && (this.endTime.equals(o.endTime)) && (this.address.equals(o.address))
-        && (this.shiftId==o.shiftId);
+        && (this.endTime.equals(o.endTime)) && (this.shiftId.equals(o.shiftId));
     }
 
     @Override

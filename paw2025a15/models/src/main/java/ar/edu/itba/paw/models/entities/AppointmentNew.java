@@ -31,6 +31,7 @@ public class AppointmentNew {
     @JoinColumn(name = "patient_id", referencedColumnName = "user_id", nullable = false)
     private User patient;
 
+
     public AppointmentNew(){
         //just for hibernate
     }

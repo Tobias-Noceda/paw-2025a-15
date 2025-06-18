@@ -52,7 +52,7 @@
             </div>
             <div class="doctor-address-div">
               <p class="doctor-address-label"><spring:message code="doctor.details.address.label"/></p>
-              <p class="doctor-address"><c:out value="${doctor.singleShifts[0].address}" escapeXml="true"/></p>
+              <p class="doctor-address"><c:out value="${doctor.activeSingleShifts[0].address}" escapeXml="true"/></p>
             </div>
             <div class="doctor-license-div">
               <p class="doctor-license-label"><spring:message code="doctor.details.license.label"/></p>
@@ -61,7 +61,7 @@
             <p class="section-title"><spring:message code="doctor.details.schedule.label"/></p>
             <div class="doctor-schedule">
               <ul>
-                <c:forEach var="schedule" items="${doctor.singleShifts}">
+                <c:forEach var="schedule" items="${doctor.activeSingleShifts}">
                   <c:set var="myWeekday">
                     <spring:message code="weekday.${schedule.weekday.name}"/>
                   </c:set>

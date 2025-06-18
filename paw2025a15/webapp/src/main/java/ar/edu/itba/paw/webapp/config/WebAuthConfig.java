@@ -76,6 +76,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/", "/home").permitAll()
                 .requestMatchers("/supersecret/user-profile-pic/{userId}").permitAll()
                 .requestMatchers("/supersecret/insurance-picture/{userId}").permitAll()
+                .regexMatchers("/profile").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
                 .requestMatchers("/patient/{patientId}")
@@ -84,6 +85,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/403").permitAll()
                 // appointments
                 .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
+                .requestMatchers("/vacations").hasRole("DOCTOR")
+                .requestMatchers("/createVacations").hasRole("DOCTOR")
                 .requestMatchers("/cancelAppointment").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/takeAppointment").hasRole("PATIENT")
                 .requestMatchers("/removeAppointment").hasRole("DOCTOR")

@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -33,10 +31,6 @@ public interface DoctorService {
 
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 
-    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);
-
-    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
-
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
     public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
@@ -44,4 +38,6 @@ public interface DoctorService {
     public List<DoctorVacation> getDoctorVacationsPast(long doctorId);
 
     public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);
+
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate);
 }

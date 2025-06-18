@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.models.AvailableTurn;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
@@ -28,6 +30,9 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
 
     @Autowired
     private DoctorShiftDao doctorShiftDao;
+
+    @Autowired
+    private AppointmentService as;
 
     @Autowired
     private DoctorService ds;
@@ -57,6 +62,32 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     @Override
     public Optional<DoctorSingleShift> getShiftById(long id) {
         return doctorShiftDao.getShiftById(id);
+    }
+
+    @Transactional
+    @Override
+    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount, boolean keepTurns) {
+        List<DoctorSingleShift> shifts = new ArrayList<>();
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        for (WeekdayEnum weekday : weekdays) {
+            shifts.add(new DoctorSingleShift(
+                doctor,
+                weekday,
+                address,
+                startTime,
+                endTime,
+                amount
+            ));
+        }
+        doctorShiftDao.updateShifts(doctorId, shifts);
+        LOGGER.info("Updated shifts for doctor with id: {}", doctorId);
+
+        if(!keepTurns){
+            List<AppointmentNew> appointments = as.getFutureAppointmentDataByDoctorId(doctorId);
+            for(AppointmentNew ap : appointments){
+                as.cancelAppointment(ap.getId().getShiftId(),ap.getDate(),ap.getId().getStartTime(), ap.getId().getEndTime(), doctorId);
+            }
+        }
     }
 
     @Transactional(readOnly = true)

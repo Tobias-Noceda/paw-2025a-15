@@ -46,11 +46,44 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
 
     @Override
     public void doctorSetShifts(Doctor doctor, List<DoctorSingleShift> shifts) {
+        if (doctor == null || shifts == null || shifts.isEmpty()) return;
+        
         List<DoctorSingleShift> managedShifts = new ArrayList<>();
-        for (DoctorSingleShift shift : shifts) {
+        
+        for(DoctorSingleShift shift : shifts) {
             managedShifts.add(em.merge(shift));
         }
+
         doctor.setSingleShifts(managedShifts);
+        em.merge(doctor);
+    }
+
+    @Override
+    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if (doctor == null || newShifts == null || newShifts.isEmpty()) return;
+
+        List<DoctorSingleShift> shiftsToAdd = new ArrayList<>(newShifts);
+        // setAll existing shifts' isActive to false
+        for (DoctorSingleShift shift : doctor.getSingleShifts()) {
+            if (newShifts.contains(shift)) {
+                // If the shift is in the new shifts, we keep it active
+                shift.setIsActive(true);
+                shiftsToAdd.remove(shift); // Remove it from the list of shifts to add
+            } else {
+                // Otherwise, we deactivate it
+                shift.setIsActive(false);
+            }
+        }
+        
+        // Add new shifts
+        for (DoctorSingleShift shift : shiftsToAdd) {
+            shift.setIsActive(true);
+            shift.setDoctor(doctor);
+            em.persist(shift);
+            doctor.addSingleShift(shift);
+        }
+        
         em.merge(doctor);
     }
 
@@ -110,7 +143,7 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         if (date.isEqual(LocalDate.now()) && LocalTime.now().isAfter(LocalTime.of(23, 59))) {
             return Collections.emptyList();
         }
-        if (doctor.getSingleShifts() == null || doctor.getSingleShifts().isEmpty()) {
+        if (doctor.getActiveSingleShifts() == null || doctor.getActiveSingleShifts().isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -152,12 +185,12 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
             """
                 FROM AppointmentNew a 
                 WHERE a.id.date = :date 
-                AND a.id.shiftId = :shiftId 
+                AND a.shift.doctor.id = :doctorId
                 ORDER BY a.id.startTime ASC
             """,
             AppointmentNew.class)
                 .setParameter("date", date)
-                .setParameter("shiftId", dss.getId())
+                .setParameter("doctorId", doctor.getId())
                 .getResultList();
 
         return getAvailableTurnsByShift(dss, takenAppointments, date);

@@ -1,0 +1,41 @@
+package ar.edu.itba.paw.webapp.form;
+
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import ar.edu.itba.paw.webapp.form.constraints.ValidVacation;
+
+@ValidVacation(message = "{form.vacation.invalid}")
+public class VacationForm {
+
+    private boolean canceling = false;
+
+    private Long doctorId;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate startDate;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate endDate;
+
+    public boolean isCanceling() { return canceling; }
+
+    public void setCanceling(boolean canceling) { this.canceling = canceling; }
+
+    public Long getDoctorId() { return doctorId; }
+
+    public void setDoctorId(Long doctorId) { this.doctorId = doctorId; }
+
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+}

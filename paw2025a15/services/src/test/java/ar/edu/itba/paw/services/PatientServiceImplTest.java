@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -64,6 +65,9 @@ public class PatientServiceImplTest {
     @Mock
     private FileService fs;
 
+    @Mock
+    private InsuranceService is;
+
     @Test
     public void testCreatePatientExistentEmail(){
         Mockito.when(us.getUserByEmail(Mockito.eq(PAT_EMAIL))).thenReturn(Optional.of(PATIENT));
@@ -97,6 +101,18 @@ public class PatientServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNonexistentInsurance(){
+        final Long INSURANCE_ID = 0L;
+        PATIENT.setId(PATIENT_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, INSURANCE_ID, null)
         );
     }
 

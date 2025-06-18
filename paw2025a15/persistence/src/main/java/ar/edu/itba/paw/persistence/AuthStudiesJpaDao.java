@@ -95,8 +95,12 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
         if (doctorIds.isEmpty()) return;
         for (Long doctorId : doctorIds) {
             Doctor doctor = em.find(Doctor.class, doctorId);
-            AuthStudy authStudy = new AuthStudy(doctor, study);
-            em.persist(authStudy);
+            AuthStudy existing = em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId));
+            if (existing == null) {
+                AuthStudy authStudy = new AuthStudy(doctor, study);
+                em.persist(authStudy);
+            }
+
         }
     }
 

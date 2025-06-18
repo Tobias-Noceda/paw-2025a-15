@@ -20,6 +20,7 @@ import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
 @ControllerAdvice
 public class ErrorControllerAdvice {
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
         IllegalArgumentException.class,

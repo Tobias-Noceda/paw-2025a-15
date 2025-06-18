@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -32,8 +31,6 @@ public interface DoctorDao {
 
     public boolean licenceExists(String licence);
 
-    public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
-
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
     public void deleteDoctorVacation(DoctorVacationId dvId);
@@ -41,4 +38,6 @@ public interface DoctorDao {
     public List<DoctorVacation> getDoctorVacationsPast(long doctorId);
 
     public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);
+
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate);
 }
