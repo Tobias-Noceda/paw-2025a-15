@@ -25,7 +25,7 @@
       id="cancelButton"
       type="button"
       class="cancel-button"
-      onclick="closeConfirmDialog()"
+      onclick="closeDeleteDialog()"
     >
       <spring:message code="appointments.dismiss"/>
     </button>
