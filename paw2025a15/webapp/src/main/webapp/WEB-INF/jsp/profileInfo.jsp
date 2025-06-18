@@ -123,7 +123,7 @@
                 <form:errors path="address" cssClass="error-box" element="div"/>
               </div>
 
-              <div class="section-header">
+              <div class="section-header  ">
                 <h3 class="section-subtitle">
                   <spring:message code="doctorProfile.updateSchedule"/>
                 </h3>
