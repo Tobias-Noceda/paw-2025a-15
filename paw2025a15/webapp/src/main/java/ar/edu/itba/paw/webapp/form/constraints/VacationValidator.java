@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.time.LocalDate;
 
 public class VacationValidator implements ConstraintValidator<ValidVacation, VacationForm> {
     @Autowired
@@ -18,6 +19,7 @@ public class VacationValidator implements ConstraintValidator<ValidVacation, Vac
         if (form.getStartDate() == null || form.getEndDate() == null) {
             return false;
         }
-        return form.getEndDate().isAfter(form.getStartDate()) && !ds.vacationExists(form.getDoctorId(), form.getStartDate(), form.getEndDate());
+
+        return form.getStartDate().isAfter(LocalDate.now()) && form.getEndDate().isAfter(form.getStartDate()) && !ds.vacationExists(form.getDoctorId(), form.getStartDate(), form.getEndDate());
     }
 }

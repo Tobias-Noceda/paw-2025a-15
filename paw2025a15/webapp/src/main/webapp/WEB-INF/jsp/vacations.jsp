@@ -53,7 +53,6 @@
             <div class="vacation-form">
 
 
-            <form:errors path="*" cssClass="error-box" element="div"/>
                 <div class="form-group">
 
                     <form:label path="startDate">
@@ -92,6 +91,8 @@
                 </button>
 
             </div>
+
+            <form:errors path="*" cssClass="error-box" element="div"/>
 
 
         </form:form>
