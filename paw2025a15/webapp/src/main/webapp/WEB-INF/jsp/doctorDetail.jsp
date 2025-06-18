@@ -133,7 +133,7 @@
               <spring:message code="doctorDetail.update.confirm.social" var="msgSocial"/>
               <spring:message code="doctorDetail.update.confirm.extra" var="msgExtra"/>
               <c:set var="confirmationSecondaryTextUpdate">
-                <ul><li><c:out value="${msgHabits}" escapeXml="true"/></li><li><c:out value="${msgMedical}" escapeXml="true"/></li><li><c:out value="${msgSocial}" escapeXml="true"/></li></ul><c:out value="${msgExtra}" escapeXml="true"/>    
+                <ul><li>${msgHabits}</li><li>${msgMedical}</li><li>${msgSocial}</li></ul>${msgExtra}    
               </c:set>
               <div class="action-buttons">
 

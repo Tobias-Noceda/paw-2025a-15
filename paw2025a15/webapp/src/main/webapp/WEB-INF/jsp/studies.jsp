@@ -206,7 +206,8 @@
 
                   <c:out value="${doctor.name}" escapeXml="true"/>
 
-                </td>             
+                </td>
+
                 <td class="text-cell">
                   <spring:message code="specialty.${doctor.specialty}"/>
                 </td>
@@ -222,11 +223,7 @@
                       name="action"
                       value="toggle"
                       class="deauthorize-button"
-                      data-confirmation="${confirmationText}"
-                      data-button-text="${buttonText}"
-                      data-cancel-text="${authCancelText}"
-                      data-doctor-id="${doctor.id}"
-                      onclick="event.stopPropagation(); confirmDeauthDoctor(this.dataset.confirmation, null, this.dataset.buttonText, this.dataset.cancelText, this.name, this.value, this.dataset.doctorId);"
+                      onclick="event.stopPropagation(); confirmDeauthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value, ${doctor.id});"
                     >
                       <c:out value="${buttonText}" escapeXml="true"/>
                     </button>

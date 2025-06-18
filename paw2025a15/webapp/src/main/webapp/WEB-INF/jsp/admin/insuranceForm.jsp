@@ -130,7 +130,7 @@
           <!-- Campo nombre -->
           <div class="form-group">
             <c:set var="currentName">
-              <c:if test='${isEdit}'>${insurance.name}</c:if>
+              <c:if test='${isEdit}'><c:out value='${insurance.name}' escapeXml='true'/></c:if>
             </c:set>
             <form:label path="name"><spring:message code="admin.insurance.form.name"/></form:label>
             <c:set var="placeholderText">

@@ -21,10 +21,10 @@
         <c:out value="${param.patientName}" escapeXml="true" />
       </h3>
       <p class="patient-card__contacts">
-        <strong>Email:</strong> <c:out value="${param.email}" escapeXml="true" />
+        <strong>Email:</strong> ${param.email}
       </p>
       <p class="patient-card__contacts">
-        <strong>Tel:</strong> <c:out value="${param.telephone}" escapeXml="true" />
+        <strong>Tel:</strong> ${param.telephone}
       </p>
     </div>
 

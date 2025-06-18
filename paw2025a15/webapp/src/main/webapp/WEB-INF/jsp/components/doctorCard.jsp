@@ -25,7 +25,7 @@
         <spring:message code="specialty.${param.specialty}"/>
       </p>
       <p class="doctor-card__insurances">
-        <c:out value="${fn:replace(fn:replace(param.insurances,'[',''),']','')}" escapeXml="true" />
+        ${fn:replace(fn:replace(param.insurances,'[',''),']','')}
       </p>
     </div>
 
