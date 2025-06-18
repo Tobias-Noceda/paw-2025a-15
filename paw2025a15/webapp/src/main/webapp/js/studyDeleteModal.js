@@ -28,7 +28,7 @@ function confirmStudyDelete(url, dateText, commentText) {
   return false;
 }
 
-function closeConfirmDialog() {
+function closeDeleteDialog() {
   document.body.classList.remove('dialog-opened');
   const dialog = document.getElementById('studyDeleteDialog');
   dialog.close();

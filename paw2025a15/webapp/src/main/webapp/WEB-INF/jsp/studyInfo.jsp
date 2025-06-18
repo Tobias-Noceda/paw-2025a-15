@@ -53,9 +53,16 @@
             <c:set var="studyDate">
               <fmt:formatDate value="${study.studyDateAsDate}" dateStyle="short"/>
             </c:set>
-            <c:set var="studyComment">
-              <c:out value="${study.comment}" escapeXml="true"/>
-            </c:set>
+            <c:choose>
+              <c:when test="${not empty study.comment}">
+                <c:set var="studyComment" value="${study.comment}" />
+              </c:when>
+              <c:otherwise>
+                <c:set var="studyComment">
+                  <spring:message code="profileInfo.notProvided"/>
+                </c:set>
+              </c:otherwise>
+            </c:choose>
             <c:set var="dateText">
               <spring:message code="study.delete.date" arguments="${studyDate}"/>
             </c:set>
