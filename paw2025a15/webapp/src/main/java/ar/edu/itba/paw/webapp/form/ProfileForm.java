@@ -31,7 +31,7 @@ public class ProfileForm {
         this.insuranceNumber = "";
         this.insurances = List.of();
         this.updateSchedules = false;
-        this.schedules = new Schedule();
+        this.schedules = null;
         this.address = "";
         this.amount = 0;
         this.keepTurns = false;
