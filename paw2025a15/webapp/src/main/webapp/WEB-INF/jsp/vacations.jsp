@@ -36,67 +36,69 @@
 
     <!-- FORMULARIO DE NUEVA VACACIÓN EN “vacation-card” -->
 
-    <div class="vacation-card">
+    <div class="form-container">
+        <div class="vacation-card">
 
-        <h3 class="table-title">
+            <h3 class="table-title">
 
-            <spring:message code="vacations.create.title"/>
+                <spring:message code="vacations.create.title"/>
 
-        </h3>
-
-
-        <c:url var="saveVacationUrl" value="/createVacations"/>
-        <form:form modelAttribute="vacationForm"
-                   action="${saveVacationUrl}"
-                   method="post">
-            <form:hidden path="doctorId" />
-            <div class="vacation-form">
+            </h3>
 
 
-                <div class="form-group">
+            <c:url var="saveVacationUrl" value="/createVacations"/>
+            <form:form modelAttribute="vacationForm"
+                       action="${saveVacationUrl}"
+                       method="post">
+                <form:hidden path="doctorId"/>
+                <div class="vacation-form">
 
-                    <form:label path="startDate">
 
-                        <spring:message code="vacations.table.startDate" />
+                    <div class="form-group">
 
-                    </form:label>
+                        <form:label path="startDate">
 
-                    <form:input path="startDate" type="date" cssClass="input-field"/>
+                            <spring:message code="vacations.table.startDate"/>
 
-                    <form:errors path="startDate" cssClass="error-text"/>
+                        </form:label>
+
+                        <form:input path="startDate" type="date" cssClass="input-field"/>
+                        <form:errors path="startDate" cssClass="error-box"/>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <form:label path="endDate">
+
+                            <spring:message code="vacations.table.endDate"/>
+
+                        </form:label>
+
+                        <form:input path="endDate" type="date" cssClass="input-field"/>
+
+                        <form:errors path="endDate" cssClass="error-text"/>
+
+                    </div>
+
+
+                    <!-- Submit -->
+
+                    <button type="button" class="confirm-button"
+                            onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationVacationMessage}', null, '${confirmVacationText}', '${cancelText}')">
+
+                        <spring:message code="vacations.create.submit"/>
+
+                    </button>
 
                 </div>
 
-                <div class="form-group">
-
-                    <form:label path="endDate">
-
-                        <spring:message code="vacations.table.endDate" />
-
-                    </form:label>
-
-                    <form:input path="endDate" type="date" cssClass="input-field"/>
-
-                    <form:errors path="endDate" cssClass="error-text"/>
-
-                </div>
+                <form:errors path="*" cssClass="error-box" element="div"/>
 
 
-                <!-- Submit -->
+            </form:form>
 
-                <button type="button" class="navigation-button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationVacationMessage}', null, '${confirmVacationText}', '${cancelText}')">
-
-                    <spring:message code="vacations.create.submit" />
-
-                </button>
-
-            </div>
-
-            <form:errors path="*" cssClass="error-box" element="div"/>
-
-
-        </form:form>
-
+        </div>
     </div>
 
     <!-- DOS TABLAS EN 2 COLUMNAS: FUTURAS Y PASADAS -->

@@ -1,7 +1,17 @@
 :root {
 
     --page-side-padding: 24px;    /* el padding que tiene .container a los lados */
-
+    --font-family: 'Inter', sans-serif;
+    --clr-bg: #d8eeff;
+    --clr-card: #ffffff;
+    --clr-primary: #4f83cc;
+    --clr-primary-hover: #3b6fa8;
+    --clr-text: #101828;
+    --clr-text-muted: #667085;
+    --clr-error-bg: #fdecea;
+    --clr-error-text: #b42318;
+    --radius: 12px;
+    --transition: 0.2s ease-in-out;
 
 }
 
@@ -20,6 +30,16 @@ body {
     gap: 20px;
     padding: 15px;
     min-height: calc(100vh - 110px);
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+.form-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+    padding: 15px;
     align-items: stretch;
     box-sizing: border-box;
 }
@@ -233,13 +253,13 @@ body {
     color: white;
 }
 
+/* Reutilizamos tu error/success-box si quieres */
 .error-box {
+    margin-top: 5px;
     background-color: var(--clr-error-bg);
     color: var(--clr-error-text);
     padding: 12px;
     border-radius: 6px;
-    margin-bottom: 20px;
-    text-align: left;
     font-size: 0.9rem;
 }
 
@@ -380,6 +400,7 @@ body {
     font-weight: 400;
     box-sizing: border-box;
 }
+
 
 
 .input-field {
@@ -630,18 +651,14 @@ dialog {
 
 .vacation-card {
 
-    background: #ffffff;
-
-    border-radius: 8px;
-
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-
-    padding: 24px;
-
-    /* reproducimos el mismo padding/margen que tu .container y tablas */
-
-    margin: 0 auto 32px;
-
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: hidden;
 
 }
 
