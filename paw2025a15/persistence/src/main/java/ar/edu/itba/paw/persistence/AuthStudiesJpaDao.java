@@ -68,12 +68,47 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
         query.setParameter("patientId", patientId);
         List<Study> studies = query.getResultList();
 
-        for(Study study : studies){//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
+        for(Study study : studies){
             AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, study.getId()));
             if(as!=null) em.remove(as);
         }
         em.flush();
         em.clear();
+    }
+
+    @Override
+    public void unauthAllStudiesForAllDocsForPatientId(long patientId) {
+        em.createQuery("DELETE FROM AuthStudy ad WHERE ad.study.id IN (SELECT s.id FROM Study s WHERE s.patient.id = :patientId)")
+            .setParameter("patientId", patientId)
+            .executeUpdate();
+    }
+
+    @Override
+    public void authStudyForAllAuthDoctors(long studyId) {
+        Study study = em.find(Study.class, studyId);
+        if (study == null) return;
+        List<Long> doctorIds = em.createQuery(
+            "SELECT ad.doctor.id FROM AuthDoctor ad WHERE ad.patient.id = :patientId",
+            Long.class)
+            .setParameter("patientId", study.getPatient().getId())
+            .getResultList();
+        if (doctorIds.isEmpty()) return;
+        for (Long doctorId : doctorIds) {
+            Doctor doctor = em.find(Doctor.class, doctorId);
+            AuthStudy existing = em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId));
+            if (existing == null) {
+                AuthStudy authStudy = new AuthStudy(doctor, study);
+                em.persist(authStudy);
+            }
+
+        }
+    }
+
+    @Override
+    public void deauthStudyForAllDoctors(long studyId) {
+        em.createQuery("DELETE FROM AuthStudy ad WHERE ad.study.id = :studyId")
+            .setParameter("studyId", studyId)
+            .executeUpdate();
     }
     
 }

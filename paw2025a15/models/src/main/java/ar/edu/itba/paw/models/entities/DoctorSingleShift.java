@@ -56,6 +56,9 @@ public class DoctorSingleShift {
     @Column(name = "shift_duration", nullable = false)
     private int duration; // Duration in minutes
 
+    @Column(name = "shift_is_active", nullable = false)
+    private boolean isActive;
+
     @OneToMany(orphanRemoval = false, mappedBy = "shift", fetch = FetchType.LAZY)
     private List<AppointmentNew> appointments;
 
@@ -70,6 +73,7 @@ public class DoctorSingleShift {
         this.startTime = startTime;
         this.endTime = endTime;
         this.duration = duration;
+        this.isActive = true; // Default to active
     }
 
     public Long getId(){
@@ -128,6 +132,14 @@ public class DoctorSingleShift {
         this.duration = duration;
     }
 
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean active) {
+        isActive = active;
+    }
+
     public List<AppointmentNew> getAppointments() {
         return appointments;
     }
@@ -144,7 +156,12 @@ public class DoctorSingleShift {
 
         DoctorSingleShift o = (DoctorSingleShift) other;
 
-        return (this.id.equals(o.id));
+        return doctor.getId().equals(o.doctor.getId()) &&
+            weekday.equals(o.weekday) &&
+            address.equals(o.address) &&
+            startTime.equals(o.startTime) &&
+            endTime.equals(o.endTime) &&
+            duration == o.duration;
     }
 
     @Override

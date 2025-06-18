@@ -32,47 +32,6 @@ public class UserJpaDaoTest {
 
     @PersistenceContext
     private EntityManager em;
-/*TODO:rethink
-    @Test
-    public void testCreate(){
-        final String USEREMAIL = TestData.Users.newPatient.getEmail();
-        final String PASSWORD = TestData.Users.newPatient.getPassword();
-        final String USERNAME = TestData.Users.newPatient.getName();
-        final String USER_TELEPHONE = TestData.Users.newPatient.getTelephone();
-        final UserRoleEnum USER_ROLE = TestData.Users.newPatient.getRole();
-        final File PICTURE = TestData.Users.newPatient.getPicture();
-        PICTURE.setId(TestData.Images.validImageId);
-        final LocaleEnum USER_LOCALE = TestData.Users.newPatient.getLocale();
-        
-        User user = userDao.create(USEREMAIL, PASSWORD, USERNAME, USER_TELEPHONE, USER_ROLE, PICTURE, USER_LOCALE);
-        User userPersisted = em.find(User.class, user.getId());
-
-        Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USEREMAIL, userPersisted.getEmail());
-        Assert.assertEquals(PASSWORD, userPersisted.getPassword());
-        Assert.assertEquals(USERNAME, userPersisted.getName());
-        Assert.assertEquals(USER_TELEPHONE, userPersisted.getTelephone());
-        Assert.assertEquals(USER_ROLE, userPersisted.getRole());
-        Assert.assertEquals(PICTURE, userPersisted.getPicture());
-        Assert.assertEquals(USER_LOCALE, userPersisted.getLocale());
-    }*/
-/*TODO:rethink
-    @Test
-    public void testCreateExistentEmail(){
-        final String USEREMAIL = TestData.Users.patient.getEmail();
-        final String PASSWORD = TestData.Users.newPatient.getPassword();
-        final String USERNAME = TestData.Users.newPatient.getName();
-        final String USER_TELEPHONE = TestData.Users.newPatient.getTelephone();
-        final UserRoleEnum USER_ROLE = TestData.Users.newPatient.getRole();
-        final File PICTURE = TestData.Users.newPatient.getPicture();
-        PICTURE.setId(TestData.Images.validImageId);
-        final LocaleEnum USER_LOCALE = TestData.Users.newPatient.getLocale();
-
-        Assert.assertThrows(PersistenceException.class, () -> {
-            userDao.create(USEREMAIL, PASSWORD, USERNAME, USER_TELEPHONE, USER_ROLE, PICTURE, USER_LOCALE);
-            em.flush();
-        });
-    }*/
 
     @Test
     public void testGetUserById(){
@@ -86,6 +45,13 @@ public class UserJpaDaoTest {
         Assert.assertNotNull(foundUser);
         Assert.assertTrue(foundUser.isPresent());
         Assert.assertEquals(USER, foundUser.get());
+        Assert.assertEquals(USER.getEmail(), foundUser.get().getEmail());
+        Assert.assertEquals(USER.getPassword(), foundUser.get().getPassword());
+        Assert.assertEquals(USER.getName(), foundUser.get().getName());
+        Assert.assertEquals(USER.getRole(), foundUser.get().getRole());
+        Assert.assertEquals(USER.getTelephone(), foundUser.get().getTelephone());
+        Assert.assertEquals(USER.getLocale(), foundUser.get().getLocale());
+        Assert.assertEquals(USER.getPicture().getId(), foundUser.get().getPicture().getId());
     }
 
     @Test
@@ -111,6 +77,31 @@ public class UserJpaDaoTest {
         Assert.assertNotNull(foundUser);
         Assert.assertTrue(foundUser.isPresent());
         Assert.assertEquals(USER, foundUser.get());
+        Assert.assertEquals(USER.getEmail(), foundUser.get().getEmail());
+        Assert.assertEquals(USER.getPassword(), foundUser.get().getPassword());
+        Assert.assertEquals(USER.getName(), foundUser.get().getName());
+        Assert.assertEquals(USER.getRole(), foundUser.get().getRole());
+        Assert.assertEquals(USER.getTelephone(), foundUser.get().getTelephone());
+        Assert.assertEquals(USER.getLocale(), foundUser.get().getLocale());
+        Assert.assertEquals(USER.getPicture().getId(), foundUser.get().getPicture().getId());
+    }
+
+    @Test
+    public void testGetUserByEmailNull(){
+
+        Optional<User> foundUser = userDao.getUserByEmail(null);
+
+        Assert.assertNotNull(foundUser);
+        Assert.assertFalse(foundUser.isPresent());
+    }
+
+    @Test
+    public void testGetUserByEmailEmpty(){
+
+        Optional<User> foundUser = userDao.getUserByEmail("");
+
+        Assert.assertNotNull(foundUser);
+        Assert.assertFalse(foundUser.isPresent());
     }
 
     @Test
@@ -126,20 +117,15 @@ public class UserJpaDaoTest {
     @Test
     public void testChangePasswordByID(){
         final long USER_ID = TestData.Users.patientId;
-        final Patient USER_OLD = TestData.Users.patient;
-        USER_OLD.getPicture().setId(TestData.Images.validImageId);
         final String PASSWORD = TestData.Users.patient.getPassword();
         final String NEW_PASSWORD = PASSWORD + "1";
-        final Patient USER_NEW = new Patient(USER_OLD.getEmail(), NEW_PASSWORD, USER_OLD.getName(), USER_OLD.getTelephone(), USER_OLD.getPicture(), USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
-        USER_NEW.setId(USER_ID);
-        USER_OLD.setId(USER_ID);
 
         userDao.changePasswordByID(USER_ID, NEW_PASSWORD);
         Patient userPersisted = em.find(Patient.class, USER_ID);
 
         Assert.assertNotNull(userPersisted);
-        Assert.assertEquals(USER_NEW.getPassword(), userPersisted.getPassword());
-        Assert.assertNotEquals(USER_OLD.getPassword(), userPersisted.getPassword());
+        Assert.assertEquals(NEW_PASSWORD, userPersisted.getPassword());
+        Assert.assertNotEquals(PASSWORD, userPersisted.getPassword());
     }
 
     @Test
@@ -153,159 +139,32 @@ public class UserJpaDaoTest {
         Assert.assertNull(userPersisted);
     }
 
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testEditUser(){
-    //     final Patient USER_OLD = TestData.Users.patient;
-    //     final long USER_ID = TestData.Users.patientId;
-    //     USER_OLD.setId(USER_ID);
-    //     USER_OLD.getPicture().setId(TestData.Images.validImageId);
-    //     final String NEW_TELEPHONE = "1111111111";
-    //     final String NEW_USERNAME = USER_OLD.getName() + "1";
-    //     final File NEW_PICTURE = TestData.Images.validImage2;
-    //     NEW_PICTURE.setId(TestData.Images.validImage2Id);
-    //     final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, NEW_TELEPHONE, NEW_PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
-    //     USER_NEW.setId(USER_ID);
+    @Test
+    public void testChangePasswordByIDNullPass(){
+        final long USER_ID = TestData.Users.patientId;
+        final String PASSWORD = TestData.Users.patient.getPassword();
+        final String NEW_PASSWORD = null;
 
-    //     userDao.editUser(USER_ID, NEW_USERNAME, NEW_TELEPHONE, NEW_PICTURE);
-    //     Patient userPersisted = em.find(Patient.class, USER_ID);
+        userDao.changePasswordByID(USER_ID, NEW_PASSWORD);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
-    //     Assert.assertNotNull(userPersisted);
-    //     Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
-    //     Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
-    //     Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
-    //     Assert.assertNotEquals(USER_OLD.getName(), userPersisted.getName());   
-    //     Assert.assertNotEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
-    //     Assert.assertNotEquals(USER_OLD.getPicture(), userPersisted.getPicture());  
-    // }
+        Assert.assertNotNull(userPersisted);
+        Assert.assertNotEquals(NEW_PASSWORD, userPersisted.getPassword());
+        Assert.assertEquals(PASSWORD, userPersisted.getPassword());
+    }
 
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testEditUserNonexistentUser(){
-    //     final long USER_ID = 0;
-    //     final String USERNAME = TestData.Users.patient.getName();
-    //     final String NEW_TELEPHONE = "1111111111";
-    //     final String NEW_USERNAME = USERNAME + "1";
-    //     final File NEW_PICTURE = TestData.Images.validImage2;
+    @Test
+    public void testChangePasswordByIDVoidPass(){
+        final long USER_ID = TestData.Users.patientId;
+        final String PASSWORD = TestData.Users.patient.getPassword();
+        final String NEW_PASSWORD = "";
 
-    //     userDao.editUser(USER_ID, NEW_USERNAME, NEW_TELEPHONE, NEW_PICTURE);
-    //     User userPersisted = em.find(User.class, USER_ID);
+        userDao.changePasswordByID(USER_ID, NEW_PASSWORD);
+        Patient userPersisted = em.find(Patient.class, USER_ID);
 
-    //     Assert.assertNull(userPersisted);
-    // }
+        Assert.assertNotNull(userPersisted);
+        Assert.assertNotEquals(NEW_PASSWORD, userPersisted.getPassword());
+        Assert.assertEquals(PASSWORD, userPersisted.getPassword());
+    }
 
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testEditUserNameOnly(){
-    //     final Patient USER_OLD = TestData.Users.patient;
-    //     final long USER_ID = TestData.Users.patientId;
-    //     USER_OLD.setId(USER_ID);
-    //     final String USER_TELEPHONE = USER_OLD.getTelephone();
-    //     final File PICTURE = TestData.Images.validImage;
-    //     PICTURE.setId(TestData.Images.validImageId);
-    //     USER_OLD.setPicture(PICTURE);
-    //     final String NEW_USERNAME = USER_OLD.getName() + "1";
-    //     final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), NEW_USERNAME, USER_TELEPHONE, PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
-    //     USER_NEW.setId(USER_ID);
-
-    //     userDao.editUser(USER_ID, NEW_USERNAME, USER_TELEPHONE, PICTURE);
-    //     Patient userPersisted = em.find(Patient.class, USER_ID);
-
-    //     Assert.assertNotNull(userPersisted);
-    //     Assert.assertEquals(USER_NEW, userPersisted);
-    //     Assert.assertEquals(USER_NEW.getName(), userPersisted.getName());
-    //     Assert.assertNotEquals(USER_OLD.getName(), userPersisted.getName());    
-    // }
-
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testEditUserTelephoneOnly(){
-    //     final Patient USER_OLD = TestData.Users.patient;
-    //     final long USER_ID = TestData.Users.patientId;
-    //     USER_OLD.setId(USER_ID);
-    //     USER_OLD.getPicture().setId(TestData.Images.validImageId);
-    //     final String NEW_TELEPHONE = "1111111111";
-    //     final String USERNAME = USER_OLD.getName();
-    //     final File PICTURE = TestData.Images.validImage;
-    //     PICTURE.setId(TestData.Images.validImageId);
-    //     final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, NEW_TELEPHONE, PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
-    //     USER_NEW.setId(USER_ID);
-
-    //     userDao.editUser(USER_ID, USERNAME, NEW_TELEPHONE, PICTURE);
-    //     Patient userPersisted = em.find(Patient.class, USER_ID);
-        
-    //     Assert.assertNotNull(userPersisted);
-    //     Assert.assertEquals(USER_NEW, userPersisted);
-    //     Assert.assertEquals(USER_NEW.getTelephone(), userPersisted.getTelephone());
-    //     Assert.assertNotEquals(USER_OLD.getTelephone(), userPersisted.getTelephone()); 
-    // }
-
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testEditUserPicOnly(){
-    //     final Patient USER_OLD = TestData.Users.patient;
-    //     final long USER_ID = TestData.Users.patientId;
-    //     USER_OLD.setId(USER_ID);
-    //     USER_OLD.getPicture().setId(TestData.Images.validImageId);
-    //     final String USER_TELEPHONE = USER_OLD.getTelephone();
-    //     final String USERNAME = USER_OLD.getName();
-    //     final File NEW_PICTURE = TestData.Images.validImage2;
-    //     NEW_PICTURE.setId(TestData.Images.validImage2Id);
-    //     final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USERNAME, USER_TELEPHONE, NEW_PICTURE, USER_OLD.getCreateDate(), USER_OLD.getLocale(), USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
-    //     USER_NEW.setId(USER_ID);
-
-    //     userDao.editUser(USER_ID, USERNAME, USER_TELEPHONE, NEW_PICTURE);
-    //     Patient userPersisted = em.find(Patient.class, USER_ID);
-
-    //     Assert.assertNotNull(userPersisted);
-    //     Assert.assertEquals(USER_NEW, userPersisted);
-    //     Assert.assertEquals(USER_NEW.getPicture(), userPersisted.getPicture());
-    //     Assert.assertNotEquals(USER_OLD.getPicture(), userPersisted.getPicture());  
-    // }
-
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testUpdateLocale(){
-    //     final Patient USER_OLD = TestData.Users.patient;
-    //     final long USER_ID = TestData.Users.patientId;
-    //     USER_OLD.setId(USER_ID);
-    //     USER_OLD.getPicture().setId(TestData.Images.validImageId);
-    //     final LocaleEnum NEW_LOCALE = LocaleEnum.ES_AR;
-    //     final Patient USER_NEW = new Patient(USER_OLD.getEmail(), USER_OLD.getPassword(), USER_OLD.getName(), USER_OLD.getTelephone(), USER_OLD.getPicture(), USER_OLD.getCreateDate(), NEW_LOCALE, USER_OLD.getBirthdate(), USER_OLD.getHeight(), USER_OLD.getWeight());
-    //     USER_NEW.setId(USER_ID);
-
-    //     userDao.updateLocale(USER_ID, NEW_LOCALE);
-    //     Patient userPersisted = em.find(Patient.class, USER_ID);
-
-    //     Assert.assertNotNull(userPersisted);
-    //     Assert.assertEquals(USER_NEW.getLocale(), userPersisted.getLocale());
-    //     Assert.assertNotEquals(USER_OLD.getLocale(), userPersisted.getLocale());   
-    // }
-
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testUpdateLocaleNonexistentUser(){
-    //     final long USER_ID = 100L;
-    //     final LocaleEnum NEW_LOCALE = LocaleEnum.ES_AR;
-
-    //     userDao.updateLocale(USER_ID, NEW_LOCALE);
-    //     User userPersisted = em.find(User.class, USER_ID);
-
-    //     Assert.assertNull(userPersisted);
-    // }
-
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // public void testUpdateLocaleNullLocale(){
-    //     final User USER = TestData.Users.patient;
-    //     final long USER_ID = TestData.Users.patientId;
-    //     USER.setId(USER_ID);
-    //     final LocaleEnum NEW_LOCALE = null;
-
-    //     userDao.updateLocale(USER_ID, NEW_LOCALE);
-    //     User userPersisted = em.find(User.class, USER_ID);
-
-    //     Assert.assertNotNull(userPersisted);
-    //     Assert.assertEquals(USER, userPersisted);
-    // }
 }

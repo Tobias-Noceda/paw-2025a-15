@@ -15,6 +15,7 @@
 <jsp:include page="components/header.jsp">
   <jsp:param name="title" value="${title}"/>
 </jsp:include>
+<fmt:setLocale value="${pageContext.request.locale}" />
 <div class="page-container appointments-div" style="display: flex; flex-direction: row;">
   <c:url var="cancelUrl" value="/cancelAppointment" />
   <c:set var="confirmationMessage">
@@ -50,15 +51,8 @@
               <c:forEach var="appointment" items="${patientFutureAppointments}">
                 <c:url value="/doctors/${appointment.shift.doctor.id}" var="doctorUrl" />
                 <tr class="appointment-row" onclick="window.location='${doctorUrl}'" style="cursor: pointer;">
-                  <c:set var="day">
-                    <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
-                  </c:set>
-                  <c:set var="month">
-                    <fmt:formatNumber value="${appointment.id.date.monthValue}" pattern="00" />
-                  </c:set>
-                  <c:set var="year" value="${appointment.id.date.year}" />
                   <c:set var="formattedDate">
-                    <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"/>
+                    <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>
                   <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" /></td>
                   <td class="text-cell"><c:out value="${formattedDate}" /></td>
@@ -112,15 +106,8 @@
               <c:forEach var="appointment" items="${patientOldAppointments}">
                 <c:url value="/doctors/${appointment.shift.doctor.id}" var="doctorUrl" />
                 <tr class="appointment-row" onclick="window.location='${doctorUrl}'" style="cursor: pointer;">
-                  <c:set var="day">
-                    <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
-                  </c:set>
-                  <c:set var="month">
-                    <fmt:formatNumber value="${appointment.id.date.monthValue}" pattern="00" />
-                  </c:set>
-                  <c:set var="year" value="${appointment.id.date.year}" />
                   <c:set var="formattedDate">
-                    <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"/>
+                    <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>
                   <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" /></td>
                   <td class="text-cell"><c:out value="${formattedDate}" /></td>
@@ -164,15 +151,8 @@
               <c:forEach var="appointment" items="${doctorTakenAppointments}">
                 <c:url value="/patient/${appointment.patient.id}" var="patientUrl" />
                 <tr class="appointment-row" onclick="openPatientDialog( '${appointment.patient.name}','${appointment.detail}', '${patientUrl}')" style="cursor: pointer;">
-                  <c:set var="day">
-                    <fmt:formatNumber value="${appointment.id.date.dayOfMonth}" pattern="00" />
-                  </c:set>
-                  <c:set var="month">
-                    <fmt:formatNumber value="${appointment.id.date.monthValue}" pattern="00" />
-                  </c:set>
-                  <c:set var="year" value="${appointment.id.date.year}" />
                   <c:set var="formattedDate">
-                    <spring:message code="dateFormat" arguments="${day},${month},${year}" htmlEscape="true"/>
+                    <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>
                   <td class="text-cell"><c:out value="${appointment.patient.name}" /></td>
                   <td class="text-cell"><c:out value="${formattedDate}" /></td>

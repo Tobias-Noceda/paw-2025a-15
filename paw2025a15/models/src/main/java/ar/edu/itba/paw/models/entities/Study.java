@@ -2,6 +2,8 @@ package ar.edu.itba.paw.models.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
@@ -24,9 +26,13 @@ public class Study {
     @Column( name = "study_comment", length = 100)
     private String comment;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false)
-    private File file;
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "study_files",
+        joinColumns = @JoinColumn(name = "study_id"),
+        inverseJoinColumns = @JoinColumn(name = "file_id")
+    )
+    private List<File> files;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "patient_id", nullable = false)
@@ -54,10 +60,10 @@ public class Study {
         //just for hibernate
     }
 
-    public Study(StudyTypeEnum type, String comment, File file, Patient patient, User uploader, LocalDateTime uploadDate, LocalDate studyDate){
+    public Study(StudyTypeEnum type, String comment, List<File> files, Patient patient, User uploader, LocalDateTime uploadDate, LocalDate studyDate){
         this.type = type;
         this.comment = comment;
-        this.file = file;
+        this.files = files;
         this.patient = patient;
         this.uploader = uploader;
         this.uploadDate = uploadDate;
@@ -88,12 +94,12 @@ public class Study {
         this.comment = comment;
     }
 
-    public File getFile(){
-        return file;
+    public List<File> getFiles(){
+        return files;
     }
 
-    public void setFile(File file){
-        this.file = file;
+    public void setFiles(List<File> files){
+        this.files = files;
     }
 
     public Patient getPatient(){
@@ -116,12 +122,20 @@ public class Study {
         return uploadDate;
     }
 
+    public Date getUploadDateAsDate(){
+        return Date.from(uploadDate.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
     public void setUploadDate(LocalDateTime uploadDate){
         this.uploadDate = uploadDate;
     }
 
     public LocalDate getStudyDate(){
         return studyDate;
+    }
+
+    public Date getStudyDateAsDate(){
+        return Date.from(studyDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     public void setStudyDate(LocalDate studyDate){
@@ -152,7 +166,7 @@ public class Study {
         int result = Long.hashCode(id);
         result = 31 * result + type.hashCode();
         result = 31 * result + comment.hashCode();
-        result = 31 * result + file.hashCode();
+        result = 31 * result + files.hashCode();
         result = 31 * result + patient.hashCode();
         result = 31 * result + uploader.hashCode();
         result = 31 * result + uploadDate.hashCode();
@@ -166,7 +180,7 @@ public class Study {
             "id=" + id +
             ", type=" + type +
             ", comment=" + comment +
-            ", file=" + file +
+            ", files=" + files +
             ", user=" + patient +
             ", uploader=" + uploader +
             ", uploadDate=" + uploadDate +

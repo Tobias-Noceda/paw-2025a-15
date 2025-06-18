@@ -2,14 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -20,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -39,10 +39,8 @@ import ar.edu.itba.paw.webapp.form.ProfileForm;
 @Controller
 public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
     private FileService fs;
@@ -51,7 +49,10 @@ public class UserController {
     private InsuranceService is;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
+
+    @Autowired
+    private DoctorShiftService dss;
 
     @Autowired
     private MessageSource messageSource;
@@ -64,7 +65,6 @@ public class UserController {
         RedirectAttributes redirectAttrs,
         Locale locale
     ) throws IOException {
-
         if (result.hasErrors()) {
             return profile(user, profileForm, result, locale);
         }
@@ -73,23 +73,25 @@ public class UserController {
         if (profileForm.getProfileImage() != null && !profileForm.getProfileImage().isEmpty()) {
             File f = fs.create(profileForm.getProfileImage().getBytes(), FileTypeEnum.fromString(profileForm.getProfileImage().getContentType()));
             picture = f;
-            LOGGER.info("Updating profile picture for user with id: {}", user.getId());
         }else {
             picture = user.getPicture();
         }
         
         if(user instanceof Doctor doctor) {
-            dds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
+            ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
+            if (profileForm.getUpdateSchedules() || !profileForm.getAddress().equals(doctor.getActiveSingleShifts().getFirst().getAddress())) {
+                dss.updateShifts(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount(), profileForm.getKeepTurns());
+            }
         } else {
-            pds.updatePatient(
+            ps.updatePatient(
                 (Patient) user,
                 profileForm.getPhoneNumber(),
                 picture,
                 profileForm.getMailLanguage(),
                 profileForm.getBirthDate(),
                 profileForm.getBloodType(),
-                BigDecimal.valueOf(profileForm.getHeight()),
-                BigDecimal.valueOf(profileForm.getWeight()),
+                profileForm.getHeight() != null ? BigDecimal.valueOf(profileForm.getHeight()) : null,
+                profileForm.getWeight() != null ? BigDecimal.valueOf(profileForm.getWeight()) : null,
                 profileForm.getSmokes(),
                 profileForm.getDrinks(),
                 profileForm.getMeds(),
@@ -97,10 +99,11 @@ public class UserController {
                 profileForm.getAllergies(),
                 profileForm.getDiet(),
                 profileForm.getHobbies(),
-                profileForm.getJob()
+                profileForm.getJob(),
+                profileForm.getInsuranceId(),
+                profileForm.getInsuranceNumber()
             );
         }
-        LOGGER.info("User with id: {} updated!", user.getId());
         
         redirectAttrs.addFlashAttribute("updateSuccessMessage","✅ Your profile has been updated!");
 
@@ -120,22 +123,32 @@ public class UserController {
         
         ModelAndView mav = new ModelAndView("profileInfo");
 
-        if (profileForm.getPhoneNumber() == null) {
-            profileForm.setPhoneNumber(user.getTelephone());
-        }
-        if (profileForm.getMailLanguage() == null) {
-            profileForm.setMailLanguage(user.getLocale());
-        }
+        if(!result.hasErrors()) {    
+            if (profileForm.getPhoneNumber() == null) {
+                profileForm.setPhoneNumber(user.getTelephone());
+            }
+            if (profileForm.getMailLanguage() == null) {
+                profileForm.setMailLanguage(user.getLocale());
+            }
 
-        if (user instanceof Doctor doctor) {
-            profileForm.setInsurances(
-                doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
-            );
-        } else {
-            mav.addObject("patientDetails", pds.getPatientById(user.getId()).orElse(null));
+            if (user instanceof Doctor doctor) {
+                profileForm.setInsurances(
+                    doctor.getInsurances() != null ? insuranceToLong(doctor.getInsurances()) : new ArrayList<>()
+                );
+                profileForm.setSchedules(doctor.getSchedules());
+                profileForm.setAmount(doctor.getActiveSingleShifts().getFirst().getDuration());
+                List<String> selectedDays = doctor.getAvailableDays()
+                        .stream()
+                        .map(Enum::name)
+                        .toList();
+                mav.addObject("selectedDays", selectedDays);
+                profileForm.setAddress(doctor.getSchedules().getAddress());
+            }
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());
+        mav.addObject("weekdaySelectItems", SelectItem.getListOfWeekdays(messageSource, locale));
+        mav.addObject("hoursSelectItems", SelectItem.getHoursSelectItems());
         mav.addObject("bloodTypes", BloodTypeEnum.values());
         mav.addObject("locales", SelectItem.getLocalesSelectItems(messageSource , locale));
         mav.addObject("landingForm", new LandingForm());

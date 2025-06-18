@@ -67,6 +67,25 @@ function submitPendingForm() {
   }
 }
 
+// Función para bulk actions
+function confirmBulkAction(message, form, action, acceptText, cancelText) {
+  console.log('confirmBulkAction called');
+  
+  // Crear el input hidden para la acción si no existe
+  let actionInput = form.querySelector('input[name="action"]');
+  if (!actionInput) {
+    actionInput = document.createElement('input');
+    actionInput.type = 'hidden';
+    actionInput.name = 'action';
+    form.appendChild(actionInput);
+  }
+  actionInput.value = action;
+
+  // Llamar directamente al modal de confirmación
+  openConfirmDialog(form, message, null, acceptText, cancelText);
+  return false;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   let dialog = document.getElementById('customConfirmDialog');
 

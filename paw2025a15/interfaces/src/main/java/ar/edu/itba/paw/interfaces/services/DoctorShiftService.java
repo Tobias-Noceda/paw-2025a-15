@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import java.time.LocalTime;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +13,8 @@ public interface DoctorShiftService {
     public void createShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount);
 
     public Optional<DoctorSingleShift> getShiftById(long id);
+
+    public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount, boolean keepTurns);
 
     /**
      * * Returns a list of available turns for a doctor in a specific date.

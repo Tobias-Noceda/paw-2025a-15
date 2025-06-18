@@ -11,8 +11,9 @@ public class ValidScheduleValidator implements ConstraintValidator<ValidSchedule
 
     @Override
     public boolean isValid(Schedule schedule, ConstraintValidatorContext context) {
+
         if (schedule == null) {
-            return false;
+            return true;
         }
 
         if(schedule.getWeekday() == null || schedule.getWeekday().isEmpty() || 

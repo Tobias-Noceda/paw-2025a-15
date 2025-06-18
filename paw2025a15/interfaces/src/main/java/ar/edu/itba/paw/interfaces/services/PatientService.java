@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.interfaces.persistence;
+package ar.edu.itba.paw.interfaces.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,8 +9,10 @@ import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 
-public interface PatientDetailDao {
-    public Patient createPatient(String email, String password, String name, String telephone, File picture, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
+public interface PatientService {
+    public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
+
+    public Optional<Patient> getPatientById(long id);
 
     public void updatePatient(
         Patient patient,
@@ -28,8 +30,8 @@ public interface PatientDetailDao {
         String allergies,
         String diet,
         String hobbies,
-        String job
+        String job,
+        Long insuranceId,
+        String insuranceNumber
     );
-
-    public Optional<Patient> getPatientById(long patientId);
 }

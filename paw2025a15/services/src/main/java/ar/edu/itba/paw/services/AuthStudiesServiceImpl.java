@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthStudiesDao;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -27,16 +27,16 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     private StudyService ss;
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Transactional
     @Override
     public boolean authStudyForDoctorId(long studyId, long doctorId) {
-        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));//TODO:check change for hibernate
-        dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));//TODO:check change for hibernate
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("User with id: " + doctorId + " does not exist!"));
 
         if(hasAuthStudy(studyId, doctorId)) return true;
         boolean result = authStudiesDao.authStudyForDoctor(studyId, doctorId);
@@ -56,7 +56,7 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Override
     public boolean hasAuthStudy(long studyId, long doctorId) {
         ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
-        dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
 
         return authStudiesDao.hasAuthStudy(studyId, doctorId);
     }
@@ -65,8 +65,6 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Override
     public void unauthStudyForDoctorId(long studyId, long doctorId) {
         if(!hasAuthStudy(studyId, doctorId)) return;
-        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
-        dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         authStudiesDao.unauthStudyForDoctor(studyId, doctorId);
         LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
     }
@@ -84,10 +82,34 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
     @Transactional
     @Override
     public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId) {
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         authStudiesDao.unauthAllStudiesForDoctorAndPatient(patientId, doctorId);
         LOGGER.info("Removed all authorizations of all studies of patient with id: {} for doctor: {}", patientId, doctorId);
+    }
+    
+    @Transactional
+    @Override
+    public void authorizeAllDoctorsForStudy(long studyId) {
+        ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        authStudiesDao.authStudyForAllAuthDoctors(studyId);
+        LOGGER.info("Authorized all patient authdoctors for study with id: {}", studyId);
+    }
+    
+    @Transactional
+    @Override
+    public void deauthorizeAllDoctorsForStudy(long studyId) {
+        ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        authStudiesDao.deauthStudyForAllDoctors(studyId);
+        LOGGER.info("Deauthorized all doctors for study with id: {}", studyId);
+    }
+
+    @Transactional
+    @Override
+    public void unauthAllStudiesForAllDocsForPatientId(long patientId) {
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        authStudiesDao.unauthAllStudiesForAllDocsForPatientId(patientId);
+        LOGGER.info("Deauthorized all doctors for patient with id: {}", patientId);
     }
 
 }

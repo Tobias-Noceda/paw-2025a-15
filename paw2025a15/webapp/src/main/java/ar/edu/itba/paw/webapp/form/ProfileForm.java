@@ -1,29 +1,52 @@
 package ar.edu.itba.paw.webapp.form;
 
-import javax.validation.constraints.*;
+import java.time.LocalDate;
+import java.util.List;
 
-import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.webapp.form.constraints.PastDate;
-import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
-import ar.edu.itba.paw.webapp.form.constraints.ValidProfileImage;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import ar.edu.itba.paw.models.Schedule;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.webapp.form.constraints.PastDate;
+import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
+import ar.edu.itba.paw.webapp.form.constraints.ValidInsuranceNumber;
+import ar.edu.itba.paw.webapp.form.constraints.ValidProfileImage;
+import ar.edu.itba.paw.webapp.form.constraints.ValidSchedule;
 
-import java.time.LocalDate;
-import java.util.List;
-
+@ValidInsuranceNumber
 public class ProfileForm {
-    
+
+    public ProfileForm() {
+        this.insuranceId = null;
+        this.insuranceNumber = "";
+        this.insurances = List.of();
+        this.updateSchedules = false;
+        this.schedules = null;
+        this.address = "";
+        this.amount = 0;
+        this.keepTurns = false;
+    }
+
+    // general
     @ValidProfileImage
     MultipartFile profileImage;
 
     @ValidArgPhone(message = "{form.phoneNumber.invalid}")
     private String phoneNumber;
 
+    private LocaleEnum mailLanguage;
+
+    // Patient specific
     @Positive
     @Max(value = 140, message = "{form.age.invalid}")
     private Integer age;
@@ -62,140 +85,219 @@ public class ProfileForm {
     @Size(max = 50)
     private String job;
 
+    private Long insuranceId;
+
+    @Pattern(regexp = "[0-9]*", message = "{form.insurances.invalid}")
+    private String insuranceNumber;
+
+    // Doctor specific
     @NotNull(message = "{form.insurances.notNull}")
     private List<Long> insurances;
 
-    private LocaleEnum mailLanguage;
+    private Boolean updateSchedules;
 
-    public LocaleEnum getMailLanguage() {
-        return mailLanguage;
-    }
+    @ValidSchedule
+    private Schedule schedules;
 
-    public void setMailLanguage(LocaleEnum mailLanguage) {
-        this.mailLanguage = mailLanguage;
-    }
+    @NotEmpty(message = "{form.address.notEmpty}")
+    private String address;
 
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
+    private int amount;
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+    private boolean keepTurns;
 
+    // Getters
     public MultipartFile getProfileImage() {
         return profileImage;
-    }
-
-    public void setProfileImage(MultipartFile profileImage) {
-        this.profileImage = profileImage;
     }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setAge(Integer age){
-        this.age = age;
+    public LocaleEnum getMailLanguage() {
+        return mailLanguage;
     }
 
     public Integer getAge(){
         return age;
     }
 
-    public void setBloodType(BloodTypeEnum bloodType){
-        this.bloodType = bloodType;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
     public BloodTypeEnum getBloodType() {
         return bloodType;
     }
 
-    public void setHeight(Double height){
-        this.height = height;
-    }
-
     public Double getHeight() {
         return height;
-    }
-
-    public void setWeight(Double weight){
-        this.weight = weight;
     }
 
     public Double getWeight() {
         return weight;
     }
 
-    public void setSmokes(Boolean smokes){
-        this.smokes = smokes;
-    }
-
     public Boolean getSmokes() {
         return smokes;
-    }
-
-    public void setDrinks(Boolean drinks){
-        this.drinks = drinks;
     }
 
     public Boolean getDrinks() {
         return drinks;
     }
 
-    public void setMeds(String meds){
-        this.meds = meds;
-    }
-
     public String getMeds() {
         return meds;
-    }
-
-    public void setConditions(String conditions){
-        this.conditions = conditions;
     }
 
     public String getConditions() {
         return conditions;
     }
 
-    public void setAllergies(String allergies){
-        this.allergies = allergies;
-    }
-
     public String getAllergies() {
         return allergies;
-    }
-
-    public void setDiet(String diet){
-        this.diet = diet;
     }
 
     public String getDiet() {
         return diet;
     }
 
-    public void setHobbies(String hobbies){
-        this.hobbies = hobbies;
-    }
-
     public String getHobbies() {
         return hobbies;
-    }
-
-    public void setJob(String job){
-        this.job = job;
     }
 
     public String getJob() {
         return job;
     }
 
-    public List<Long> getInsurances() { return insurances; }
+    public Long getInsuranceId() {
+        return insuranceId;
+    }
 
-    public void setInsurances(List<Long> insurances) { this.insurances = insurances; }
+    public String getInsuranceNumber() {
+        return insuranceNumber;
+    }
+
+    public List<Long> getInsurances() {
+        return insurances;
+    }
+    
+    public Boolean getUpdateSchedules() {
+        return updateSchedules;
+    }
+
+    public boolean getKeepTurns() {
+        return keepTurns;
+    }
+
+    
+    public Schedule getSchedules() {
+        return schedules;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    // Setters
+    public void setProfileImage(MultipartFile profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setMailLanguage(LocaleEnum mailLanguage) {
+        this.mailLanguage = mailLanguage;
+    }
+
+    public void setAge(Integer age){
+        this.age = age;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setBloodType(BloodTypeEnum bloodType){
+        this.bloodType = bloodType;
+    }
+
+    public void setHeight(Double height){
+        this.height = height;
+    }
+
+    public void setWeight(Double weight){
+        this.weight = weight;
+    }
+
+    public void setSmokes(Boolean smokes){
+        this.smokes = smokes;
+    }
+
+    public void setDrinks(Boolean drinks){
+        this.drinks = drinks;
+    }
+
+    public void setMeds(String meds){
+        this.meds = meds;
+    }
+
+    public void setConditions(String conditions){
+        this.conditions = conditions;
+    }
+
+    public void setAllergies(String allergies){
+        this.allergies = allergies;
+    }
+
+    public void setDiet(String diet){
+        this.diet = diet;
+    }
+
+    public void setHobbies(String hobbies){
+        this.hobbies = hobbies;
+    }
+
+    public void setJob(String job){
+        this.job = job;
+    }
+
+    public void setInsuranceId(Long insurance) {
+        this.insuranceId = insurance;
+    }
+
+    public void setInsuranceNumber(String insuranceNumber) {
+        this.insuranceNumber = insuranceNumber;
+    }
+
+    public void setInsurances(List<Long> insurances) {
+        this.insurances = insurances;
+    }
+
+    public void setUpdateSchedules(Boolean updateSchedules) {
+        this.updateSchedules = updateSchedules;
+    }
+    
+    public void setSchedules(Schedule schedules) {
+        this.schedules = schedules;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setKeepTurns(boolean keepTurns) {
+        this.keepTurns = keepTurns;
+    }
 }

@@ -15,3 +15,5 @@ function confirmDeauthDoctor(message, secondaryMessage, accept, cancel, name, va
         openConfirmDialog(form, message, secondaryMessage, accept, cancel);
     }
 }
+
+

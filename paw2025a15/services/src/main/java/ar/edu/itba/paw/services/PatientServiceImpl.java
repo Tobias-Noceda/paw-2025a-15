@@ -11,11 +11,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.interfaces.persistence.PatientDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -23,12 +25,12 @@ import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
-public class PatientDetailServiceImpl implements PatientDetailService{
+public class PatientServiceImpl implements PatientService{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatientDetailServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatientServiceImpl.class);
 
     @Autowired
-    private PatientDetailDao patientDetailDao;
+    private PatientDao patientDao;
 
     @Autowired
     private UserService us;
@@ -37,12 +39,15 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     private FileService fs;
 
     @Autowired
+    private InsuranceService is;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
     public Optional<Patient> getPatientById(long id) {
-        return patientDetailDao.getPatientById(id);
+        return patientDao.getPatientById(id);
     }
 
     @Transactional
@@ -50,7 +55,7 @@ public class PatientDetailServiceImpl implements PatientDetailService{
     public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));
-        return patientDetailDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
+        return patientDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
     }
 
     @Transactional
@@ -71,16 +76,24 @@ public class PatientDetailServiceImpl implements PatientDetailService{
         String allergies,
         String diet,
         String hobbies,
-        String job
+        String job,
+        Long insuranceId,
+        String insuranceNumber
     ) {
         if (patient == null || getPatientById(patient.getId()).isEmpty()) {
             throw new NotFoundException("Patient does not exist!");
         }
-        if (birthdate == null || height == null || weight == null) {
-            throw new IllegalArgumentException("Birthdate, height, and weight cannot be null!");
+        Insurance insurance = null;
+        String realInsuranceNumber = null;
+        if (insuranceId != null) {
+            insurance = is.getInsuranceById(insuranceId)
+                .orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
+            realInsuranceNumber = insuranceNumber;
         }
 
-        patientDetailDao.updatePatient(
+        
+
+        patientDao.updatePatient(
             patient,
             phoneNumber,
             picture,
@@ -96,7 +109,9 @@ public class PatientDetailServiceImpl implements PatientDetailService{
             allergies,
             diet,
             hobbies,
-            job
+            job,
+            insurance,
+            realInsuranceNumber
         );        
         LOGGER.info("Updated patient with id: {}", patient.getId());
     }

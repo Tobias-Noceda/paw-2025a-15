@@ -27,15 +27,15 @@ public class StudyJpaDao implements StudyDao {
     private EntityManager em;
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, File file, Patient patient, User uploader, LocalDate studyDate) {
-        final Study study = new Study(type, comment, file, patient, uploader, LocalDateTime.now(), studyDate);
+    public Study create(StudyTypeEnum type, String comment, List<File> files, Patient patient, User uploader, LocalDate studyDate) {
+        final Study study = new Study(type, comment, files, patient, uploader, LocalDateTime.now(), studyDate);
         em.persist(study);
         return study;
     }
 
     @Override
-    public Study create(StudyTypeEnum type, String comment, File file, Patient patient, User uploader) {
-        final Study study = new Study(type, comment, file, patient, uploader, LocalDateTime.now(), LocalDate.now());
+    public Study create(StudyTypeEnum type, String comment, List<File> files, Patient patient, User uploader) {
+        final Study study = new Study(type, comment, files, patient, uploader, LocalDateTime.now(), LocalDate.now());
         em.persist(study);
         return study;
     }
@@ -53,6 +53,15 @@ public class StudyJpaDao implements StudyDao {
         }
         em.remove(study);
         return true;
+    }
+
+    @Override
+    public boolean isFileInStudy(long studyId, long fileId) {
+        String q = "SELECT COUNT(f) > 0 FROM Study s JOIN s.files f WHERE s.id = :studyId AND f.id = :fileId";
+        TypedQuery<Boolean> query = em.createQuery(q, Boolean.class);
+        query.setParameter("studyId", studyId);
+        query.setParameter("fileId", fileId);
+        return query.getSingleResult();
     }
 
     @Override

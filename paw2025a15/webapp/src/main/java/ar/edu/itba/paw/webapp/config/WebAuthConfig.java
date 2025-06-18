@@ -76,25 +76,32 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers("/", "/home").permitAll()
                 .requestMatchers("/supersecret/user-profile-pic/{userId}").permitAll()
                 .requestMatchers("/supersecret/insurance-picture/{userId}").permitAll()
+                .regexMatchers("/profile").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
                 .requestMatchers("/patient/{patientId}")
-                    .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
+                    .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))//TODO:check using get() directly
                 .requestMatchers("/login", "/register", "/forgot-password", "/change-password/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
                 .requestMatchers("/403").permitAll()
                 // appointments
                 .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
+                .requestMatchers("/vacations").hasRole("DOCTOR")
+                .requestMatchers("/createVacations").hasRole("DOCTOR")
                 .requestMatchers("/cancelAppointment").hasAnyRole("DOCTOR", "PATIENT")
                 .requestMatchers("/takeAppointment").hasRole("PATIENT")
                 .requestMatchers("/removeAppointment").hasRole("DOCTOR")
                 // studies
                 .requestMatchers("/studies").hasRole("PATIENT")
-                .requestMatchers("/study-info/{studyId}").hasRole("PATIENT")
+                .requestMatchers("/study-info/{studyId}")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))//TODO:check using get() directly
+                    // .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")))) // TODO: update to this //TODO:check using get() directly
                 .requestMatchers("/authFileDoctor/{doctorId}/{studyId}").hasRole("PATIENT")
-                .requestMatchers("/view-study/{studyId}")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
+                .requestMatchers("/view-study/{studyId}/file/{fileId}")
+                    .access((a, c) -> ad.hasFileAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")), Long.parseLong(c.getVariables().get("fileId"))))//TODO:check using get() directly
                 .requestMatchers("/upload-study/{patientId}")
-                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))//TODO:check using get() directly
+                // admin
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 // temporary
                 .requestMatchers("/**").permitAll()
             )

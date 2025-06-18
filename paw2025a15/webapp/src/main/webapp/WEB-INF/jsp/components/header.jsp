@@ -34,6 +34,12 @@
             <a href="<c:url value="/appointments"/>" class="nav-item <c:if test='${param.title eq "appointments"}'>active</c:if>">
               <spring:message code="header.appointments" />
             </a>
+            <sec:authorize access="hasRole('ROLE_DOCTOR')">
+              <a href="<c:url value="/vacations"/>" class="nav-item">
+                <spring:message code="header.vacations" />
+              </a>
+            </sec:authorize>
+
             <sec:authorize access="hasRole('ROLE_PATIENT')">
               <a href="<c:url value="/studies"/>" class="nav-item <c:if test='${param.title eq "studies"}'>active</c:if>">
                 <spring:message code="header.studies" />
@@ -54,22 +60,27 @@
         <c:url value="/home" />
       </c:set>
 
-      <div class="search-bar-container">
-        <div class="search-bar">
-          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
-            <path fill="white" d="M10 2a8 8 0 015.29 13.71l3.94 3.94-1.42 1.42-3.94-3.94A8 8 0 1110 2m0 2a6 6 0 104.24 10.24A6 6 0 0010 4z"/>
-          </svg>
-          <form:form modelAttribute="landingForm" action="${searchLink}" method="get" class="search-bar-form">
-            <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
-            <button type="submit" style="display: none;"></button>
-            <sec:authorize access="not isAuthenticated() or hasRole('ROLE_PATIENT')">
-              <form:input type="hidden" path="insurances"/>
-              <form:input type="hidden" path="weekday"/>
-              <form:input type="hidden" path="specialty"/>
-            </sec:authorize>
-          </form:form>
+      <sec:authorize access="!hasRole('ROLE_ADMIN')">
+        <div class="search-bar-container">
+          <div class="search-bar">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+              <path fill="white" d="M10 2a8 8 0 015.29 13.71l3.94 3.94-1.42 1.42-3.94-3.94A8 8 0 1110 2m0 2a6 6 0 104.24 10.24A6 6 0 0010 4z"/>
+            </svg>
+            <form:form modelAttribute="landingForm" action="${searchLink}" method="get" class="search-bar-form">
+              <form:input path="query" class="search-bar-text" placeholder="${barPlaceholder}" />
+              <button type="submit" style="display: none;"></button>
+              <sec:authorize access="not isAuthenticated() or hasRole('ROLE_PATIENT')">
+                <form:input type="hidden" path="insurances"/>
+                <form:input type="hidden" path="weekday"/>
+                <form:input type="hidden" path="specialty"/>
+              </sec:authorize>
+            </form:form>
+          </div>
         </div>
-      </div>
+      </sec:authorize>
+      <sec:authorize access="hasRole('ROLE_ADMIN')">
+        <span style="display: flex; flex: 1"></span>
+      </sec:authorize>      
       <!-- Show only if user IS authenticated -->
       <c:if test="${user_data != null}">
         <button id="userBtn" class="user-btn" onclick="toggleUserDropdown()">
@@ -85,8 +96,10 @@
           </div>
         </button>
         <div id="userDropdownMenu" class="user-dropdown-menu">
-          <c:url value="/profile" var="profile"/>
-          <a href="${profile}"><spring:message code="header.profile"/></a>
+          <sec:authorize access="!hasRole('ROLE_ADMIN')">
+            <c:url value="/profile" var="profile"/>
+            <a href="${profile}"><spring:message code="header.profile"/></a>
+          </sec:authorize>
           <c:url value="/logout" var="logout"/>
           <a href="${logout}"><spring:message code="header.logout"/></a>
         </div>

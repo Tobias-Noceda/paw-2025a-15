@@ -1,12 +1,16 @@
 package ar.edu.itba.paw.persistence;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +20,13 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.edu.itba.paw.models.AvailableTurn;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
-
 
 @Transactional
 @Rollback
@@ -33,6 +39,11 @@ public class DoctorShiftJpaDaoTest {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Before
+    public void setup() {
+        TestData.DoctorSingleShifts.doctorSingleShift.setId(TestData.DoctorSingleShifts.doctorSingleShiftId); // Ensure ID is set before creating APP
+    }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql"})
@@ -55,46 +66,13 @@ public class DoctorShiftJpaDaoTest {
         Assert.assertEquals(ADDRESS, dsPersisted.getAddress());
         Assert.assertEquals(START_TIME, dsPersisted.getStartTime());
         Assert.assertEquals(END_TIME, dsPersisted.getEndTime());
+        Assert.assertEquals(SLOT, dsPersisted.getDuration());
+        Assert.assertTrue(dsPersisted.getIsActive());
     }
-
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // @Sql({"classpath:images.sql", "classpath:users.sql"})
-    // public void testBatchCreate() {
-    //     final User DOC = TestData.Users.doctor;
-    //     final long DOC_ID = TestData.Users.doctorId;
-    //     DOC.setId(DOC_ID);
-    //     DOC.getPicture().setId(TestData.Images.validImageId);
-    //     final String ADDRESS = TestData.DoctorSingleShifts.doctorSingleShift.getAddress();
-    //     final WeekdayEnum WEEKDAY = TestData.DoctorSingleShifts.doctorSingleShift.getWeekday();
-    //     final LocalTime START_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
-    //     final LocalTime END_TIME = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
-    //     final DoctorSingleShift SHIFT1 = new DoctorSingleShift(DOC, WEEKDAY, ADDRESS, START_TIME, END_TIME);
-    //     SHIFT1.setId(1L);
-    //     final DoctorSingleShift SHIFT2 = new DoctorSingleShift(DOC, WEEKDAY, ADDRESS, START_TIME.plusMinutes(30), END_TIME.plusMinutes(30));
-    //     SHIFT2.setId(2L);
-    //     List<DoctorSingleShift> shifts = List.of(
-    //         SHIFT1,
-    //         SHIFT2
-    //     );
-
-    //     int[] results = doctorSingleShiftDao.batchCreate(shifts);
-    //     DoctorSingleShift dsPersisted = em.find(DoctorSingleShift.class, SHIFT1.getId());
-    //     DoctorSingleShift ds2Persisted = em.find(DoctorSingleShift.class, SHIFT2.getId());
-
-    //     Assert.assertEquals(shifts.size(), results.length);
-    //     for (int result : results) {
-    //         Assert.assertTrue(result > 0);
-    //     }
-    //     Assert.assertNotNull(dsPersisted);
-    //     Assert.assertNotNull(ds2Persisted);
-    //     Assert.assertEquals(SHIFT1, dsPersisted);
-    //     Assert.assertEquals(SHIFT2, ds2Persisted);
-    // }
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
-    public void getShiftById(){
+    public void testGetShiftById(){
         final Long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
         final DoctorSingleShift SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
         SHIFT.setId(SHIFT_ID);
@@ -106,39 +84,160 @@ public class DoctorShiftJpaDaoTest {
         Assert.assertNotNull(foundShift);
         Assert.assertTrue(foundShift.isPresent());
         Assert.assertEquals(SHIFT, foundShift.get());
+        Assert.assertEquals(SHIFT.getDoctor().getId(), foundShift.get().getDoctor().getId());
+        Assert.assertEquals(SHIFT.getWeekday(), foundShift.get().getWeekday());
+        Assert.assertEquals(SHIFT.getAddress(), foundShift.get().getAddress());
+        Assert.assertEquals(SHIFT.getStartTime(), foundShift.get().getStartTime());
+        Assert.assertEquals(SHIFT.getEndTime(), foundShift.get().getEndTime());
+        Assert.assertEquals(SHIFT.getDuration(), foundShift.get().getDuration());
+        Assert.assertEquals(SHIFT.getIsActive(), foundShift.get().getIsActive());
     }
 
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
-    // public void testGetShiftsByDoctorId(){
-    //     final long DOC_ID = TestData.Users.doctorId;
-    //     final DoctorSingleShift SHIFT1 = TestData.DoctorSingleShifts.doctorSingleShift;
-    //     SHIFT1.setId(TestData.DoctorSingleShifts.doctorSingleShiftId);
-    //     SHIFT1.getDoctor().setId(DOC_ID);
-    //     SHIFT1.getDoctor().getPicture().setId(TestData.Images.validImageId);
-    //     final DoctorSingleShift SHIFT2 = TestData.DoctorSingleShifts.doctorSingleShift2;
-    //     SHIFT2.setId(TestData.DoctorSingleShifts.doctorSingleShift2Id);
-    //     SHIFT2.getDoctor().setId(DOC_ID);
-    //     SHIFT2.getDoctor().getPicture().setId(TestData.Images.validImageId);
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void testGetShiftByIdNonexistentShift(){
+        final Long SHIFT_ID = 0L;
 
-    //     List<DoctorSingleShift> foundShifts = doctorSingleShiftDao.getShiftsByDoctorId(DOC_ID);
+        Optional<DoctorSingleShift> foundShift = doctorSingleShiftDao.getShiftById(SHIFT_ID);
 
-    //     Assert.assertFalse(foundShifts.isEmpty());
-    //     Assert.assertEquals(2, foundShifts.size());
-    //     Assert.assertTrue(foundShifts.contains(SHIFT1));
-    //     Assert.assertTrue(foundShifts.contains(SHIFT2));
-    // }
+        Assert.assertNotNull(foundShift);
+        Assert.assertFalse(foundShift.isPresent());
+    }
+    
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void updateShiftsNoNewShiftsNull(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorSingleShift OLD_SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
 
-    // TODO: revisar, esto no parece tener más sentido gracias a hibernate (esta función ya no existe)
-    // @Test
-    // @Sql({"classpath:images.sql", "classpath:users.sql"})
-    // public void testGetShiftsByDoctorIdNonexistentShiftsDoc(){
-    //     final long DOC_ID = TestData.Users.doctorId;
+        doctorSingleShiftDao.updateShifts(DOC_ID, null);
+        Doctor DOC = em.find(Doctor.class, DOC_ID);
+    
+        Assert.assertNotNull(DOC);
+        Assert.assertEquals(1, DOC.getActiveSingleShifts().size());
+        Assert.assertTrue(DOC.getActiveSingleShifts().get(0).getIsActive());
+        Assert.assertEquals(DOC_ID, DOC.getActiveSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(OLD_SHIFT.getWeekday(), DOC.getActiveSingleShifts().get(0).getWeekday());
+        Assert.assertEquals(OLD_SHIFT.getAddress(), DOC.getActiveSingleShifts().get(0).getAddress());
+        Assert.assertEquals(OLD_SHIFT.getStartTime(), DOC.getActiveSingleShifts().get(0).getStartTime());
+        Assert.assertEquals(OLD_SHIFT.getEndTime(), DOC.getActiveSingleShifts().get(0).getEndTime());
+        Assert.assertEquals(OLD_SHIFT.getDuration(), DOC.getActiveSingleShifts().get(0).getDuration());
+    }
 
-    //     List<DoctorSingleShift> foundShifts = doctorSingleShiftDao.getShiftsByDoctorId(DOC_ID);
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void updateShiftsNoNewShiftsEmpty(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorSingleShift OLD_SHIFT = TestData.DoctorSingleShifts.doctorSingleShift;
 
-    //     Assert.assertTrue(foundShifts.isEmpty());
-    // }
+        doctorSingleShiftDao.updateShifts(DOC_ID, Collections.emptyList());
+        Doctor DOC = em.find(Doctor.class, DOC_ID);
+    
+        Assert.assertNotNull(DOC);
+        Assert.assertEquals(1, DOC.getActiveSingleShifts().size());
+        Assert.assertTrue(DOC.getActiveSingleShifts().get(0).getIsActive());
+        Assert.assertEquals(DOC_ID, DOC.getActiveSingleShifts().get(0).getDoctor().getId());
+        Assert.assertEquals(OLD_SHIFT.getWeekday(), DOC.getActiveSingleShifts().get(0).getWeekday());
+        Assert.assertEquals(OLD_SHIFT.getAddress(), DOC.getActiveSingleShifts().get(0).getAddress());
+        Assert.assertEquals(OLD_SHIFT.getStartTime(), DOC.getActiveSingleShifts().get(0).getStartTime());
+        Assert.assertEquals(OLD_SHIFT.getEndTime(), DOC.getActiveSingleShifts().get(0).getEndTime());
+        Assert.assertEquals(OLD_SHIFT.getDuration(), DOC.getActiveSingleShifts().get(0).getDuration());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testGetAvailableTurnsByDoctorByDateNullDoc(){
+
+        List<AvailableTurn> avTurns = doctorSingleShiftDao.getAvailableTurnsByDoctorByDate(null, LocalDate.now());
+
+        Assert.assertTrue(avTurns.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testGetAvailableTurnsByDoctorByDateNullDate(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Doctor DOC = em.find(Doctor.class, DOC_ID);
+
+        List<AvailableTurn> avTurns = doctorSingleShiftDao.getAvailableTurnsByDoctorByDate(DOC, null);
+
+        Assert.assertTrue(avTurns.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testGetAvailableTurnsByDoctorByDateBeforeDate(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Doctor DOC = em.find(Doctor.class, DOC_ID);
+
+        List<AvailableTurn> avTurns = doctorSingleShiftDao.getAvailableTurnsByDoctorByDate(DOC, LocalDate.now().minusDays(1));
+
+        Assert.assertTrue(avTurns.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testGetAvailableTurnsByDoctorByDateNoDocShifts(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Doctor DOC = em.find(Doctor.class, DOC_ID);
+
+        List<AvailableTurn> avTurns = doctorSingleShiftDao.getAvailableTurnsByDoctorByDate(DOC, LocalDate.now().plusDays(1));
+
+        Assert.assertTrue(avTurns.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql"})
+    public void testGetAvailableTurnsByDoctorByDateAllTaken(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Doctor DOC = em.find(Doctor.class, DOC_ID);
+        final LocalDate DATE = TestData.NewAppointments.appointment.getDate();
+        final Long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final LocalTime TIME1 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime TIME2 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
+
+        List<AvailableTurn> avTurns = doctorSingleShiftDao.getAvailableTurnsByDoctorByDate(DOC, DATE);
+        AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME1, TIME2));
+        AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME2, TIME3));
+
+
+        Assert.assertTrue(avTurns.isEmpty());
+        Assert.assertNotNull(appFound1);
+        Assert.assertNotNull(appFound2);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql"})
+    public void testGetAvailableTurnsByDoctorByDateNoneTaken(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final Doctor DOC = em.find(Doctor.class, DOC_ID);
+        final LocalDate DATE = TestData.NewAppointments.appointment.getDate();
+        final Long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
+        final String ADDRESS = TestData.DoctorSingleShifts.doctorSingleShift.getAddress();
+        final LocalTime TIME1 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
+        final LocalTime TIME2 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
+        final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
+
+        List<AvailableTurn> avTurns = doctorSingleShiftDao.getAvailableTurnsByDoctorByDate(DOC, DATE);
+        AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME1, TIME2));
+        AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME2, TIME3));
+
+
+        Assert.assertFalse(avTurns.isEmpty());
+        Assert.assertEquals(2, avTurns.size());
+        Assert.assertEquals(SHIFT_ID, avTurns.get(0).getShiftId());
+        Assert.assertEquals(DATE, avTurns.get(0).getDate());
+        Assert.assertEquals(TIME1, avTurns.get(0).getStartTime());
+        Assert.assertEquals(TIME2, avTurns.get(0).getEndTime());
+        Assert.assertEquals(ADDRESS, avTurns.get(0).getAddress());
+        Assert.assertEquals(SHIFT_ID, avTurns.get(1).getShiftId());
+        Assert.assertEquals(DATE, avTurns.get(1).getDate());
+        Assert.assertEquals(TIME2, avTurns.get(1).getStartTime());
+        Assert.assertEquals(TIME3, avTurns.get(1).getEndTime());
+        Assert.assertEquals(ADDRESS, avTurns.get(1).getAddress());
+        Assert.assertNull(appFound1);
+        Assert.assertNull(appFound2);
+    }
 
 }

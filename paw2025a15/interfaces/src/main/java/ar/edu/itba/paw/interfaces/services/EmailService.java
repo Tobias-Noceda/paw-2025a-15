@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import java.util.List;
+
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
@@ -14,7 +16,7 @@ public interface EmailService {
     
     public void sendPatientTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift);
 
-    public void sendRecievedStudyEmail(Patient patient, Doctor doctor, File file, Study study, String description);
+    public void sendRecievedStudyEmail(Patient patient, Doctor doctor, List<File> files, Study study, String description);
 
     public void sendDoctorCancelledAppointmentEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift);
 

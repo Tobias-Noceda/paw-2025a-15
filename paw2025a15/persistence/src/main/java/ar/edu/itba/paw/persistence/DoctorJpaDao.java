@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -11,8 +12,10 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import ar.edu.itba.paw.interfaces.persistence.DoctorDetailDao;
+import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
+import ar.edu.itba.paw.models.entities.DoctorVacationId;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -22,7 +25,7 @@ import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
-public class DoctorDetailJpaDao implements DoctorDetailDao{
+public class DoctorJpaDao implements DoctorDao{
 
     @PersistenceContext
     private EntityManager em;
@@ -43,13 +46,18 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
         if(doctor ==null || picture == null || (telephone == null || telephone.isEmpty()) ) return;
         doctor.setTelephone(telephone);
         doctor.setLocale(mailLanguage);
-        if (insurances == null) {
-            insurances = Collections.emptyList();
+        List<Insurance> toAdd;
+        if (insurances == null) toAdd = Collections.emptyList();
+        else{
+            toAdd = new ArrayList<>();
+            for(Insurance insurance:insurances){
+                toAdd.add(em.merge(insurance));
+            }
         }
-        doctor.setInsurances(insurances);
+        doctor.setInsurances(toAdd);
         File oldPicture = doctor.getPicture();
         boolean remove = false;
-        if(picture.getId().equals(oldPicture.getId())){
+        if(!picture.getId().equals(oldPicture.getId())){
             doctor.setPicture(picture);
             if(oldPicture.getId() != 1) remove = true;
         }
@@ -65,6 +73,7 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
 
     @Override
     public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize) {
+        if (page < 1 || pageSize <= 0) return Collections.emptyList();
         Insurance insurance;
         if (insuranceId != null) {
             insurance = em.find(Insurance.class, insuranceId);
@@ -240,4 +249,48 @@ public class DoctorDetailJpaDao implements DoctorDetailDao{
             return Integer.compare(count1, count2);
         });
     }
+
+    @Override
+    public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if (doctor == null || startDate == null || endDate == null) return null;
+        if(endDate.isBefore(startDate)) return null;
+        if(startDate.isBefore(LocalDate.now())) return null;
+
+        // Create a new DoctorVacation entity
+        DoctorVacation vacation = new DoctorVacation(doctor, startDate, endDate);
+        em.persist(vacation);
+        return vacation;
+    }
+
+    @Override
+    public void deleteDoctorVacation(DoctorVacationId dvId) {
+        DoctorVacation dv = em.find(DoctorVacation.class, dvId);
+        if (dv == null) return;
+        em.remove(dv);
+    }
+
+    @Override
+    public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
+    LocalDate today = LocalDate.now();
+        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today", DoctorVacation.class)
+             .setParameter("doctorId", doctorId)
+             .setParameter("today", today)
+             .getResultList();
+    }
+
+    @Override
+    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
+    LocalDate today = LocalDate.now();
+        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today", DoctorVacation.class)
+             .setParameter("doctorId", doctorId)
+             .setParameter("today", today)
+             .getResultList();
+    }
+
+    @Override
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
+        return em.find(DoctorVacation.class, new DoctorVacationId(doctorId, startDate, endDate)) != null;
+    }
+
 }

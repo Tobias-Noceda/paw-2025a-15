@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ar.edu.itba.paw.interfaces.persistence.AuthDoctorDao;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -30,16 +29,16 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     private AuthStudiesService ass;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Transactional
     @Override
     public void toggleAuthDoctor(long patientId, long doctorId) {
-        pds.getPatientById(patientId).orElseThrow(()-> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(()-> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         if(hasAuthDoctor(patientId, doctorId)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
             ass.unauthAllStudiesForDoctorIdAndPatientId(patientId, doctorId);
@@ -53,52 +52,38 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
 
     private void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
         if(accessLevels==null || accessLevels.isEmpty()) return;
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        int[] results = authDoctorDao.authDoctorWithLevels(patientId, doctorId, accessLevels);
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] > 0) {
-                LOGGER.info("Giving authorization for doctor with id: {} of patient with id: {} with level:{}", doctorId, patientId, accessLevels.get(i).name());
-            } else {
-                LOGGER.error("Failed to authorize doctor with id: {} of patient with id: {} with level:{} at {}", doctorId, patientId, accessLevels.get(i).name(), LocalDateTime.now());
-                throw new RuntimeException("Failed to authorize doctor with id: " + doctorId + " of patient with id: " + patientId + " with level:" + accessLevels.get(i).name());
-            }
-        }
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        authDoctorDao.authDoctorWithLevels(patientId, doctorId, accessLevels);
+        LOGGER.info("Giving authorizations for doctor with id: {} of patient with id: {}", doctorId, patientId);
     }
 
     private void unauthDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels){
         if(accessLevels==null || accessLevels.isEmpty()) return;
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         if(accessLevels.contains(AccessLevelEnum.VIEW_BASIC)){
             authDoctorDao.unauthDoctorAllAccessLevels(patientId, doctorId);
             LOGGER.info("Removing all specific authorizations for doctor with id: {} for patient with id: {}", doctorId, patientId);
             return;
         }
-        int[] results = authDoctorDao.unauthDoctorForLevels(patientId, doctorId, accessLevels);
-        for (int i = 0; i < results.length; i++) {
-            if (results[i] > 0) {
-                LOGGER.info("Removing authorization for doctor with id: {} of patient with id: {} with level:{}", doctorId, patientId, accessLevels.get(i).name());
-            } else {
-                LOGGER.error("Failed to remove authorization of doctor with id: {} of patient with id: {} with level:{} at {}", doctorId, patientId, accessLevels.get(i).name(), LocalDateTime.now());
-                throw new RuntimeException("Failed to remove authorization of doctor with id: " + doctorId + " of patient with id: " + patientId + " with level:" + accessLevels.get(i).name());
-            }
-        }
+        authDoctorDao.unauthDoctorForLevels(patientId, doctorId, accessLevels);
+        LOGGER.info("Removing authorizations for doctor with id: {} of patient with id: {}", doctorId, patientId);
     }
 
     @Transactional(readOnly = true)
     @Override
     public boolean hasAuthDoctor(long patientId, long doctorId) {
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return authDoctorDao.hasAuthDoctor(patientId, doctorId);
     }
 
     @Transactional
     @Override
     public void updateAuthDoctor(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
-        pds.getPatientById(patientId).orElseThrow(()-> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        dds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(()-> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         List<AccessLevelEnum> toRemove;
         List<AccessLevelEnum> toAdd = accessLevels == null ? new ArrayList<>() : new ArrayList<>(accessLevels);
         if(accessLevels==null || accessLevels.isEmpty()){
@@ -121,8 +106,17 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
     @Transactional(readOnly = true)
     @Override
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId) {
-        dds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return authDoctorDao.getAuthAccessLevelEnums(patientId, doctorId);
+    }   
+    
+    @Transactional
+    @Override
+    public void deauthorizeAllDoctors(long patientId) {
+        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        authDoctorDao.deauthorizeAllDoctors(patientId);
+        ass.unauthAllStudiesForAllDocsForPatientId(patientId);
+        LOGGER.info("Deauthorized all doctors for patient with id: {}", patientId);
     }
 }

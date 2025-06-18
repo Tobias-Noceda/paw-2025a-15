@@ -53,28 +53,21 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public int[] authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+    public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
         Patient patient = em.find(Patient.class, patientId);
         Doctor doctor = em.find(Doctor.class, doctorId);
-        if(doctor==null || patient==null) return new int[0];
-        int[] results = new int[accessLevels.size()];
-        for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
-            try{
-                AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevels.get(i));
-                em.persist(ad);
-                results[i] = 1;
-                if (i!=0 && i % 50 == 0) {
-                    em.flush();
-                    em.clear();
-                    doctor = em.find(Doctor.class, doctorId);
-                    patient = em.find(Patient.class, patientId);
-                }
-            }
-            catch(Exception e){
-                results[i] = 0;
+        if(doctor==null || patient==null) return;
+        for (int i = 0; i < accessLevels.size(); i++) {
+            AuthDoctor ad = new AuthDoctor(doctor, patient, accessLevels.get(i));
+            em.persist(ad);
+            if (i!=0 && i % 50 == 0) {
+                em.flush();
+                em.clear();
+                doctor = em.find(Doctor.class, doctorId);
+                patient = em.find(Patient.class, patientId);
             }
         }
-        return results;
+        return;
     }
 
     @Override
@@ -96,29 +89,21 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
     }
 
     @Override
-    public int[] unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
+    public void unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels) {
         Doctor doctor = em.find(Doctor.class, doctorId);
         Patient patient = em.find(Patient.class, patientId);
-        if(doctor==null || patient==null) return new int[0];
-        int[] results = new int[accessLevels.size()];
-        for (int i = 0; i < accessLevels.size(); i++) {//TODO: preguntar si no hay un batch, por lo que vi no pareciera haber
-            try{
-                AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctor.getId(), patient.getId(), accessLevels.get(i)));
-                if(ad!=null){
-                    em.remove(ad);
-                    results[i] = 1;
-                    if (i % 50 == 0) {
-                        em.flush();
-                        em.clear();
-                    }
+        if(doctor==null || patient==null) return;
+        for (int i = 0; i < accessLevels.size(); i++) {
+            AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctor.getId(), patient.getId(), accessLevels.get(i)));
+            if(ad!=null){
+                em.remove(ad);
+                if (i % 50 == 0) {
+                    em.flush();
+                    em.clear();
                 }
-                else results[i] = 0;
-            }
-            catch(Exception e){
-                results[i] = 0;
             }
         }
-        return results;
+        return;
     }
 
     @Override
@@ -130,5 +115,12 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                             .setParameter("doctorId", doctorId)
                             .setParameter("patientId", patientId)
                             .getResultList();
+    }
+
+    @Override
+    public void deauthorizeAllDoctors(long patientId) {
+        em.createQuery("DELETE FROM AuthDoctor ad WHERE ad.patient.id = :patientId")
+            .setParameter("patientId", patientId)
+            .executeUpdate();
     }
 }

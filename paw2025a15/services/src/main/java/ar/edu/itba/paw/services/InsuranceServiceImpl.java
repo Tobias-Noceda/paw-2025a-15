@@ -47,8 +47,9 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional
     @Override
     public void edit(long id, String name, File picture) {
+        if(name==null) throw new IllegalArgumentException("Insurance name cannot be null");
         Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
-        if(getInsuranceByName(name).isPresent()) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        if((!name.equals(insurance.getName())) && (getInsuranceByName(name).isPresent())) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
         fs.findById(picture.getId()).orElseThrow(() -> new NotFoundException("Logo with id: " + picture.getId() + " does not exist!"));
         insurance.setName(name);
         insurance.setPicture(picture);
@@ -71,5 +72,25 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public List<Insurance> getAllInsurances() {
         return insuranceDao.getAllInsurances();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getInsurancesCount() {
+        return insuranceDao.getInsurancesCount();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Insurance> getInsurancesPage(int page, int pageSize) {
+        return insuranceDao.getInsurancesPage(page, pageSize);
+    }
+
+    @Transactional
+    @Override
+    public void delete(long id) {
+        Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
+        insuranceDao.delete(insurance);
+        LOGGER.info("Deleted insurance with id: {}", id);
     }
 }

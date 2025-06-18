@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.webapp.controller.util.SelectItem;
@@ -37,10 +37,10 @@ public class RegisterController {
     private InsuranceService is;
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
-    private DoctorDetailService dds;
+    private DoctorService ds;
 
     @Autowired
     private DoctorShiftService dss;
@@ -73,7 +73,7 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                pds.createPatient(
+                ps.createPatient(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),
@@ -117,7 +117,7 @@ public class RegisterController {
             isValid = false;
         } else {
             try {
-                User doc = dds.createDoctor(
+                User doc = ds.createDoctor(
                         form.getEmail(),
                         form.getPassword(),
                         form.getName() + " " + form.getSurname(),

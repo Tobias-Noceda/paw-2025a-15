@@ -9,10 +9,15 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import ar.edu.itba.paw.models.entities.*;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
+import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.entities.AppointmentNewId;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.entities.User;
 
 @Repository
 public class AppointmentJpaDao implements AppointmentDao{
@@ -107,10 +112,24 @@ public class AppointmentJpaDao implements AppointmentDao{
     }
 
     @Override
-    public void clearRemovedAppointmentBeforeDate(LocalDate date) {
-        em.createQuery("DELETE FROM Appointment a WHERE a.appointmentDate < :date AND a.patient.id = a.shift.doctor.id")
+    public void clearRemovedAppointmentBeforeDate(LocalDate date) { 
+        em.createQuery("DELETE FROM AppointmentNew a WHERE a.id.date < :date AND a.patient.id IN (SELECT ds.doctor.id FROM DoctorSingleShift ds)")
             .setParameter("date", date)
             .executeUpdate();
     }
-    
+
+    @Override
+    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AppointmentNew> toRemove =  em.createQuery("from AppointmentNew a where a.id.date >= :startDate and a.id.date <= :endDate and a.shift.doctor.id = :doctorId", AppointmentNew.class)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .setParameter("doctorId", doctorId)
+                .getResultList();
+        for (AppointmentNew appointment : toRemove) {
+            em.remove(appointment);
+        }
+        em.flush();
+        em.clear();
+    }
+
 }

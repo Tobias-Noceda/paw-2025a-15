@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.services.DoctorDetailService;
+import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
+import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
@@ -30,14 +33,22 @@ public class DoctorShiftServiceImplTest {
     private DoctorShiftServiceImpl dss;
 
     @Mock
-    private DoctorDetailService dds;
+    private DoctorShiftDao doctorDaoMock;
+
+    @Mock
+    private DoctorService ds;
 
     @Test
-    public void testCreateShiftsNonexistentDoc(){
-        Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+    public void testCreateShiftsNullStartTime(){
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, null, END_TIME, SLOT)
+        );
+    }
 
-        Assert.assertThrows(NotFoundException.class, () -> 
-            dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, SLOT)
+    @Test
+    public void testCreateShiftsNullEndTime(){
+        Assert.assertThrows(IllegalArgumentException.class, () -> 
+            dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, null, SLOT)
         );
     }
 
@@ -48,15 +59,31 @@ public class DoctorShiftServiceImplTest {
         );
     }
 
-    // TODO: ver, pero no creo q tenga sentido con los nuevos shifts
-    // @Test
-    // public void testCreateShiftsBatchFailure(){
-    //     Mockito.when(dds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-    //     Mockito.when(doctorShiftDaoMock.batchCreate(Mockito.eq(SHIFT))).thenReturn(new int[]{1, 0});
+    @Test
+    public void testCreateShiftsNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-    //     Assert.assertThrows(RuntimeException.class, () -> 
-    //         dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, slot)
-    //     );
-    // }
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dss.createShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, SLOT)
+        );
+    }
+
+    @Test
+    public void testUpdateShiftsNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dss.updateShifts(DOC_ID, WEEKDAYS, ADDRESS, START_TIME, END_TIME, SLOT, false)
+        );
+    }
+
+    @Test
+    public void testGetAvailableTurnsByDOctorIdByDateNonexistentDoctor(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dss.getAvailableTurnsByDoctorIdByDate(DOC_ID, LocalDate.now())
+        );
+    }
 
 }

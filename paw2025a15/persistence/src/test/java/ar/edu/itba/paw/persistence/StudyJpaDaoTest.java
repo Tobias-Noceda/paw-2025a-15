@@ -46,22 +46,23 @@ public class StudyJpaDaoTest {
         STUDY.setId(TestData.Studies.newStudyId);
         final StudyTypeEnum TYPE = TestData.Studies.newStudyWithoutDate.getType();
         final String COMMENT = TestData.Studies.newStudyWithoutDate.getComment();
-        final File FILE = TestData.Images.validImage;
-        FILE.setId(TestData.Images.validImageId);
+        final List<File> FILES = List.of(TestData.Images.validImage);
+        FILES.get(0).setId(TestData.Images.validImageId);
         final Patient PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
         final User UPLOADER = TestData.Users.patient;
         UPLOADER.setId(TestData.Users.patientId);
 
-        Study study = studyDao.create(TYPE, COMMENT, FILE, PATIENT, UPLOADER);
+        Study study = studyDao.create(TYPE, COMMENT, FILES, PATIENT, UPLOADER);
         Study studyPersisted = em.find(Study.class, study.getId());
 
         Assert.assertNotNull(studyPersisted);
         Assert.assertEquals(STUDY.getType(), studyPersisted.getType());
         Assert.assertEquals(STUDY.getComment(), studyPersisted.getComment());
-        Assert.assertEquals(STUDY.getFile(), studyPersisted.getFile());
-        Assert.assertEquals(STUDY.getPatient(), studyPersisted.getPatient());
-        Assert.assertEquals(STUDY.getUploader(), studyPersisted.getUploader());
+        Assert.assertEquals(1, studyPersisted.getFiles().size());
+        Assert.assertEquals(STUDY.getFiles().get(0).getId(), studyPersisted.getFiles().get(0).getId());
+        Assert.assertEquals(STUDY.getPatient().getId(), studyPersisted.getPatient().getId());
+        Assert.assertEquals(STUDY.getUploader().getId(), studyPersisted.getUploader().getId());
         Assert.assertEquals(STUDY.getStudyDate(), studyPersisted.getStudyDate());
     }
 
@@ -71,24 +72,25 @@ public class StudyJpaDaoTest {
         STUDY.setId(TestData.Studies.validStudyWithDateId);
         final StudyTypeEnum TYPE = TestData.Studies.validStudyWithDate.getType();
         final String COMMENT = TestData.Studies.validStudyWithDate.getComment();
-        final File FILE = TestData.Images.validImage;
-        FILE.setId(TestData.Images.validImageId);
+        final List<File> FILES = List.of(TestData.Images.validImage);
+        FILES.get(0).setId(TestData.Images.validImageId);
         final Patient PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
         final User UPLOADER = TestData.Users.patient;
         UPLOADER.setId(TestData.Users.patientId);
         final LocalDate STUDY_DATE = TestData.Studies.validStudyWithDate.getStudyDate();
 
-        Study study = studyDao.create(TYPE, COMMENT, FILE, PATIENT, UPLOADER, STUDY_DATE);
+        Study study = studyDao.create(TYPE, COMMENT, FILES, PATIENT, UPLOADER, STUDY_DATE);
         Study studyPersisted = em.find(Study.class, study.getId());
 
         Assert.assertNotNull(study);
         Assert.assertNotNull(studyPersisted);
         Assert.assertEquals(STUDY.getType(), studyPersisted.getType());
         Assert.assertEquals(STUDY.getComment(), studyPersisted.getComment());
-        Assert.assertEquals(STUDY.getFile(), studyPersisted.getFile());
-        Assert.assertEquals(STUDY.getPatient(), studyPersisted.getPatient());
-        Assert.assertEquals(STUDY.getUploader(), studyPersisted.getUploader());
+        Assert.assertEquals(1, studyPersisted.getFiles().size());
+        Assert.assertEquals(STUDY.getFiles().get(0).getId(), studyPersisted.getFiles().get(0).getId());
+        Assert.assertEquals(STUDY.getPatient().getId(), studyPersisted.getPatient().getId());
+        Assert.assertEquals(STUDY.getUploader().getId(), studyPersisted.getUploader().getId());
         Assert.assertEquals(STUDY.getStudyDate(), studyPersisted.getStudyDate());
     }
 
@@ -97,7 +99,7 @@ public class StudyJpaDaoTest {
         final Study STUDY = TestData.Studies.validStudyWithDate;
         final long STUDY_ID = TestData.Studies.validStudyWithDateId;
         STUDY.setId(STUDY_ID);
-        STUDY.getFile().setId(TestData.Images.validImageId);
+        STUDY.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY.getPatient().setId(TestData.Users.patientId);
         STUDY.getUploader().setId(TestData.Users.patientId);
 
@@ -106,6 +108,13 @@ public class StudyJpaDaoTest {
         Assert.assertNotNull(foundStudy);
         Assert.assertTrue(foundStudy.isPresent());
         Assert.assertEquals(STUDY, foundStudy.get());
+        Assert.assertEquals(STUDY.getType(), foundStudy.get().getType());
+        Assert.assertEquals(STUDY.getComment(), foundStudy.get().getComment());
+        Assert.assertEquals(1, foundStudy.get().getFiles().size());
+        Assert.assertEquals(STUDY.getFiles().get(0).getId(), foundStudy.get().getFiles().get(0).getId());
+        Assert.assertEquals(STUDY.getPatient().getId(), foundStudy.get().getPatient().getId());
+        Assert.assertEquals(STUDY.getUploader().getId(), foundStudy.get().getUploader().getId());
+        Assert.assertEquals(STUDY.getStudyDate(), foundStudy.get().getStudyDate());
     }
 
     @Test
@@ -123,12 +132,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
         final Long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
@@ -155,12 +164,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
@@ -192,12 +201,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
@@ -217,12 +226,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
         final long EXTRASTUDY1_ID = TestData.Studies.extraStudyId;
@@ -251,12 +260,12 @@ public class StudyJpaDaoTest {
         final Long PATIENT = TestData.Users.patientId;
         final Study STUDY1 = TestData.Studies.validStudyWithDate;
         STUDY1.setId(TestData.Studies.validStudyWithDateId);
-        STUDY1.getFile().setId(TestData.Images.validImageId);
+        STUDY1.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY1.getPatient().setId(TestData.Users.patientId);
         STUDY1.getUploader().setId(TestData.Users.patientId);
         final Study STUDY2 = TestData.Studies.validStudyWithoutDate;
         STUDY2.setId(TestData.Studies.validStudyWithoutDateId);
-        STUDY2.getFile().setId(TestData.Images.validImageId);
+        STUDY2.getFiles().get(0).setId(TestData.Images.validImageId);
         STUDY2.getPatient().setId(TestData.Users.patientId);
         STUDY2.getUploader().setId(TestData.Users.patientId);
 
@@ -271,4 +280,55 @@ public class StudyJpaDaoTest {
         Assert.assertTrue(foundStudies.contains(STUDY1));
         Assert.assertTrue(foundStudies.contains(STUDY2));
     }
+
+    @Test
+    public void testDeleteStudy(){
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
+
+        boolean result = studyDao.deleteStudy(STUDY_ID);
+        Study studyPersisted = em.find(Study.class, STUDY_ID);
+
+        Assert.assertTrue(result);
+        Assert.assertNull(studyPersisted);
+    }
+
+    @Test
+    public void testDeleteStudyNonexistentStudy(){
+        final Long STUDY_ID = TestData.Studies.extraStudyId;
+
+        boolean result = studyDao.deleteStudy(STUDY_ID);
+        Study studyPersisted = em.find(Study.class, STUDY_ID);
+
+        Assert.assertFalse(result);
+        Assert.assertNull(studyPersisted);
+    }
+
+    @Test
+    public void testIsFileInStudy(){
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
+        final Long FILE_ID = TestData.Images.validImageId;
+
+        boolean result = studyDao.isFileInStudy(STUDY_ID, FILE_ID);
+        Study studyPersisted = em.find(Study.class, STUDY_ID);
+
+        Assert.assertTrue(result);
+        Assert.assertNotNull(studyPersisted);
+        Assert.assertEquals(1, studyPersisted.getFiles().size());
+        Assert.assertEquals(FILE_ID, studyPersisted.getFiles().get(0).getId());
+    }
+
+    @Test
+    public void testIsFileInStudyNegative(){
+        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
+        final Long FILE_ID = TestData.Images.validImage2Id;
+
+        boolean result = studyDao.isFileInStudy(STUDY_ID, FILE_ID);
+        Study studyPersisted = em.find(Study.class, STUDY_ID);
+
+        Assert.assertFalse(result);
+        Assert.assertNotNull(studyPersisted);
+        Assert.assertEquals(1, studyPersisted.getFiles().size());
+        Assert.assertNotEquals(FILE_ID, studyPersisted.getFiles().get(0).getId());
+    }
+
 }

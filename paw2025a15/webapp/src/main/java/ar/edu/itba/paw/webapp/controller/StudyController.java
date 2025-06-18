@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.FileService;
-import ar.edu.itba.paw.interfaces.services.PatientDetailService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
@@ -42,7 +45,7 @@ public class StudyController {
     private StudyService ss;
 
     @Autowired
-    private PatientDetailService pds;
+    private PatientService ps;
 
     @Autowired
     private AuthStudiesService ass;
@@ -62,7 +65,7 @@ public class StudyController {
         Locale locale,
         @ModelAttribute("user_data") User user
     ){
-        Patient patient = pds.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
+        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient not found"));
 
         if(!patient.getRole().equals(UserRoleEnum.PATIENT)) {
             throw new NotFoundException("Patient not found");
@@ -92,8 +95,15 @@ public class StudyController {
         if(createStudyForm.getComment() != null) {
             comment = createStudyForm.getComment();
         }
-        File file = fs.create(createStudyForm.getFile().getBytes(), FileTypeEnum.fromString(createStudyForm.getFile().getContentType()));
-        Study study = ss.create(createStudyForm.getType(), comment, file, patientId, user.getId(), createStudyForm.getDate());
+        List<File> files = new ArrayList<>();
+        for(MultipartFile mFile : createStudyForm.getFiles()) {
+            if(mFile.getBytes() == null || mFile.getContentType() == null) {
+                errors.rejectValue("files", "error.file", "File is required");
+                return createStudyForm(patientId, landingForm, createStudyForm, errors, locale, user);
+            }
+            files.add(fs.create(mFile.getBytes(), FileTypeEnum.fromString(mFile.getContentType())));
+        }
+        Study study = ss.create(createStudyForm.getType(), comment, files, patientId, user.getId(), createStudyForm.getDate());
         ass.authStudyForDoctorIdList(createStudyForm.getAuthDoctorIds(), study.getId());
         if(patientId != user.getId()) {
             return new ModelAndView("redirect:/patient/" + patientId);
@@ -135,10 +145,10 @@ public class StudyController {
         }
 
         ModelAndView mav = new ModelAndView("studyInfo");
-        Patient patient = (Patient) user;
 
         // Obtener el estudio
-        Study study = ss.getStudyById(studyId).orElseThrow();
+        Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found with id: " + studyId));
+        Patient patient = study.getPatient();
 
         // Obtener todos los doctores asociados al paciente (autorizados o no)
         List<Doctor> doctors = patient.getAuthorizedDoctors();
@@ -159,5 +169,30 @@ public class StudyController {
     ){
         ss.deleteStudy(studyId);
         return new ModelAndView("redirect:/studies");
+    }
+
+    @RequestMapping(value = "/authAllStudyDoctors/{studyId:\\d+}", method = RequestMethod.POST)
+    public ModelAndView authAllDoctorsForStudy(
+            @ModelAttribute("user_data") User user,
+            @PathVariable("studyId") long studyId,
+            @RequestParam("action") String action
+    ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+
+        // Verificar que el estudio pertenece al usuario
+        Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found with id: " + studyId));
+        if (!study.getPatient().getId().equals(user.getId())) {
+            throw new UnauthorizedException("User not authorized to modify this study");
+        }
+
+        if (action.equals("authorize")) {
+            ass.authorizeAllDoctorsForStudy(studyId);
+        } else if (action.equals("deauthorize")) {
+            ass.deauthorizeAllDoctorsForStudy(studyId);
+        }
+
+        return new ModelAndView("redirect:/study-info/" + studyId);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ErrorController {
+
     @RequestMapping("/400")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView badRequest() {

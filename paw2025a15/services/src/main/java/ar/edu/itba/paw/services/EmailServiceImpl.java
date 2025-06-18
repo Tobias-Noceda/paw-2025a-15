@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -65,7 +67,7 @@ public class EmailServiceImpl implements EmailService{
         emailSender.send(message);
     }
 
-    private void sendMessageWithFileTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, byte[] file, String fileType, String fileName, Locale locale) throws MessagingException {
+    private void sendMessageWithFilesTemplate(String to, String subject, Map<String, Object> templateModel, String templateName, List<File> files, List<String> fileNames, Locale locale) throws MessagingException {
         Context context = new Context(locale);
         context.setVariables(templateModel);
         String htmlBody = templateEngine.process(templateName, context);
@@ -76,7 +78,12 @@ public class EmailServiceImpl implements EmailService{
         helper.setSubject(subject);
         helper.setText(htmlBody, true);
         helper.setFrom(emailFromString);
-        helper.addAttachment(fileName, new ByteArrayDataSource(file, fileType));
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+            String fileName = fileNames.get(i);
+            String fileType = file.getType().getName();
+            helper.addAttachment(fileName, new ByteArrayDataSource(file.getContent(), fileType));
+        }
 
         emailSender.send(message);
     }
@@ -86,7 +93,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -115,7 +122,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientTakenShiftEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -141,29 +148,37 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
-    public void sendRecievedStudyEmail(Patient patient, Doctor doctor, File file, Study study, String description) {
+    public void sendRecievedStudyEmail(Patient patient, Doctor doctor, List<File> files, Study study, String description) {
         Map<String, Object> templateModel;
         templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
         templateModel.put("studyLink", baseURL + "view-study/" + study.getId());
         
-        StringBuilder fileName = new StringBuilder();
-        fileName.append("Study_")
-            .append(patient.getName().replace(" ", "-"))
-            .append("_")
-            .append(study.getUploadDate().toString().replace(":", "-"))
-            .append(".")
-            .append(file.getType().getName().split("/")[1]);
+        List<String> studyNames = new ArrayList<>();
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);    
+            StringBuilder fileName = new StringBuilder();
+            fileName.append("Study_")
+                .append(patient.getName().replace(" ", "-"))
+                .append("_")
+                .append(study.getUploadDate().toString().replace(":", "-"))
+                .append("_")
+                .append(i + 1)
+                .append(".")
+                .append(file.getType().getName().split("/")[1]);
+            
+            studyNames.add(fileName.toString());
+        }
 
         Locale locale = patient.getLocale().toLocale();
         String subject = messageSource.getMessage("recievedStudy.subject", null, locale);
 
         try {
-            sendMessageWithFileTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", file.getContent(), file.getType().getName(), fileName.toString(), locale);
+            sendMessageWithFilesTemplate(patient.getEmail(), subject, templateModel, "recievedStudyTemplate", files, studyNames, locale);
         } catch (MessagingException e) {
             LOGGER.error("Error sending recieved study email to {}: {}", patient.getEmail(), e.getMessage(), e);
         }
@@ -174,7 +189,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancelledAppointmentEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -203,7 +218,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendDoctorCancellationConfirmationEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -231,7 +246,7 @@ public class EmailServiceImpl implements EmailService{
         Map<String, Object> templateModel = new HashMap<>();
 
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -260,7 +275,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPatientCancellationConfirmationEmail(Patient patient, Doctor doctor, AppointmentNew appointment, DoctorSingleShift shift) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -287,7 +302,7 @@ public class EmailServiceImpl implements EmailService{
     public void sendPasswordResetEmail(User user, String token) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("userName", user.getName());
 
         String recoveryLink = baseURL + "change-password/" + token + "/" + user.getId();
@@ -312,7 +327,7 @@ public class EmailServiceImpl implements EmailService{
         
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());
@@ -341,7 +356,7 @@ public class EmailServiceImpl implements EmailService{
 
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("homeLink", baseURL);
-        templateModel.put("imageSource", baseURL + "supersecret/files/logo");
+        templateModel.put("imageSource", baseURL + "logo");
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("patientName", patient.getName());
         templateModel.put("dateNumber", appointment.getDateNumber());

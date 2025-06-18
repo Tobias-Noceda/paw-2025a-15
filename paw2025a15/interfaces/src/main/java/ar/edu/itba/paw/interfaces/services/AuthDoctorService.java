@@ -12,4 +12,6 @@ public interface AuthDoctorService {
     public boolean hasAuthDoctor(long patientId, long doctorId);
 
     public List<AccessLevelEnum> getAuthAccessLevelEnums(long patientId, long doctorId);
+    
+    public void deauthorizeAllDoctors(long patientId);
 }
