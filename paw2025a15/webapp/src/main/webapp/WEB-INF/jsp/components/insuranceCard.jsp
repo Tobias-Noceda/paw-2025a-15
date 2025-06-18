@@ -9,7 +9,7 @@
     <div class="insurance-card__logo">
       <img
         src="<c:url value='/supersecret/insurance-picture/${param.insuranceId}'/>"
-        alt="Logo de <c:out value='${param.insuranceName}' escapeXml='true' />"
+        alt="<spring:message code='admin.insurance.alt' arguments='${param.insuranceName}' htmlEscape='true'/>"
       />
     </div>
 
