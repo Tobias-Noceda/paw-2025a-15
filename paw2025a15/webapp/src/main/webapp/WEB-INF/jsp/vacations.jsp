@@ -39,7 +39,7 @@
 
         <h3 class="table-title">
 
-            <spring:message code="vacations.create.title" text="Register a new vacation"/>
+            <spring:message code="vacations.create.title"/>
 
         </h3>
 
@@ -57,7 +57,7 @@
 
                     <form:label path="startDate">
 
-                        <spring:message code="vacations.table.startDate" text="Start Date"/>
+                        <spring:message code="vacations.table.startDate" />
 
                     </form:label>
 
@@ -71,7 +71,7 @@
 
                     <form:label path="endDate">
 
-                        <spring:message code="vacations.table.endDate" text="End Date"/>
+                        <spring:message code="vacations.table.endDate" />
 
                     </form:label>
 
@@ -86,7 +86,7 @@
 
                 <button type="button" class="navigation-button" onclick="event.stopPropagation(); openConfirmDialog(this.form, '${confirmationVacationMessage}', null, '${confirmVacationText}', '${cancelText}')">
 
-                    <spring:message code="vacations.create.submit" text="Submit vacation"/>
+                    <spring:message code="vacations.create.submit" />
 
                 </button>
 
@@ -103,15 +103,15 @@
         <!-- VACACIONES PASADAS -->
         <div class="appointment-list-container">
             <h3 class="table-title">
-                <spring:message code="vacations.past.title" text="Vacaciones Pasadas"/>
+                <spring:message code="vacations.past.title" />
             </h3>
             <div class="appointment-table-container">
                 <div class="appointments-table-header">
                     <table class="appointments-table">
                         <thead>
                         <tr>
-                            <th><spring:message code="vacations.table.startDate" text="Desde"/></th>
-                            <th><spring:message code="vacations.table.endDate"   text="Hasta"/></th>
+                            <th><spring:message code="vacations.table.startDate" /></th>
+                            <th><spring:message code="vacations.table.endDate" /></th>
                         </tr>
                         </thead>
                     </table>
@@ -137,7 +137,7 @@
                 <c:if test="${empty pastVacations}">
                     <div class="no-appointments-container">
                         <h4 class="no-appointments-text">
-                            <spring:message code="vacations.past.empty" text="No hay vacaciones pasadas."/>
+                            <spring:message code="vacations.past.empty"/>
                         </h4>
                     </div>
                 </c:if>
@@ -147,15 +147,15 @@
         <!-- VACACIONES FUTURAS -->
         <div class="appointment-list-container">
             <h3 class="table-title">
-                <spring:message code="vacations.future.title" text="Vacaciones Futuras"/>
+                <spring:message code="vacations.future.title" />
             </h3>
             <div class="appointment-table-container">
                 <div class="appointments-table-header">
                     <table class="appointments-table">
                         <thead>
                         <tr>
-                            <th><spring:message code="vacations.table.startDate" text="Desde"/></th>
-                            <th><spring:message code="vacations.table.endDate"   text="Hasta"/></th>
+                            <th><spring:message code="vacations.table.startDate" /></th>
+                            <th><spring:message code="vacations.table.endDate"   /></th>
                         </tr>
                         </thead>
                     </table>
@@ -196,7 +196,7 @@
                 <c:if test="${empty futureVacations}">
                     <div class="no-appointments-container">
                         <h4 class="no-appointments-text">
-                            <spring:message code="vacations.future.empty" text="No hay vacaciones futuras."/>
+                            <spring:message code="vacations.future.empty" />
                         </h4>
                     </div>
                 </c:if>

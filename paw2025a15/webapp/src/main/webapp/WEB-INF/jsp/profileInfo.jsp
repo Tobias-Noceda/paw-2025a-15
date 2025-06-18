@@ -123,20 +123,26 @@
                 <form:errors path="address" cssClass="error-box" element="div"/>
               </div>
 
-              <div class="field-container full-width">
-                <h3 class="section-subtitle"><spring:message code="doctorProfile.updateSchedule"/></h3>
-                <input 
-                  type="checkbox"
-                  cssClass="switch-checkbox"
-                  onclick="setUpdateScheduleFields()"
+              <div class="section-header  ">
+                <h3 class="section-subtitle">
+                  <spring:message code="doctorProfile.updateSchedule"/>
+                </h3>
+                <input
+                        type="checkbox"
+                        class="switch-checkbox"
+                        onclick="setUpdateScheduleFields()"
                 />
                 <form:hidden
-                  path="updateSchedules"
-                  id="updateScheduleSwitch"
-                  value="${profileForm.updateSchedules ? 'true' : 'false'}"
+                        path="updateSchedules"
+                        id="updateScheduleSwitch"
+                        value="${profileForm.updateSchedules ? 'true' : 'false'}"
                 />
+              </div>
 
-              
+
+              <div class="field-container full-width">
+
+
                 <div style="display: none; flex-direction: column; align-items: left; max-height: fit-content;" id="new-schedule-fields">
                   <h3 class="section-subtitle"><spring:message code="doctorForm.schedule"/></h3>
                   <div class="field-container full-width">
