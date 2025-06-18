@@ -81,7 +81,9 @@ public class UserController {
         
         if(user instanceof Doctor doctor) {
             ds.updateDoctor(doctor, profileForm.getPhoneNumber(), picture, profileForm.getMailLanguage(), profileForm.getInsurances());
-            ds.updateShifts(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount());
+            if (profileForm.getUpdateSchedules()) {
+                ds.updateShifts(doctor.getId(), profileForm.getSchedules().getWeekday(), profileForm.getAddress(), LocalTime.parse(profileForm.getSchedules().getStartTime()), LocalTime.parse(profileForm.getSchedules().getEndTime()), profileForm.getAmount(), profileForm.getKeepTurns());
+            }
         } else {
             ps.updatePatient(
                 (Patient) user,
@@ -100,8 +102,8 @@ public class UserController {
                 profileForm.getDiet(),
                 profileForm.getHobbies(),
                 profileForm.getJob(),
-                null,
-                null
+                profileForm.getInsuranceId(),
+                profileForm.getInsuranceNumber()
             );
         }
         LOGGER.info("User with id: {} updated!", user.getId());
@@ -143,9 +145,6 @@ public class UserController {
                     .toList();
             mav.addObject("selectedDays", selectedDays);
             profileForm.setAddress(doctor.getSchedules().getAddress());
-            mav.addObject("doctorDetail", doctor);
-        } else {
-            mav.addObject("patientDetails", ps.getPatientById(user.getId()).orElse(null));
         }
 
         mav.addObject("obrasSocialesItems", is.getAllInsurances());

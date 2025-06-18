@@ -126,4 +126,6 @@ public class DoctorController {
 
         return new ModelAndView("redirect:/studies");        
     }
+
+
 }

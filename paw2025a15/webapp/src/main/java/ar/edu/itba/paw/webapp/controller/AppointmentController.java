@@ -1,17 +1,21 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import javax.print.Doc;
 import javax.validation.Valid;
 
+import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -22,10 +26,6 @@ import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.exceptions.FormErrorException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
-import ar.edu.itba.paw.webapp.form.AppointmentForm;
-import ar.edu.itba.paw.webapp.form.LandingForm;
-import ar.edu.itba.paw.webapp.form.ShiftsDayForm;
-import ar.edu.itba.paw.webapp.form.TakeTurnForm;
 
 @Controller
 public class AppointmentController {
@@ -35,6 +35,10 @@ public class AppointmentController {
 
     @Autowired
     private DoctorShiftService dss;
+
+    @Autowired
+    private DoctorService ds;
+
 
     @RequestMapping("/appointments")
     public ModelAndView appointments(
@@ -117,6 +121,8 @@ public class AppointmentController {
         }
     }
 
+
+
     @RequestMapping(value = "/removeAppointment", method = RequestMethod.POST)
     public ModelAndView removeAppointment(
         @ModelAttribute("user_data") User user,
@@ -140,4 +146,72 @@ public class AppointmentController {
         
         return new ModelAndView("redirect:/appointments");
     }
+
+
+    @RequestMapping(value = "/vacations")
+    public ModelAndView vacations(
+            @ModelAttribute("vacationForm") VacationForm vacationForm,
+            BindingResult result,
+            @ModelAttribute("user_data") User user,
+            Locale locale
+    ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+
+        Doctor doctor = ds.getDoctorById(user.getId())
+                .orElseThrow(() -> new NotFoundException("Doctor does not exist"));
+        List<DoctorVacation> vacations = doctor.getVacations();
+
+        ModelAndView mav = new ModelAndView("vacations");
+        // Esto es lo que te faltaba
+
+        mav.addObject("futureVacations", ds.getDoctorVacationsFuture(user.getId()));
+        mav.addObject("pastVacations", ds.getDoctorVacationsPast(user.getId()));
+        // Para que header.jsp no rompa
+        mav.addObject("landingForm", new LandingForm());
+        vacationForm.setDoctorId(user.getId());
+        return mav;
+    }
+
+    @RequestMapping(value="/createVacations", method = RequestMethod.POST)
+    public ModelAndView createVacation(
+            @Valid @ModelAttribute("vacationForm") final VacationForm vacationForm,
+            BindingResult result,
+            @ModelAttribute("user_data") User user,
+            Locale locale
+           ) {
+
+        if(result.hasErrors()) {
+            ModelAndView mav = new ModelAndView("vacations");
+
+            Doctor doctor = ds.getDoctorById(user.getId())
+                    .orElseThrow(() -> new NotFoundException("Doctor does not exist"));
+
+            mav.addObject("futureVacations", ds.getDoctorVacationsFuture(user.getId()));
+            mav.addObject("pastVacations", ds.getDoctorVacationsPast(user.getId()));
+            mav.addObject("vacations", doctor.getVacations());
+            mav.addObject("landingForm", new LandingForm()); // si lo necesita el header
+
+            return mav;
+        }
+
+        ds.createDoctorVacation(user.getId(), vacationForm.getStartDate(), vacationForm.getEndDate());
+        as.cancelAppointmentRange(user.getId(), vacationForm.getStartDate(), vacationForm.getEndDate());
+        return new ModelAndView("redirect:/vacations");
+    }
+
+    @RequestMapping(value="/cancelVacation", method = RequestMethod.POST)
+    public ModelAndView removeAppointments(
+            @Valid @ModelAttribute("vacationForm") final VacationForm vacationForm,
+            @ModelAttribute("user_data") User user,
+            Locale locale
+           ) {
+        if (user == null) {
+            throw new UnauthorizedException("User not found");
+        }
+        ds.deleteDoctorVacation(user.getId(),vacationForm.getStartDate(), vacationForm.getEndDate());
+        return new ModelAndView("redirect:/vacations");
+    }
 }
+

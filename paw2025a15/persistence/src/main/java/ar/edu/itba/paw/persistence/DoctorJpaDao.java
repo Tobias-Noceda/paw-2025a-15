@@ -314,4 +314,14 @@ public class DoctorJpaDao implements DoctorDao{
              .getResultList();
     }
 
+    @Override
+    public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
+        return em.createQuery(
+                "SELECT COUNT(dv) FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate = :startDate AND dv.id.endDate = :endDate", Long.class)
+                .setParameter("doctorId", doctorId)
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .getSingleResult().intValue() > 0;
+    }
+
 }
