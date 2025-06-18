@@ -191,17 +191,24 @@
 
                   <form:errors path="schedules" cssClass="error-box" element="div"/>
 
-                  <!-- Amount field -->
-                  <div class="field-container">
-                    <label class="field-label"><spring:message code="doctorForm.amount"/></label>
-                    <form:select path="amount" cssClass="input-field filter-select">
-                      <form:option value="15" label="15"/>
-                      <form:option value="30" label="30"/>
-                      <form:option value="45" label="45"/>
-                      <form:option value="60" label="60"/>
-                    </form:select>
-                    <form:errors path="amount" cssClass="error-box" element="div"/>
-                  </div>
+        <c:if test="${patientDetails == null}">
+          <div class="field-container full-width">
+            <div class="insurance-toggle-group">
+              <form:label path="insurances">
+                <spring:message code="doctor.details.insurances.label"/>
+              </form:label>
+              <c:forEach var="insurance" items="${obrasSocialesItems}">
+                <div class="insurance-btn">
+                  <form:checkbox
+                          path="insurances"
+                          id="insurance-${insurance.id}"
+                          value="${insurance.id}"
+                          cssClass="insurance-checkbox"/>
+                  <label
+                          for="insurance-${insurance.id}"
+                          class="insurance-label">
+                      <c:out value="${insurance.name}" escapeXml="true" />
+                  </label>
                 </div>
               </div>
 

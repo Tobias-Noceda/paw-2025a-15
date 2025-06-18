@@ -81,7 +81,7 @@
           </button>
 
           <div class="page-button">
-            ${currentPage} / ${totalPages}
+            <c:out value="${currentPage}" escapeXml="true" /> / <c:out value="${totalPages}" escapeXml="true" />
           </div>
 
           <button

@@ -122,7 +122,7 @@
                 <c:forEach var="authDocs" items="${patient.authorizedDoctors}">
                   <tr class="appointments-row">
                     <td class="text-cell">
-                      <c:out value="${authDocs.name}"/>
+                      <c:out value="${authDocs.name}" escapeXml="true"/>
                     </td>
                     <td class="checkbox-cell last-column">
                       <form:checkbox path="authDoctorIds" value="${authDocs.id}" cssClass="doctor-checkbox"/>

@@ -46,7 +46,7 @@
           <!--Subido por-->
           <div class="study-detail">
             <strong><spring:message code="studyTable.uploader"/></strong>
-            <span><c:out value="${study.uploader.name}"/></span>
+            <span><c:out value="${study.uploader.name}" escapeXml="true" /></span>
           </div>
           <sec:authorize access="hasRole('ROLE_PATIENT')">
             <c:url var="deleteUrl" value="/delete-study/${study.id}"/>
@@ -96,9 +96,7 @@
                 <tbody>
                   <c:forEach var="file" items="${study.files}">
                     <c:url value="/view-study/${study.id}/file/${file.id}" var="studyLink" />
-                    <c:set var="studyName">
-                      <spring:message code="studyType.${study.type}"/>_${study.studyDate}
-                    </c:set>
+                    <c:set var="studyName" value="${study.type}_${study.studyDate}" />
                     <tr class="study-row">
                       <td class="text-cell">
                         <spring:message code="fileType.${file.type}"/>

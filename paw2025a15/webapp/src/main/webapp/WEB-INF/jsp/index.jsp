@@ -42,7 +42,7 @@
                       <c:when test="${landingForm.insurances > 0}">
                         <c:forEach var="insurance" items="${insurances}">
                           <c:if test="${insurance.id eq landingForm.insurances}">
-                            ${insurance.name}
+                            <c:out value="${insurance.name}" escapeXml="true" />
                           </c:if>
                         </c:forEach>
                       </c:when>
@@ -66,7 +66,7 @@
                         alt="${insurance.name}"
                         class="option-image"
                       />
-                      <span class="option-text">${insurance.name}</span>
+                      <span class="option-text"><c:out value="${insurance.name}" escapeXml="true" /></span>
                     </li>
                   </c:forEach>
                 </ul>
@@ -219,7 +219,7 @@
           </button>
 
           <div class="page-button">
-            ${page} / ${totalPages}
+            <c:out value="${page}" escapeXml="true" /> / <c:out value="${totalPages}" escapeXml="true" />
           </div>
 
           <button
