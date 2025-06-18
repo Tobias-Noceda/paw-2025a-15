@@ -162,7 +162,7 @@ public class StudyController {
         return mav;
     }
 
-    @RequestMapping(path = "/delete-study/{studyId:\\d+}", method = RequestMethod.POST)
+    @RequestMapping(path = "/delete-study/{studyId:\\d+}")
     public ModelAndView deleteStudy(
             @PathVariable("studyId") int studyId,
             Locale locale

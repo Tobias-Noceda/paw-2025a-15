@@ -142,7 +142,6 @@ class AdminController {
             is.edit(id, insuranceForm.getName(), pictureFile);
             redirectAttrs.addFlashAttribute("successMessage", "updated");
         } catch (Exception e) {
-            System.out.println("Error updating insurance: " + e.getMessage());
             redirectAttrs.addFlashAttribute("errorMessage", "updated");
         }
 

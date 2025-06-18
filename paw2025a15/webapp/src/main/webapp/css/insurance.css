@@ -1,0 +1,97 @@
+.admin-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.insurance-form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.form-control:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+}
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 10px;
+}
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.btn:hover {
+    opacity: 0.9;
+}
+.current-image {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+.current-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+}
+.page-header {
+    margin-bottom: 30px;
+}
+.page-header h1 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+
+.save-button {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 4px 8px; /* Espaciado compacto */
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    line-height: 1;
+}
+.save-button:hover {
+    background-color: #0056b3;
+}
