@@ -7,6 +7,7 @@
 
 <html>
 <head>
+    <link rel="icon" type="image/png" href="<c:url value="/favicon.ico"/>" />
     <link rel="stylesheet" href="<c:url value="/css/main.css"/>"/>
     <link rel="stylesheet" href="<c:url value="/css/appointments.css"/>"/>
 </head>
