@@ -195,7 +195,11 @@
                       name="action"
                       value="toggle"
                       class="deauthorize-button"
-                      onclick="event.stopPropagation(); confirmDeauthDoctor('${confirmationText}', null, '${buttonText}', '${authCancelText}', this.name, this.value, ${doctor.id});"
+                      data-confirmation="<c:out value='${confirmationText}' escapeXml='true'/>"
+                      data-button-text="<c:out value='${buttonText}' escapeXml='true'/>"
+                      data-cancel-text="<c:out value='${authCancelText}' escapeXml='true'/>"
+                      data-doctor-id="<c:out value='${doctor.id}' escapeXml='true'/>"
+                      onclick="event.stopPropagation(); confirmDeauthDoctor(this.dataset.confirmation, null, this.dataset.buttonText, this.dataset.cancelText, this.name, this.value, this.dataset.doctorId);"
                     >
                       <c:out value="${buttonText}" escapeXml="true"/>
                     </button>
