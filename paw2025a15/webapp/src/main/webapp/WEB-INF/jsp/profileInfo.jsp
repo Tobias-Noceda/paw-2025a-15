@@ -113,7 +113,7 @@
                   <label
                           for="insurance-${insurance.id}"
                           class="insurance-label">
-                      ${insurance.name}
+                      <c:out value="${insurance.name}" escapeXml="true" />
                   </label>
                 </div>
               </c:forEach>
@@ -184,7 +184,7 @@
           <div class="field-container">
             <form:label path="birthDate"><spring:message code="form.birthDate"/></form:label>
             <form:input
-                    value="${patientDetails.birthdate}"
+                    value="<c:out value='${patientDetails.birthdate}' escapeXml='true' />"
                     cssClass="input-field"
                     id="birthDate"
                     path="birthDate"

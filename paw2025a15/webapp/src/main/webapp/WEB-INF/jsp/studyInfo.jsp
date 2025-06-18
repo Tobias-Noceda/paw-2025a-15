@@ -46,7 +46,7 @@
           <!--Subido por-->
           <div class="study-detail">
             <strong><spring:message code="studyTable.uploader"/></strong>
-            <span><c:out value="${study.uploader.name}"/></span>
+            <span><c:out value="${study.uploader.name}" escapeXml="true" /></span>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@
                   <c:forEach var="file" items="${study.files}">
                     <c:url value="/view-study/${study.id}/file/${file.id}" var="studyLink" />
                     <c:set var="studyName">
-                      <spring:message code="studyType.${study.type}"/>_${study.studyDate}
+                      <spring:message code="studyType.${study.type}"/>_<c:out value="${study.studyDate}" escapeXml="true" />
                     </c:set>
                     <tr class="study-row">
                       <td class="text-cell">
@@ -92,8 +92,8 @@
                         </a>
                         <a
                           class="download-button"
-                          href="${studyLink}"
-                          download="${studyName}"
+                          href="<c:out value='${studyLink}' escapeXml='true' />"
+                          download="<c:out value='${studyName}' escapeXml='true' />"
                           onclick="event.stopPropagation();"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">

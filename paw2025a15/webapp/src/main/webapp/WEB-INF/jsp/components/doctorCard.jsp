@@ -3,10 +3,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="redirectLink" value="${pageContext.request.contextPath}/doctors/${param.id}" />
+<c:set var="redirectLink" value="${pageContext.request.contextPath}/doctors/<c:out value='${param.id}' escapeXml='true' />" />
 
 <div class="doctor-card card">
-  <a href="${redirectLink}" class="doctor-card__link">
+  <a href="<c:out value='${redirectLink}' escapeXml='true' />" class="doctor-card__link">
 
     <!-- Avatar -->
     <div class="doctor-card__avatar">
@@ -25,7 +25,7 @@
         <spring:message code="specialty.${param.specialty}"/>
       </p>
       <p class="doctor-card__insurances">
-        ${fn:replace(fn:replace(param.insurances,'[',''),']','')}
+        <c:out value="${fn:replace(fn:replace(param.insurances,'[',''),']','')}" escapeXml="true" />
       </p>
     </div>
 

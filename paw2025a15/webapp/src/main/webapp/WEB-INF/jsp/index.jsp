@@ -42,7 +42,7 @@
                       <c:when test="${landingForm.insurances > 0}">
                         <c:forEach var="insurance" items="${insurances}">
                           <c:if test="${insurance.id eq landingForm.insurances}">
-                            ${insurance.name}
+                            <c:out value="${insurance.name}" escapeXml="true" />
                           </c:if>
                         </c:forEach>
                       </c:when>
@@ -60,13 +60,13 @@
                   </li>
 
                   <c:forEach var="insurance" items="${insurances}">
-                    <li class="option" data-value="${insurance.id}">
+                    <li class="option" data-value="<c:out value='${insurance.id}' escapeXml='true' />">
                       <img
                         src="<c:url value='/supersecret/insurance-picture/${insurance.id}'/>"
-                        alt="${insurance.name}"
+                        alt="<c:out value='${insurance.name}' escapeXml='true' />"
                         class="option-image"
                       />
-                      <span class="option-text">${insurance.name}</span>
+                      <span class="option-text"><c:out value="${insurance.name}" escapeXml="true" /></span>
                     </li>
                   </c:forEach>
                 </ul>

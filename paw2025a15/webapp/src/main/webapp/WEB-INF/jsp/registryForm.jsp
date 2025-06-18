@@ -207,8 +207,14 @@
         <div class="insurance-toggle-group">
           <c:forEach var="insurance" items="${obrasSocialesItems}">
             <div class="insurance-btn">
-              <input type="checkbox" id="insurance-${insurance.id}" name="ObrasSociales" value="${insurance.id}" class="insurance-checkbox"/>
-              <label for="insurance-${insurance.id}" class="insurance-label">${insurance.name}</label>
+              <c:set var="insuranceId" value="${insurance.id}" />
+              <c:set var="insuranceName" value="${insurance.name}" />
+
+              <input type="checkbox" id="insurance-${insuranceId}" name="ObrasSociales" value="${insuranceId}" class="insurance-checkbox"/>
+              <label for="insurance-${insuranceId}" class="insurance-label">
+                  <c:out value="${insuranceName}" escapeXml="true" />
+              </label>
+
             </div>
           </c:forEach>
           <form:errors path="ObrasSociales" cssClass="error-box" element="div"/>
@@ -258,7 +264,11 @@
 
       <div class="extra-links">
         <p>
-          <a href="${login}" class="link-primary">
+            <c:set var="loginUrl" value="${login}" />
+            <a href="${loginUrl}" class="link-primary">
+                <spring:message code="register.back"/>
+            </a>
+
             <spring:message code="register.back"/>
           </a>
         </p>

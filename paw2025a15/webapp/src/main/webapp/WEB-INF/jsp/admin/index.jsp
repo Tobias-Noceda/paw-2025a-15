@@ -233,7 +233,7 @@
           <button
             type="submit"
             class="page-navigation-button"
-            onclick="document.getElementById('pageInput').value = ${1}"
+            onclick="document.getElementById('pageInput').value = <c:out value='${1}' escapeXml='true' />"
             <c:if test="${currentPage == 1}">disabled</c:if>
           >
             <spring:message code="landing.pagination.first"/>
@@ -242,20 +242,20 @@
           <button
             type="submit"
             class="page-navigation-button"
-            onclick="document.getElementById('pageInput').value = ${currentPage - 1}"
+            onclick="document.getElementById('pageInput').value = <c:out value='${currentPage - 1}' escapeXml='true' />"
             <c:if test="${currentPage <= 1}">disabled</c:if>
           >
             <spring:message code="doctorDetail.previousWeek"/>
           </button>
 
           <div class="page-button">
-            ${currentPage} / ${totalPages}
+            <c:out value="${currentPage}" escapeXml="true" /> / <c:out value="${totalPages}" escapeXml="true" />
           </div>
 
           <button
             type="submit"
             class="page-navigation-button"
-            onclick="document.getElementById('pageInput').value = ${currentPage + 1}"
+            onclick="document.getElementById('pageInput').value = <c:out value='${currentPage + 1}' escapeXml='true' />"
             <c:if test="${currentPage >= totalPages}">disabled</c:if>
           >
             <spring:message code="doctorDetail.nextWeek"/>
@@ -264,7 +264,7 @@
           <button
             type="submit"
             class="page-navigation-button"
-            onclick="document.getElementById('pageInput').value = ${totalPages}"
+            onclick="document.getElementById('pageInput').value = <c:out value='${totalPages}' escapeXml='true' />"
             <c:if test="${currentPage == totalPages}">disabled</c:if>
           >
             <spring:message code="landing.pagination.last"/>

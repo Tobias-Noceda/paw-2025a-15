@@ -92,7 +92,7 @@
               <c:forEach var="study" items="${patientStudies}">
                 <c:url value="/study-info/${study.id}" var="studyDetailLink" />
                 <c:set var="studyName">
-                  <spring:message code="studyType.${study.type}"/>_${study.studyDate}
+                  <spring:message code="studyType.${study.type}"/>_<c:out value="${study.studyDate}" escapeXml="true" />
                 </c:set>
                 <tr class="study-row"
                     onclick="window.location='${studyDetailLink}'"
@@ -179,16 +179,15 @@
 
                   <c:out value="${doctor.name}" escapeXml="true"/>
 
-                </td>
-
+                </td>             
                 <td class="text-cell">
                   <spring:message code="specialty.${doctor.specialty}"/>
                 </td>
                 <td class="deauthorize-cell">
                   <c:url value="/patientAuthDoctor/${doctor.id}" var="deauthDoctorUrl" />
                   <form
-                    id="deauthDoctor_${doctor.id}"
-                    action="${deauthDoctorUrl}"
+                    id="deauthDoctor_<c:out value='${doctor.id}' escapeXml='true' />"
+                    action="<c:out value='${deauthDoctorUrl}' escapeXml='true' />"
                     method="post"
                   >
                     <button

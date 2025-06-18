@@ -142,9 +142,9 @@
               name="name" 
               path="name"
               class="form-control" 
-              value="${currentName}"
+              value="<c:out value='${currentName}' escapeXml='true' />"
               maxlength="100"
-              placeholder="${placeholderText}"
+              placeholder="<c:out value='${placeholderText}' escapeXml='true' />"
             />
           </div>
 

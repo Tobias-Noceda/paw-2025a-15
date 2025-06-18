@@ -54,10 +54,10 @@
                   <c:set var="formattedDate">
                     <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>
-                  <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" /></td>
-                  <td class="text-cell"><c:out value="${formattedDate}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.shift.address}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${formattedDate}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.address}" escapeXml="true" /></td>
                   <td class="cancel-cell">
                     <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
                       <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
@@ -109,10 +109,10 @@
                   <c:set var="formattedDate">
                     <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>
-                  <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" /></td>
-                  <td class="text-cell"><c:out value="${formattedDate}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.shift.address}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.doctor.name}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${formattedDate}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${appointment.shift.address}" escapeXml="true" /></td>
                 </tr>
               </c:forEach>
               </tbody>
@@ -154,9 +154,9 @@
                   <c:set var="formattedDate">
                     <fmt:formatDate value="${appointment.id.dateAsDate}" dateStyle="short" />
                   </c:set>
-                  <td class="text-cell"><c:out value="${appointment.patient.name}" /></td>
-                  <td class="text-cell"><c:out value="${formattedDate}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.patient.name}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${formattedDate}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${appointment.id.getStartToEndTime()}" escapeXml="true" /></td>
                   <td class="cancel-cell">
                     <form:form modelAttribute="appointmentForm" action="${cancelUrl}" method="post">
                       <form:hidden path="shiftId" value="${appointment.id.shiftId}" />
@@ -238,8 +238,8 @@
               <c:forEach var="appointment" items="${doctorFreeAppointments}">
                 <tr class="appointment-row">
                   <td class="text-cell"><spring:message code="weekday.${appointment.date.dayOfWeek}"/></td>
-                  <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" /></td>
-                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" /></td>
+                  <td class="text-cell"><c:out value="${appointment.date.dayOfMonth}" escapeXml="true" /></td>
+                  <td class="text-cell"><c:out value="${appointment.getStartToEndTime()}" escapeXml="true" /></td>
                   <td class="cancel-cell">
                     <c:set var="removeConfirmationMessage">
                       <spring:message code="appointments.removeConfirm" arguments="${appointment.getStartToEndTime()}"/>
