@@ -113,8 +113,11 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.smokes"/></p>
               <c:choose>
-                <c:when test="${patient.smokes != null}">
-                    <c:out value="${patient.smokes}" escapeXml="true" />
+                <c:when test="${patient.smokes == false}">
+                  <spring:message code="profileInfo.no"/>
+                </c:when>
+                <c:when test="${patient.smokes == true}">
+                  <spring:message code="profileInfo.yes"/>
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
@@ -124,8 +127,11 @@
             <div class="patient-email-div">
               <p class="patient-email-label"><spring:message code="profileInfo.drinks"/></p>
               <c:choose>
-                <c:when test="${patient.drinks != null}">
-                    <c:out value="${patient.drinks}" escapeXml="true" />
+                <c:when test="${patient.drinks == false }">
+                  <spring:message code="profileInfo.no"/>
+                </c:when>
+                <c:when test="${patient.drinks == true}">
+                  <spring:message code="profileInfo.yes"/>
                 </c:when>
                 <c:otherwise>
                   <spring:message code="profileInfo.notProvided"/>
