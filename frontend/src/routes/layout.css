@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@theme {
+    --color-primary: #4f83cc;
+    --color-primary-hover: #3b6fa8;
+    --color-secondary: #007bff;
+    --color-secondary-hover: #0056b3;
+    --color-success: #5cb85c;
+    --color-success-hover: #2b962f;
+    --color-error-text: #b42318;
+    --color-error-bg: #fdecea;
+    --color-skeleton: #e0e0e0;
+}
+
+:root {
+    --color-background: #ffffff;
+    --color-surface: #f5f5f5;
+    --color-text: #000000;
+    --color-border: #dddddd;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #121212;
+        --color-surface: #1e1e1e;
+        --color-text: #ffffff;
+        --color-border: #444444;
+    }
+}

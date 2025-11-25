@@ -27,4 +27,4 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./webapp/target/webapp.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./src/webapp/target/webapp.war:/usr/local/tomcat/webapps/ROOT.war
