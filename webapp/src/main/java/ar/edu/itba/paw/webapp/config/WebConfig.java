@@ -36,12 +36,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
@@ -61,25 +57,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private Resource schemaSql;
 
     @Bean
-    public ViewResolver viewResolver() {
-        final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/jsp/");
-        viewResolver.setSuffix(".jsp");
-        return viewResolver;
-    }
-
-    @Override
-    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
-        super.addResourceHandlers(registry);
-
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-        registry.addResourceHandler("/js/**").addResourceLocations("/js/");
-        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-        registry.addResourceHandler("/favicon.ico").addResourceLocations("/favicon/favicon.ico");
-    }
-
-    @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
@@ -95,7 +72,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
+    public DataSourceInitializer dataSourceInitializer(final @NonNull DataSource ds) {
         final DataSourceInitializer dsi = new DataSourceInitializer();
         dsi.setDataSource(ds);
         dsi.setDatabasePopulator(databasePopulator());
@@ -103,15 +80,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return dsi;
     }
 
-    private DatabasePopulator databasePopulator() {
+    private @NonNull DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(schemaSql);
+        if (schemaSql != null) {
+            populator.addScript(schemaSql);
+        }
 
         return populator;
     }
 
     @Bean
-    public MessageSource messageSource() {
+    public @NonNull MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
 
         ms.setCacheSeconds((int) TimeUnit.MINUTES.toSeconds(5));
@@ -169,6 +148,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public LocalValidatorFactoryBean getValidator() {
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+
         bean.setValidationMessageSource(messageSource());
         return bean;
     }
@@ -203,7 +183,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+    public PlatformTransactionManager transactionManager(final @NonNull EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
 

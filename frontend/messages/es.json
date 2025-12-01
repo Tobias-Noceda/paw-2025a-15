@@ -1,4 +1,31 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from es!"
+	"hello_world": "Hola, {name} desde es!",
+	"no_data_available": "No hay datos disponibles.",
+	"input_loading": "Cargando...",
+	"months": {
+		"jan": "Enero",
+		"feb": "Febrero",
+		"mar": "Marzo",
+		"apr": "Abril",
+		"may": "Mayo",
+		"jun": "Junio",
+		"jul": "Julio",
+		"aug": "Agosto",
+		"sep": "Septiembre",
+		"oct": "Octubre",
+		"nov": "Noviembre",
+		"dec": "Diciembre"
+	},
+	"weekdays_short": {
+		"mon": "L",
+		"tue": "M",
+		"wed": "X",
+		"thu": "J",
+		"fri": "V",
+		"sat": "S",
+		"sun": "D"
+	},
+	"clear": "Borrar",
+	"today": "Hoy"
 }

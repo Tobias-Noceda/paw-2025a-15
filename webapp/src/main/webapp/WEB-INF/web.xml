@@ -7,6 +7,33 @@
 
   <display-name>PAW 2025Q1 G15</display-name>
 
+  <!-- Context Parameters -->
+  <context-param>
+    <param-name>contextClass</param-name>
+    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+  </context-param>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      ar.edu.itba.paw.webapp.config.WebConfig,
+      ar.edu.itba.paw.webapp.config.WebAuthConfig
+    </param-value>
+  </context-param>
+
+  <!-- Listener -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>cors</filter-name>
+    <filter-class>ar.edu.itba.paw.webapp.config.filters.CorsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>cors</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+
   <!-- Character Encoding Filter -->
   <filter>
     <filter-name>characterEncodingFilter</filter-name>
@@ -26,100 +53,82 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <!-- Spring Security Filter -->
+  <servlet>
+    <servlet-name>jersey-servlet</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+    <init-param>
+      <param-name>jersey.config.server.provider.packages</param-name>
+      <param-value>
+        ar.edu.itba.paw.webapp.config,
+        ar.edu.itba.paw.webapp.controller
+      </param-value>
+    </init-param>
+
+    <init-param>
+      <param-name>jersey.config.server.provider.classnames</param-name>
+      <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+    </init-param>
+
+    <init-param>
+      <param-name>jersey.config.server.response.setStatusOverSendError</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <init-param>
+      <param-name>jersey.config.beanValidation.enableOutputValidationErrorEntity.server</param-name>
+      <param-value>true</param-value>
+    </init-param>
+
+    <init-param>
+      <param-name>jersey.config.server.contentLength.buffer</param-name>
+      <param-value>0</param-value>
+    </init-param>
+
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jersey-servlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
+
   <filter>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <filter-name>StaticCacheFilter</filter-name>
+    <filter-class>ar.edu.itba.paw.webapp.config.filters.StaticCacheFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/*</url-pattern>
+    <filter-name>StaticCacheFilter</filter-name>
+    <url-pattern>/cached/*</url-pattern>
   </filter-mapping>
 
-  <!-- Context Parameters -->
-  <context-param>
-    <param-name>contextClass</param-name>
-    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-  </context-param>
-  <context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>
-      ar.edu.itba.paw.webapp.config.WebConfig,
-      ar.edu.itba.paw.webapp.config.WebAuthConfig
-    </param-value>
-  </context-param>
-
-  <!-- Listener -->
-  <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-
-  <!-- Dispatcher Servlet -->
   <servlet>
-    <servlet-name>dispatcher</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <servlet-name>default</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
     <init-param>
-      <param-name>contextClass</param-name>
-      <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+      <param-name>debug</param-name>
+      <param-value>0</param-value>
+    </init-param>
+    <init-param>
+      <param-name>listings</param-name>
+      <param-value>false</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-
-  <servlet-mapping>
-    <servlet-name>dispatcher</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
-
   <servlet-mapping>
     <servlet-name>default</servlet-name>
-    <url-pattern>*.css</url-pattern>
+    <url-pattern>/_app/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/cached/*</url-pattern>
   </servlet-mapping>
 
-  <!--JPA-->
-  <filter>
-    <filter-name>openEntityManagerInViewFilter</filter-name>
-    <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>openEntityManagerInViewFilter</filter-name>
+  <servlet>
+    <servlet-name>spa</servlet-name>
+    <servlet-class>ar.edu.itba.paw.webapp.config.servlets.SpaServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spa</servlet-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <!-- Error Pages -->
-  <error-page>
-    <error-code>400</error-code>
-    <location>/400</location>
-  </error-page>
-  <error-page>
-    <error-code>401</error-code>
-    <location>/401</location>
-  </error-page>
-  <error-page>
-    <error-code>403</error-code>
-    <location>/403</location>
-  </error-page>
-  <error-page>
-    <error-code>404</error-code>
-    <location>/404</location>
-  </error-page>
-  <error-page>
-    <error-code>405</error-code>
-    <location>/405</location>
-  </error-page>
-  <error-page>
-    <error-code>408</error-code>
-    <location>/408</location>
-  </error-page>
-  <error-page>
-    <error-code>500</error-code>
-    <location>/500</location>
-  </error-page>
-  <error-page>
-    <error-code>502</error-code>
-    <location>/502</location>
-  </error-page>
-  <error-page>
-    <error-code>503</error-code>
-    <location>/503</location>
-  </error-page>
+  </servlet-mapping>
 </web-app>

@@ -2,7 +2,7 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import Button from './Button.svelte';
   import { fn } from 'storybook/test';
-	import Icon from '../Icon/Icon.svelte';
+	import Icon from '$components/Icon/Icon.svelte';
 
   // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
   const { Story } = defineMeta({
@@ -37,8 +37,12 @@
   <p>Button</p>
 </Story>
 
-<Story name="Icon" args={{ variant: 'destructive' }}>
-  <Icon name="trash" />
+<Story name="Icon" args={{ variant: 'primary', class: 'rounded-full p-2' }}>
+  <Icon name="edit" />
+</Story>
+
+<Story name="Icon2" args={{ variant: 'primary', class: 'rounded-full p-2' }}>
+  <Icon name="right-arrow" />
 </Story>
 
 <Story name="Skeleton" args={{ variant: 'primary', skeleton: true }}>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { cn } from '$lib/utils';
-  import Icon from '../Icon/Icon.svelte';
+  import Icon from '$components/Icon/Icon.svelte';
+  import { m } from '$lib/paraglide/messages.js';
 
   interface Props {
     label?: string;
@@ -35,7 +36,7 @@
   const finalClass = cn(
     'w-full transition-colors',
     inputClass,
-    'px-3 py-2.5 rounded-md border bg-transparent',
+    'px-3 py-2.5 rounded-md border bg-bgColor text-primaryText',
     'disabled:opacity-50 disabled:cursor-not-allowed',
     errorMessage ? 'border-red-500' : 'border-gray-300',
     'focus:border-primary',
@@ -62,9 +63,9 @@
     <input
       type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
       class={finalClass}
-      {placeholder}
+      placeholder={skeleton ? m.input_loading() : placeholder}
       bind:value
-      {disabled}
+      disabled={disabled || skeleton}
       {required}
       {min}
       {oninput}

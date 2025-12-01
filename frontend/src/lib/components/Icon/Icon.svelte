@@ -47,7 +47,8 @@
   const finalClass = $derived(cn(
     'inline-block align-middle overflow-hidden',
     /\b(w-|h-)/.test(className) ? '' : 'w-4 h-4',
-    className
+    className,
+    "select-none"
   ));
 </script>
 
