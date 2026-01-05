@@ -110,6 +110,8 @@ public class DoctorServiceImpl implements DoctorService {
         if (insuranceId != null) {
             is.getInsuranceById(insuranceId).orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
         }
+
+        LOGGER.info("Fetching doctors page: {} with page size: {}", page, pageSize);
         return doctorDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
     }
 

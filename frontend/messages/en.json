@@ -27,5 +27,14 @@
 		"sun": "Su"
 	},
 	"clear": "Clear",
-	"today": "Today"
+	"today": "Today",
+	"topbar": {
+		"logo_alt_text": "CareTrace Logo",
+		"appointments": "Appointments",
+		"studies": "Studies",
+		"vacations": "Vacations",
+		"login": "Login",
+		"logout": "Logout",
+		"profile": "Profile"
+	}
 }

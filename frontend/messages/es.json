@@ -27,5 +27,14 @@
 		"sun": "D"
 	},
 	"clear": "Borrar",
-	"today": "Hoy"
+	"today": "Hoy",
+	"topbar": {
+		"logo_alt_text": "Logo de CareTrace",
+		"appointments": "Turnos",
+		"studies": "Estudios",
+		"vacations": "Vacaciones",
+		"login": "Iniciar sesión",
+		"logout": "Cerrar sesión",
+		"profile": "Perfil"
+	}
 }
