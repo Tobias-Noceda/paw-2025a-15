@@ -180,6 +180,35 @@
 
   <build>
     <finalName>webapp</finalName>
+    <plugins>
+      <!-- Copy WAR and trigger Tomcat reload -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-war-to-container</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>docker</executable>
+              <arguments>
+                <argument>cp</argument>
+                <argument>${project.build.directory}/${project.build.finalName}.war</argument>
+                <argument>paw-server-dev:/usr/local/tomcat/webapps/paw-2025a-15.war</argument>
+              </arguments>
+              <successCodes>
+                <successCode>0</successCode>
+                <successCode>1</successCode>
+              </successCodes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to
       parent pom) -->
       <plugins>
