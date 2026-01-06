@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -18,13 +20,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
+import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.webapp.dto.InsuranceDTO;
+import ar.edu.itba.paw.webapp.exception.FileNotFoundException;
 import ar.edu.itba.paw.webapp.exception.InsuranceNotFoundException;
 
 @Path("/insurances")
@@ -51,7 +58,7 @@ public class InsuranceController {
 
         URI first = uriInfo.getRequestUriBuilder().replaceQueryParam("page", 1).build();
         URI prev = uriInfo.getRequestUriBuilder().replaceQueryParam("page", Math.max(page - 1, 1)).build();
-        URI next = uriInfo.getRequestUriBuilder().replaceQueryParam("page", page + 1).build();
+        URI next = uriInfo.getRequestUriBuilder().replaceQueryParam("page", Math.min(page + 1, totalPages)).build();
         URI last = uriInfo.getRequestUriBuilder().replaceQueryParam("page", totalPages).build();
 
         return Response.ok(new GenericEntity<List<InsuranceDTO>>(allInsurances) {})
@@ -60,25 +67,59 @@ public class InsuranceController {
     }
 
     @POST
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(final InsuranceDTO insuranceDTO) {
-        final Insurance insurance = is.create(insuranceDTO.getName(), fs.findById(insuranceDTO.getPictureId()).orElseThrow());
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(insurance.getId())).build();
-        return Response.created(uri).build();
+    @Consumes(value = MediaType.MULTIPART_FORM_DATA)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response createInsurance(
+        @FormDataParam("name") String name,
+        @FormDataParam("image") InputStream image,
+        @FormDataParam("image") FormDataBodyPart imagePart
+    ) {
+        try{
+            File picture;
+            if(image != null && imagePart != null) picture = fs.create(image.readAllBytes(), FileTypeEnum.fromString(imagePart.getMediaType().toString()));
+            else picture = fs.findById(1).orElseThrow(FileNotFoundException::new);
+            final Insurance insurance = is.create(name, picture);
+            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(insurance.getId())).build();
+            return Response.created(uri).build();
+        }
+        catch (Exception e) {
+            return Response.serverError().build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
+    @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
         Insurance insurance = is.getInsuranceById(id).orElseThrow(InsuranceNotFoundException::new);
         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
-    
     }
+
+    // @PUT TODO ver si es mejor patch o put ademas mepa que el service no esta usando el dao en realidad
+    // @Path("/{id}")
+    // @Consumes(MediaType.MULTIPART_FORM_DATA)
+    // @Produces(value = MediaType.APPLICATION_JSON)
+    // public Response edit(
+    //     @PathParam("id") final long id,
+    //     @FormDataParam("name") String name,
+    //     @FormDataParam("image") InputStream image,
+    //     @FormDataParam("image") FormDataBodyPart imagePart
+    // ) {
+    //     if (name == null || image == null || imagePart == null) {
+    //         return Response.status(Response.Status.BAD_REQUEST).build();
+    //     }
+    //     try {
+    //         Insurance insurance = is.getInsuranceById(id).orElseThrow(InsuranceNotFoundException::new);
+    //         File picture = fs.create(image.readAllBytes(), FileTypeEnum.fromString(imagePart.getMediaType().toString()));
+    //         is.edit(id, name, picture);
+    //         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
+    //     } catch (Exception e) {
+    //         return Response.serverError().build();
+    //     }
+    // }
 
     @DELETE
     @Path("/{id}")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response deleteById(@PathParam("id") final long id) {
         is.delete(id);
         return Response.noContent().build();

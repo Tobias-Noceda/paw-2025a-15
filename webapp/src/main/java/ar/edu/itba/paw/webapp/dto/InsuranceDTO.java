@@ -10,9 +10,9 @@ import ar.edu.itba.paw.models.entities.Insurance;
 public class InsuranceDTO {
     
     private String name;
+
     private URI self;
     private URI picture;
-    private Long pictureId;
 
     public static Function<Insurance, InsuranceDTO> mapper(final UriInfo uriInfo){
         return (i) -> fromInsurance(uriInfo, i);
@@ -50,13 +50,5 @@ public class InsuranceDTO {
 
     public void setPicture(URI picture){
         this.picture = picture;
-    }
-
-    public Long getPictureId(){
-        return pictureId;
-    }
-
-    public void setPictureId(Long pictureId){
-        this.pictureId = pictureId;
     }
 }
