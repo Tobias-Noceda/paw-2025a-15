@@ -5,16 +5,7 @@
 	import { cn } from "$lib/utils";
 
   import * as m from '$lib/paraglide/messages.js';
-
-  export interface WeekSchedule {
-    monday: boolean;
-    tuesday: boolean;
-    wednesday: boolean;
-    thursday: boolean;
-    friday: boolean;
-    saturday: boolean;
-    sunday: boolean;
-  }
+	import { Weekdays } from "$types/enums/weekdays";
 
   interface Props {
     variant: 'doctor' | 'patient';
@@ -22,7 +13,7 @@
     userName: string;
     specialization?: string;
     insurances?: string[];
-    schedule?: WeekSchedule;
+    schedule?: Set<Weekdays>;
     email?: string;
     phone?: string;
     class?: string;
@@ -90,10 +81,11 @@
     </div>
     <div class="flex flex-wrap gap-2 justify-center m-0">
       {#if variant === 'doctor' && schedule}
-        {#each Object.entries(schedule ?? {}) as [_, isAvailable], index}
+        <!-- Loop over the Weekdays Enum -->
+        {#each Object.values(Weekdays) as day, index}
           <Chip
             label={daysShort[index]}
-            variant={isAvailable ? 'primary' : 'tertiary'}
+            variant={schedule.has(day) ? 'primary' : 'tertiary'}
             class="text-[0.8rem] px-2.5 py-[5px] font-bold"
           />
         {/each}

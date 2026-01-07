@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.dto;
 
-import java.net.URL;
+import java.net.URI;
+import java.util.function.Function;
+
+import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
 
@@ -11,11 +14,16 @@ public class DoctorDTO {
     private String licence;
     private String specialty;
 
-    private URL self;
-    private URL image;
-    private URL schedule;
+    private URI self;
+    private URI image;
+    private URI schedule;
+    private URI insurances;
 
-    public static DoctorDTO fromDoctor(final Doctor doctor) {
+    public static Function<Doctor, DoctorDTO> mapper(final UriInfo uriInfo) {
+        return d -> fromDoctor(d,uriInfo);
+    }
+
+    public static DoctorDTO fromDoctor(final Doctor doctor, final UriInfo uriInfo) {
         final DoctorDTO dto = new DoctorDTO();
 
         dto.email = doctor.getEmail();
@@ -24,7 +32,10 @@ public class DoctorDTO {
         dto.licence = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
 
-        // TODO: set URLs
+        dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
+        dto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(doctor.getPicture().getId())).build();
+        dto.schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
+        dto.insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
 
         return dto;
     }
@@ -50,16 +61,20 @@ public class DoctorDTO {
         return specialty;
     }
 
-    public URL getSelf() {
+    public URI getSelf() {
         return self;
     }
 
-    public URL getImage() {
+    public URI getImage() {
         return image;
     }
 
-    public URL getSchedule() {
+    public URI getSchedule() {
         return schedule;
+    }
+
+    public URI getInsurances() {
+        return insurances;
     }
 
     // setters
@@ -83,21 +98,26 @@ public class DoctorDTO {
         this.specialty = specialty;
     }
 
-    public void setSelf(URL self) {
+    public void setSelf(URI self) {
         this.self = self;
     }
 
-    public void setImage(URL image) {
+    public void setImage(URI image) {
         this.image = image;
     }
 
-    public void setSchedule(URL schedule) {
+    public void setSchedule(URI schedule) {
         this.schedule = schedule;
+    }
+
+    public void setInsurances(URI insurances) {
+        this.insurances = insurances;
     }
 
     @Override
     public String toString() {
-        return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + licence + ", specialty="
+        return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + licence
+                + ", specialty="
                 + specialty + ", self=" + self + ", image=" + image + ", schedule=" + schedule + "]";
     }
 }

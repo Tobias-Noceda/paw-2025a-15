@@ -50,7 +50,20 @@ public class InsuranceController {
 
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response listInsurances(@QueryParam("page") @DefaultValue("1") final int page) {
+    public Response listInsurances(
+        @QueryParam("suportedBy") final Long doctorId,
+        @QueryParam("page") @DefaultValue("1") final int page
+    ) {
+        if (doctorId != null) {
+            final List<InsuranceDTO> insurances = is.getInsurancesByDoctorId(doctorId)
+                .stream()
+                .map(InsuranceDTO.mapper(uriInfo))
+                .collect(Collectors.toList());
+
+            return Response.ok(new GenericEntity<List<InsuranceDTO>>(insurances) {})
+                .build();
+        }
+        
         final List<InsuranceDTO> allInsurances = is.getInsurancesPage(page, PAGE_SIZE)
             .stream().map(InsuranceDTO.mapper(uriInfo)).collect(Collectors.toList());
         int totalInsurances = is.getInsurancesCount();

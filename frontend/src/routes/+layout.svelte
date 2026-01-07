@@ -2,10 +2,10 @@
 	import './layout.css';
 	import { m } from '$lib/paraglide/messages.js';
 	import { base } from '$app/paths';
+	import { page } from '$app/stores';
 
 	import { user } from '$lib/stores/user';
 	import Icon from '$components/Icon/Icon.svelte';
-	import Input from '$components/Input/Input.svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 
 	let userDropdownOpen = $state(false);
@@ -21,11 +21,12 @@
 	</div>
 	{#if $user}
 		<nav class="nav-links">
-			<a href="{base}/appointments" class="nav-item">{m['topbar.appointments']()}</a>
+			<!-- add "active" class when the location matches the link -->
+			<a href="{base}/appointments" class="nav-item {$page.url.pathname === `${base}/appointments` ? 'active' : ''}">{m['topbar.appointments']()}</a>
 			{#if $user === 'patient'}
-				<a href="{base}/studies" class="nav-item">{m['topbar.studies']()}</a>
+				<a href="{base}/studies" class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}">{m['topbar.studies']()}</a>
 			{:else if $user === 'doctor'}
-				<a href="{base}/vacations" class="nav-item">{m['topbar.vacations']()}</a>
+				<a href="{base}/vacations" class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}">{m['topbar.vacations']()}</a>
 			{/if}
 		</nav>
 	{/if}
@@ -65,7 +66,9 @@
     {/if}
 	{/if}
 </div>
-{@render children()}
+<div class="page-container">
+	{@render children()}
+</div>
 
 <style>
 	.topbar {

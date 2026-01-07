@@ -133,6 +133,23 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     }
 
     @Override
+    public List<DoctorSingleShift> getActiveShiftsByDoctor(Doctor doctor) {
+        if (doctor == null) {
+            return Collections.emptyList();
+        }
+        final List<DoctorSingleShift> activeShifts = em.createQuery(
+            """
+                FROM DoctorSingleShift dss 
+                WHERE dss.doctor = :doctor 
+                AND dss.isActive = true
+            """, 
+            DoctorSingleShift.class)
+                .setParameter("doctor", doctor)
+                .getResultList();
+        return activeShifts.isEmpty() ? Collections.emptyList() : activeShifts;
+    }
+
+    @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorByDate(Doctor doctor, LocalDate date) {
         if (doctor == null || date == null) {
             return Collections.emptyList();
