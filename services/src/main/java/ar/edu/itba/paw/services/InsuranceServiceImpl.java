@@ -89,8 +89,9 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Transactional
     @Override
     public void delete(long id) {
-        Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
-        insuranceDao.delete(insurance);
+        Optional<Insurance> insurance = getInsuranceById(id);
+        if(insurance.isEmpty()) return;
+        insuranceDao.delete(insurance.get());
         LOGGER.info("Deleted insurance with id: {}", id);
     }
 }
