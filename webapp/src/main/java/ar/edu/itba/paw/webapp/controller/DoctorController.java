@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.DefaultValue;
@@ -25,6 +27,7 @@ import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.DoctorDTO;
 import ar.edu.itba.paw.webapp.dto.ShiftDTO;
 
@@ -70,11 +73,29 @@ public class DoctorController {
             pageSize
         ).stream().map(DoctorDTO.mapper(uriInfo)).collect(Collectors.toList());
 
-        System.out.println("Doctors: " + doctors);
+        final Integer totalDoctors = ds.getTotalDoctorsByParams(
+            name,
+            specialty,
+            insurance != null ? insurance.getId() : null,
+            weekdayEnum
+        );
 
-        return Response.ok(
-            new GenericEntity<List<DoctorDTO>>(doctors) {}
-        ).build();
+        Map<String, String> queryParams = new HashMap<>();
+
+        if (name != null) queryParams.put("name", name);
+        if (specialtyName != null) queryParams.put("specialty", specialtyName);
+        if (insuranceName != null) queryParams.put("insurance", insuranceName);
+        if (weekday != null) queryParams.put("weekday", weekday);
+        if (orderBy != null) queryParams.put("orderBy", orderBy);
+
+        return PaginationBuilder.buildResponse(
+            Response.ok(new GenericEntity<List<DoctorDTO>>(doctors) {}),
+            page,
+            pageSize,
+            totalDoctors,
+            queryParams,
+            uriInfo
+        );
     }
 
     @GET

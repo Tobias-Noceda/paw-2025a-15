@@ -6,8 +6,10 @@
 	import { getSpecialtyLabel, Specialties } from '$types/enums/specialties';
 	import { getWeekdayLabel, Weekdays } from '$types/enums/weekdays';
 	import Card from '$components/Card/Card.svelte';
-	import type { Doctor, Insurance, Shift } from '$types/api';
-	import Avatar from '$components/Avatar/Avatar.svelte';
+	import type { Doctor, Insurance, Paginated } from '$types/api';
+	import { fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
+	import ScrollPagination from '$components/ScrollPagination/ScrollPagination.svelte';
+	import Pagination from '$components/Pagination/pagination.svelte';
 
     let insurances: Insurance[] = $state([]);
 
@@ -35,63 +37,20 @@
 		{ value: 'L_POPULAR', label: m['filters.order.l_popular']() }
 	];
 
-	let ensurance = $state('all');
+	let insurance = $state('all');
 	let day = $state('all');
 	let specialty = $state('all');
 	let order = $state('');
 
-	let doctors: Doctor[] = $state([]);
-
-	const fetchDoctors = async () => {
-		try {
-			let url = new URL('http://localhost:8080/paw-2025a-15/api/doctors');
-			if (ensurance !== 'all') {
-				url.searchParams.append('insurance', ensurance);
-			}
-			if (day !== 'all') {
-				url.searchParams.append('weekday', day);
-			}
-			if (specialty !== 'all') {
-				url.searchParams.append('specialty', specialty);
-			}
-			if (order !== '') {
-				url.searchParams.append('orderBy', order);
-			}
-			const response = await fetch(url.toString());
-			if (response.ok) {
-				doctors = await response.json();
-
-				await Promise.all(doctors.map(async (doctor) => {
-					const response = await fetch(doctor.schedule);
-
-					if (response.ok) {
-						const schedule: Shift[] = await response.json();
-
-						const days = new Set<Weekdays>();
-						schedule.forEach(shift => {
-							days.add(shift.weekday as Weekdays);
-						});
-						doctor.scheduleDays = days;
-					} else {
-						throw new Error('Failed to fetch schedule');
-					}
-
-                    const responseInsurances = await fetch(doctor.insurances);
-                    if (responseInsurances.ok) {
-                        const insurancesData: Insurance[] = await responseInsurances.json();
-                        doctor.insuranceNames = insurancesData.map(ins => ins.name);
-                    } else {
-                        throw new Error('Failed to fetch insurances');
-                    }
-				}));
-			}
-		} catch (error) {
-			console.error('Failed to fetch doctors:', error);
-		}
-	};
+	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
 
 	onMount(async () => {
-		await fetchDoctors();
+		doctors = await fetchDoctors(
+			insurance,
+			day,
+			specialty,
+			order
+		);
 
         const insurancesResponse = await fetch('http://localhost:8080/paw-2025a-15/api/insurances');
         if (insurancesResponse.ok) {
@@ -99,8 +58,6 @@
         } else {
             console.error('Failed to fetch insurances');
         }
-
-        console.log('Insurances:', insurances);
 	});
 </script>
 
@@ -117,7 +74,7 @@
                     avatarSrc: ins.picture
 				}))
 			]}
-			bind:value={ensurance}
+			bind:value={insurance}
 			class="w-full"
 		/>
 
@@ -139,22 +96,51 @@
 
 		<Select label={m['filters.label.order']()} options={orders} bind:value={order} class="w-full" />
 	</div>
-	<Button variant="primary" class="w-full mt-5" onclick={() => fetchDoctors()}>
+	<Button variant="primary" class="w-full mt-5" onclick={async () => {
+		doctors = await fetchDoctors(
+			insurance,
+			day,
+			specialty,
+			order
+		);
+	}}>
 		{m['filters.apply']()}
 	</Button>
 </div>
 <h2 class="section-title m-0 mb-3">{m['doctors_list']()}</h2>
 <div class="flex flex-wrap justify-center gap-5">
-	{#each doctors as doctor}
-		<Card
-			variant="doctor"
-			avatarSrc={doctor.image}
-			userName={doctor.name}
-			specialization={getSpecialtyLabel(doctor.specialty)}
-            schedule={doctor.scheduleDays}
-            insurances={doctor.insuranceNames}
-			email={doctor.email}
-			phone={doctor.phone}
-		/>
-	{/each}
+	<Pagination
+		initialFetchFunction={() => fetchDoctors(insurance, day, specialty, order)}
+		pageFetchFunction={(page) => fetchDoctorsPage(page)}
+	>
+		{#snippet loading()}
+			{#each Array(10) as _, i}
+				<Card 
+					variant="doctor"
+					avatarSrc=""
+					userName=""
+					specialization=""
+					schedule={new Set<Weekdays>()}
+					insurances={[]}
+					email=""
+					phone=""
+					skeleton={true}
+				/>
+			{/each}
+		{/snippet}
+
+		{#snippet children(entry: Doctor, i: number)}
+			<Card
+				variant="doctor"
+				avatarSrc={entry.image}
+				userName={entry.name}
+				specialization={getSpecialtyLabel(entry.specialty)}
+				schedule={entry.scheduleDays}
+				insurances={entry.insuranceNames}
+				email={entry.email}
+				phone={entry.phone}
+				onclick={() => console.log(`Clicked on doctor ${entry.name}`)}
+			/>
+		{/snippet}
+	</Pagination>
 </div>

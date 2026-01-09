@@ -5,6 +5,7 @@
 :root {
     --font-family: 'Inter', sans-serif;
     --color-background: #ffffff;
+    --color-bg-alt: #e6e6e6;
     --color-surface: #f5f5f5;
     --color-text: #000000;
     --color-text-secondary: #555555;
@@ -43,6 +44,7 @@ body {
     --color-table-header: #0d4a85;
 
     --color-bgColor: var(--color-background);
+    --color-bgColorHover: var(--color-bg-alt);
     --color-surfaceColor: var(--color-surface);
     --color-primaryText: var(--color-text);
     --color-secondaryText: var(--color-text-secondary);

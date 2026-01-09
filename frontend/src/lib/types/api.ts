@@ -4,7 +4,7 @@ import type { Weekdays } from "./enums/weekdays";
 export type Languages = 'es' | 'en';
 
 export type Paginated<T> = {
-	_links?: {
+	_links: {
         first?: string;
 		prev?: string;
 		next?: string;
