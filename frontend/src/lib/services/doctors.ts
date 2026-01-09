@@ -35,6 +35,13 @@ export const fetchDoctors = async (
                 }
             });
 
+            if (response.headers.get('X-Current-Page') && response.headers.get('X-Total-Pages')) {
+                doctors._pageInfo = {
+                    currentPage: Number(response.headers.get('X-Current-Page')),
+                    totalPages: Number(response.headers.get('X-Total-Pages'))
+                };
+            }
+
             await Promise.all(doctors.results.map(async (doctor) => {
                 await populateDoctorData(doctor);
             }));
@@ -59,8 +66,13 @@ export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Docto
                     doctors._links[rel as keyof typeof doctors._links] = linkUrl;
                 }
             });
+            if (response.headers.get('X-Current-Page') && response.headers.get('X-Total-Pages')) {
+                doctors._pageInfo = {
+                    currentPage: Number(response.headers.get('X-Current-Page')),
+                    totalPages: Number(response.headers.get('X-Total-Pages'))
+                };
+            }
         }
-
         await Promise.all(doctors.results.map(async (doctor) => {
             await populateDoctorData(doctor);
         }));

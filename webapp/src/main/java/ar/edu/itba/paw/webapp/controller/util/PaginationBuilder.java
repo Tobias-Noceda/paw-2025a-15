@@ -38,6 +38,9 @@ public class PaginationBuilder<T> {
             responseBuilder.link(lastPageUri, "last");
         }
 
+        responseBuilder.header("X-Current-Page", page);
+        responseBuilder.header("X-Total-Pages", totalPages);
+
         return responseBuilder.build();
     }
 }

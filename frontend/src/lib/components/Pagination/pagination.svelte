@@ -57,6 +57,9 @@
 	let next: string | undefined = $state(undefined as string | undefined);
     let last: string | undefined = $state(undefined as string | undefined);
 
+	let totalPages: number = $state(0);
+	let currentPage: number = $state(0);
+
 	async function get(pageUrl: string) {
         load = true;
         entries = [];
@@ -64,10 +67,16 @@
 		await pageFetchFunction(pageUrl)
 			.then((response) => {
 				entries = [...response.results];
+
                 first = response._links?.first;
                 prev = response._links?.prev;
 				next = response._links?.next;
                 last = response._links?.last;
+
+				if (response._pageInfo) {
+					currentPage = response._pageInfo.currentPage;
+					totalPages = response._pageInfo.totalPages;
+				}
 			})
 			.catch((e) => {
 				console.error('Error in fetch:', e);
@@ -88,6 +97,13 @@
             prev = data._links?.prev;
 			next = data._links?.next;
             last = data._links?.last;
+
+			console.log('Initial fetch data:', data);
+
+			if (data._pageInfo) {
+				currentPage = data._pageInfo.currentPage;
+				totalPages = data._pageInfo.totalPages;
+			}
 			
             load = false;
 			initialLoadComplete = true;
@@ -143,10 +159,12 @@
 	{@render error()}
 {/if}
 
-<div class="flex w-full h-fit justify-center items-center my-2 gap-2">
-    <Button variant="secondary" class="text-sm!" disabled={first === undefined} onclick={() => get(first!)}>&laquo;</Button>
-    <Button variant="secondary" class="text-sm!" disabled={prev === undefined} onclick={() => get(prev!)}>&lt;</Button>
-    <span class={ammountClass}>Hola</span>
-    <Button variant="secondary" class="text-sm!" disabled={next === undefined} onclick={() => get(next!)}>&gt;</Button>
-    <Button variant="secondary" class="text-sm!" disabled={last === undefined} onclick={() => get(last!)}>&raquo;</Button>
-</div>
+{#if totalPages > 0}
+	<div class="flex w-full h-fit justify-center items-center my-2 gap-2">
+		<Button variant="secondary" class="text-sm!" disabled={first === undefined} onclick={() => get(first!)}>&laquo;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={prev === undefined} onclick={() => get(prev!)}>&lt;</Button>
+		<span class={ammountClass}>{currentPage} / {totalPages}</span>
+		<Button variant="secondary" class="text-sm!" disabled={next === undefined} onclick={() => get(next!)}>&gt;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={last === undefined} onclick={() => get(last!)}>&raquo;</Button>
+	</div>
+{/if}

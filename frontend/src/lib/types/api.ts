@@ -10,6 +10,10 @@ export type Paginated<T> = {
 		next?: string;
         last?: string;
 	};
+	_pageInfo?: {
+		currentPage: number;
+		totalPages: number;
+	};
 	results: T[];
 };
 
