@@ -1,5 +1,5 @@
 <script lang="ts">
-	import './layout.css';
+	import '../layout.css';
 	import { m } from '$lib/paraglide/messages.js';
 	import { base } from '$app/paths';
 	import { page } from '$app/stores';
@@ -13,61 +13,63 @@
 	let { children } = $props();
 </script>
 
-<div class="topbar">
-	<div class="logo">
-		<a href="{base}/" class="logo-link">
-			<img src="{base}/cached/resources/icono.jpg" alt={m['topbar.logo_alt_text']()} />
-		</a>
-	</div>
-	{#if $user}
-		<nav class="nav-links">
-			<!-- add "active" class when the location matches the link -->
-			<a href="{base}/appointments" class="nav-item {$page.url.pathname === `${base}/appointments` ? 'active' : ''}">{m['topbar.appointments']()}</a>
-			{#if $user === 'patient'}
-				<a href="{base}/studies" class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}">{m['topbar.studies']()}</a>
-			{:else if $user === 'doctor'}
-				<a href="{base}/vacations" class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}">{m['topbar.vacations']()}</a>
-			{/if}
-		</nav>
-	{/if}
-	<div class="search-bar-container">
-		<div class="search-bar">
-			<form class="search-bar-form" onsubmit={(e) => e.preventDefault()}>
-				<Icon name="search" class="w-4.5 h-4.5 text-white" />
-				<input type="text" class="search-bar-text" placeholder="Search..." />
-			</form>
+<div class="flex min-h-screen! min-w-screen! flex-col">
+	<div class="topbar">
+		<div class="logo">
+			<a href="{base}/" class="logo-link">
+				<img src="{base}/cached/resources/icono.jpg" alt={m['topbar.logo_alt_text']()} />
+			</a>
 		</div>
-	</div>
-	{#if $user == null}
-		<a href="{base}/login">
-			<button class="login-btn">
-				<Icon name="login" class="w-4.5 h-4.5 text-white" />
-				{m['topbar.login']()}
-			</button>
-		</a>
-	{:else}
-		<button
-			class="user-btn {userDropdownOpen ? 'active' : ''}"
-			onclick={() => {
-				userDropdownOpen = !userDropdownOpen;
-			}}
-		>
-			<Avatar size="md" />
-			<div class="user-info">
-				<p class="user-name">Jhon Doe</p>
-				<p class="user-role">{$user}</p>
+		{#if $user}
+			<nav class="nav-links">
+				<!-- add "active" class when the location matches the link -->
+				<a href="{base}/appointments" class="nav-item {$page.url.pathname === `${base}/appointments` ? 'active' : ''}">{m['topbar.appointments']()}</a>
+				{#if $user === 'patient'}
+					<a href="{base}/studies" class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}">{m['topbar.studies']()}</a>
+				{:else if $user === 'doctor'}
+					<a href="{base}/vacations" class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}">{m['topbar.vacations']()}</a>
+				{/if}
+			</nav>
+		{/if}
+		<div class="search-bar-container">
+			<div class="search-bar">
+				<form class="search-bar-form" onsubmit={(e) => e.preventDefault()}>
+					<Icon name="search" class="w-4.5 h-4.5 text-white" />
+					<input type="text" class="search-bar-text" placeholder="Search..." />
+				</form>
 			</div>
-		</button>
-    {#if userDropdownOpen}
-      <div class="user-dropdown-menu">
-        <a href="{base}/profile">{m['topbar.profile']()}</a>
-        <a href="{base}/logout">{m['topbar.logout']()}</a>
-      </div>
-    {/if}
-	{/if}
-</div>
-<div class="page-container">
-	{@render children()}
+		</div>
+		{#if $user == null}
+			<a href="{base}/login">
+				<button class="login-btn">
+					<Icon name="login" class="w-4.5 h-4.5 text-white" />
+					{m['topbar.login']()}
+				</button>
+			</a>
+		{:else}
+			<button
+				class="user-btn {userDropdownOpen ? 'active' : ''}"
+				onclick={() => {
+					userDropdownOpen = !userDropdownOpen;
+				}}
+			>
+				<Avatar size="md" />
+				<div class="user-info">
+					<p class="user-name">Jhon Doe</p>
+					<p class="user-role">{$user}</p>
+				</div>
+			</button>
+		{#if userDropdownOpen}
+		<div class="user-dropdown-menu">
+			<a href="{base}/profile">{m['topbar.profile']()}</a>
+			<a href="{base}/logout">{m['topbar.logout']()}</a>
+		</div>
+		{/if}
+		{/if}
+	</div>
+	<div class="page-container flex-1 w-full!">
+		{@render children()}
+	</div>
 </div>
 
 <style>

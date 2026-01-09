@@ -60,7 +60,7 @@ public class InsuranceJpaDao implements InsuranceDao{
     @Override
     public List<Insurance> getInsurancesByDoctorId(long doctorId) {
         final TypedQuery<Insurance> query = em.createQuery(
-            "select distinct i from Insurance i join i.doctors d where d.id = :doctorId",
+            "select i from Doctor d join d.insurances i where d.id = :doctorId",
             Insurance.class
         );
         query.setParameter("doctorId", doctorId);

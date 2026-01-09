@@ -3,7 +3,7 @@
 @plugin 'tailwind-scrollbar';
 
 :root {
-    --font-family: 'Inter', sans-serif;
+    --font-family: 'Arial', sans-serif;
     --color-background: #ffffff;
     --color-bg-alt: #e6e6e6;
     --color-surface: #f5f5f5;
@@ -80,12 +80,21 @@ body {
 
 .page-container {
     display: flex;
-    width: 100%;
-    height: 100%;
     flex-direction: column;
     gap: 20px;
     padding: 20px;
     min-height: calc(100vh - 110px);
     align-items: stretch;
     box-sizing: border-box;
+}
+
+.page-division {
+    display: flex;
+    background-color: var(--bgColor, #fff);
+    border-radius: 10px;
+    padding: 20px;
+    top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--primaryText, #000);
+    height: calc(100vh - 110px);
 }

@@ -8,8 +8,9 @@
 	import Card from '$components/Card/Card.svelte';
 	import type { Doctor, Insurance, Paginated } from '$types/api';
 	import { fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
-	import ScrollPagination from '$components/ScrollPagination/ScrollPagination.svelte';
 	import Pagination from '$components/Pagination/pagination.svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
     let insurances: Insurance[] = $state([]);
 
@@ -37,20 +38,30 @@
 		{ value: 'L_POPULAR', label: m['filters.order.l_popular']() }
 	];
 
-	let insurance = $state('all');
-	let day = $state('all');
-	let specialty = $state('all');
-	let order = $state('');
+	let insurance = $state($page.url.searchParams.get('insurance') || 'all');
+	let day = $state($page.url.searchParams.get('day') || 'all');
+	let specialty = $state($page.url.searchParams.get('specialty') || 'all');
+	let order = $state($page.url.searchParams.get('order') || '');
 
 	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
+	let filterKey = $state(0);
+
+	async function applyFilters() {
+		// Update URL with current filter values
+		const params = new URLSearchParams();
+		if (insurance !== 'all') params.set('insurance', insurance);
+		if (day !== 'all') params.set('day', day);
+		if (specialty !== 'all') params.set('specialty', specialty);
+		if (order !== '') params.set('order', order);
+		
+		goto(`?${params.toString()}`, { replaceState: true, noScroll: true });
+		
+		doctors = await fetchDoctors(insurance, day, specialty, order);
+		filterKey++; // Force Pagination to remount
+	}
 
 	onMount(async () => {
-		doctors = await fetchDoctors(
-			insurance,
-			day,
-			specialty,
-			order
-		);
+		doctors = await fetchDoctors(insurance, day, specialty, order);
 
         const insurancesResponse = await fetch('http://localhost:8080/paw-2025a-15/api/insurances');
         if (insurancesResponse.ok) {
@@ -96,23 +107,17 @@
 
 		<Select label={m['filters.label.order']()} options={orders} bind:value={order} class="w-full" />
 	</div>
-	<Button variant="primary" class="w-full mt-5" onclick={async () => {
-		doctors = await fetchDoctors(
-			insurance,
-			day,
-			specialty,
-			order
-		);
-	}}>
+	<Button variant="primary" class="w-full mt-5" onclick={applyFilters}>
 		{m['filters.apply']()}
 	</Button>
 </div>
 <h2 class="section-title m-0 mb-3">{m['doctors_list']()}</h2>
 <div class="flex flex-wrap justify-center gap-5">
-	<Pagination
-		initialFetchFunction={() => fetchDoctors(insurance, day, specialty, order)}
-		pageFetchFunction={(page) => fetchDoctorsPage(page)}
-	>
+	{#key filterKey}
+		<Pagination
+			initialFetchFunction={() => fetchDoctors(insurance, day, specialty, order)}
+			pageFetchFunction={(page) => fetchDoctorsPage(page)}
+		>
 		{#snippet loading()}
 			{#each Array(10) as _, i}
 				<Card 
@@ -135,12 +140,13 @@
 				avatarSrc={entry.image}
 				userName={entry.name}
 				specialization={getSpecialtyLabel(entry.specialty)}
-				schedule={entry.scheduleDays}
+				schedule={entry.scheduleDays ? new Set(entry.scheduleDays.keys()) : new Set<Weekdays>()}
 				insurances={entry.insuranceNames}
 				email={entry.email}
-				phone={entry.phone}
+				phone={entry.telephone}
 				onclick={() => console.log(`Clicked on doctor ${entry.name}`)}
 			/>
 		{/snippet}
 	</Pagination>
+	{/key}
 </div>

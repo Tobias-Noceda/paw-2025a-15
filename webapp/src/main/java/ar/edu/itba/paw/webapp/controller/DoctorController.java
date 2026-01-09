@@ -99,6 +99,15 @@ public class DoctorController {
     }
 
     @GET
+    @Path("/{id}")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getDoctorById(@PathParam("id") Integer doctorId) {
+        return ds.getDoctorById(doctorId)
+            .map(doctor -> Response.ok(DoctorDTO.mapper(uriInfo).apply(doctor)).build())
+            .orElse(Response.status(Response.Status.NOT_FOUND).build());
+    }
+
+    @GET
     @Path("/{id}/shifts")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response listShifts(

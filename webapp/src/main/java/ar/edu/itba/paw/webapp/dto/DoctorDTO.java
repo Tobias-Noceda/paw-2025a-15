@@ -11,7 +11,7 @@ public class DoctorDTO {
     private String email;
     private String name;
     private String telephone;
-    private String licence;
+    private String license;
     private String specialty;
 
     private URI self;
@@ -29,7 +29,7 @@ public class DoctorDTO {
         dto.email = doctor.getEmail();
         dto.name = doctor.getName();
         dto.telephone = doctor.getTelephone();
-        dto.licence = doctor.getLicence();
+        dto.license = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
 
         dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
@@ -53,8 +53,8 @@ public class DoctorDTO {
         return telephone;
     }
 
-    public String getLicence() {
-        return licence;
+    public String getLicense() {
+        return license;
     }
 
     public String getSpecialty() {
@@ -90,8 +90,8 @@ public class DoctorDTO {
         this.telephone = telephone;
     }
 
-    public void setLicence(String licence) {
-        this.licence = licence;
+    public void setLicense(String license) {
+        this.license = license;
     }
 
     public void setSpecialty(String specialty) {
@@ -116,7 +116,7 @@ public class DoctorDTO {
 
     @Override
     public String toString() {
-        return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + licence
+        return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + license
                 + ", specialty="
                 + specialty + ", self=" + self + ", image=" + image + ", schedule=" + schedule + "]";
     }

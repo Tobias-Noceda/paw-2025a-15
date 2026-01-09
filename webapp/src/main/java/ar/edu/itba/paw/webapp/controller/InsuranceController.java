@@ -51,7 +51,7 @@ public class InsuranceController {
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response listInsurances(
-        @QueryParam("suportedBy") final Long doctorId,
+        @QueryParam("supportedBy") final Long doctorId,
         @QueryParam("page") @DefaultValue("1") final int page
     ) {
         if (doctorId != null) {

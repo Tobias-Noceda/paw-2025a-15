@@ -1,6 +1,8 @@
 import type { Specialties } from "./enums/specialties";
 import type { Weekdays } from "./enums/weekdays";
 
+export const baseApiUrl = 'http://localhost:8080/paw-2025a-15/api'
+
 export type Languages = 'es' | 'en';
 
 export type Paginated<T> = {
@@ -26,12 +28,13 @@ export type Doctor = {
 	name: string;
 	image: string;
 	email: string;
-	phone: string;
+	telephone: string;
 	license: string;
 	specialty: Specialties;
 	schedule: string;
 	insurances: string;
-	scheduleDays?: Set<Weekdays>;
+	scheduleDays?: Map<Weekdays, [Date, Date]>;
+	direction?: string;
 	insuranceNames?: string[];
 }
 
