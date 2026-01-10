@@ -16,7 +16,7 @@
 <div class="flex min-h-screen! min-w-screen! flex-col">
 	<div class="topbar">
 		<div class="logo">
-			<a href="{base}/" class="logo-link">
+			<a href="{base}/home" class="logo-link">
 				<img src="{base}/cached/resources/icono.jpg" alt={m['topbar.logo_alt_text']()} />
 			</a>
 		</div>

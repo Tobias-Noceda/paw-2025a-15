@@ -33,6 +33,7 @@ export type Doctor = {
 	specialty: Specialties;
 	schedule: string;
 	insurances: string;
+	self: string;
 	scheduleDays?: Map<Weekdays, [Date, Date]>;
 	direction?: string;
 	insuranceNames?: string[];

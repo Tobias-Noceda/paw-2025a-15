@@ -98,8 +98,6 @@
 			next = data._links?.next;
             last = data._links?.last;
 
-			console.log('Initial fetch data:', data);
-
 			if (data._pageInfo) {
 				currentPage = data._pageInfo.currentPage;
 				totalPages = data._pageInfo.totalPages;

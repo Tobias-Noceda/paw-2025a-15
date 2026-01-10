@@ -11,7 +11,7 @@
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Table from '$components/Table/Table.svelte';
 
-	let doctor: Doctor | null = $state($page.data.doctor || null);
+	let doctor: Doctor | null = $state(null);
 
     let selectedDate: Date = $state(new Date());
 

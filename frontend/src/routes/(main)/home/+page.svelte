@@ -6,11 +6,12 @@
 	import { getSpecialtyLabel, Specialties } from '$types/enums/specialties';
 	import { getWeekdayLabel, Weekdays } from '$types/enums/weekdays';
 	import Card from '$components/Card/Card.svelte';
-	import type { Doctor, Insurance, Paginated } from '$types/api';
+	import { type Doctor, type Insurance, type Paginated } from '$types/api';
 	import { fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
 	import Pagination from '$components/Pagination/pagination.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 
     let insurances: Insurance[] = $state([]);
 
@@ -59,6 +60,13 @@
 		doctors = await fetchDoctors(insurance, day, specialty, order);
 		filterKey++; // Force Pagination to remount
 	}
+
+	// parse self (cut after /api/)
+	const parseSelf = (self: string) => {
+		const apiIndex = self.indexOf('/api/');
+		const toRet = apiIndex !== -1 ? self.substring(apiIndex + 5) : self;
+		return toRet;
+	};
 
 	onMount(async () => {
 		doctors = await fetchDoctors(insurance, day, specialty, order);
@@ -144,7 +152,7 @@
 				insurances={entry.insuranceNames}
 				email={entry.email}
 				phone={entry.telephone}
-				onclick={() => console.log(`Clicked on doctor ${entry.name}`)}
+				onclick={() => goto(`${base}/${parseSelf(entry.self)}`)}
 			/>
 		{/snippet}
 	</Pagination>
