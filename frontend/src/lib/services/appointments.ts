@@ -15,6 +15,10 @@ export const fetchFreeAppointments = async (
         const response = await fetch(url.toString());
         if (response.ok) {
             appointments = await response.json();
+
+            await Promise.all(appointments.map(async (appointment) => {
+                await populateAppointmentData(appointment);
+            }));
         }
     } catch (error) {
         console.error('Failed to fetch appointments:', error);
@@ -22,3 +26,17 @@ export const fetchFreeAppointments = async (
 
     return appointments;
 };
+
+const populateAppointmentData = async (appointment: Appointment): Promise<void> => {
+    try {
+        const response = await fetch(appointment.doctor);
+        if (response.ok) {
+            const doctorData = await response.json();
+            appointment.doctorData = doctorData;
+        }
+    } catch (error) {
+        console.error('Failed to populate appointment data:', error);
+    }
+    
+    return;
+}

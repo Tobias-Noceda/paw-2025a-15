@@ -66,4 +66,5 @@ export type Appointment = {
 	self: string;
 	doctor: string;
 	patient: string;
+	doctorData?: Doctor;
 }
