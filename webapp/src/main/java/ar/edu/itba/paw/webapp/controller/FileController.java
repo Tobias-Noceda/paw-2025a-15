@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.webapp.exception.FileNotFoundException;
+import ar.edu.itba.paw.webapp.exception.NotFoundException;
 
 @Path("/files")
 @Component
@@ -40,7 +40,7 @@ public class FileController {
     @Path("/{id}")
     @Produces(MediaType.WILDCARD)
     public Response getById(@PathParam("id") final long id) {
-        File file = fs.findById(id).orElseThrow(FileNotFoundException::new);
+        File file = fs.findById(id).orElseThrow(NotFoundException::new);
 
         return Response.ok(file.getContent())
             .type(file.getType().getName())

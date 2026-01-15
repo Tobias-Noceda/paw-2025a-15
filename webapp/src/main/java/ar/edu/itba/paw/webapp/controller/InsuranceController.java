@@ -34,8 +34,7 @@ import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.InsuranceDTO;
-import ar.edu.itba.paw.webapp.exception.FileNotFoundException;
-import ar.edu.itba.paw.webapp.exception.InsuranceNotFoundException;
+import ar.edu.itba.paw.webapp.exception.NotFoundException;
 
 @Path("/insurances")
 @Component
@@ -94,7 +93,7 @@ public class InsuranceController {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response createInsurance(@Valid InsuranceCreateDTO dto) {
-        File picture = fs.findById(dto.getPictureId()).orElseThrow(FileNotFoundException::new);
+        File picture = fs.findById(dto.getPictureId()).orElseThrow(NotFoundException::new);
         final Insurance insurance = is.create(dto.getName(), picture);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(insurance.getId())).build();
         return Response.created(uri).build();
@@ -104,7 +103,7 @@ public class InsuranceController {
     @Path("/{id}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") final long id) {
-        Insurance insurance = is.getInsuranceById(id).orElseThrow(InsuranceNotFoundException::new);
+        Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
     }
 
@@ -116,7 +115,7 @@ public class InsuranceController {
         @PathParam("id") long id,
         @Valid InsuranceEditDTO dto
     ) {
-        is.getInsuranceById(id).orElseThrow(InsuranceNotFoundException::new);
+        is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         is.edit(id, dto.getName(), dto.getPictureId());
         return Response.ok().build();
     }
