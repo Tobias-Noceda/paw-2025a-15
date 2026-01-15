@@ -14,6 +14,7 @@ function parseTime(timeStr: string): Date {
 }
 
 export const fetchDoctors = async (
+    name: string,
     ensurance: string,
     day: string,
     specialty: string,
@@ -34,6 +35,9 @@ export const fetchDoctors = async (
         }
         if (order !== '') {
             url.searchParams.append('orderBy', order);
+        }
+        if (name.trim() !== '') {
+            url.searchParams.append('name', name.trim());
         }
 
         const response = await fetch(url.toString());

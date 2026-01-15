@@ -23,4 +23,12 @@ public interface AppointmentService {
     public void removeAppointment(long shiftId, LocalDate date, long doctorId, LocalTime startTime, LocalTime endTime);
 
     public  void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate);
+
+    /**
+     * * Returns a list of available turns for a doctor in a specific date.
+     * * @param doctorId The ID of the doctor.
+     * * @return A list of available turns for the specified doctor and date.
+     * *         If no turns are available, an empty list is returned.
+     */
+    public List<AppointmentNew> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date);
 }

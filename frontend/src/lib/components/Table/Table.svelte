@@ -3,7 +3,7 @@
   import { m } from '$lib/paraglide/messages.js';
 	import ScrollPagination from "$components/ScrollPagination/ScrollPagination.svelte";
 
-  interface Column<RowType> {
+  export interface Column<RowType> {
     id: keyof RowType | string;
     label: string;
     render?: (row: RowType) => any;

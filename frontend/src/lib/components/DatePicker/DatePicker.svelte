@@ -134,7 +134,7 @@
   </button>
   {#if showCalendar}
     <div
-      class="absolute bg-white border border-primaryBorder rounded-xl shadow p-2 mt-1 z-10"
+      class="absolute bg-white border border-primaryBorder rounded-xl shadow p-2 mt-1 z-1000"
       style="width: 240px;"
       use:clickOutside={(event?: MouseEvent) => {
         if (!buttonRef.contains(event?.target as Node)) {

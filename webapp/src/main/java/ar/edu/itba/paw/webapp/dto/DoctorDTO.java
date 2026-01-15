@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
@@ -17,6 +18,7 @@ public class DoctorDTO {
     private URI self;
     private URI image;
     private URI schedule;
+    private URI todaysFreeAppointments;
     private URI insurances;
 
     public static Function<Doctor, DoctorDTO> mapper(final UriInfo uriInfo) {
@@ -35,6 +37,7 @@ public class DoctorDTO {
         dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
         dto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(doctor.getPicture().getId())).build();
         dto.schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
+        dto.todaysFreeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("date", LocalDate.now()).build();
         dto.insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
 
         return dto;
@@ -73,6 +76,10 @@ public class DoctorDTO {
         return schedule;
     }
 
+    public URI getTodaysFreeAppointments() {
+        return todaysFreeAppointments;
+    }
+
     public URI getInsurances() {
         return insurances;
     }
@@ -108,6 +115,10 @@ public class DoctorDTO {
 
     public void setSchedule(URI schedule) {
         this.schedule = schedule;
+    }
+
+    public void setTodaysFreeAppointments(URI todaysFreeAppointments) {
+        this.todaysFreeAppointments = todaysFreeAppointments;
     }
 
     public void setInsurances(URI insurances) {

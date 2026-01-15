@@ -12,6 +12,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
+	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
 
     let insurances: Insurance[] = $state([]);
 
@@ -39,27 +40,36 @@
 		{ value: 'L_POPULAR', label: m['filters.order.l_popular']() }
 	];
 
-	let insurance = $state($page.url.searchParams.get('insurance') || 'all');
-	let day = $state($page.url.searchParams.get('day') || 'all');
-	let specialty = $state($page.url.searchParams.get('specialty') || 'all');
-	let order = $state($page.url.searchParams.get('order') || '');
-
 	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
 	let filterKey = $state(0);
 
 	async function applyFilters() {
-		// Update URL with current filter values
-		const params = new URLSearchParams();
-		if (insurance !== 'all') params.set('insurance', insurance);
-		if (day !== 'all') params.set('day', day);
-		if (specialty !== 'all') params.set('specialty', specialty);
-		if (order !== '') params.set('order', order);
+		goto(`?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
 		
-		goto(`?${params.toString()}`, { replaceState: true, noScroll: true });
-		
-		doctors = await fetchDoctors(insurance, day, specialty, order);
+		doctors = await fetchDoctors($searchQuery, $insurance, $day, $specialty, $order);
 		filterKey++; // Force Pagination to remount
 	}
+
+	// Watch URL params and refetch when they change
+	$effect(() => {
+		const urlSearchQuery = $page.url.searchParams.get('search') || '';
+		const insuranceParam = $page.url.searchParams.get('insurance') || 'all';
+		const dayParam = $page.url.searchParams.get('day') || 'all';
+		const specialtyParam = $page.url.searchParams.get('specialty') || 'all';
+		const orderParam = $page.url.searchParams.get('order') || '';
+
+		// Sync URL params to stores
+		insurance.set(insuranceParam);
+		day.set(dayParam);
+		specialty.set(specialtyParam);
+		order.set(orderParam);
+
+		// Fetch doctors with current URL params
+		fetchDoctors(urlSearchQuery, insuranceParam, dayParam, specialtyParam, orderParam).then(result => {
+			doctors = result;
+			filterKey++;
+		});
+	});
 
 	// parse self (cut after /api/)
 	const parseSelf = (self: string) => {
@@ -69,14 +79,13 @@
 	};
 
 	onMount(async () => {
-		doctors = await fetchDoctors(insurance, day, specialty, order);
-
-        const insurancesResponse = await fetch('http://localhost:8080/paw-2025a-15/api/insurances');
-        if (insurancesResponse.ok) {
-            insurances = await insurancesResponse.json();
-        } else {
-            console.error('Failed to fetch insurances');
-        }
+		// Fetch insurances list
+		const insurancesResponse = await fetch('http://localhost:8080/paw-2025a-15/api/insurances');
+		if (insurancesResponse.ok) {
+			insurances = await insurancesResponse.json();
+		} else {
+			console.error('Failed to fetch insurances');
+		}
 	});
 </script>
 
@@ -93,27 +102,27 @@
                     avatarSrc: ins.picture
 				}))
 			]}
-			bind:value={insurance}
+			bind:value={$insurance}
 			class="w-full"
 		/>
 
 		<Select
 			label={m['filters.label.workday']()}
 			options={workDays}
-			bind:value={day}
+			bind:value={$day}
 			class="w-full"
 		/>
 
 		<Select
 			label={m['filters.label.specialty']()}
 			options={specialties}
-			bind:value={specialty}
+			bind:value={$specialty}
 			class="w-full"
 		/>
 
 		<div></div>
 
-		<Select label={m['filters.label.order']()} options={orders} bind:value={order} class="w-full" />
+		<Select label={m['filters.label.order']()} options={orders} bind:value={$order} class="w-full" />
 	</div>
 	<Button variant="primary" class="w-full mt-5" onclick={applyFilters}>
 		{m['filters.apply']()}
@@ -123,7 +132,7 @@
 <div class="flex flex-wrap justify-center gap-5">
 	{#key filterKey}
 		<Pagination
-			initialFetchFunction={() => fetchDoctors(insurance, day, specialty, order)}
+			initialFetchFunction={() => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order)}
 			pageFetchFunction={(page) => fetchDoctorsPage(page)}
 		>
 		{#snippet loading()}

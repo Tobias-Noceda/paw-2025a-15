@@ -2,18 +2,29 @@
     import { page } from '$app/stores';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import { fetchDoctorById } from '$lib/services/doctors';
-	import type { Doctor } from '$types/api';
+	import type { Appointment, Doctor } from '$types/api';
 	import { onMount } from 'svelte';
 
     import { m } from '$lib/paraglide/messages';
 	import Divider from '$components/Divider/Divider.svelte';
 	import Button from '$components/Button/Button.svelte';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
-	import Table from '$components/Table/Table.svelte';
+	import Table, { type Column } from '$components/Table/Table.svelte';
+	import { fetchFreeAppointments } from '$lib/services/appointments';
 
 	let doctor: Doctor | null = $state(null);
+    let appointments: Appointment[] = $state([]);
+
+    let appointmentsDate: Date | null = $state(null);
 
     let selectedDate: Date = $state(new Date());
+
+    const fetchAppointments = async (doctorId: number, date: Date) => {
+        if (doctor && selectedDate) {
+            appointments = await fetchFreeAppointments(doctorId, date.toISOString().split('T')[0]);
+            return;
+        }
+    };
 
     onMount(async () => {
         if (!doctor) {
@@ -25,6 +36,40 @@
                     console.error('Failed to fetch doctor:', error);
                     return null;
                 });
+
+            if (doctor) {
+                // Initialize appointmentsDate from doctor.todaysFreeAppointments URI query param
+                appointmentsDate = new Date();
+            }
+
+            // Fetch appointments for today
+            if (doctor && appointmentsDate) {
+                await fetchAppointments(Number.parseInt($page.params.id!), appointmentsDate);
+            }
+        }
+    });
+
+    const tableColumns: Column<Appointment>[] = [
+        {
+            id: 'weekday',
+            label: 'Día',
+            render: (appointment: Appointment) => {
+                return m[`filters.weekdays.${appointment.weekday.toLowerCase()}`]();
+            },
+            class: 'font-medium'
+        },
+        {
+            id: 'time-span',
+            label: 'Horario',
+            render: (appointment: Appointment) => appointment.startTime + ' - ' + appointment.endTime,
+            class: 'text-start'
+        }
+    ];
+
+    $effect(() => {
+        if (doctor && selectedDate) {
+            fetchAppointments(Number.parseInt($page.params.id!), selectedDate);
+            return;
         }
     });
 </script>
@@ -81,7 +126,9 @@
             <Button
                 variant="secondary"
                 class="w-fit"
-                onclick={() => console.log('Previous clicked')}
+                onclick={() => {
+                    selectedDate = new Date(selectedDate.valueOf() - 24 * 60 * 60 * 1000);
+                }}
                 disabled={selectedDate <= new Date()}
             >
                 Anterior
@@ -89,19 +136,27 @@
             <DatePicker
                 bind:selectedDate
                 onSelectDate={(date) => console.log('Selected date:', date)}
-                minDate={new Date()}
-                maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
                 class="w-fit"
             />
             <Button
                 variant="secondary"
                 class="w-fit"
-                onclick={() => console.log('Next clicked')}
+                onclick={() => {
+                    selectedDate = new Date(selectedDate.valueOf() + 24 * 60 * 60 * 1000);
+                }}
                 disabled={selectedDate >= new Date(new Date().setMonth(new Date().getMonth() + 3))}
             >
                 Siguiente
             </Button>
         </div>
+        <Table
+            columns={tableColumns}
+            rows={appointments}
+            hover={true}
+            striped={true}
+            skeleton={doctor === null}
+            emptyMessage={"No hay turnos disponibles para la fecha seleccionada."}
+        />
     </div>
 </div>
 
