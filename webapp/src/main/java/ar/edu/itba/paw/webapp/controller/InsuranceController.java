@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
