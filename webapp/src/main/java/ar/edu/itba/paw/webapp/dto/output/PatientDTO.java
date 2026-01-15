@@ -8,7 +8,6 @@ import java.util.function.Function;
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 
 public class PatientDTO {
     
@@ -16,7 +15,7 @@ public class PatientDTO {
     private String name;
     private String telephone;
     private LocalDate birthdate;
-    private BloodTypeEnum bloodtype;
+    private String bloodtype;
     private BigDecimal height;
     private BigDecimal weight;
     private Boolean smokes;
@@ -45,7 +44,7 @@ public class PatientDTO {
         dto.email = patient.getEmail();
         dto.telephone = patient.getTelephone();
         dto.birthdate = patient.getBirthdate();
-        dto.bloodtype = patient.getBloodType();
+        dto.bloodtype = patient.getBloodType().getName();
         dto.height = patient.getHeight();
         dto.weight = patient.getWeight();
         dto.smokes = patient.getSmokes();
@@ -98,11 +97,11 @@ public class PatientDTO {
         this.birthdate = birthdate;
     }
 
-    public BloodTypeEnum getBloodtype(){
+    public String getBloodtype(){
         return bloodtype;
     }
 
-    public void setBloodtype(BloodTypeEnum bloodtype){
+    public void setBloodtype(String bloodtype){
         this.bloodtype = bloodtype;
     }
 
