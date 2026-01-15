@@ -35,7 +35,7 @@ public class DoctorDTO {
         dto.specialty = doctor.getSpecialty().toString();
 
         dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
-        dto.image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(doctor.getPicture().getId())).build();
+        dto.image = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(doctor.getPicture().getId())).build();
         dto.schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
         dto.todaysFreeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("date", LocalDate.now()).build();
         dto.insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();

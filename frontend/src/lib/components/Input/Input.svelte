@@ -13,8 +13,9 @@
     disabled?: boolean;
     skeleton?: boolean;
     required?: boolean;
+    multiline?: boolean;
     class?: string;
-    oninput?: (event: Event & { currentTarget: HTMLInputElement }) => void;
+    oninput?: (event: Event & { currentTarget: HTMLInputElement | HTMLTextAreaElement }) => void;
   }
 
   let showPassword = $state(false);
@@ -29,6 +30,7 @@
     disabled = false,
     skeleton = false,
     required = false,
+    multiline = false,
     class: inputClass,
     oninput
   }: Props = $props();
@@ -41,8 +43,22 @@
     errorMessage ? 'border-red-500' : 'border-gray-300',
     'focus:border-primary',
     skeleton ? 'bg-skeleton animate-pulse text-transparent cursor-default' : '',
+    multiline ? 'resize-none overflow-hidden' : '',
     type === 'number' ? '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none' : ''
   );
+
+  let textareaElement: HTMLTextAreaElement | null = $state(null);
+
+  function autoResize(element: HTMLTextAreaElement) {
+    element.style.height = 'auto';
+    element.style.height = element.scrollHeight + 'px';
+  }
+
+  $effect(() => {
+    if (multiline && textareaElement && value !== undefined) {
+      autoResize(textareaElement);
+    }
+  });
 
   const errorClass = cn(
     'flex p-3 rounded-md bg-error-bg mt-1',
@@ -60,17 +76,32 @@
     </label>
   {/if}
   <div class="relative">
-    <input
-      type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
-      class={finalClass}
-      placeholder={skeleton ? m.input_loading() : placeholder}
-      bind:value
-      disabled={disabled || skeleton}
-      {required}
-      {min}
-      {oninput}
-    />
-    {#if type === 'password'}
+    {#if multiline}
+      <textarea
+        bind:this={textareaElement}
+        class={finalClass}
+        placeholder={skeleton ? m.input_loading() : placeholder}
+        bind:value
+        disabled={disabled || skeleton}
+        {required}
+        oninput={(e) => {
+          autoResize(e.currentTarget);
+          oninput?.(e);
+        }}
+      ></textarea>
+    {:else}
+      <input
+        type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
+        class={finalClass}
+        placeholder={skeleton ? m.input_loading() : placeholder}
+        bind:value
+        disabled={disabled || skeleton}
+        {required}
+        {min}
+        {oninput}
+      />
+    {/if}
+    {#if type === 'password' && !multiline}
       <button 
         type="button" 
         class="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity" 

@@ -3,6 +3,20 @@
 	"hello_world": "Hola, {name} desde es!",
 	"no_data_available": "No hay datos disponibles.",
 	"input_loading": "Cargando...",
+	"error": {
+		"title": "Error {code}",
+		"400_message": "Solicitud incorrecta",
+		"401_message": "No autorizado",
+		"403_message": "Prohibido",
+		"404_message": "Página no encontrada",
+		"405_message": "Método no permitido",
+		"408_message": "Tiempo de solicitud agotado",
+		"415_message": "Tipo de medio no soportado",
+		"500_message": "Error interno del servidor",
+		"503_message": "Servicio no disponible",
+		"504_message": "Tiempo de espera de la puerta de enlace agotado",
+		"back_home": "Volver a la página de inicio"
+	},
 	"months": {
 		"jan": "Enero",
 		"feb": "Febrero",
@@ -98,5 +112,38 @@
 		"login": "Iniciar sesión",
 		"logout": "Cerrar sesión",
 		"profile": "Perfil"
-	}
+	},
+	"doctor": {
+		"labels": {
+			"telephone": "Teléfono",
+			"insurances": "Obras sociales",
+			"specialty": "Especialidad",
+			"address": "Dirección",
+			"license": "Matrícula",
+			"schedule": "Atiende"
+		},
+		"table": {
+			"day": "Día",
+			"time": "Horario"
+		},
+		"actions": {
+			"authorize": "Autorizar",
+			"de_authorize": "Desautorizar"
+		},
+		"text": {
+			"no_schedule": "No hay horario disponible.",
+			"schedule": "{day} de {startTime} a {endTime}",
+			"empty_schedule": "No hay turnos disponibles para la fecha seleccionada"
+		},
+		"pop_up": {
+			"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
+			"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+			"reason": "Motivo de la cita:",
+			"reason_placeholder": "Ingrese el motivo de la cita",
+			"confirm": "Tomar turno",
+			"cancel": "Cancelar"
+		}
+	},
+	"next": "Siguiente",
+	"previous": "Anterior"
 }

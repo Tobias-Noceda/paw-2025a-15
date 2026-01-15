@@ -108,8 +108,19 @@
   }
 
   function isDateDisabled(date: Date) {
-    if (minDate && date.getDate() < minDate.getDate()) return true;
-    if (maxDate && date.getDate() >= maxDate.getDate()) return true;
+    // Compare dates without time
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    
+    if (minDate) {
+      const minDateOnly = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+      if (dateOnly < minDateOnly) return true;
+    }
+    
+    if (maxDate) {
+      const maxDateOnly = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
+      if (dateOnly >= maxDateOnly) return true;
+    }
+    
     return false;
   }
 </script>

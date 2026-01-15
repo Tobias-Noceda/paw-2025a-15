@@ -9,7 +9,6 @@
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
 	import { goto } from '$app/navigation';
-	import { preventDefault } from 'svelte/legacy';
 	import { onMount } from 'svelte';
 
 	let userDropdownOpen = $state(false);
