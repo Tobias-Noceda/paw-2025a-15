@@ -13,13 +13,20 @@
 	import { fetchFreeAppointments } from '$lib/services/appointments';
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
+	import { goto } from '$app/navigation';
 
 	let doctor: Doctor | null = $state(null);
     let appointments: Appointment[] = $state([]);
 
     let appointmentsDate: Date | null = $state(null);
 
-    let selectedDate: Date = $state(new Date());
+    // Parse date in local timezone to avoid UTC conversion issues
+    const parseDateInLocalTimezone = (dateStr: string): Date => {
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    };
+
+    let selectedDate: Date = $state($page.url.searchParams.get('date') ? parseDateInLocalTimezone($page.url.searchParams.get('date')!) : new Date());
 
     let selectedAppointment: Appointment | null = $state(null);
     let reason = $state('');
@@ -130,6 +137,7 @@
                 class="w-fit"
                 onclick={() => {
                     selectedDate = new Date(selectedDate.valueOf() - 24 * 60 * 60 * 1000);
+                    goto($page.url.pathname + `?date=` + selectedDate.toISOString().split('T')[0]);
                 }}
                 disabled={selectedDate <= new Date()}
             >
@@ -137,7 +145,10 @@
             </Button>
             <DatePicker
                 bind:selectedDate
-                onSelectDate={(date) => selectedDate = date!}
+                onSelectDate={(date) => {
+                    selectedDate = date!;
+                    goto($page.url.pathname + `?date=` + selectedDate.toISOString().split('T')[0]);
+                }}
                 minDate={new Date()}
                 maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
                 class="w-fit"
@@ -147,6 +158,7 @@
                 class="w-fit"
                 onclick={() => {
                     selectedDate = new Date(selectedDate.valueOf() + 24 * 60 * 60 * 1000);
+                    goto($page.url.pathname + `?date=` + selectedDate.toISOString().split('T')[0]);
                 }}
                 disabled={selectedDate >= new Date(new Date().setMonth(new Date().getMonth() + 3))}
             >
