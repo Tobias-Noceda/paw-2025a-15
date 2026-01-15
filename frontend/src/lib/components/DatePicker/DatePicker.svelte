@@ -13,6 +13,7 @@
     onSelectDate?: (date: Date | null) => void;
     minDate?: Date;
     maxDate?: Date;
+    erasable?: boolean;
     class?: string;
   }
 
@@ -27,6 +28,7 @@
      * Maximum selectable date (not inclusive). Dates after this will be disabled.
     */
     maxDate,
+    erasable,
     class: datePickerClass
   }: Props = $props();
 
@@ -122,7 +124,7 @@
         "w-60",
         datePickerClass,
         "flex items-center justify-left",
-        "border border-primaryBorder px-2 py-1 rounded-xl",
+        "border border-primaryBorder font-semibold rounded-md px-4 py-2",
         "text-secondaryText select-none! cursor-pointer!"
       )
     }
@@ -187,14 +189,16 @@
           {/if}
         {/each}
       </div>
-      <div class="flex justify-between mt-2 text-sm">
-        <Button
-          onclick={clearDate}
-          variant="secondary"
-          class="py-1 px-2 font-normal leading-none rounded-lg"
-        >
-          {m.clear()}
-        </Button>
+      <div class="flex {erasable ? 'justify-between' : 'justify-end'} mt-2 text-sm">
+        {#if erasable}
+          <Button
+            onclick={clearDate}
+            variant="secondary"
+            class="py-1 px-2 font-normal leading-none rounded-lg"
+          >
+            {m.clear()}
+          </Button>
+        {/if}
         <Button
           onclick={selectToday}
           variant="secondary"

@@ -92,6 +92,13 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
 
     @Transactional(readOnly = true)
     @Override
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId) {
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorShiftDao.getActiveShiftsByDoctor(doctor);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorShiftDao.getAvailableTurnsByDoctorByDate(doctor, date);

@@ -75,6 +75,12 @@ public class InsuranceServiceImpl implements InsuranceService{
 
     @Transactional(readOnly = true)
     @Override
+    public List<Insurance> getInsurancesByDoctorId(long doctorId) {
+        return insuranceDao.getInsurancesByDoctorId(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public int getInsurancesCount() {
         return insuranceDao.getInsurancesCount();
     }

@@ -3,9 +3,10 @@
 
   interface Props {
     size?: 'sm' | 'md' | 'lg' | 'auto';
+    class?: string;
   }
 
-  let { size = 'md' }: Props = $props();
+  let { size = 'md', class: innerClass = '' }: Props = $props();
 
   const sizeClasses = {
     sm: 'w-[40px] h-[4px] mt-[8px] mx-auto',
@@ -16,7 +17,8 @@
 
   const finalClass = $derived(cn(
     'bg-primary rounded-full',
-    sizeClasses[size]
+    sizeClasses[size],
+    innerClass
   ));
 </script>
 

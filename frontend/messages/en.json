@@ -26,6 +26,77 @@
 		"sat": "Sa",
 		"sun": "Su"
 	},
+	"filters": {
+		"title": "Filters",
+		"apply": "Filter",
+		"label": {
+			"ensurance": "Health insurance:",
+			"workday": "Work day:",
+			"specialty": "Specialty:",
+			"order": "Order by:"
+		},
+		"weekdays": {
+			"monday": "Monday",
+			"tuesday": "Tuesday",
+			"wednesday": "Wednesday",
+			"thursday": "Thursday",
+			"friday": "Friday",
+			"saturday": "Saturday",
+			"sunday": "Sunday"
+		},
+		"order": {
+			"m_recent": "Longest time in app",
+			"l_recent": "Shortest time in app",
+			"m_popular": "Most popular",
+			"l_popular": "Least popular"
+		}
+	},
+	"specialties": {
+		"BARIATRIC_SURGERY": "Bariatric Surgery",
+		"BREAST_PATHOLOGY": "Breast Pathology",
+		"CARDIOLOGY": "Cardiology",
+		"DERMATOLOGY": "Dermatology",
+		"ENDOCRINOLOGY": "Endocrinology",
+		"GASTROENTEROLOGY": "Gastroenterology",
+		"GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY": "Gynecological General Endocrinology",
+		"GYNECOLOGY": "Gynecology",
+		"HEAD_AND_NECK_SURGERY": "Head and Neck Surgery",
+		"HEMATOLOGY": "Hematology",
+		"INFECTIOUS_DISEASES": "Infectious Diseases",
+		"INTERNAL_MEDICINE": "Internal Medicine",
+		"PEDIATRIC_DERMATOLOGY": "Pediatric Dermatology",
+		"PEDIATRIC_CARDIOLOGY": "Pediatric Cardiology",
+		"PHLEBOLOGY": "Phlebology",
+		"PLASTIC_AND_RECONSTRUCTIVE_SURGERY": "Plastic and Reconstructive Surgery",
+		"NEPHROLOGY": "Nephrology",
+		"NEUROLOGY": "Neurology",
+		"NEUROSURGERY": "Neurosurgery",
+		"NUTRITION": "Nutrition",
+		"ONCOLOGY": "Oncology",
+		"OTOLARYNGOLOGY": "Otolaryngology",
+		"PEDIATRICS": "Pediatrics",
+		"PEDIATRIC_NUTRITION_AND_DIABETOLOGY": "Pediatric Nutrition and Diabetology",
+		"PEDIATRIC_PULMONOLOGY": "Pediatric Pulmonology",
+		"PULMONOLOGY": "Pulmonology",
+		"OPHTHALMOLOGY": "Ophthalmology",
+		"PROCTOLOGY_AND_SURGERY": "Proctology and Surgery",
+		"RHEUMATOLOGY": "Rheumatology",
+		"SPEECH_THERAPY": "Speech Therapy",
+		"SURGERY": "Surgery",
+		"TRAUMATOLOGY": "Traumatology",
+		"UROLOGY": "Urology"
+	},
+	"all": "All",
+	"doctors_list": "Doctors",
 	"clear": "Clear",
-	"today": "Today"
+	"today": "Today",
+	"topbar": {
+		"logo_alt_text": "CareTrace Logo",
+		"appointments": "Appointments",
+		"studies": "Studies",
+		"vacations": "Vacations",
+		"login": "Login",
+		"logout": "Logout",
+		"profile": "Profile"
+	}
 }

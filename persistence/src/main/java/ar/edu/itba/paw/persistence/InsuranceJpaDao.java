@@ -56,6 +56,16 @@ public class InsuranceJpaDao implements InsuranceDao{
     public List<Insurance> getAllInsurances() {
         return em.createQuery("from Insurance as i",Insurance.class).getResultList();
     }
+
+    @Override
+    public List<Insurance> getInsurancesByDoctorId(long doctorId) {
+        final TypedQuery<Insurance> query = em.createQuery(
+            "select i from Doctor d join d.insurances i where d.id = :doctorId",
+            Insurance.class
+        );
+        query.setParameter("doctorId", doctorId);
+        return query.getResultList();
+    }
     
     @Override
     public int getInsurancesCount() {

@@ -26,6 +26,77 @@
 		"sat": "S",
 		"sun": "D"
 	},
+	"filters": {
+		"title": "Filtros",
+		"apply": "Filtrar",
+		"label": {
+			"ensurance": "Obra social:",
+			"workday": "Día laboral:",
+			"specialty": "Especialidad:",
+			"order": "Ordenar por:"
+		},
+		"weekdays": {
+			"monday": "Lunes",
+			"tuesday": "Martes",
+			"wednesday": "Miércoles",
+			"thursday": "Jueves",
+			"friday": "Viernes",
+			"saturday": "Sábado",
+			"sunday": "Domingo"
+		},
+		"order": {
+			"m_recent": "Más tiempo en la app",
+			"l_recent": "Menos tiempo en la app",
+			"m_popular": "Más populares",
+			"l_popular": "Menos populares"
+		}
+	},
+	"specialties": {
+		"BARIATRIC_SURGERY": "Cirugía Bariátrica",
+		"BREAST_PATHOLOGY": "Patología Mamaria",
+		"CARDIOLOGY": "Cardiología",
+		"DERMATOLOGY": "Dermatología",
+		"ENDOCRINOLOGY": "Endocrinología",
+		"GASTROENTEROLOGY": "Gastroenterología",
+		"GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY": "Endocrinología Ginecológica General",
+		"GYNECOLOGY": "Ginecología",
+		"HEAD_AND_NECK_SURGERY": "Cirugía de Cabeza y Cuello",
+		"HEMATOLOGY": "Hematología",
+		"INFECTIOUS_DISEASES": "Enfermedades Infecciosas",
+		"INTERNAL_MEDICINE": "Medicina Interna",
+		"PEDIATRIC_DERMATOLOGY": "Dermatología Pediátrica",
+		"PEDIATRIC_CARDIOLOGY": "Cardiología Pediátrica",
+		"PHLEBOLOGY": "Flebología",
+		"PLASTIC_AND_RECONSTRUCTIVE_SURGERY": "Cirugía Plástica y Reconstructiva",
+		"NEPHROLOGY": "Nefrología",
+		"NEUROLOGY": "Neurología",
+		"NEUROSURGERY": "Neurocirugía",
+		"NUTRITION": "Nutrición",
+		"ONCOLOGY": "Oncología",
+		"OTOLARYNGOLOGY": "Otorrinolaringología",
+		"PEDIATRICS": "Pediatría",
+		"PEDIATRIC_NUTRITION_AND_DIABETOLOGY": "Nutrición y Diabetología Pediátrica",
+		"PEDIATRIC_PULMONOLOGY": "Neumonología Pediátrica",
+		"PULMONOLOGY": "Neumonología",
+		"OPHTHALMOLOGY": "Oftalmología",
+		"PROCTOLOGY_AND_SURGERY": "Proctología y Cirugía",
+		"RHEUMATOLOGY": "Reumatología",
+		"SPEECH_THERAPY": "Terapia del Habla",
+		"SURGERY": "Cirugía",
+		"TRAUMATOLOGY": "Traumatología",
+		"UROLOGY": "Urología"
+	},
+	"all": "Todos",
+	"doctors_list": "Cartilla médica",
 	"clear": "Borrar",
-	"today": "Hoy"
+	"today": "Hoy",
+	"topbar": {
+		"logo_alt_text": "Logo de CareTrace",
+		"appointments": "Turnos",
+		"studies": "Estudios",
+		"vacations": "Vacaciones",
+		"login": "Iniciar sesión",
+		"logout": "Cerrar sesión",
+		"profile": "Perfil"
+	}
 }

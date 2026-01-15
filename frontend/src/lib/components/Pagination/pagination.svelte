@@ -5,7 +5,8 @@
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { preserve, restore } from '$modules/statefull.svelte';
 
-	import * as m from '$lib/paraglide/messages';
+	import Button from '$components/Button/Button.svelte';
+	import { cn } from '$lib/utils';
 
 	interface Props {
 		/**
@@ -15,7 +16,7 @@
 		/**
 		 * The function to fetch the next page.
 		 */
-		nextFetchFunction: (nextUrl: string) => Promise<Paginated<T>>;
+		pageFetchFunction: (nextUrl: string) => Promise<Paginated<T>>;
 		/**
 		 * The component to render per element.
 		 */
@@ -32,11 +33,17 @@
 
 	let {
 		initialFetchFunction,
-		nextFetchFunction,
+		pageFetchFunction,
 		children,
 		loading,
 		error,
 	}: Props = $props();
+
+    const ammountClass = cn(
+        'flex items-center justify-center font-semibold rounded-md px-4 py-2',
+        'cursor-pointer transition-colors text-base',
+        'bg-bgColor text-primary border-1 border-primaryBorder',
+    );
 
 	let entries = $state([] as T[]);
 
@@ -45,22 +52,31 @@
 	let done = $state(false);
 	let erro = $state(false);
 
+    let first: string | undefined = $state(undefined as string | undefined);
+    let prev: string | undefined = $state(undefined as string | undefined);
 	let next: string | undefined = $state(undefined as string | undefined);
+    let last: string | undefined = $state(undefined as string | undefined);
 
-	async function get() {
-		if (!initialLoadComplete || !next) {
-			if (initialLoadComplete && !next) {
-				done = true;
-			}
-			return;
-		}
+	let totalPages: number = $state(0);
+	let currentPage: number = $state(0);
 
-		load = true;
+	async function get(pageUrl: string) {
+        load = true;
+        entries = [];
 
-		await nextFetchFunction(next)
+		await pageFetchFunction(pageUrl)
 			.then((response) => {
-				entries.push(...response.results);
+				entries = [...response.results];
+
+                first = response._links?.first;
+                prev = response._links?.prev;
 				next = response._links?.next;
+                last = response._links?.last;
+
+				if (response._pageInfo) {
+					currentPage = response._pageInfo.currentPage;
+					totalPages = response._pageInfo.totalPages;
+				}
 			})
 			.catch((e) => {
 				console.error('Error in fetch:', e);
@@ -69,37 +85,27 @@
 			})
 			.finally(() => {
 				load = false;
-
-				if (!next) {
-					observer.disconnect();
-					done = true;
-				}
 			});
 	}
 
-	let sentinel: HTMLElement | null = $state(null);
-	let observer: IntersectionObserver;
 	onMount(() => {
 		const doctorsPage = initialFetchFunction();
 		doctorsPage.then((data) => {
 			entries = data.results;
+
+            first = data._links?.first;
+            prev = data._links?.prev;
 			next = data._links?.next;
-			load = false;
+            last = data._links?.last;
+
+			if (data._pageInfo) {
+				currentPage = data._pageInfo.currentPage;
+				totalPages = data._pageInfo.totalPages;
+			}
+			
+            load = false;
 			initialLoadComplete = true;
 		});
-
-		observer = new IntersectionObserver(
-			(entries) => {
-				if (entries[0].isIntersecting) get();
-			},
-			{
-				root: null,
-				rootMargin: '100px',
-				threshold: 1.0
-			}
-		);
-
-		observer.observe(sentinel!);
 	});
 
 	let scrollY: number = $state(0);
@@ -143,14 +149,20 @@
 	{@render children(e, i)}
 {/each}
 
-{#if !done}
-	<div bind:this={sentinel} class="h-0.5" data-testid="done-test"></div>
-{/if}
-
 {#if load}
 	{@render loading()}
 {/if}
 
 {#if erro && error}
 	{@render error()}
+{/if}
+
+{#if totalPages > 0}
+	<div class="flex w-full h-fit justify-center items-center my-2 gap-2">
+		<Button variant="secondary" class="text-sm!" disabled={first === undefined} onclick={() => get(first!)}>&laquo;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={prev === undefined} onclick={() => get(prev!)}>&lt;</Button>
+		<span class={ammountClass}>{currentPage} / {totalPages}</span>
+		<Button variant="secondary" class="text-sm!" disabled={next === undefined} onclick={() => get(next!)}>&gt;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={last === undefined} onclick={() => get(last!)}>&raquo;</Button>
+	</div>
 {/if}

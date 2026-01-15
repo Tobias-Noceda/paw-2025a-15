@@ -31,6 +31,7 @@ const config = {
 			$assets: 'src/lib/assets',
 			$components: 'src/lib/components',
 			$modules: 'src/lib/modules',
+			$stores: 'src/lib/stores',
 			$types: 'src/lib/types',
 		},
 		paths: {

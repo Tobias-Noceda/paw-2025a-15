@@ -29,14 +29,14 @@
       props.class,
       'cursor-pointer transition-colors text-base',
       {
-        primary: 'bg-primary text-white hover:bg-primary-hover border-1 border-primary',
-        secondary: 'bg-secondary text-white hover:bg-secondary-hover border-1 border-secondary',
-        tertiary: 'bg-tertiary text-primaryText hover:bg-primary-hover hover:text-white border-1 border-primaryBorder',
-        success: 'bg-success text-white hover:bg-success-hover border-1 border-success',
-        destructive: 'bg-red-500 text-white hover:bg-red-600 border-1 border-destructive',
+        primary: 'bg-primary text-white hover:bg-primary-hover border-1 border-primary disabled:opacity-50',
+        secondary: 'bg-secondary text-white hover:bg-secondary-hover border-1 border-secondary disabled:bg-skeleton disabled:border-skeleton disabled:text-gray-500',
+        tertiary: 'bg-tertiary text-primaryText hover:bg-primary-hover hover:text-white border-1 border-primaryBorder disabled:opacity-50',
+        success: 'bg-success text-white hover:bg-success-hover border-1 border-success disabled:opacity-50',
+        destructive: 'bg-red-500 text-white hover:bg-red-600 border-1 border-destructive disabled:opacity-50',
       }[variant],
       skeleton ? '!bg-skeleton animate-pulse !text-transparent cursor-default border-1 border-skeleton' : '',
-      disabled ? 'opacity-50 animate-none cursor-not-allowed' : '',
+      disabled ? 'animate-none cursor-not-allowed' : '',
       "select-none"
     )
   );

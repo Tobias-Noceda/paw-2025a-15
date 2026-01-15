@@ -3,11 +3,15 @@
 @plugin 'tailwind-scrollbar';
 
 :root {
+    --font-family: 'Arial', sans-serif;
     --color-background: #ffffff;
+    --color-bg-alt: #e6e6e6;
     --color-surface: #f5f5f5;
     --color-text: #000000;
     --color-text-secondary: #555555;
     --color-border: #dddddd;
+    --color-primary: #4f83cc;
+    --radius: 12px;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -20,8 +24,15 @@
     }
 } */
 
+body {
+    flex-grow: 1;
+    font-family: var(--font-family);
+    background-color: #d8eeff;
+    color: var(--clr-text);
+}
+
 @theme {
-    --color-primary: #4f83cc;
+    --color-primary: var(--color-primary);
     --color-primary-hover: #3b6fa8;
     --color-secondary: #007bff;
     --color-secondary-hover: #0056b3;
@@ -33,8 +44,57 @@
     --color-table-header: #0d4a85;
 
     --color-bgColor: var(--color-background);
+    --color-bgColorHover: var(--color-bg-alt);
     --color-surfaceColor: var(--color-surface);
     --color-primaryText: var(--color-text);
     --color-secondaryText: var(--color-text-secondary);
     --color-primaryBorder: var(--color-border);
+}
+
+.section-title {
+    font-size: 1.75rem;              /* agranda un poco */
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+    position: relative;
+    line-height: 1.2;
+}
+
+/* línea (pill) decorativa centrada debajo */
+.section-title::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-primary);
+    border-radius: var(--radius);
+    margin: 8px auto 0;
+}
+
+.card {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    height: fit-content;
+    padding: 30px;
+    border-radius: var(--radius);
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    min-height: calc(100vh - 110px);
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+.page-division {
+    display: flex;
+    background-color: var(--bgColor, #fff);
+    border-radius: 10px;
+    padding: 20px;
+    top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--primaryText, #000);
+    height: calc(100vh - 110px);
 }

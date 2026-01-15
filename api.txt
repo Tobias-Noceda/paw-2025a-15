@@ -1,0 +1,20 @@
+/
+
+/doctor
+/doctor/{doctorId}
+/doctor/{doctorId}/shifts
+/doctor/{doctorId}/vacations
+
+/appointments
+/appointments/{appointmentId}
+
+/patient
+/patient/{patientId}
+/patient/{patientId}/studies            (?)
+/patient/{patientId}/studies/{studyId}  (?)
+
+/images
+/images/{imageId}
+
+/insurances
+/insurances?usedBy={doctorId}
