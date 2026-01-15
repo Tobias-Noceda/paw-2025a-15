@@ -95,7 +95,7 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2)
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2_ID)
         );
     }
 
@@ -105,7 +105,7 @@ public class InsuranceServiceImplTest {
         Mockito.when(insuranceDaoMock.getInsuranceByName(Mockito.eq(INSURANCE_NAME2))).thenReturn(Optional.of(INSURANCE2));
 
         Assert.assertThrows(AlreadyExistsException.class, () -> 
-            is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2)
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2_ID)
         );
     }
 
@@ -117,7 +117,7 @@ public class InsuranceServiceImplTest {
         Mockito.when(fs.findById(Mockito.eq(PICTURE2_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2)
+            is.edit(INSURANCE_ID, INSURANCE_NAME2, PICTURE2_ID)
         );
     }
 

@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
 import java.util.function.Function;
@@ -23,7 +23,7 @@ public class InsuranceDTO {
 
         dto.name = insurance.getName();
         dto.self = uriInfo.getBaseUriBuilder().path("insurances").path(String.valueOf(insurance.getId())).build();
-        dto.picture = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(insurance.getPicture().getId())).build();
+        dto.picture = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(insurance.getPicture().getId())).build();
 
         return dto;
     }
