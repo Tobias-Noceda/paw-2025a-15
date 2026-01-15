@@ -46,13 +46,12 @@ public class InsuranceServiceImpl implements InsuranceService{
 
     @Transactional
     @Override
-    public void edit(long id, String name, File picture) {
-        if(name==null) throw new IllegalArgumentException("Insurance name cannot be null");
+    public void edit(long id, String name, Long pictureId) {
         Insurance insurance = getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
-        if((!name.equals(insurance.getName())) && (getInsuranceByName(name).isPresent())) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
-        fs.findById(picture.getId()).orElseThrow(() -> new NotFoundException("Logo with id: " + picture.getId() + " does not exist!"));
-        insurance.setName(name);
-        insurance.setPicture(picture);
+        if((name!=null) && ((!name.equals(insurance.getName())) && (getInsuranceByName(name).isPresent()))) throw new AlreadyExistsException("Insurance with name: " + name + " already exists!");
+        File picture = null;
+        if(pictureId!=null) picture = fs.findById(pictureId).orElseThrow(() -> new NotFoundException("Logo with id: " + pictureId + " does not exist!"));
+        insuranceDao.edit(insurance, name, picture);
         LOGGER.info("Edited insurance information for insurance with id: {}", id);
     }
 
