@@ -2,13 +2,22 @@
 	import { base } from "$app/paths";
 	import Button from "$components/Button/Button.svelte";
 	import Input from "$components/Input/Input.svelte";
+	import Toast from "$components/Toast/Toast.svelte";
 	import { m } from "$lib/paraglide/messages";
+	import { set } from "date-fns";
 
     let email = $state('');
+
+    let success = $state(false);
+    let error = $state(false);
 
     const handleSubmit = () => {
         // Implement login logic here
         console.log(`Submitting with email: ${email}`);
+        success = true;
+        setTimeout(() => {
+            error = true;
+        }, 3000);
     };
 </script>
 
@@ -54,4 +63,22 @@
             </div>
         </div>
     </div>
+
+    <Toast
+        bind:show={success}
+        title={m["login.recover.success_title"]()}
+        description={m["login.recover.success_message"]()}
+        variant="success"
+        position="top-center"
+        duration={3000}
+    />
+
+    <Toast
+        bind:show={error}
+        title={m["login.recover.error_title"]()}
+        description={m["login.recover.error_message"]()}
+        variant="destructive"
+        position="top-center"
+        duration={3000}
+    />
 </div>

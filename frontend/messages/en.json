@@ -35,7 +35,10 @@
 			"submit_button": "Send recovery link",
 			"remember": "Remembered your password?",
 			"back_to_login": "Log in",
-			"success_message": "A recovery link has been sent to your email."
+			"success_title": "Success!",
+			"success_message": "A recovery link has been sent to your email.",
+			"error_title": "Error",
+			"error_message": "An error occurred while trying to recover your password. Please try again later."
 		}
 	},
 	"months": {

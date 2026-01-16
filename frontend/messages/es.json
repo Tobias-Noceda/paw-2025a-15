@@ -35,7 +35,10 @@
 			"submit_button": "Enviar enlace de recuperación",
 			"remember": "¿Recordaste tu contraseña?",
 			"back_to_login": "Inicia sesión",
-			"success_message": "Se ha enviado un enlace de recuperación a su correo electrónico."
+			"success_title": "¡Éxito!",
+			"success_message": "Se ha enviado un enlace de recuperación a su correo electrónico.",
+			"error_title": "Error",
+			"error_message": "Ocurrió un error al intentar recuperar su contraseña. Por favor, inténtelo de nuevo más tarde."
 		}
 	},
 	"months": {
