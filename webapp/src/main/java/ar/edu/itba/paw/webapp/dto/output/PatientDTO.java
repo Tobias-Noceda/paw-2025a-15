@@ -44,7 +44,7 @@ public class PatientDTO {
         dto.email = patient.getEmail();
         dto.telephone = patient.getTelephone();
         dto.birthdate = patient.getBirthdate();
-        dto.bloodtype = patient.getBloodType().getName();
+        if(patient.getBloodType()!=null) dto.bloodtype = patient.getBloodType().getName();
         dto.height = patient.getHeight();
         dto.weight = patient.getWeight();
         dto.smokes = patient.getSmokes();

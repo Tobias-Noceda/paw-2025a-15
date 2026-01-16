@@ -63,7 +63,7 @@ public class PatientServiceImpl implements PatientService{
     public void updatePatient(
         Patient patient,
         String phoneNumber,
-        File picture,
+        Long pictureId,
         LocaleEnum mailLanguage,
         LocalDate birthdate,
         BloodTypeEnum bloodType,
@@ -89,6 +89,11 @@ public class PatientServiceImpl implements PatientService{
             insurance = is.getInsuranceById(insuranceId)
                 .orElseThrow(() -> new NotFoundException("Insurance with id: " + insuranceId + " does not exist!"));
             realInsuranceNumber = insuranceNumber;
+        }
+        File picture = null;
+        if (pictureId != null) {
+            picture = fs.findById(pictureId)
+                .orElseThrow(() -> new NotFoundException("File with id: " + pictureId + " does not exist!"));
         }
 
         
