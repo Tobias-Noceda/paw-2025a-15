@@ -2,16 +2,23 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -20,10 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.PatientCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.PatientEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientDTO;
@@ -37,10 +45,40 @@ public class PatientController {
     private PatientService ps;
 
     @Autowired
-    private FileService is;
+    private DoctorService ds;
 
     @Context
     private UriInfo uriInfo;
+
+    @GET
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response listPatients(
+        @QueryParam("doctorId") final Long doctorId,
+        @QueryParam("name") final String name,
+        @QueryParam("page") @DefaultValue("1") final int page,
+        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+    ) {
+        Map<String, String> queryParams = new HashMap<>();
+
+        if (doctorId != null) {
+            final List<PatientDTO> patients = ds.getAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize)
+                .stream().map(PatientDTO.mapper(uriInfo)).collect(Collectors.toList());
+
+            queryParams.put("doctorId", doctorId.toString());
+            if(name!=null) queryParams.put("name", name);
+
+            return PaginationBuilder.buildResponse(
+                Response.ok(new GenericEntity<List<PatientDTO>>(patients) {}),
+                page, 
+                pageSize, 
+                ds.getAuthPatientsCountByDoctorIdAndName(doctorId, name), 
+                queryParams, 
+                uriInfo
+            );
+        }
+        
+        return Response.noContent().build();//TODO paginar?
+    }
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON)
@@ -68,7 +106,7 @@ public class PatientController {
         @Valid PatientEditDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
-        ps.updatePatient(patient, dto.getTelephone(), dto.getPictureId(), LocaleEnum.valueOf(dto.getMailLanguage()), dto.getBirthDate(), dto.getBloodtype(), BigDecimal.valueOf(dto.getHeight()), BigDecimal.valueOf(dto.getWeight()), dto.getSmokes(), dto.getDrinks(), dto.getMeds(), dto.getConditions(), dto.getAllergies(), dto.getDiet(), dto.getHobbies(), dto.getJob(), dto.getInsuranceId(), dto.getInsuranceNumber());
+        ps.updatePatient(patient, dto.getTelephone(), dto.getPictureId(), dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, dto.getBirthDate(), dto.getBloodtype(), BigDecimal.valueOf(dto.getHeight()), BigDecimal.valueOf(dto.getWeight()), dto.getSmokes(), dto.getDrinks(), dto.getMeds(), dto.getConditions(), dto.getAllergies(), dto.getDiet(), dto.getHobbies(), dto.getJob(), dto.getInsuranceId(), dto.getInsuranceNumber());
         return Response.ok().build();
     }
 }

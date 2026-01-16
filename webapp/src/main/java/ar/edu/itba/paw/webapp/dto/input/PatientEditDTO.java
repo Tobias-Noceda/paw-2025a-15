@@ -10,9 +10,11 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 
+@NonEmptyBody
 public class PatientEditDTO {
 
     @ValidArgPhone

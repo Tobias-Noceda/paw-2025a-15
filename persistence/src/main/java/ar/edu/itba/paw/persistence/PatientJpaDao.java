@@ -1,19 +1,20 @@
 package ar.edu.itba.paw.persistence;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
+
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
-
-import org.springframework.stereotype.Repository;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Optional;
 
 @Repository
 public class PatientJpaDao implements PatientDao {
@@ -59,25 +60,23 @@ public class PatientJpaDao implements PatientDao {
         Insurance insurance,
         String insuranceNumber
     ) {
-        patient.setTelephone(phoneNumber);
-        if (picture != null) {
-            patient.setPicture(picture);
-        }
-        patient.setLocale(mailLanguage);
-        patient.setBirthdate(birthdate);
-        patient.setBloodType(bloodType);
-        patient.setHeight(height);
-        patient.setWeight(weight);
-        patient.setSmokes(smokes);
-        patient.setDrinks(drinks);
-        patient.setMeds(meds);
-        patient.setConditions(conditions);
-        patient.setAllergies(allergies);
-        patient.setDiet(diet);
-        patient.setHobbies(hobbies);
-        patient.setJob(job);
-        patient.setInsurance(insurance);
-        patient.setInsuranceNumber(insuranceNumber);
+        if (phoneNumber != null) patient.setTelephone(phoneNumber);
+        if (picture != null) patient.setPicture(picture);
+        if (mailLanguage != null) patient.setLocale(mailLanguage);
+        if (birthdate != null) patient.setBirthdate(birthdate);
+        if (bloodType != null) patient.setBloodType(bloodType);
+        if (height != null) patient.setHeight(height);
+        if (weight != null) patient.setWeight(weight);
+        if (smokes != null) patient.setSmokes(smokes);
+        if (drinks != null) patient.setDrinks(drinks);
+        if (meds != null) patient.setMeds(meds);
+        if (conditions != null) patient.setConditions(conditions);
+        if (allergies != null) patient.setAllergies(allergies);
+        if (diet != null) patient.setDiet(diet);
+        if (hobbies != null) patient.setHobbies(hobbies);
+        if (job != null) patient.setJob(job);
+        if (insurance != null) patient.setInsurance(insurance);
+        if (insuranceNumber != null) patient.setInsuranceNumber(insuranceNumber);
         em.merge(patient);
     }
 
