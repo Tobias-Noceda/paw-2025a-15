@@ -3,7 +3,6 @@
 	import type { Snippet } from 'svelte';
 
   interface Params {
-    ariaLabel?: string;
     variant: 'primary' | 'secondary' | 'tertiary' | 'success' | 'destructive';
     skeleton?: boolean;
     disabled?: boolean;
@@ -16,7 +15,6 @@
   let props: Params = $props();
 
   // reactive derived values
-  const ariaLabel = $derived(props.ariaLabel);
   const variant = $derived(props.variant);
   const skeleton = $derived(props.skeleton ?? false);
   const disabled = $derived(props.disabled ?? false);

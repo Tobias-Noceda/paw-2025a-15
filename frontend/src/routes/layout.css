@@ -9,6 +9,7 @@
     --color-surface: #f5f5f5;
     --color-text: #000000;
     --color-text-secondary: #555555;
+    --color-text-muted: #667085;
     --color-border: #dddddd;
     --color-primary: #4f83cc;
     --radius: 12px;
@@ -48,6 +49,7 @@ body {
     --color-surfaceColor: var(--color-surface);
     --color-primaryText: var(--color-text);
     --color-secondaryText: var(--color-text-secondary);
+    --color-mutedText: var(--color-text-muted);
     --color-primaryBorder: var(--color-border);
 }
 

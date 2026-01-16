@@ -17,6 +17,27 @@
 		"504_message": "Gateway timeout",
 		"back_home": "Back to home"
 	},
+	"login": {
+		"title": "Login",
+		"welcome": "Welcome to CareTrace",
+		"email_label": "Email",
+		"password_label": "Password",
+		"submit_button": "Login",
+		"remember_me": "Remember me",
+		"forgot_password": "Forgot your password?",
+		"no_account": "Don't have an account?",
+		"register": "Register",
+		"go_back": "Go back",
+		"invalid_credentials": "Invalid username or password",
+		"recover": {
+			"title": "Recover Password",
+			"subtitle": "Enter your email so we can send you the recovery email",
+			"submit_button": "Send recovery link",
+			"remember": "Remembered your password?",
+			"back_to_login": "Log in",
+			"success_message": "A recovery link has been sent to your email."
+		}
+	},
 	"months": {
 		"jan": "January",
 		"feb": "February",

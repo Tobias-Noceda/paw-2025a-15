@@ -17,6 +17,27 @@
 		"504_message": "Tiempo de espera de la puerta de enlace agotado",
 		"back_home": "Volver a la página de inicio"
 	},
+	"login": {
+		"title": "Iniciar sesión",
+		"welcome": "Bienvenido a CareTrace",
+		"email_label": "Correo electrónico",
+		"password_label": "Contraseña",
+		"submit_button": "Iniciar sesión",
+		"remember_me": "Recuérdame",
+		"forgot_password": "¿Olvidaste tu contraseña?",
+		"no_account": "¿No tienes una cuenta?",
+		"register": "Regístrate",
+		"go_back": "Volver al inicio",
+		"invalid_credentials": "Usuario o contraseña incorrectos",
+		"recover": {
+			"title": "Recuperar contraseña",
+			"subtitle": "Introduce tu correo para que podamos enviarte el correo de recuperación",
+			"submit_button": "Enviar enlace de recuperación",
+			"remember": "¿Recordaste tu contraseña?",
+			"back_to_login": "Inicia sesión",
+			"success_message": "Se ha enviado un enlace de recuperación a su correo electrónico."
+		}
+	},
 	"months": {
 		"jan": "Enero",
 		"feb": "Febrero",
