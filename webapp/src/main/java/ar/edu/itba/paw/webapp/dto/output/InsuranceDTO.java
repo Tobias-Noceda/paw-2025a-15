@@ -11,8 +11,7 @@ public class InsuranceDTO {
     
     private String name;
 
-    private URI self;
-    private URI picture;
+    private LinkDTO links;
 
     public static Function<Insurance, InsuranceDTO> mapper(final UriInfo uriInfo){
         return (i) -> fromInsurance(uriInfo, i);
@@ -21,9 +20,15 @@ public class InsuranceDTO {
     public static InsuranceDTO fromInsurance(final UriInfo uriInfo, Insurance insurance){
         final InsuranceDTO dto = new InsuranceDTO();
 
-        dto.name = insurance.getName();
-        dto.self = uriInfo.getBaseUriBuilder().path("insurances").path(String.valueOf(insurance.getId())).build();
-        dto.picture = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(insurance.getPicture().getId())).build();
+        dto.setName(insurance.getName());
+        
+        URI self = uriInfo.getBaseUriBuilder().path("insurances").path(String.valueOf(insurance.getId())).build();
+        URI picture = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(insurance.getPicture().getId())).build();
+
+        dto.setLinks(new LinkDTO()
+            .setSelf(self)
+            .setPicture(picture)
+        );
 
         return dto;
     }
@@ -35,20 +40,12 @@ public class InsuranceDTO {
     public void setName(String name){
         this.name = name;
     }
- 
-    public URI getSelf(){
-        return self;
+
+    public LinkDTO getLinks(){
+        return links;
     }
 
-    public void setSelf(URI self){
-        this.self = self;
-    }
-
-    public URI getPicture(){
-        return picture;
-    }
-
-    public void setPicture(URI picture){
-        this.picture = picture;
+    public void setLinks(LinkDTO links){
+        this.links = links;
     }
 }

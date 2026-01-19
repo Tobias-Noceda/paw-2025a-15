@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
 import java.util.function.Function;
@@ -15,8 +15,7 @@ public class ShiftDTO {
     private String endTime;
     private int duration;
 
-    private URI self;
-    private URI doctor;
+    private LinkDTO links;
 
     public static Function<DoctorSingleShift, ShiftDTO> mapper(final UriInfo uriInfo) {
         return s -> fromShift(s, uriInfo);
@@ -31,8 +30,13 @@ public class ShiftDTO {
         dto.endTime = shift.getEndTime().toString();
         dto.duration = shift.getDuration();
 
-        dto.self = uriInfo.getBaseUriBuilder().path("shifts").path(String.valueOf(shift.getId())).build();
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
+        URI self = uriInfo.getBaseUriBuilder().path("shifts").path(String.valueOf(shift.getId())).build();
+        URI doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
+
+        dto.setLinks(new LinkDTO()
+            .setSelf(self)
+            .setDoctor(doctor)
+        );
         
         return dto;
     }
@@ -58,12 +62,8 @@ public class ShiftDTO {
         return duration;
     }
 
-    public URI getSelf() {
-        return self;
-    }
-
-    public URI getDoctor() {
-        return doctor;
+    public LinkDTO getLinks(){
+        return links;
     }
 
     // Setters
@@ -87,11 +87,7 @@ public class ShiftDTO {
         this.duration = duration;
     }
 
-    public void setSelf(URI self) {
-        this.self = self;
-    }
-
-    public void setDoctor(URI doctor) {
-        this.doctor = doctor;
+    public void setLinks(LinkDTO links){
+        this.links = links;
     }
 }

@@ -28,10 +28,7 @@ public class PatientDTO {
     private String job;
     private String insuranceNumber;
 
-    private URI self;
-    private URI picture;
-    private URI insurance;
-    private URI doctors;
+    private LinkDTO links;
 
     public static Function<Patient, PatientDTO> mapper(final UriInfo uriInfo){
         return (p) -> fromPatient(uriInfo, p);
@@ -40,27 +37,35 @@ public class PatientDTO {
     public static PatientDTO fromPatient(final UriInfo uriInfo, Patient patient){
         final PatientDTO dto = new PatientDTO();
 
-        dto.name = patient.getName();
-        dto.email = patient.getEmail();
-        dto.telephone = patient.getTelephone();
-        dto.birthdate = patient.getBirthdate();
-        if(patient.getBloodType()!=null) dto.bloodtype = patient.getBloodType().getName();
-        dto.height = patient.getHeight();
-        dto.weight = patient.getWeight();
-        dto.smokes = patient.getSmokes();
-        dto.drinks = patient.getDrinks();
-        dto.meds = patient.getMeds();
-        dto.conditions = patient.getConditions();
-        dto.allergies = patient.getAllergies();
-        dto.diet = patient.getDiet();
-        dto.hobbies = patient.getHobbies();
-        dto.job = patient.getJob();
-        dto.insuranceNumber = patient.getInsuranceNumber();
+        dto.setName(patient.getName());
+        dto.setEmail(patient.getEmail());
+        dto.setTelephone(patient.getTelephone());
+        dto.setBirthdate(patient.getBirthdate());
+        if(patient.getBloodType()!=null) dto.setBloodtype(patient.getBloodType().getName());
+        dto.setHeight(patient.getHeight());
+        dto.setWeight(patient.getWeight());
+        dto.setSmokes(patient.getSmokes());
+        dto.setDrinks(patient.getDrinks());
+        dto.setMeds(patient.getMeds());
+        dto.setConditions(patient.getConditions());
+        dto.setAllergies(patient.getAllergies());
+        dto.setDiet(patient.getDiet());
+        dto.setHobbies(patient.getHobbies());
+        dto.setJob(patient.getJob());
+        dto.setInsuranceNumber(patient.getInsuranceNumber());
 
-        dto.self = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(patient.getId())).build();
-        dto.picture = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(patient.getPicture().getId())).build();
-        if(patient.getInsurance()!=null) dto.insurance = uriInfo.getBaseUriBuilder().path("insurances").path(String.valueOf(patient.getInsurance().getId())).build();
-        //dto.doctors = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(patient.getPicture().getId())).build(); TODO filtered GET in doctors controller
+        URI insurance = null;
+        if(patient.getInsurance()!=null) insurance = uriInfo.getBaseUriBuilder().path("insurances").path(String.valueOf(patient.getInsurance().getId())).build();
+        //dto.setDoctors(uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(patient.getPicture().getId())).build()); TODO filtered GET in doctors controller
+
+        URI self = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(patient.getId())).build();
+        URI picture = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(patient.getPicture().getId())).build();
+
+        dto.setLinks(new LinkDTO()
+            .setSelf(self)
+            .setPicture(picture)
+            .setInsurance(insurance)
+        );
 
         return dto;
     }
@@ -192,36 +197,12 @@ public class PatientDTO {
     public void setInsuranceNumber(String insuranceNumber){
         this.insuranceNumber = insuranceNumber;
     }
- 
-    public URI getSelf(){
-        return self;
+
+    public LinkDTO getLinks(){
+        return links;
     }
 
-    public void setSelf(URI self){
-        this.self = self;
-    }
-
-    public URI getPicture(){
-        return picture;
-    }
-
-    public void setPicture(URI picture){
-        this.picture = picture;
-    }
-
-    public URI getInsurance(){
-        return insurance;
-    }
-
-    public void setInsurance(URI insurance){
-        this.insurance = insurance;
-    }
-
-    public URI getDoctors(){
-        return doctors;
-    }
-
-    public void setDoctors(URI doctors){
-        this.doctors = doctors;
+    public void setLinks(LinkDTO links){
+        this.links = links;
     }
 }
