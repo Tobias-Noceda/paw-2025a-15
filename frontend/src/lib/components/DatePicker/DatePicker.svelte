@@ -9,6 +9,9 @@
   import * as m from '$lib/paraglide/messages.js';
 
   interface Props {
+    id?: string;
+    label?: string;
+    required?: boolean;
     selectedDate: Date | null;
     onSelectDate?: (date: Date | null) => void;
     minDate?: Date;
@@ -18,6 +21,9 @@
   }
 
   let {
+    id = 'date-picker',
+    label,
+    required = false,
     selectedDate = $bindable(null),
     onSelectDate,
     /**
@@ -125,7 +131,15 @@
   }
 </script>
 
-<div>
+<div class="relative inline-block {datePickerClass}">
+  {#if label}
+    <label class="text-sm font-medium text-text" for={id}>
+      {label}
+      {#if required}
+        <span class="text-red-500">*</span>
+      {/if}
+    </label>
+  {/if}
   <button
     bind:this={buttonRef}
     type="button"
