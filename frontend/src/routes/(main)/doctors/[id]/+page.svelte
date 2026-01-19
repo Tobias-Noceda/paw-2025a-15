@@ -14,6 +14,8 @@
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
 
+    const doctorId = $derived(Number.parseInt($page.params.id!));
+
 	let doctor: Doctor | null = $state(null);
     let appointments: Appointment[] = $state([]);
 
@@ -49,7 +51,7 @@
 
             // Fetch appointments for today
             if (doctor && appointmentsDate) {
-                await fetchAppointments(Number.parseInt($page.params.id!), appointmentsDate);
+                await fetchAppointments(doctorId, appointmentsDate);
             }
         }
     });
@@ -73,7 +75,7 @@
 
     $effect(() => {
         if (doctor && selectedDate) {
-            fetchAppointments(Number.parseInt($page.params.id!), selectedDate);
+            fetchAppointments(doctorId, selectedDate);
             return;
         }
     });

@@ -4,7 +4,6 @@
 	import Input from "$components/Input/Input.svelte";
 	import Toast from "$components/Toast/Toast.svelte";
 	import { m } from "$lib/paraglide/messages";
-	import { set } from "date-fns";
 
     let email = $state('');
 
@@ -58,7 +57,7 @@
             <div class="flex text-mutedText">
                 <p>{m["login.no_account"]()}</p>
                 <a href="{base}/register" class="ml-1 font-semibold text-primary hover:underline cursor-pointer">
-                    {m["login.register"]()}
+                    {m["login.register_link"]()}
                 </a>
             </div>
         </div>

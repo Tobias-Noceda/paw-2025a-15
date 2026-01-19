@@ -26,7 +26,7 @@
 		"remember_me": "Remember me",
 		"forgot_password": "Forgot your password?",
 		"no_account": "Don't have an account?",
-		"register": "Register",
+		"register_link": "Register",
 		"go_back": "Go back",
 		"invalid_credentials": "Invalid username or password",
 		"recover": {
@@ -39,6 +39,44 @@
 			"success_message": "A recovery link has been sent to your email.",
 			"error_title": "Error",
 			"error_message": "An error occurred while trying to recover your password. Please try again later."
+		},
+		"register": {
+			"title": "Create an account",
+			"role": {
+				"patient": "Patient",
+				"doctor": "Doctor"
+			},
+			"name": "Name",
+			"surname": "Surname",
+			"email": "Email",
+			"telephone": "Phone number",
+			"license": "License number",
+			"specialty": "Specialty",
+			"address": "Address",
+			"insurances": "Health insurances",
+			"work_days": "Work days",
+			"start_time": "Start time",
+			"end_time": "End time",
+			"duration": "Shift duration (min)",
+			"birthdate": "Birthdate",
+			"height": "Height (m)",
+			"weight": "Weight (kg)",
+			"password": "Password",
+			"confirm_password": "Confirm password",
+			"submit_button": "Register",
+			"back_to_login": "Back to login"
+		},
+		"change": {
+			"title": "Change Password",
+			"subtitle": "Please enter and confirm your new password to continue.",
+			"new_label": "New Password",
+			"confirm_label": "Repeat Password",
+			"submit_button": "Change Password",
+			"back_to_login": "Back to login",
+			"success_title": "Success!",
+			"success_message": "Your password has been changed successfully.",
+			"error_title": "Error",
+			"error_message": "An error occurred while trying to change your password. Please try again later."
 		}
 	},
 	"months": {

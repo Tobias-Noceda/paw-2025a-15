@@ -79,7 +79,7 @@
             <div class="flex text-mutedText">
                 <p>{m["login.no_account"]()}</p>
                 <a href="{base}/register" class="ml-1 font-semibold text-primary hover:underline cursor-pointer">
-                    {m["login.register"]()}
+                    {m["login.register_link"]()}
                 </a>
             </div>
             <a href="{base}/home" class="font-semibold text-primary hover:underline cursor-pointer">
