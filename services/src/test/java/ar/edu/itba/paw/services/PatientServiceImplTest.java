@@ -30,6 +30,7 @@ public class PatientServiceImplTest {
     private static final byte[] FILE_CONTENT = "Image".getBytes();
     private static final FileTypeEnum FILETYPE = FileTypeEnum.JPEG;
     private static final File FILE = new File(FILE_CONTENT, FILETYPE);
+    private static final long FILE_ID = 1L;
 
     private static final long PATIENT_ID = 1L;
     
@@ -90,7 +91,7 @@ public class PatientServiceImplTest {
     @Test
     public void testUpdatePatientDetailsNullPatient(){
         Assert.assertThrows(NotFoundException.class, () -> 
-            ps.updatePatient(null, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+            ps.updatePatient(null, PAT_TELEPHONE, FILE_ID, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
         );
     }
 
@@ -100,7 +101,7 @@ public class PatientServiceImplTest {
         Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE_ID, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null)
         );
     }
 
@@ -112,7 +113,7 @@ public class PatientServiceImplTest {
         Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, INSURANCE_ID, null)
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE_ID, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, INSURANCE_ID, null)
         );
     }
 

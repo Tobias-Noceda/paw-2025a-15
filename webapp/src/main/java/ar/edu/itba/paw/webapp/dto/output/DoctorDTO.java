@@ -1,7 +1,6 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
@@ -15,11 +14,7 @@ public class DoctorDTO {
     private String license;
     private String specialty;
 
-    private URI self;
-    private URI image;
-    private URI schedule;
-    private URI todaysFreeAppointments;
-    private URI insurances;
+    private LinkDTO links;
 
     public static Function<Doctor, DoctorDTO> mapper(final UriInfo uriInfo) {
         return d -> fromDoctor(d,uriInfo);
@@ -34,11 +29,17 @@ public class DoctorDTO {
         dto.license = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
 
-        dto.self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
-        dto.image = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(doctor.getPicture().getId())).build();
-        dto.schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
-        dto.todaysFreeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("date", LocalDate.now()).build();
-        dto.insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
+        URI self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
+        URI image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(doctor.getPicture().getId())).build();
+        URI schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
+        URI insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
+
+        dto.setLinks(new LinkDTO()
+            .setSelf(self)
+            .setImage(image)
+            .setSchedule(schedule)
+            .setInsurances(insurances)
+        );
 
         return dto;
     }
@@ -64,26 +65,6 @@ public class DoctorDTO {
         return specialty;
     }
 
-    public URI getSelf() {
-        return self;
-    }
-
-    public URI getImage() {
-        return image;
-    }
-
-    public URI getSchedule() {
-        return schedule;
-    }
-
-    public URI getTodaysFreeAppointments() {
-        return todaysFreeAppointments;
-    }
-
-    public URI getInsurances() {
-        return insurances;
-    }
-
     // setters
     public void setEmail(String email) {
         this.email = email;
@@ -105,30 +86,14 @@ public class DoctorDTO {
         this.specialty = specialty;
     }
 
-    public void setSelf(URI self) {
-        this.self = self;
-    }
-
-    public void setImage(URI image) {
-        this.image = image;
-    }
-
-    public void setSchedule(URI schedule) {
-        this.schedule = schedule;
-    }
-
-    public void setTodaysFreeAppointments(URI todaysFreeAppointments) {
-        this.todaysFreeAppointments = todaysFreeAppointments;
-    }
-
-    public void setInsurances(URI insurances) {
-        this.insurances = insurances;
+    public void setLinks(LinkDTO links){
+        this.links = links;
     }
 
     @Override
     public String toString() {
         return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + license
                 + ", specialty="
-                + specialty + ", self=" + self + ", image=" + image + ", schedule=" + schedule + "]";
+                + specialty + ", links=" + links + "]";
     }
 }

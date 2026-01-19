@@ -5,13 +5,13 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import ar.edu.itba.paw.webapp.exception.InsuranceNotFoundException;
+import ar.edu.itba.paw.webapp.exception.NotFoundException;
 
 @Provider
-public class InsuranceNotFoundExceptionMapper implements ExceptionMapper<InsuranceNotFoundException>{
+public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException>{
 
     @Override
-    public Response toResponse(InsuranceNotFoundException exception) {
+    public Response toResponse(NotFoundException exception) {
         return Response.status(Status.NOT_FOUND).build();
     }
     
