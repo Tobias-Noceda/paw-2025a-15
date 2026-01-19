@@ -6,7 +6,6 @@ import java.util.List;
 public class LinkDTO {
 
     private URI self;
-    private URI picture;
     private URI image;
     private URI insurance;
     private URI insurances;
@@ -24,15 +23,6 @@ public class LinkDTO {
 
     public LinkDTO setSelf(URI self) {
         this.self = self;
-        return this;
-    }
-
-    public URI getPicture() {
-        return picture;
-    }
-
-    public LinkDTO setPicture(URI picture) {
-        this.picture = picture;
         return this;
     }
 

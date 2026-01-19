@@ -27,7 +27,7 @@ public class InsuranceDTO {
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
-            .setPicture(picture)
+            .setImage(picture)
         );
 
         return dto;

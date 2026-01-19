@@ -63,7 +63,7 @@ public class PatientDTO {
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
-            .setPicture(picture)
+            .setImage(picture)
             .setInsurance(insurance)
         );
 
