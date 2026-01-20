@@ -32,6 +32,7 @@ export type Doctor = {
 	license: string;
 	specialty: Specialties;
 	schedule: string;
+	todaysFreeAppointments: string;
 	insurances: string;
 	self: string;
 	scheduleDays?: Map<Weekdays, [Date, Date]>;
@@ -53,4 +54,16 @@ export type Insurance = {
 	name: string;
 	picture: string;
 	self: string;
+}
+
+export type Appointment = {
+	weekday: string;
+	address: string;
+	date: string;
+	startTime: string;
+	endTime: string;
+	durationMinutes: number;
+	self: string;
+	doctor: string;
+	patient: string;
 }

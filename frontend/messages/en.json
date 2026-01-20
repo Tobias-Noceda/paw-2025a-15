@@ -3,6 +3,82 @@
 	"hello_world": "Hello, {name} from en!",
 	"no_data_available": "No data available.",
 	"input_loading": "Loading...",
+	"error": {
+		"title": "Error {code}",
+		"400_message": "Bad request",
+		"401_message": "Unauthorized",
+		"403_message": "Forbidden",
+		"404_message": "Page not found",
+		"405_message": "Method not allowed",
+		"408_message": "Request timeout",
+		"415_message": "Unsupported media type",
+		"500_message": "Internal server error",
+		"503_message": "Service unavailable",
+		"504_message": "Gateway timeout",
+		"back_home": "Back to home"
+	},
+	"login": {
+		"title": "Login",
+		"welcome": "Welcome to CareTrace",
+		"email_label": "Email",
+		"password_label": "Password",
+		"submit_button": "Login",
+		"remember_me": "Remember me",
+		"forgot_password": "Forgot your password?",
+		"no_account": "Don't have an account?",
+		"register_link": "Register",
+		"go_back": "Go back",
+		"invalid_credentials": "Invalid username or password",
+		"recover": {
+			"title": "Recover Password",
+			"subtitle": "Enter your email so we can send you the recovery email",
+			"submit_button": "Send recovery link",
+			"remember": "Remembered your password?",
+			"back_to_login": "Log in",
+			"success_title": "Success!",
+			"success_message": "A recovery link has been sent to your email.",
+			"error_title": "Error",
+			"error_message": "An error occurred while trying to recover your password. Please try again later."
+		},
+		"register": {
+			"title": "Create an account",
+			"role": {
+				"patient": "Patient",
+				"doctor": "Doctor"
+			},
+			"name": "Name",
+			"surname": "Surname",
+			"email": "Email",
+			"telephone": "Phone number",
+			"license": "License number",
+			"specialty": "Specialty",
+			"address": "Address",
+			"insurances": "Health insurances",
+			"work_days": "Work days",
+			"start_time": "Start time",
+			"end_time": "End time",
+			"duration": "Shift duration (min)",
+			"birthdate": "Birthdate",
+			"height": "Height (m)",
+			"weight": "Weight (kg)",
+			"password": "Password",
+			"confirm_password": "Confirm password",
+			"submit_button": "Register",
+			"back_to_login": "Back to login"
+		},
+		"change": {
+			"title": "Change Password",
+			"subtitle": "Please enter and confirm your new password to continue.",
+			"new_label": "New Password",
+			"confirm_label": "Repeat Password",
+			"submit_button": "Change Password",
+			"back_to_login": "Back to login",
+			"success_title": "Success!",
+			"success_message": "Your password has been changed successfully.",
+			"error_title": "Error",
+			"error_message": "An error occurred while trying to change your password. Please try again later."
+		}
+	},
 	"months": {
 		"jan": "January",
 		"feb": "February",
@@ -98,5 +174,38 @@
 		"login": "Login",
 		"logout": "Logout",
 		"profile": "Profile"
-	}
+	},
+	"doctor": {
+		"labels": {
+			"telephone": "Telephone",
+			"insurances": "Insurances",
+			"specialty": "Specialty",
+			"address": "Address",
+			"license": "License",
+			"schedule": "Availability"
+		},
+		"table": {
+			"day": "Weekday",
+			"time": "Time"
+		},
+		"actions": {
+			"authorize": "Authorize",
+			"de_authorize": "De-authorize"
+		},
+		"text": {
+			"no_schedule": "No available schedule.",
+			"schedule": "{day}s from {startTime} to {endTime}",
+			"empty_schedule": "No available appointments on this date",
+			"pop_up": {
+				"title": "Are you sure you want to take an appointment on {month} {day} at {startTime} with {doctorName}?",
+				"subtitle": "By doing this you will also be authorizing them to see your medical profile and studies. You can revoke this permission at any time.",
+				"reason": "Appointment reason:",
+				"reason_placeholder": "Enter a brief reason for the appointment",
+				"confirm": "Take appointment",
+				"cancel": "Cancel"
+			}
+		}
+	},
+	"next": "Next",
+	"previous": "Previous"
 }

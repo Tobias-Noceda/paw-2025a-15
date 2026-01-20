@@ -6,6 +6,7 @@
 
   interface Props {
     label?: string;
+    required?: boolean;
     options?: { value: string; label: string, icon?: Snippet, avatarSrc?: string }[];
     value?: string;
     disabled?: boolean;
@@ -17,6 +18,7 @@
 
   let {
     label = '',
+    required = false,
     options = [],
     value = $bindable(''),
     disabled = false,
@@ -45,7 +47,7 @@
   const buttonClass = cn(
     'bg-bgColor text-primaryText w-full',
     'disabled:opacity-50 disabled:cursor-not-allowed',
-    'px-3 py-2.5 rounded-xl transition-colors cursor-pointer',
+    'px-3 py-2.5 rounded-md transition-colors cursor-pointer',
     'border border-primaryBorder hover:border-primaryBorder',
     'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
     'flex items-center justify-between',
@@ -73,10 +75,13 @@
   );
 </script>
 
-<div>
+<div class="w-full">
   {#if label}
-    <label for="select">
+    <label class="text-sm font-medium text-text" for="select">
       {label}
+      {#if required}
+        <span class="text-red-500">*</span>
+      {/if}
     </label>
   {/if}
   <div class={containerClass} use:clickOutside={() => isOpen = false}>

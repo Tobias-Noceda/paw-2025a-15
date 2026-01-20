@@ -9,6 +9,9 @@
   import * as m from '$lib/paraglide/messages.js';
 
   interface Props {
+    id?: string;
+    label?: string;
+    required?: boolean;
     selectedDate: Date | null;
     onSelectDate?: (date: Date | null) => void;
     minDate?: Date;
@@ -18,6 +21,9 @@
   }
 
   let {
+    id = 'date-picker',
+    label,
+    required = false,
     selectedDate = $bindable(null),
     onSelectDate,
     /**
@@ -108,13 +114,32 @@
   }
 
   function isDateDisabled(date: Date) {
-    if (minDate && date.getDate() < minDate.getDate()) return true;
-    if (maxDate && date.getDate() >= maxDate.getDate()) return true;
+    // Compare dates without time
+    const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    
+    if (minDate) {
+      const minDateOnly = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+      if (dateOnly < minDateOnly) return true;
+    }
+    
+    if (maxDate) {
+      const maxDateOnly = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
+      if (dateOnly >= maxDateOnly) return true;
+    }
+    
     return false;
   }
 </script>
 
-<div>
+<div class="relative inline-block {datePickerClass}">
+  {#if label}
+    <label class="text-sm font-medium text-text" for={id}>
+      {label}
+      {#if required}
+        <span class="text-red-500">*</span>
+      {/if}
+    </label>
+  {/if}
   <button
     bind:this={buttonRef}
     type="button"
@@ -134,7 +159,7 @@
   </button>
   {#if showCalendar}
     <div
-      class="absolute bg-white border border-primaryBorder rounded-xl shadow p-2 mt-1 z-10"
+      class="absolute bg-white border border-primaryBorder rounded-xl shadow p-2 mt-1 z-1000"
       style="width: 240px;"
       use:clickOutside={(event?: MouseEvent) => {
         if (!buttonRef.contains(event?.target as Node)) {

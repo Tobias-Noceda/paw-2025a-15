@@ -14,6 +14,7 @@ public class LinkDTO {
     private URI uploader;
     private URI authDoctors;
     private URI schedule;
+    private URI todaysFreeAppointments;
     private URI files;
 
     public URI getSelf() {
@@ -112,6 +113,15 @@ public class LinkDTO {
 
     public LinkDTO setInsurances(URI insurances) {
         this.insurances = insurances;
+        return this;
+    }
+
+    public URI getTodaysFreeAppointments() {
+        return todaysFreeAppointments;
+    }
+
+    public LinkDTO setTodaysFreeAppointments(URI todaysFreeAppointments) {
+        this.todaysFreeAppointments = todaysFreeAppointments;
         return this;
     }
 }

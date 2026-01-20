@@ -174,5 +174,12 @@ public class AppointmentServiceImpl implements AppointmentService{
         }
         LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
     }
-            
+          
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<AppointmentNew> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return appointmentDao.getAvailableTurnsByDoctorByDate(doctor, date);
+    }
 }

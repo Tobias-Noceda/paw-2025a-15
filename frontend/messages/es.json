@@ -3,6 +3,82 @@
 	"hello_world": "Hola, {name} desde es!",
 	"no_data_available": "No hay datos disponibles.",
 	"input_loading": "Cargando...",
+	"error": {
+		"title": "Error {code}",
+		"400_message": "Solicitud incorrecta",
+		"401_message": "No autorizado",
+		"403_message": "Prohibido",
+		"404_message": "Página no encontrada",
+		"405_message": "Método no permitido",
+		"408_message": "Tiempo de solicitud agotado",
+		"415_message": "Tipo de medio no soportado",
+		"500_message": "Error interno del servidor",
+		"503_message": "Servicio no disponible",
+		"504_message": "Tiempo de espera de la puerta de enlace agotado",
+		"back_home": "Volver a la página de inicio"
+	},
+	"login": {
+		"title": "Iniciar sesión",
+		"welcome": "Bienvenido a CareTrace",
+		"email_label": "Correo electrónico",
+		"password_label": "Contraseña",
+		"submit_button": "Iniciar sesión",
+		"remember_me": "Recuérdame",
+		"forgot_password": "¿Olvidaste tu contraseña?",
+		"no_account": "¿No tienes una cuenta?",
+		"register_link": "Regístrate",
+		"go_back": "Volver al inicio",
+		"invalid_credentials": "Usuario o contraseña incorrectos",
+		"recover": {
+			"title": "Recuperar contraseña",
+			"subtitle": "Introduce tu correo para que podamos enviarte el correo de recuperación",
+			"submit_button": "Enviar enlace de recuperación",
+			"remember": "¿Recordaste tu contraseña?",
+			"back_to_login": "Inicia sesión",
+			"success_title": "¡Éxito!",
+			"success_message": "Se ha enviado un enlace de recuperación a su correo electrónico.",
+			"error_title": "Error",
+			"error_message": "Ocurrió un error al intentar recuperar su contraseña. Por favor, inténtelo de nuevo más tarde."
+		},
+		"register": {
+			"title": "Crear una cuenta",
+			"role": {
+				"patient": "Paciente",
+				"doctor": "Doctor"
+			},
+			"name": "Nombre",
+			"surname": "Apellido",
+			"email": "Correo electrónico",
+			"telephone": "Número telefónico",
+			"license": "Número de matrícula",
+			"specialty": "Especialidad",
+			"address": "Dirección",
+			"insurances": "Obras sociales",
+			"work_days": "Días laborales",
+			"start_time": "Horario de inicio",
+			"end_time": "Horario de fin",
+			"duration": "Duración de los turnos (min)",
+			"birthdate": "Fecha de nacimiento",
+			"height": "Altura (m)",
+			"weight": "Peso (kg)",
+			"password": "Contraseña",
+			"confirm_password": "Confirmar contraseña",
+			"submit_button": "Registrarse",
+			"back_to_login": "Volver a iniciar sesión"
+		},
+		"change": {
+			"title": "Cambiar contraseña",
+			"subtitle": "Por favor, introduce y confirma tu nueva contraseña para continuar.",
+			"new_label": "Nueva contraseña",
+			"confirm_label": "Repetir contraseña",
+			"submit_button": "Cambiar contraseña",
+			"back_to_login": "Volver a iniciar sesión",
+			"success_title": "¡Éxito!",
+			"success_message": "Tu contraseña ha sido cambiada exitosamente.",
+			"error_title": "Error",
+			"error_message": "Ocurrió un error al intentar cambiar su contraseña. Por favor, inténtelo de nuevo más tarde."
+		}
+	},
 	"months": {
 		"jan": "Enero",
 		"feb": "Febrero",
@@ -98,5 +174,38 @@
 		"login": "Iniciar sesión",
 		"logout": "Cerrar sesión",
 		"profile": "Perfil"
-	}
+	},
+	"doctor": {
+		"labels": {
+			"telephone": "Teléfono",
+			"insurances": "Obras sociales",
+			"specialty": "Especialidad",
+			"address": "Dirección",
+			"license": "Matrícula",
+			"schedule": "Atiende"
+		},
+		"table": {
+			"day": "Día",
+			"time": "Horario"
+		},
+		"actions": {
+			"authorize": "Autorizar",
+			"de_authorize": "Desautorizar"
+		},
+		"text": {
+			"no_schedule": "No hay horario disponible.",
+			"schedule": "{day} de {startTime} a {endTime}",
+			"empty_schedule": "No hay turnos disponibles para la fecha seleccionada"
+		},
+		"pop_up": {
+			"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
+			"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+			"reason": "Motivo de la cita:",
+			"reason_placeholder": "Ingrese el motivo de la cita",
+			"confirm": "Tomar turno",
+			"cancel": "Cancelar"
+		}
+	},
+	"next": "Siguiente",
+	"previous": "Anterior"
 }

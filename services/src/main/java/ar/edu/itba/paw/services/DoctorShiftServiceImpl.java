@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,6 @@ import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.models.AvailableTurn;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
@@ -95,12 +93,5 @@ public class DoctorShiftServiceImpl implements DoctorShiftService{
     public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorShiftDao.getActiveShiftsByDoctor(doctor);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<AvailableTurn> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date) {
-        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorShiftDao.getAvailableTurnsByDoctorByDate(doctor, date);
     }
 }

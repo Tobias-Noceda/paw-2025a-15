@@ -7,10 +7,35 @@
 	import { user } from '$lib/stores/user';
 	import Icon from '$components/Icon/Icon.svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
+	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let userDropdownOpen = $state(false);
 
 	let { children } = $props();
+
+	$effect(() => {
+		const urlSearch = $page.url.searchParams.get('search') || '';
+		// Only update if different to prevent feedback loop
+		searchQuery.update(current => current !== urlSearch ? urlSearch : current);
+	});
+
+	onMount(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			const dropdown = document.querySelector('.user-dropdown-menu');
+			const button = document.querySelector('.user-btn');
+			if (dropdown && button && !dropdown.contains(event.target as Node) && !button.contains(event.target as Node)) {
+				userDropdownOpen = false;
+			}
+		};
+
+		document.addEventListener('click', handleClickOutside);
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+		};
+	});
 </script>
 
 <div class="flex min-h-screen! min-w-screen! flex-col">
@@ -33,9 +58,12 @@
 		{/if}
 		<div class="search-bar-container">
 			<div class="search-bar">
-				<form class="search-bar-form" onsubmit={(e) => e.preventDefault()}>
+				<form class="search-bar-form" onsubmit={(e) => {
+					e.preventDefault();
+					goto(`/paw-2025a-15/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
+				}}>
 					<Icon name="search" class="w-4.5 h-4.5 text-white" />
-					<input type="text" class="search-bar-text" placeholder="Search..." />
+					<input type="text" class="search-bar-text" placeholder="Search..." bind:value={$searchQuery} />
 				</form>
 			</div>
 		</div>

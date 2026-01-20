@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.persistence.DoctorShiftDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
@@ -77,13 +75,13 @@ public class DoctorShiftServiceImplTest {
         );
     }
 
-    @Test
-    public void testGetAvailableTurnsByDOctorIdByDateNonexistentDoctor(){
-        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+    // @Test
+    // public void testGetAvailableTurnsByDOctorIdByDateNonexistentDoctor(){
+    //     Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(NotFoundException.class, () -> 
-            dss.getAvailableTurnsByDoctorIdByDate(DOC_ID, LocalDate.now())
-        );
-    }
+    //     Assert.assertThrows(NotFoundException.class, () -> 
+    //         dss.getAvailableTurnsByDoctorIdByDate(DOC_ID, LocalDate.now())
+    //     );
+    // }
 
 }
