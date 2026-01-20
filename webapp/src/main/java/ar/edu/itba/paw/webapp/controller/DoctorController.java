@@ -145,13 +145,20 @@ public class DoctorController {
         @QueryParam("page") @DefaultValue("1") Integer page,
         @QueryParam("pageSize") @DefaultValue("100") Integer pageSize
     ) {
-        List<ShiftDTO> shifts = dss.getActiveShiftsByDoctorId(doctorId)
-            .stream()
-            .map(ShiftDTO.mapper(uriInfo))
-            .collect(Collectors.toList());
+        Map<String, String> queryParams = new HashMap<>();
 
-        return Response.ok(//TODO paginar??
-            new GenericEntity<List<ShiftDTO>>(shifts) {}
-        ).build();
+        if (doctorId != null) queryParams.put("id", doctorId.toString());
+
+        List<ShiftDTO> shifts = dss.getActiveShiftsByDoctorIdPage(doctorId, page, pageSize)
+            .stream().map(ShiftDTO.mapper(uriInfo)).collect(Collectors.toList());
+
+        return PaginationBuilder.buildResponse(
+            Response.ok(new GenericEntity<List<ShiftDTO>>(shifts) {}),
+            page,
+            pageSize,
+            dss.getActiveShiftsByDoctorIdCount(doctorId),
+            queryParams,
+            uriInfo
+        );
     }
 }

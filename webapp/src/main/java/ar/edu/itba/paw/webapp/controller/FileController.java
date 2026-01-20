@@ -20,7 +20,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
@@ -75,7 +74,7 @@ public class FileController {
                 uriInfo
             );
         }
-       return Response.status(Status.BAD_REQUEST).build(); //TODO bad request
+       return Response.noContent().build();
     }
 
     @GET
