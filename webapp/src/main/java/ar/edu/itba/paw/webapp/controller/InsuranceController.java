@@ -59,7 +59,7 @@ public class InsuranceController {
         Map<String, String> queryParams = new HashMap<>();
 
         if (doctorId != null) {
-            final List<InsuranceDTO> insurances = is.getInsurancesByDoctorId(doctorId) //TODO paginar?
+            final List<InsuranceDTO> insurances = is.getInsurancesByDoctorIdPage(doctorId, page, pageSize)
                 .stream().map(InsuranceDTO.mapper(uriInfo)).collect(Collectors.toList());
 
             queryParams.put("supportedBy", doctorId.toString());
@@ -68,7 +68,7 @@ public class InsuranceController {
                 Response.ok(new GenericEntity<List<InsuranceDTO>>(insurances) {}),
                 page, 
                 pageSize, 
-                insurances.size(), 
+                is.getInsurancesByDoctorIdCount(doctorId), 
                 queryParams, 
                 uriInfo
             );

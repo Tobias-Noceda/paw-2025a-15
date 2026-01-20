@@ -17,7 +17,9 @@ public interface InsuranceDao {
 
     public List<Insurance> getAllInsurances();
     
-    public List<Insurance> getInsurancesByDoctorId(long doctorId);
+    public int getInsurancesByDoctorIdCount(long doctorId);
+
+    public List<Insurance> getInsurancesByDoctorIdPage(long doctorId, int page, int pageSize);
 
     public int getInsurancesCount();
 
