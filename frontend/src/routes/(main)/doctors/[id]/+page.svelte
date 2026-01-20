@@ -2,7 +2,7 @@
     import { page } from '$app/stores';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import { fetchDoctorById } from '$lib/services/doctors';
-	import type { Appointment, Doctor } from '$types/api';
+	import type { Appointment, Doctor, Paginated } from '$types/api';
 	import { onMount } from 'svelte';
 
     import { m } from '$lib/paraglide/messages';
@@ -10,22 +10,21 @@
 	import Button from '$components/Button/Button.svelte';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Table, { type Column } from '$components/Table/Table.svelte';
-	import { fetchFreeAppointments } from '$lib/services/appointments';
+	import { fetchFreeAppointments, parseDateInLocalTimezone } from '$lib/services/appointments';
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
 	import { goto } from '$app/navigation';
 
-    const doctorId = $derived(Number.parseInt($page.params.id!));
-
 	let doctor: Doctor | null = $state(null);
-    let appointments: Appointment[] = $state([]);
+    let appointments: Paginated<Appointment> = $state({ _links: {}, results: [] });
+    let isFetching = $state(false);
 
-    let appointmentsDate: Date | null = $state(null);
-
-    // Parse date in local timezone to avoid UTC conversion issues
-    const parseDateInLocalTimezone = (dateStr: string): Date => {
-        const [year, month, day] = dateStr.split('-').map(Number);
-        return new Date(year, month - 1, day);
+    // Format date in local timezone (avoid UTC conversion)
+    const formatDateLocal = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
 
     let selectedDate: Date = $state($page.url.searchParams.get('date') ? parseDateInLocalTimezone($page.url.searchParams.get('date')!) : new Date());
@@ -33,16 +32,35 @@
     let selectedAppointment: Appointment | null = $state(null);
     let reason = $state('');
 
-    const fetchAppointments = async (doctorId: number, date: Date) => {
-        if (doctor && selectedDate) {
-            appointments = await fetchFreeAppointments(doctorId, date.toISOString().split('T')[0]);
-            return;
+    const updateUrlDate = (date: Date) => {
+        const dateStr = formatDateLocal(date);
+        const newUrl = new URL($page.url);
+        newUrl.searchParams.set('date', dateStr);
+        goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+    };
+
+    const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
+        if (!doctor || isFetching) return;
+        
+        isFetching = true;
+        try {
+            appointments = await fetchFreeAppointments(url, date ? formatDateLocal(date) : undefined);
+            const newDate = appointments._pageInfo?.currentDate || date || new Date();
+            selectedDate = newDate;
+            if (updateUrl) {
+                updateUrlDate(newDate);
+            }
+        } finally {
+            isFetching = false;
         }
     };
 
     onMount(async () => {
+        const currentDoctorId = $page.params.id!;
+        
+        // Only fetch doctor if ID changed
         if (!doctor) {
-            doctor = await fetchDoctorById($page.params.id!)
+            doctor = await fetchDoctorById(currentDoctorId)
                 .then((data) => {
                     return data;
                 })
@@ -52,13 +70,8 @@
                 });
 
             if (doctor) {
-                // Initialize appointmentsDate from doctor.todaysFreeAppointments URI query param
-                appointmentsDate = new Date();
-            }
-
-            // Fetch appointments for today
-            if (doctor && appointmentsDate) {
-                await fetchAppointments(doctorId, appointmentsDate);
+                // Initialize appointments with current date
+                await fetchAppointments(doctor.links.freeAppointments, selectedDate, false);
             }
         }
     });
@@ -79,13 +92,6 @@
             class: 'text-start'
         }
     ];
-
-    $effect(() => {
-        if (doctor && selectedDate) {
-            fetchAppointments(doctorId, selectedDate);
-            return;
-        }
-    });
 </script>
 
 <div class="flex gap-5">
@@ -96,14 +102,14 @@
                 <div class="flex w-[200px] h-[200px]">
                     <Avatar
                         size="auto"
-                        src={doctor ? doctor.image : ''}
+                        src={doctor ? doctor.links.image : ''}
                         class="bg-primary"
                     />
                 </div>
             </div>
             <p class="text-line font-bold">{doctor ? doctor.email : 'Loading...'}</p>
             <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.telephone']()}:</span> {doctor ? doctor.telephone : 'Loading...'}</p>
-            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.insurances']()}:</span> {doctor ? doctor.insuranceNames?.join(', ') : 'Loading...'}</p>
+            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.insurances']()}:</span> {doctor ? doctor.insurances?.join(', ') : 'Loading...'}</p>
             <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.specialty']()}:</span> {doctor ? m[`specialties.${doctor.specialty}`]() : 'Loading...'}</p>
             <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.address']()}:</span> {doctor ? doctor.direction : 'Loading...'}</p>
             <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.license']()}:</span> {doctor ? doctor.license : 'Loading...'}</p>
@@ -111,9 +117,9 @@
             <div class="flex flex-1 flex-col">
                 <p class="section-title">{m['doctor.labels.schedule']()}:</p>
 
-                {#if doctor && doctor.scheduleDays && doctor.scheduleDays.size > 0}
+                {#if doctor && doctor.schedule && doctor.schedule.size > 0}
                     <ul class="mt-2.5 pb-5">
-                        {#each Array.from(doctor.scheduleDays.entries()) as [day, [start, end]]}
+                        {#each Array.from(doctor.schedule.entries()) as [day, [start, end]]}
                             <li class="text-secondaryText">
                                 {m['doctor.text.schedule']({ day: m[`filters.weekdays.${day.toLowerCase()}`](), startTime: start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), endTime: end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })}
                             </li>
@@ -137,19 +143,16 @@
             <Button
                 variant="secondary"
                 class="w-fit"
-                onclick={() => {
-                    selectedDate = new Date(selectedDate.valueOf() - 24 * 60 * 60 * 1000);
-                    goto($page.url.pathname + `?date=` + selectedDate.toISOString().split('T')[0]);
-                }}
-                disabled={selectedDate <= new Date()}
+                onclick={() => fetchAppointments(appointments._links.prev!)}
+                disabled={selectedDate <= new Date() || isFetching}
             >
                 {m['previous']()}
             </Button>
             <DatePicker
-                bind:selectedDate
+                selectedDate={selectedDate}
                 onSelectDate={(date) => {
-                    selectedDate = date!;
-                    goto($page.url.pathname + `?date=` + selectedDate.toISOString().split('T')[0]);
+                    selectedDate = date ?? new Date();
+                    fetchAppointments(doctor!.links.freeAppointments, selectedDate);
                 }}
                 minDate={new Date()}
                 maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
@@ -158,18 +161,15 @@
             <Button
                 variant="secondary"
                 class="w-fit"
-                onclick={() => {
-                    selectedDate = new Date(selectedDate.valueOf() + 24 * 60 * 60 * 1000);
-                    goto($page.url.pathname + `?date=` + selectedDate.toISOString().split('T')[0]);
-                }}
-                disabled={selectedDate >= new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                onclick={() => fetchAppointments(appointments._links.next!)}
+                disabled={selectedDate >= new Date(new Date().setMonth(new Date().getMonth() + 3)) || isFetching}
             >
                 {m['next']()}
             </Button>
         </div>
         <Table
             columns={tableColumns}
-            rows={appointments}
+            rows={appointments.results}
             onRowClick={(appointment) => {
                 selectedAppointment = appointment;
             }}
@@ -182,7 +182,7 @@
     {#if selectedAppointment !== null}
         <PopUp>
             <div class="flex flex-col gap-2">
-                <h1 class="text-primaryText text-[1.17rem] font-bold">{m['doctor.pop_up.title']({month: selectedAppointment.startTime.toLocaleString('default', { month: 'long' }), day: selectedDate.getDate(), startTime: selectedAppointment.startTime, doctorName: doctor?.name})}</h1>
+                <h1 class="text-primaryText text-[1.17rem] font-bold">{m['doctor.pop_up.title']({month: selectedAppointment.startTime.toString(), day: selectedDate.getDate(), startTime: selectedAppointment.startTime, doctorName: doctor?.name ?? ''})}</h1>
                 <p class="text-primaryText">{m['doctor.pop_up.subtitle']()}</p>
                 <div>
                     <p class="text-primaryText">{m['doctor.pop_up.reason']()}</p>

@@ -110,9 +110,37 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional(readOnly = true)
     @Override
+    public List<AppointmentNew> getOldAppointmentDataPageByPatientId(long patientId, int page, int pageSize) {
+        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        return appointmentDao.getOldAppointmentDataPageByPatient(patient, page, pageSize);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Integer getOldAppointmentTotalByPatientId(long patientId) {
+        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        return appointmentDao.getOldAppointmentTotalByPatient(patient);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<AppointmentNew> getFutureAppointmentDataByDoctorId(long doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return appointmentDao.getFutureAppointmentDataByDoctor(doctor);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<AppointmentNew> getFutureAppointmentDataPageByDoctorId(long doctorId, int page, int pageSize) {
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return appointmentDao.getFutureAppointmentDataPageByDoctor(doctor, page, pageSize);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Integer getFutureAppointmentTotalByDoctorId(long doctorId) {
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return appointmentDao.getFutureAppointmentTotalByDoctor(doctor);
     }
 
     @Transactional

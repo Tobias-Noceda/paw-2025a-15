@@ -20,15 +20,19 @@
             patient: '/patients/1',
             doctorData: {
                 name: 'Dr. Smith',
-                image: '/files/1',
                 email: 'dr.smith@example.com',
                 telephone: '555-1234',
                 license: 'ABC123',
                 specialty: Specialties.BARIATRIC_SURGERY,
-                schedule: '/shifts?doctorId=1',
-                todaysFreeAppointments: 'trash',
-                insurances: 'trash',
-                self: '/doctors/1'
+                schedule: new Map(),
+                insurances: [],
+                links: {
+                    self: '/doctors/1',
+                    image: '/files/1',
+                    schedule: '/doctors/1/schedule',
+                    insurances: '/doctors/1/insurances',
+                    freeAppointments: '/doctors/1/freeAppointments'
+                }
             }
         }
     ];

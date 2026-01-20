@@ -1,11 +1,13 @@
 package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.enums.AppointmentStatus;
 
 public class DoctorDTO {
     private String email;
@@ -30,15 +32,17 @@ public class DoctorDTO {
         dto.specialty = doctor.getSpecialty().toString();
 
         URI self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
-        URI image = uriInfo.getBaseUriBuilder().path("images").path(String.valueOf(doctor.getPicture().getId())).build();
+        URI image = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(doctor.getPicture().getId())).build();
         URI schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
         URI insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
+        URI freeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatus.FREE).queryParam("date", LocalDate.now()).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
             .setImage(image)
             .setSchedule(schedule)
             .setInsurances(insurances)
+            .setFreeAppointments(freeAppointments)
         );
 
         return dto;
@@ -63,6 +67,10 @@ public class DoctorDTO {
 
     public String getSpecialty() {
         return specialty;
+    }
+
+    public LinkDTO getLinks() {
+        return links;
     }
 
     // setters

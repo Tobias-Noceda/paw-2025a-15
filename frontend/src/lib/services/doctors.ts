@@ -115,7 +115,7 @@ export const fetchDoctorById = async (id: string): Promise<Doctor | null> => {
 };
 
 const populateDoctorData = async (doctor: Doctor): Promise<Doctor> => {
-    const response = await fetch(doctor.schedule);
+    const response = await fetch(doctor.links.schedule);
 
     if (response.ok) {
         const schedule: Shift[] = await response.json();
@@ -131,16 +131,16 @@ const populateDoctorData = async (doctor: Doctor): Promise<Doctor> => {
                 direction = shift.address;
             }
         });
-        doctor.scheduleDays = days;
+        doctor.schedule = days;
         doctor.direction = direction;
     } else {
         throw new Error('Failed to fetch schedule');
     }
 
-    const responseInsurances = await fetch(doctor.insurances);
+    const responseInsurances = await fetch(doctor.links.insurances);
     if (responseInsurances.ok) {
         const insurancesData: Insurance[] = await responseInsurances.json();
-        doctor.insuranceNames = insurancesData.map(ins => ins.name);
+        doctor.insurances = insurancesData.map(ins => ins.name);
     } else {
         throw new Error('Failed to fetch insurances');
     }

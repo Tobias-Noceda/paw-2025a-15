@@ -26,7 +26,7 @@ public class CorsFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String headers = "X-Requested-With, X-Refresh-Token, Link, Location, Authorization, Accept-Version, Content-MD5, CSRF-Token, Content-Type, Content-Length, X-Current-Page, X-Total-Pages";
+        final String headers = "X-Requested-With, X-Refresh-Token, Link, Location, Authorization, Accept-Version, Content-MD5, CSRF-Token, Content-Type, Content-Length, X-Current-Page, X-Total-Pages, X-Current-Date, X-Max-Date";
 
         response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD");

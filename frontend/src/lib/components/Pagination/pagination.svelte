@@ -74,8 +74,8 @@
                 last = response._links?.last;
 
 				if (response._pageInfo) {
-					currentPage = response._pageInfo.currentPage;
-					totalPages = response._pageInfo.totalPages;
+					currentPage = response._pageInfo.currentPage!;
+					totalPages = response._pageInfo.totalPages!;
 				}
 			})
 			.catch((e) => {
@@ -99,8 +99,8 @@
             last = data._links?.last;
 
 			if (data._pageInfo) {
-				currentPage = data._pageInfo.currentPage;
-				totalPages = data._pageInfo.totalPages;
+				currentPage = data._pageInfo.currentPage!;
+				totalPages = data._pageInfo.totalPages!;
 			}
 			
             load = false;
