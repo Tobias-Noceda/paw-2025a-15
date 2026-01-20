@@ -21,6 +21,10 @@ public interface StudyDao {
 
     public boolean isFileInStudy(long studyId, long fileId);
 
+    public int getStudyFilesCount(long studyId);
+
+    public List<File> getStudyFilesPage(long studyId, int page, int pageSize);
+
     public int getFilteredStudiesByPatientCount(long patientId, StudyTypeEnum type);
 
     public List<Study> getFilteredStudiesByPatientPage(long patientId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize);

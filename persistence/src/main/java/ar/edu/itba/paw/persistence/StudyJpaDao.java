@@ -65,6 +65,29 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
+    public int getStudyFilesCount(long studyId) {
+        Study study = em.find(Study.class, studyId);
+        if(study==null) return 0;
+        String q = "SELECT COUNT(f) FROM Study s JOIN s.files f WHERE s.id = :studyId";
+        TypedQuery<Long> query = em.createQuery(q, Long.class);
+        query.setParameter("studyId", studyId);
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<File> getStudyFilesPage(long studyId, int page, int pageSize) {
+        Study study = em.find(Study.class, studyId);
+        if(study==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        String q = "SELECT f FROM Study s JOIN s.files f WHERE s.id = :studyId";
+        TypedQuery<File> query = em.createQuery(q, File.class);
+        query.setParameter("studyId", studyId);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
     public int getFilteredStudiesByPatientCount(long patientId, StudyTypeEnum type) {
         Patient patient = em.find(Patient.class, patientId);
         if(patient==null) return 0;

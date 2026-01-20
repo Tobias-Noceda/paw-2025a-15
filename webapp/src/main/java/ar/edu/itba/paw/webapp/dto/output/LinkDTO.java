@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
-import java.util.List;
 
 public class LinkDTO {
 
@@ -15,7 +14,7 @@ public class LinkDTO {
     private URI uploader;
     private URI authDoctors;
     private URI schedule;
-    private List<URI> files;
+    private URI files;
 
     public URI getSelf() {
         return self;
@@ -53,11 +52,11 @@ public class LinkDTO {
         return this;
     }
 
-    public List<URI> getFiles(){
+    public URI getFiles(){
         return files;
     }
 
-    public LinkDTO setFiles(List<URI> files){
+    public LinkDTO setFiles(URI files){
         this.files = files;
         return this;
     }

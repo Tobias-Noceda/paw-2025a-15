@@ -19,6 +19,10 @@ public interface StudyService {
 
     public boolean isFileInStudy(long studyId, long fileId);
 
+    public int getStudyFilesCount(long studyId);
+
+    public List<File> getStudyFilesPage(long studyId, int page, int pageSize);
+
     public int getFilteredStudiesCount(long patientId, Long doctorId, StudyTypeEnum type);
 
     public List<Study> getFilteredStudiesPage(long patientId, Long doctorId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize);

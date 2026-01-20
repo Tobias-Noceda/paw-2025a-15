@@ -3,16 +3,24 @@ package ar.edu.itba.paw.webapp.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
@@ -22,8 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.FileService;
+import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
+import ar.edu.itba.paw.webapp.dto.output.FileDTO;
 import ar.edu.itba.paw.webapp.exception.NotFoundException;
 
 @Path("/files")
@@ -33,8 +44,39 @@ public class FileController {
     @Autowired
     private FileService fs;
 
+    @Autowired
+    private StudyService ss;
+
     @Context
     private UriInfo uriInfo;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listFiles(
+        @QueryParam("studyId") final Long studyId,
+        @QueryParam("page") @DefaultValue("1") final int page,
+        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+    ) {
+        Map<String, String> queryParams = new HashMap<>();
+
+        if(studyId!=null){
+            queryParams.put("studyId", studyId.toString());
+            
+            final List<FileDTO> files = ss.getStudyFilesPage(studyId, page, pageSize)
+                .stream().map(FileDTO.mapper(uriInfo)).collect(Collectors.toList());
+            
+
+            return PaginationBuilder.buildResponse(
+                Response.ok(new GenericEntity<List<FileDTO>>(files) {}),
+                page, 
+                pageSize, 
+                ss.getStudyFilesCount(studyId), 
+                queryParams, 
+                uriInfo
+            );
+        }
+       return Response.status(Status.BAD_REQUEST).build(); //TODO bad request
+    }
 
     @GET
     @Path("/{id}")

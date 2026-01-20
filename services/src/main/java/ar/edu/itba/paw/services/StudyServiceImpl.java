@@ -129,6 +129,18 @@ public class StudyServiceImpl implements StudyService{
 
     @Transactional(readOnly = true)
     @Override
+    public int getStudyFilesCount(long studyId) {
+        return studyDao.getStudyFilesCount(studyId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<File> getStudyFilesPage(long studyId, int page, int pageSize) {
+        return studyDao.getStudyFilesPage(studyId, page, pageSize);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public int getFilteredStudiesCount(long patientId, Long doctorId, StudyTypeEnum type){
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         if(doctorId != null){
