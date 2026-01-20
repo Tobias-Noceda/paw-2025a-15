@@ -172,4 +172,14 @@ public class StudyServiceImpl implements StudyService{
             fs.findById(file.getId()).orElseThrow(() -> new NotFoundException("File not found with ID: " + file.getId()));
         }
     }
+
+    @Override
+    public int getAuthDoctorsCount(long studyId) {
+        return studyDao.getAuthDoctorsCount(studyId);
+    }
+
+    @Override
+    public List<Doctor> getAuthDoctorsPage(long studyId, int page, int pageSize) {
+        return studyDao.getAuthDoctorsPage(studyId, page, pageSize);
+    }
 }

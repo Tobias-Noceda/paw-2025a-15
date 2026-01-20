@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
@@ -26,4 +27,8 @@ public interface StudyService {
     public int getFilteredStudiesCount(long patientId, Long doctorId, StudyTypeEnum type);
 
     public List<Study> getFilteredStudiesPage(long patientId, Long doctorId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize);
+
+    public int getAuthDoctorsCount(long studyId);
+
+    public List<Doctor> getAuthDoctorsPage(long studyId, int page, int pageSize);
 }

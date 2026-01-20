@@ -173,4 +173,27 @@ public class StudyJpaDao implements StudyDao {
         query.setMaxResults(pageSize);
         return query.getResultList();
     }
+
+    @Override
+    public int getAuthDoctorsCount(long studyId) {
+        Study study = em.find(Study.class, studyId);
+        if(study==null) return 0;
+        String q = "SELECT COUNT(ad) FROM Study s JOIN s.authDoctors ad WHERE s.id = :studyId";
+        TypedQuery<Long> query = em.createQuery(q, Long.class);
+        query.setParameter("studyId", studyId);
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<Doctor> getAuthDoctorsPage(long studyId, int page, int pageSize) {
+        Study study = em.find(Study.class, studyId);
+        if(study==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        String q = "SELECT ad FROM Study s JOIN s.authDoctors ad WHERE s.id = :studyId";
+        TypedQuery<Doctor> query = em.createQuery(q, Doctor.class);
+        query.setParameter("studyId", studyId);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
 }

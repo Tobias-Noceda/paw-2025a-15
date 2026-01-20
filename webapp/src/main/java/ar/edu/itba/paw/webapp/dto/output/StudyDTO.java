@@ -39,9 +39,8 @@ public class StudyDTO {
         URI uploader = null;
         if(study.getUploader().getRole().equals(UserRoleEnum.DOCTOR))uploader = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(study.getUploader().getId())).build();
         else if(study.getUploader().getRole().equals(UserRoleEnum.PATIENT)) uploader = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getUploader().getId())).build();
-        //TODO labs, ver caso admin tmb else if(study.getUploader().getRole().equals(UserRoleEnum.LABORATORY)) uploader = uriInfo.getBaseUriBuilder().path(LaboratoryController.class).path(String.valueOf(study.getUploader().getId())).build();
-        URI files = uriInfo.getBaseUriBuilder().path(FileController.class).path("?studyId=" + String.valueOf(study.getId())).build();
-        URI authDoctors = null; //TODO en el doctorController permitir este filtro uriInfo.getBaseUriBuilder().path(DoctorController.class).path("?studyId=" + String.valueOf(study.getId())).build();
+        URI files = uriInfo.getBaseUriBuilder().path(FileController.class).queryParam("studyId", study.getId()).build();
+        URI authDoctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("studyId", study.getId()).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

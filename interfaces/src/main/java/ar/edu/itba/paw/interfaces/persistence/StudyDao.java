@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
@@ -32,4 +33,8 @@ public interface StudyDao {
     public int getFilteredStudiesByPatientAndDoctorCount(long patientId, long doctorId, StudyTypeEnum type);
     
     public List<Study> getFilteredStudiesByPatientAndDoctorPage(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize);
+
+    public int getAuthDoctorsCount(long studyId);
+
+    public List<Doctor> getAuthDoctorsPage(long studyId, int page, int pageSize);
 }

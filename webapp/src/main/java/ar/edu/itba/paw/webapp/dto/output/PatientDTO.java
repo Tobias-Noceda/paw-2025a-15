@@ -60,8 +60,7 @@ public class PatientDTO {
 
         URI insurance = null;
         if(patient.getInsurance()!=null) insurance = uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(patient.getInsurance().getId())).build();
-        //TODO filtered GET in doctors controller
-        URI doctors = null; uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(patient.getPicture().getId())).build();
+        URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
         URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
 
@@ -69,7 +68,7 @@ public class PatientDTO {
             .setSelf(self)
             .setImage(picture)
             .setInsurance(insurance)
-            .setDoctor(doctors)
+            .setDoctors(doctors)
         );
 
         return dto;

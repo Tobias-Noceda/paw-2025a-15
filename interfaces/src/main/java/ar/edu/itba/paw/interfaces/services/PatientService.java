@@ -2,8 +2,10 @@ package ar.edu.itba.paw.interfaces.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -33,4 +35,9 @@ public interface PatientService {
         Long insuranceId,
         String insuranceNumber
     );
+
+    public int getAuthDoctorsByPatientIdAndNameCount(long patientId, String name);
+
+    public List<Doctor> getAuthDoctorsByPatientIdAndNamePage(long patientId, String name, int page, int pageSize);
+
 }
