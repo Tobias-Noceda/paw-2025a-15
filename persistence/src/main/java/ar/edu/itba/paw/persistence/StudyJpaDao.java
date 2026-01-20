@@ -65,9 +65,26 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
-    public List<Study> getFilteredStudiesByPatient(long patientId, StudyTypeEnum type, boolean mostRecent) {
+    public int getFilteredStudiesByPatientCount(long patientId, StudyTypeEnum type) {
         Patient patient = em.find(Patient.class, patientId);
-        if(patient==null) return Collections.emptyList();
+        if(patient==null) return 0;
+        String q = "select count(s) from Study as s where s.patient.id = :patientId "
+                + (type != null ? "and s.type = :type " : "");
+
+        TypedQuery<Long> query = em.createQuery(q, Long.class);
+        query.setParameter("patientId", patientId);
+        if (type != null) {
+            query.setParameter("type", type);
+        }
+
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<Study> getFilteredStudiesByPatientPage(long patientId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize) {
+        Patient patient = em.find(Patient.class, patientId);
+        if(patient==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
         String q = "from Study as s where s.patient.id = :patientId "
                 + (type != null ? "and s.type = :type " : "")
                 + (mostRecent ? "order by s.studyDate desc" : "order by s.studyDate asc");
@@ -77,15 +94,41 @@ public class StudyJpaDao implements StudyDao {
         if (type != null) {
             query.setParameter("type", type);
         }
-
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
 
     @Override
-    public List<Study> getFilteredStudiesByPatientAndDoctor(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
+    public int getFilteredStudiesByPatientAndDoctorCount(long patientId, long doctorId, StudyTypeEnum type) {
         Patient patient = em.find(Patient.class, patientId);
         Doctor doctor = em.find(Doctor.class, doctorId);
-        if(patient==null || doctor==null) return Collections.emptyList();
+        if(patient==null || doctor==null) return 0;
+        String q = "SELECT count(s) from Study s " +
+                "join AuthStudy a on a.study = s " +
+                "where s.patient.id = :patientId " +
+                "and a.doctor.id = :doctorId ";
+        if (type != null) {
+            q += "and s.type = :type ";
+        }
+
+        TypedQuery<Long> query = em.createQuery(q, Long.class);
+        query.setParameter("patientId", patientId);
+        query.setParameter("doctorId", doctorId);
+
+        if (type != null) {
+            query.setParameter("type", type);
+        }
+
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<Study> getFilteredStudiesByPatientAndDoctorPage(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize) {
+        Patient patient = em.find(Patient.class, patientId);
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(patient==null || doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
         String q = "SELECT s from Study s " +
                 "join AuthStudy a on a.study = s " +
                 "where s.patient.id = :patientId " +
@@ -103,6 +146,8 @@ public class StudyJpaDao implements StudyDao {
             query.setParameter("type", type);
         }
 
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
 }

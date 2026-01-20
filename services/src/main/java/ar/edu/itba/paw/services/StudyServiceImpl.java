@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.StudyDao;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -129,18 +129,30 @@ public class StudyServiceImpl implements StudyService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Study> getFilteredStudies(long patientId, StudyTypeEnum type, boolean mostRecent) {
+    public int getFilteredStudiesCount(long patientId, Long doctorId, StudyTypeEnum type){
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        return studyDao.getFilteredStudiesByPatient(patientId, type, mostRecent);
+        if(doctorId != null){
+            ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+
+            return studyDao.getFilteredStudiesByPatientAndDoctorCount(patientId, doctorId, type);
+        }
+        else {
+            return studyDao.getFilteredStudiesByPatientCount(patientId, type);
+        }
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Study> getFilteredStudiesByPatientIdAndDoctorId(long patientId, long doctorId, StudyTypeEnum type, boolean mostRecent) {
+    public List<Study> getFilteredStudiesPage(long patientId, Long doctorId, StudyTypeEnum type, boolean mostRecent, int page, int pageSize){
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        if(doctorId != null){
+            ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
 
-        return studyDao.getFilteredStudiesByPatientAndDoctor(patientId, doctorId, type, mostRecent);
+            return studyDao.getFilteredStudiesByPatientAndDoctorPage(patientId, doctorId, type, mostRecent, page, pageSize);
+        }
+        else {
+            return studyDao.getFilteredStudiesByPatientPage(patientId, type, mostRecent, page, pageSize);
+        }
     }
 
     private void checkAllFilesExist(List<File> files) {

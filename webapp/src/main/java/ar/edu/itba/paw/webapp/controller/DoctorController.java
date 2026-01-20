@@ -28,8 +28,8 @@ import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
-import ar.edu.itba.paw.webapp.dto.DoctorDTO;
-import ar.edu.itba.paw.webapp.dto.ShiftDTO;
+import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
+import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
 
 @Path("/doctors")
 @Component
