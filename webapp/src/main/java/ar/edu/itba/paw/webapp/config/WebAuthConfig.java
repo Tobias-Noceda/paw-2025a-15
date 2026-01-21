@@ -85,14 +85,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         return new JwtTokenUtil(token);
     }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-        configurer.setLocation(new ClassPathResource("application.properties"));
-        
-        return configurer;
-    }
     
     @Bean
     public BasicAuthorizationFilter basicAuthorizationFilter() {
