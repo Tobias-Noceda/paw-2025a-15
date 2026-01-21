@@ -158,7 +158,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return new ConcurrentMapCacheManager();
     }
 
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();

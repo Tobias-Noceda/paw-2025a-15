@@ -1,0 +1,6 @@
+security.key=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+api.base.url=http://localhost:8080/paw-2025a-15/api
+
+app.base-url=http://localhost:8080/paw-2025a-15/
+app.email.from=caretracehealth@gmail.com

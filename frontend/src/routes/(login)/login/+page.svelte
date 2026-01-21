@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { base } from "$app/paths";
 	import Button from "$components/Button/Button.svelte";
 	import Input from "$components/Input/Input.svelte";
 	import { m } from "$lib/paraglide/messages";
+	import { login } from "$modules/api.svelte";
 
     let email = $state('');
     let password = $state('');
@@ -10,6 +12,14 @@
     const handleLogin = () => {
         // Implement login logic here
         console.log(`Logging in with email: ${email} and password: ${password}`);
+        login(email, password, fetch)
+            .then(() => {
+                error = false;
+                goto(`${base}/home`);
+            })
+            .catch(() => {
+                error = true;
+            });
     };
 
     let error = $state(false);
