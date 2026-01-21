@@ -69,7 +69,7 @@ public class PatientController {
 
         if(name!=null) queryParams.put("name", name);
 
-        if (doctorId != null) queryParams.put("doctorId", doctorId.toString()); //TODO caso sin doctorID
+        if (doctorId != null) queryParams.put("doctorId", doctorId.toString());
 
         final List<PatientDTO> patients = ds.getAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize)
             .stream().map(PatientDTO.mapper(uriInfo)).collect(Collectors.toList());
