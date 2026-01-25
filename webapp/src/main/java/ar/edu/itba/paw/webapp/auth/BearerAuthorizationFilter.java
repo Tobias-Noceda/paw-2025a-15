@@ -65,38 +65,14 @@ public class BearerAuthorizationFilter extends OncePerRequestFilter {
         if (info.expired()) {
             LOGGER.debug("Session expired");
 
-            final String refreshHeader = request.getHeader("X-Refresh-Token");
-            LOGGER.debug("Got refresh header: {}", refreshHeader);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
-            if (refreshHeader == null || !refreshHeader.startsWith("Bearer ")) {
-                LOGGER.debug("No refresh token found");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+        if (!info.isAccess()) {
+            LOGGER.debug("Session token used, creating new refresh token");
 
-            final String refreshToken = refreshHeader.split(" ")[1].trim();
-            LOGGER.debug("Got refresh token: {}", refreshToken);
-
-            if (refreshToken.isEmpty()) {
-                LOGGER.debug("Empty refresh token");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-
-            final JwtTokenUtil.SessionInfo refreshParsed = jwt.parse(refreshToken);
-            if (refreshParsed == null || refreshParsed.expired()) {
-                LOGGER.debug("Invalid or expired refresh token");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-
-            if (!refreshParsed.user().equals(info.user())) {
-                LOGGER.debug("Refresh token user does not match session user");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-
-            LOGGER.debug("Accepted refresh token");
+            response.setHeader("X-Access-Token", jwt.createAccessToken(((PawAuthUserDetails) info.user()).getUser()));
         }
 
         LOGGER.debug("Setting authentication");

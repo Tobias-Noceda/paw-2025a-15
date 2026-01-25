@@ -13,7 +13,6 @@ let user = writable<User | null>(null);
 export function setUserFromSession(sessionToken: string) {
     // Parse user data from session token
 	const payload = parseJWT(sessionToken);
-	console.log('JWT payload:', payload);
 	if (payload) {
 		user.set({
 			name: payload.name,
@@ -21,7 +20,6 @@ export function setUserFromSession(sessionToken: string) {
             image: payload.image,
 			...payload
 		});
-		console.log('Authenticated user:', user);
 	}
 };
 

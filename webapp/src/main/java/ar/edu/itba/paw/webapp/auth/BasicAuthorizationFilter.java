@@ -11,12 +11,13 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,7 @@ import java.util.Base64;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+@Slf4j
 @Component
 public class BasicAuthorizationFilter extends OncePerRequestFilter {
     @Autowired
@@ -34,12 +36,6 @@ public class BasicAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwt;
-
-    private final UriBuilder base;
-
-    public BasicAuthorizationFilter(final UriBuilder base) {
-        this.base = base;
-    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -56,8 +52,7 @@ public class BasicAuthorizationFilter extends OncePerRequestFilter {
 
             final PawAuthUserDetails user = (PawAuthUserDetails) uds.loadUserByUsername(credentials[0]);
 
-            if (user == null || !user.isAccountNonLocked()
-                    || SecurityContextHolder.getContext().getAuthentication() != null) {
+            if (user == null || !user.isAccountNonLocked() || SecurityContextHolder.getContext().getAuthentication() != null) {
                 chain.doFilter(request, response);
                 return;
             }
@@ -67,9 +62,9 @@ public class BasicAuthorizationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             
-            JwtTokenUtil.Session session = jwt.create(user.getUser(), base);
+            JwtTokenUtil.Session session = jwt.create(user.getUser());
 
-            response.setHeader("X-Auth-Token", session.session());
+            response.setHeader("X-Access-Token", session.access());
             response.setHeader("X-Refresh-Token", session.refresh());
         } catch (AuthenticationException failed) {
             SecurityContextHolder.clearContext();

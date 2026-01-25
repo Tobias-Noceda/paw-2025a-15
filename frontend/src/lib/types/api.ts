@@ -23,7 +23,7 @@ export type Paginated<T> = {
 };
 
 export type Session = {
-	session: string;
+	access: string;
 	refresh: string;
 };
 

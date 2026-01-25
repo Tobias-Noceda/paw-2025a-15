@@ -1,3 +1,4 @@
+import { get } from "$modules/api.svelte";
 import { baseApiUrl, type Appointment, type Paginated } from "$types/api";
 import { getPaginationLinks } from "./pagination";
 
@@ -20,7 +21,7 @@ export const fetchFreeAppointments = async (
             url.searchParams.set('date', date);
         }
 
-        const response = await fetch(url.toString());
+        const response = await get(url.toString(), undefined, fetch);
         if (response.ok) {
             appointments.results = await response.json();
 
@@ -30,6 +31,11 @@ export const fetchFreeAppointments = async (
                     currentDate: parseDateInLocalTimezone(response.headers.get('X-Current-Date')!),
                     maxDate: parseDateInLocalTimezone(response.headers.get('X-Max-Date')!)
                 };
+            }
+
+            // Populate doctor data for each appointment
+            for (const appointment of appointments.results) {
+                await populateAppointmentData(appointment);
             }
         }
     } catch (error) {
@@ -41,7 +47,7 @@ export const fetchFreeAppointments = async (
 
 const populateAppointmentData = async (appointment: Appointment): Promise<void> => {
     try {
-        const response = await fetch(appointment.doctor);
+        const response = await get(appointment.doctor, undefined, fetch);
         if (response.ok) {
             const doctorData = await response.json();
             appointment.doctorData = doctorData;

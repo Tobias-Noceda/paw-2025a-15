@@ -11,9 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,6 +50,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private Environment env;
 
     @Autowired
+    private BasicAuthorizationFilter basic;
+
+    @Autowired
     private BearerAuthorizationFilter bearer;
 
     @Bean
@@ -78,19 +79,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtTokenUtil jwtTokenUtil() throws IOException {
         final String token = env.getProperty("security.key");
+        String baseUrl = env.getProperty("api.base.url", "http://localhost:8080/paw-2025a-15/api");
 
         if (token == null) {
             throw new IOException("Missing JWT secret key in configuration. Please set 'security.key' property.");
         }
 
-        return new JwtTokenUtil(token);
-    }
-    
-    @Bean
-    public BasicAuthorizationFilter basicAuthorizationFilter() {
-        // Get base URL from environment or use default
-        String baseUrl = env.getProperty("api.base.url", "http://localhost:8080/paw-2025a-15/api");
-        return new BasicAuthorizationFilter(UriBuilder.fromUri(baseUrl));
+        return new JwtTokenUtil(token, UriBuilder.fromUri(baseUrl));
     }
 
     @Override
@@ -108,7 +103,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.disable())
             .headers(h -> h.cacheControl().disable())
-            .addFilterBefore(basicAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(basic, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(bearer, UsernamePasswordAuthenticationFilter.class);
     }
 

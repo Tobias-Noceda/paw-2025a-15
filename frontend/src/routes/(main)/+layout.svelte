@@ -33,16 +33,8 @@
 
 		document.addEventListener('click', handleClickOutside);
 
-		// if session is not expired, set user from session
-		if (localStorage.getItem('expiration') && new Date() < new Date(localStorage.getItem('expiration')!)) {
-			if ($user === null && localStorage.getItem('session')) {
-				setUserFromSession(localStorage.getItem('session')!);
-			}
-		} else {
-			// session expired, clear localStorage
-			localStorage.removeItem('session');
-			localStorage.removeItem('refresh');
-			localStorage.removeItem('expiration');
+		if ($user === null && localStorage.getItem('access')) {
+			setUserFromSession(localStorage.getItem('access')!);
 		}
 
 		return () => {
