@@ -1,8 +1,9 @@
 package ar.edu.itba.paw.models.enums;
 
 public enum AppointmentStatus {
-    Free("Free"),
-    Booked("Booked");
+    FREE("Free"),
+    TAKEN("Taken"),
+    COMPLETED("Completed");
 
     private final String displayName;
 

@@ -206,6 +206,23 @@
 			}
 		}
 	},
+	"appointments": {
+		"title": {
+			"past": "Past Appointments",
+			"future": "Upcoming Appointments"
+		},
+		"label": {
+			"doctor": "Doctor",
+			"date": "Date",
+			"time": "Time",
+			"address": "Address",
+			"action": "Action"
+		},
+		"empty": {
+			"past": "You have no past appointments",
+			"future": "You have no upcoming appointments"
+		}
+	},
 	"next": "Next",
 	"previous": "Previous"
 }

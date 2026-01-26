@@ -1,37 +1,42 @@
 package ar.edu.itba.paw.webapp.config;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.UriBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.GenericFilterBean;
 
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
-import ar.edu.itba.paw.webapp.auth.CustomAuthenticationFailureHandler;
+import ar.edu.itba.paw.webapp.auth.BasicAuthorizationFilter;
+import ar.edu.itba.paw.webapp.auth.BearerAuthorizationFilter;
+import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.WebUserAuthDecision;
 
 @Configuration
 @EnableWebSecurity
 @ComponentScan({"ar.edu.itba.paw.webapp.auth"})
+@PropertySource("classpath:application.properties")
 @SuppressWarnings("deprecation")
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
@@ -39,13 +44,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private PawUserDetailsService userDetailsService;
 
     @Autowired
-    private CustomAuthenticationFailureHandler authenticationFailureHandler;
-
-    @Autowired
     private WebUserAuthDecision ad;
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private BasicAuthorizationFilter basic;
+
+    @Autowired
+    private BearerAuthorizationFilter bearer;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,78 +71,55 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().requestMatchers("/css/**", "/js/**", "/resources/**", "/403");
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new UnauthorizedRequestHandler();
+    }
+
+    @Bean
+    public JwtTokenUtil jwtTokenUtil() throws IOException {
+        final String token = env.getProperty("security.key");
+        String baseUrl = env.getProperty("api.base.url", "http://localhost:8080/paw-2025a-15/api");
+
+        if (token == null) {
+            throw new IOException("Missing JWT secret key in configuration. Please set 'security.key' property.");
+        }
+
+        return new JwtTokenUtil(token, UriBuilder.fromUri(baseUrl));
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement(management -> management.invalidSessionUrl("/home"))
+        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(requests -> requests
                 // general
-                .requestMatchers("/", "/home").permitAll()
-                .requestMatchers("/supersecret/user-profile-pic/{userId}").permitAll()
-                .requestMatchers("/supersecret/insurance-picture/{userId}").permitAll()
-                .regexMatchers("/profile").hasAnyRole("DOCTOR", "PATIENT")
-                .requestMatchers("/save-profile").hasAnyRole("DOCTOR", "PATIENT")
-                .requestMatchers("/doctors/{doctorId}", "/patientAuthDoctor/{doctorId}").hasRole("PATIENT")
-                .requestMatchers("/patient/{patientId}")
-                    .access((a, c) -> ad.isAuthDoctor(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
-                .requestMatchers("/login", "/register", "/forgot-password", "/change-password/**", "/recover-password", "/createPatient", "/createMedic").anonymous()
-                .requestMatchers("/403").permitAll()
-                // appointments
-                .requestMatchers("/appointments").hasAnyRole("DOCTOR", "PATIENT")
-                .requestMatchers("/vacations").hasRole("DOCTOR")
-                .requestMatchers("/createVacations").hasRole("DOCTOR")
-                .requestMatchers("/cancelAppointment").hasAnyRole("DOCTOR", "PATIENT")
-                .requestMatchers("/takeAppointment").hasRole("PATIENT")
-                .requestMatchers("/removeAppointment").hasRole("DOCTOR")
-                // studies
-                .requestMatchers("/studies").hasRole("PATIENT")
-                .requestMatchers("/study-info/{studyId}")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
-                    // .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
-                .requestMatchers("/authFileDoctor/{doctorId}/{studyId}").hasRole("PATIENT")
-                .requestMatchers("/view-study/{studyId}/file/{fileId}")
-                    .access((a, c) -> ad.hasFileAuth(a.get(), Long.parseLong(c.getVariables().get("studyId")), Long.parseLong(c.getVariables().get("fileId"))))
-                .requestMatchers("/upload-study/{patientId}")
-                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("patientId"))))
-                // admin
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                // temporary
-                .requestMatchers("/**").permitAll()
+                // doctors
+                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
             )
-            .formLogin(login -> login
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/", false)
-                .loginPage("/login")
-                .failureHandler(authenticationFailureHandler)
-            )
-            .rememberMe(me -> me
-                .rememberMeParameter("remember-me")
-                .userDetailsService(userDetailsService)
-                .key(env.getProperty("security.rememberme.key"))
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
-            )
+            .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(new UnauthorizedRequestHandler())
+                        .accessDeniedHandler(new ForbiddenRequestHandler()))
             .csrf(csrf -> csrf.disable())
-            .addFilterBefore(new DecisionExceptionHandler(), UsernamePasswordAuthenticationFilter.class);
+            .cors(cors -> cors.disable())
+            .headers(h -> h.cacheControl().disable())
+            .addFilterBefore(basic, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(bearer, UsernamePasswordAuthenticationFilter.class);
     }
 
-    private class DecisionExceptionHandler extends GenericFilterBean {
+    private class UnauthorizedRequestHandler implements AuthenticationEntryPoint {
         @Override
-        public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-                throws IOException, ServletException {
-            try {
-                chain.doFilter(req, res);
-            } catch (NotFoundException e) {
-                req.getRequestDispatcher("/404").forward(req, res);
-            }
+        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
+                throws IOException {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+    }
+
+    private class ForbiddenRequestHandler implements AccessDeniedHandler {
+        @Override
+        public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
+                throws IOException {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 }

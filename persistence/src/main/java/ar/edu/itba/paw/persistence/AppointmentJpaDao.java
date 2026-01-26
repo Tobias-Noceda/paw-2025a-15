@@ -25,7 +25,22 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 @Repository
-public class AppointmentJpaDao implements AppointmentDao{
+public class AppointmentJpaDao implements AppointmentDao {
+
+    private static final String PATIENTS_OLD_APPOINTMENTS_QUERY = 
+        "FROM AppointmentNew a " +
+        "WHERE a.patient = :patient " +
+        "AND (a.id.date < :today " +
+        "OR (a.id.date = :today AND a.id.startTime < :todaysTime)) " +
+        "ORDER BY a.id.date DESC, a.id.startTime DESC";
+
+    private static final String DOCTORS_FUTURE_APPOINTMENTS_QUERY = 
+        "FROM AppointmentNew a " +
+        "WHERE a.shift.doctor = :doctor " +
+        "AND (a.patient <> :doctor) " +
+        "AND (a.id.date > :today " +
+        "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
+        "ORDER BY a.id.date ASC, a.id.startTime ASC";
 
     @PersistenceContext
     private EntityManager em;
@@ -68,11 +83,7 @@ public class AppointmentJpaDao implements AppointmentDao{
 
     @Override
     public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient) {
-        String query = "FROM AppointmentNew a " +
-                    "WHERE a.patient = :patient " +
-                    "AND (a.id.date < :today " +
-                    "OR (a.id.date = :today AND a.id.startTime < :todaysTime)) " +
-                    "ORDER BY a.id.date DESC, a.id.startTime DESC";
+        String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -81,6 +92,30 @@ public class AppointmentJpaDao implements AppointmentDao{
                         .setParameter("today", now.toLocalDate())
                         .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
+    }
+
+    @Override
+    public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
+        String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
+
+        return em.createQuery(query, AppointmentNew.class)
+                        .setParameter("patient", patient)
+                        .setParameter("today", LocalDate.now())
+                        .setParameter("todaysTime", LocalTime.now())
+                        .setFirstResult((page - 1) * pageSize)
+                        .setMaxResults(pageSize)
+                        .getResultList();
+    }
+
+    @Override
+    public Integer getOldAppointmentTotalByPatient(Patient patient) {
+        String query = "SELECT COUNT(a) " + PATIENTS_OLD_APPOINTMENTS_QUERY;
+        Long count = em.createQuery(query, Long.class)
+                        .setParameter("patient", patient)
+                        .setParameter("today", LocalDate.now())
+                        .setParameter("todaysTime", LocalTime.now())
+                        .getSingleResult();
+        return count.intValue();
     }
 
     @Override
@@ -98,6 +133,30 @@ public class AppointmentJpaDao implements AppointmentDao{
                         .setParameter("today", now.toLocalDate())
                         .setParameter("todaysTime", now.toLocalTime())
                         .getResultList();
+    }
+
+    @Override
+    public List<AppointmentNew> getFutureAppointmentDataPageByDoctor(Doctor doctor, int page, int pageSize) {
+        String query = DOCTORS_FUTURE_APPOINTMENTS_QUERY;
+
+        return em.createQuery(query, AppointmentNew.class)
+                        .setParameter("doctor", doctor)
+                        .setParameter("today", LocalDate.now())
+                        .setParameter("todaysTime", LocalTime.now())
+                        .setFirstResult((page - 1) * pageSize)
+                        .setMaxResults(pageSize)
+                        .getResultList();
+    }
+
+    @Override
+    public Integer getFutureAppointmentTotalByDoctor(Doctor doctor) {
+        String query = "SELECT COUNT(a) " + DOCTORS_FUTURE_APPOINTMENTS_QUERY;
+        Long count = em.createQuery(query, Long.class)
+                        .setParameter("doctor", doctor)
+                        .setParameter("today", LocalDate.now())
+                        .setParameter("todaysTime", LocalTime.now())
+                        .getSingleResult();
+        return count.intValue();
     }
 
     @Override

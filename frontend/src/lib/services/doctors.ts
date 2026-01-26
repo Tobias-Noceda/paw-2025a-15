@@ -2,6 +2,7 @@ import type { Doctor, Insurance, Paginated, Shift } from "$types/api";
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
 import { getPaginationLinks } from "./pagination";
+import { get, getAuth } from "$modules/api.svelte";
 
 /**
  * Parse time string in HH:mm format and return a Date object
@@ -40,7 +41,7 @@ export const fetchDoctors = async (
             url.searchParams.append('name', name.trim());
         }
 
-        const response = await fetch(url.toString());
+        const response = await get(url.toString(), undefined, fetch);
         if (response.ok) {
             doctors.results = await response.json();
             response.headers.get('Link')?.split(',').forEach(link => {
@@ -58,9 +59,9 @@ export const fetchDoctors = async (
                 };
             }
 
-            await Promise.all(doctors.results.map(async (doctor) => {
+            for (const doctor of doctors.results) {
                 await populateDoctorData(doctor);
-            }));
+            }
         }
     } catch (error) {
         console.error('Failed to fetch doctors:', error);
@@ -72,7 +73,7 @@ export const fetchDoctors = async (
 export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Doctor>> => {
     let doctors: Paginated<Doctor> = { results: [], _links: {} };
     try {
-        const response = await fetch(nextUrl)
+        const response = await get(nextUrl, undefined, fetch);
         if (response.ok) {
             doctors.results = await response.json();
             doctors._links = getPaginationLinks(response);
@@ -83,9 +84,9 @@ export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Docto
                 };
             }
         }
-        await Promise.all(doctors.results.map(async (doctor) => {
+        for (const doctor of doctors.results) {
             await populateDoctorData(doctor);
-        }));
+        }
 
         return doctors;
     } catch (error) {
@@ -97,9 +98,9 @@ export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Docto
 export const fetchDoctorById = async (id: string): Promise<Doctor | null> => {
     let doctor: Doctor | null = null;
     try {
-        let url = new URL(`${baseApiUrl}/doctors/${id}`);
+        const url = new URL(`${baseApiUrl}/doctors/${id}`);
 
-        const response = await fetch(url.toString());
+        const response = await get(url.toString(), undefined, fetch);
         if (response.ok) {
             doctor = await response.json();
 
@@ -115,9 +116,9 @@ export const fetchDoctorById = async (id: string): Promise<Doctor | null> => {
 };
 
 const populateDoctorData = async (doctor: Doctor): Promise<Doctor> => {
-    const response = await fetch(doctor.schedule);
+    const response = await get(doctor.links.schedule, undefined, fetch);
 
-    if (response.ok) {
+    if (response && response.ok) {
         const schedule: Shift[] = await response.json();
 
         const days = new Map<Weekdays, [Date, Date]>();
@@ -131,16 +132,16 @@ const populateDoctorData = async (doctor: Doctor): Promise<Doctor> => {
                 direction = shift.address;
             }
         });
-        doctor.scheduleDays = days;
+        doctor.schedule = days;
         doctor.direction = direction;
     } else {
         throw new Error('Failed to fetch schedule');
     }
 
-    const responseInsurances = await fetch(doctor.insurances);
+    const responseInsurances = await get(doctor.links.insurances, undefined, fetch);
     if (responseInsurances.ok) {
         const insurancesData: Insurance[] = await responseInsurances.json();
-        doctor.insuranceNames = insurancesData.map(ins => ins.name);
+        doctor.insurances = insurancesData.map(ins => ins.name);
     } else {
         throw new Error('Failed to fetch insurances');
     }

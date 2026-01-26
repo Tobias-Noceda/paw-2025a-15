@@ -154,14 +154,14 @@
 		{#snippet children(entry: Doctor, i: number)}
 			<Card
 				variant="doctor"
-				avatarSrc={entry.image}
+				avatarSrc={entry.links.image}
 				userName={entry.name}
 				specialization={getSpecialtyLabel(entry.specialty)}
-				schedule={entry.scheduleDays ? new Set(entry.scheduleDays.keys()) : new Set<Weekdays>()}
-				insurances={entry.insuranceNames}
+				schedule={entry.schedule ? new Set(entry.schedule.keys()) : new Set<Weekdays>()}
+				insurances={entry.insurances}
 				email={entry.email}
 				phone={entry.telephone}
-				onclick={() => goto(`${base}/${parseSelf(entry.self)}`)}
+				onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
 			/>
 		{/snippet}
 	</Pagination>

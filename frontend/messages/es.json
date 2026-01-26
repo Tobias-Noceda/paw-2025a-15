@@ -206,6 +206,23 @@
 			"cancel": "Cancelar"
 		}
 	},
+	"appointments": {
+		"title": {
+			"past": "Turnos pasados",
+			"future": "Turnos futuros"
+		},
+		"label": {
+			"doctor": "Doctor",
+			"date": "Día",
+			"time": "Horario",
+			"address": "Dirección",
+			"action": "Acción"
+		},
+		"empty": {
+			"past": "No tienes turnos pasados",
+			"future": "No tienes turnos futuros"
+		}
+	},
 	"next": "Siguiente",
 	"previous": "Anterior"
 }

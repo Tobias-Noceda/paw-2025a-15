@@ -1,3 +1,4 @@
+import type { insurance } from "$stores/filters";
 import type { Specialties } from "./enums/specialties";
 import type { Weekdays } from "./enums/weekdays";
 
@@ -13,31 +14,35 @@ export type Paginated<T> = {
         last?: string;
 	};
 	_pageInfo?: {
-		currentPage: number;
-		totalPages: number;
+		currentPage?: number;
+		totalPages?: number;
+		currentDate?: Date;
+		maxDate?: Date;
 	};
 	results: T[];
 };
 
 export type Session = {
-	session: string;
+	access: string;
 	refresh: string;
 };
 
 export type Doctor = {
 	name: string;
-	image: string;
 	email: string;
 	telephone: string;
 	license: string;
 	specialty: Specialties;
-	schedule: string;
-	todaysFreeAppointments: string;
-	insurances: string;
-	self: string;
-	scheduleDays?: Map<Weekdays, [Date, Date]>;
+	schedule?: Map<Weekdays, [Date, Date]>;
 	direction?: string;
-	insuranceNames?: string[];
+	insurances?: string[];
+	links: {
+		image: string;
+		insurances: string;
+		self: string;
+		schedule: string;
+		freeAppointments: string;
+	}
 }
 
 export type Shift = {
@@ -66,4 +71,5 @@ export type Appointment = {
 	self: string;
 	doctor: string;
 	patient: string;
+	doctorData?: Doctor;
 }

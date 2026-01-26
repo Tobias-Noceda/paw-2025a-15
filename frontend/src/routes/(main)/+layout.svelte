@@ -2,9 +2,10 @@
 	import '../layout.css';
 	import { m } from '$lib/paraglide/messages.js';
 	import { base } from '$app/paths';
+	import { apiOrigin, logout } from '$modules/api.svelte';
 	import { page } from '$app/stores';
 
-	import { user } from '$lib/stores/user';
+	import { setUserFromSession, user } from '$lib/stores/user';
 	import Icon from '$components/Icon/Icon.svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
@@ -32,6 +33,10 @@
 
 		document.addEventListener('click', handleClickOutside);
 
+		if ($user === null && localStorage.getItem('access')) {
+			setUserFromSession(localStorage.getItem('access')!);
+		}
+
 		return () => {
 			document.removeEventListener('click', handleClickOutside);
 		};
@@ -49,9 +54,9 @@
 			<nav class="nav-links">
 				<!-- add "active" class when the location matches the link -->
 				<a href="{base}/appointments" class="nav-item {$page.url.pathname === `${base}/appointments` ? 'active' : ''}">{m['topbar.appointments']()}</a>
-				{#if $user === 'patient'}
+				{#if $user.role === 'PATIENT'}
 					<a href="{base}/studies" class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}">{m['topbar.studies']()}</a>
-				{:else if $user === 'doctor'}
+				{:else if $user.role === 'DOCTOR'}
 					<a href="{base}/vacations" class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}">{m['topbar.vacations']()}</a>
 				{/if}
 			</nav>
@@ -81,16 +86,16 @@
 					userDropdownOpen = !userDropdownOpen;
 				}}
 			>
-				<Avatar size="md" />
+				<Avatar size="md" src={$user.image} />
 				<div class="user-info">
-					<p class="user-name">Jhon Doe</p>
-					<p class="user-role">{$user}</p>
+					<p class="user-name">{$user.name}</p>
+					<p class="user-role">{$user.role.charAt(0).toUpperCase() + $user.role.slice(1).toLowerCase()}</p>
 				</div>
 			</button>
 		{#if userDropdownOpen}
 		<div class="user-dropdown-menu">
 			<a href="{base}/profile">{m['topbar.profile']()}</a>
-			<a href="{base}/logout">{m['topbar.logout']()}</a>
+			<button onclick={() => logout()}>{m['topbar.logout']()}</button>
 		</div>
 		{/if}
 		{/if}
@@ -279,6 +284,7 @@
 		box-sizing: border-box;
 	}
 
+	.user-dropdown-menu button,
 	.user-dropdown-menu a {
 		display: block;
 		padding: 8px;
@@ -291,8 +297,10 @@
 		box-sizing: border-box;
 	}
 
+	.user-dropdown-menu button:hover,
 	.user-dropdown-menu a:hover {
 		background-color: #0e3b6b;
 		color: white;
+		cursor: pointer;
 	}
 </style>

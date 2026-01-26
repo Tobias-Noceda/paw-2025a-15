@@ -19,7 +19,15 @@ public interface AppointmentDao {
 
     public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient);
 
+    public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize);
+
+    public Integer getOldAppointmentTotalByPatient(Patient patient);
+
     public List<AppointmentNew> getFutureAppointmentDataByDoctor(Doctor doctor);
+
+    public List<AppointmentNew> getFutureAppointmentDataPageByDoctor(Doctor doctor, int page, int pageSize);
+
+    public Integer getFutureAppointmentTotalByDoctor(Doctor doctor);
 
     public boolean cancelAppointment(DoctorSingleShift shift, LocalDate date, LocalTime startTime, LocalTime endTime);
     

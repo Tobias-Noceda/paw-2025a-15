@@ -47,7 +47,7 @@
 
 	let next: string | undefined = $state(undefined as string | undefined);
 
-	async function get() {
+	async function getPage() {
 		if (!initialLoadComplete || !next) {
 			if (initialLoadComplete && !next) {
 				done = true;
@@ -90,7 +90,7 @@
 
 		observer = new IntersectionObserver(
 			(entries) => {
-				if (entries[0].isIntersecting) get();
+				if (entries[0].isIntersecting) getPage();
 			},
 			{
 				root: null,
