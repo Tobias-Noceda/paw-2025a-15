@@ -14,7 +14,7 @@ import ar.edu.itba.paw.webapp.controller.InsuranceController;
 import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class PatientDTO {
-    
+    //BASIC
     private String email;
     private String name;
     private String telephone;
@@ -22,15 +22,21 @@ public class PatientDTO {
     private String bloodtype;
     private BigDecimal height;
     private BigDecimal weight;
-    private Boolean smokes;
-    private Boolean drinks;
+    private String insuranceNumber;
+
+    //MEDICAL
     private String meds;
     private String conditions;
     private String allergies;
+
+    //HABITS
+    private Boolean smokes;
+    private Boolean drinks;
     private String diet;
+
+    //SOCIAL
     private String hobbies;
     private String job;
-    private String insuranceNumber;
 
     private LinkDTO links;
 
