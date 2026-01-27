@@ -137,6 +137,106 @@ export async function getAuth(path: string, options?: RequestInit, fetch = windo
 	}
 };
 
+export async function post(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+	return await fetch(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			...options?.headers,
+		},
+		body: JSON.stringify(body)
+	});
+};
+
+export async function postAuth(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+	if (!tokens.access) {
+		logout();
+		return Promise.reject('No access token available');
+	}
+
+	if (expiration && new Date() <= expiration) {
+		return await post(
+			path,
+			body,
+			{
+				...options,
+				headers: {
+					...options?.headers,
+					Authorization: `Bearer ${tokens.access}`
+				}
+			},
+			fetch
+		);
+	} else if (tokens.refresh) {
+		return await post(
+			path,
+			body,
+			{
+				...options,
+				headers: {
+					...options?.headers,
+					Authorization: `Bearer ${tokens.refresh}`
+				}
+			},
+			fetch
+		);
+	} else {
+		logout();
+		return Promise.reject('Session expired');
+	}
+};
+
+export async function put(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+	return await fetch(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			...options?.headers,
+		},
+		body: JSON.stringify(body)
+	});
+};
+
+export async function putAuth(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+	if (!tokens.access) {
+		logout();
+		return Promise.reject('No access token available');
+	}
+
+	if (expiration && new Date() <= expiration) {
+		return await put(
+			path,
+			body,
+			{
+				...options,
+				headers: {
+					...options?.headers,
+					Authorization: `Bearer ${tokens.access}`
+				}
+			},
+			fetch
+		);
+	} else if (tokens.refresh) {
+		return await put(
+			path,
+			body,
+			{
+				...options,
+				headers: {
+					...options?.headers,
+					Authorization: `Bearer ${tokens.refresh}`
+				}
+			},
+			fetch
+		);
+	} else {
+		logout();
+		return Promise.reject('Session expired');
+	}
+};
+
 export function logout() {
 	tokens = { access: null, refresh: null };
 	user.set(null);

@@ -4,6 +4,7 @@
 	import Input from "$components/Input/Input.svelte";
 	import Toast from "$components/Toast/Toast.svelte";
 	import { m } from "$lib/paraglide/messages";
+	import { requestPasswordReset } from "$lib/services/users";
 
     let email = $state('');
 
@@ -11,12 +12,13 @@
     let error = $state(false);
 
     const handleSubmit = () => {
-        // Implement login logic here
-        console.log(`Submitting with email: ${email}`);
-        success = true;
-        setTimeout(() => {
-            error = true;
-        }, 3000);
+        requestPasswordReset(email)
+            .then(() => {
+                success = true;
+            })
+            .catch(() => {
+                error = true;
+            });
     };
 </script>
 
