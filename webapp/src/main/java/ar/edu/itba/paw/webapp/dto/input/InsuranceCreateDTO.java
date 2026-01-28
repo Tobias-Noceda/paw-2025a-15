@@ -12,7 +12,7 @@ public class InsuranceCreateDTO {
 
     @NotNull
     @Positive
-    private Long pictureId;
+    private Long pictureId; //TODO cambiar a URI?
 
     public String getName(){
         return name;

@@ -12,8 +12,6 @@ import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 public interface StudyService {
     public Study create(StudyTypeEnum type, String comment, List<File> files, long userId, long uploaderId, LocalDate studyDate);
 
-    public Study create(StudyTypeEnum type, String comment, List<File> files, long userId, long uploaderId);
-
     public Optional<Study> getStudyById(long id);
 
     public boolean deleteStudy(long id);

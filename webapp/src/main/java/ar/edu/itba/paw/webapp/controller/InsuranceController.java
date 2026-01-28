@@ -100,18 +100,18 @@ public class InsuranceController {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getInsuranceById(@PathParam("id") final long id) {
         Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
     }
 
     @PATCH
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response edit(
+    public Response editInsurance(
         @PathParam("id") long id,
         @Valid InsuranceEditDTO dto
     ) {
@@ -121,8 +121,8 @@ public class InsuranceController {
     }
 
     @DELETE
-    @Path("/{id}")
-    public Response deleteById(@PathParam("id") final long id) {
+    @Path("/{id:\\d+}")
+    public Response deleteInsuranceById(@PathParam("id") final long id) {
         is.delete(id);
         return Response.noContent().build();
     }

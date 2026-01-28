@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
@@ -28,8 +29,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
@@ -37,6 +40,7 @@ import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.PatientCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.PatientEditDTO;
+import ar.edu.itba.paw.webapp.dto.input.StudyCreateDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
 import ar.edu.itba.paw.webapp.exception.NotFoundException;
@@ -53,6 +57,9 @@ public class PatientController {
 
     @Autowired
     private StudyService ss;
+
+    @Autowired
+    private FileService fs;
 
     @Context
     private UriInfo uriInfo;
@@ -88,21 +95,27 @@ public class PatientController {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response createPatient(@Valid PatientCreateDTO dto) {
-        final Patient patient = ps.createPatient(dto.getEmail(), dto.getPassword(), dto.getName(), dto.getTelephone(), LocaleEnum.fromLocale(LocaleContextHolder.getLocale()), dto.getBirthDate(), BigDecimal.valueOf(dto.getHeight()), BigDecimal.valueOf(dto.getWeight()));
+        final Patient patient = ps.createPatient(
+            dto.getEmail(), dto.getPassword(), 
+            dto.getName(), dto.getTelephone(), 
+            LocaleEnum.fromLocale(LocaleContextHolder.getLocale()), 
+            dto.getBirthDate(), BigDecimal.valueOf(dto.getHeight()), 
+            BigDecimal.valueOf(dto.getWeight())
+        );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build();
         return Response.created(uri).build();
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("id") final long id) {
+    public Response getPatientById(@PathParam("id") final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
     }
 
     @PATCH
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response edit(
@@ -110,16 +123,32 @@ public class PatientController {
         @Valid PatientEditDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
-        ps.updatePatient(patient, dto.getTelephone(), dto.getPictureId(), dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, dto.getBirthDate(), dto.getBloodtype(), BigDecimal.valueOf(dto.getHeight()), BigDecimal.valueOf(dto.getWeight()), dto.getSmokes(), dto.getDrinks(), dto.getMeds(), dto.getConditions(), dto.getAllergies(), dto.getDiet(), dto.getHobbies(), dto.getJob(), dto.getInsuranceId(), dto.getInsuranceNumber());
+        ps.updatePatient(
+            patient, dto.getTelephone(), 
+            dto.getPictureId(), 
+            dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
+            dto.getBirthDate(), dto.getBloodtype(), 
+            BigDecimal.valueOf(dto.getHeight()), 
+            BigDecimal.valueOf(dto.getWeight()), 
+            dto.getSmokes(), 
+            dto.getDrinks(), 
+            dto.getMeds(), 
+            dto.getConditions(), 
+            dto.getAllergies(), 
+            dto.getDiet(), dto.getHobbies(), 
+            dto.getJob(), 
+            dto.getInsuranceId(), 
+            dto.getInsuranceNumber()
+        );
         return Response.ok().build();
     }
 
     /*========================= STUDIES =========================*/
 
     @GET
-    @Path("/{id}/studies")
+    @Path("/{id:\\d+}/studies")
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getStudiesById(
+    public Response listStudies(
         @PathParam("id") final long id,
         @QueryParam("doctorId") final Long doctorId,
         @QueryParam("studyType") final String studyType,
@@ -152,14 +181,58 @@ public class PatientController {
         );
     }
 
-    @GET
-    @Path("/{id}/studies/{studyId}")
+    @POST
+    @Path("/{id:\\d+}/studies")
+    @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getById(
+    public Response createStudy(
+        @PathParam("id") final long id,
+        @Valid StudyCreateDTO dto
+    ) {
+        final Study study = ss.create(
+            dto.getType(), 
+            dto.getComment(), 
+            dto.getFiles().stream().map(this::resolveFile).collect(Collectors.toList()), 
+            id, 
+            id,//TODO se podra obtener del auth capaz?
+            dto.getStudyDate()
+        );
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(study.getId())).build();
+        return Response.created(uri).build();
+    }
+
+    private File resolveFile(URI uri) {
+        Long id = extractIdFromUri(uri);
+        return fs.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    private Long extractIdFromUri(URI uri) {
+        String path = uri.getPath(); // "/files/123"
+        try {
+            return Long.parseLong(path.substring(path.lastIndexOf('/') + 1));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid file URI: " + uri);
+        }
+    }
+
+    @GET
+    @Path("/{id:\\d+}/studies/{studyId:\\d+}")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getStudyById(
         @PathParam("id") final long id,
         @PathParam("studyId") final long studyId
     ) {
         Study study = ss.getStudyById(studyId).orElseThrow(NotFoundException::new);
         return Response.ok(StudyDTO.fromStudy(uriInfo, study)).build();
+    }
+
+    @DELETE
+    @Path("/{id:\\d+}/studies/{studyId:\\d+}")
+    public Response deleteStudyById(
+        @PathParam("id") final long id,
+        @PathParam("studyId") final long studyId
+    ) {
+        ss.deleteStudy(studyId);
+        return Response.noContent().build();
     }
 }

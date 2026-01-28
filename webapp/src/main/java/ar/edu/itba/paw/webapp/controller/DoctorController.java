@@ -128,7 +128,7 @@ public class DoctorController {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{id:\\d+}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getDoctorById(@PathParam("id") Integer doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
@@ -138,7 +138,7 @@ public class DoctorController {
     /*========================= SHIFTS =========================*/
 
     @GET
-    @Path("/{id}/shifts")
+    @Path("/{id:\\d+}/shifts")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response listShifts(
         @PathParam("id") Integer doctorId,

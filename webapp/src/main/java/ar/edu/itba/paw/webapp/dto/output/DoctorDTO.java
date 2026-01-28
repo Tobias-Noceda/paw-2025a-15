@@ -11,6 +11,7 @@ import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
 import ar.edu.itba.paw.models.enums.AppointmentStatus;
+import ar.edu.itba.paw.webapp.controller.AppointmentController;
 
 public class DoctorDTO {
     private String email;
@@ -38,7 +39,7 @@ public class DoctorDTO {
         URI image = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
         URI schedule = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("shifts").build();
         URI insurances = uriInfo.getBaseUriBuilder().path(InsuranceController.class).queryParam("supportedBy", String.valueOf(doctor.getId())).build();
-        URI freeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatus.FREE).queryParam("date", LocalDate.now()).build();
+        URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatus.FREE).queryParam("date", LocalDate.now()).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

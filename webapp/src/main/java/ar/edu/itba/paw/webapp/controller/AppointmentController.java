@@ -24,7 +24,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.models.enums.AppointmentStatus;
 import ar.edu.itba.paw.webapp.controller.util.DatePaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
-import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
+import ar.edu.itba.paw.webapp.dto.output.AppointmentDTO;
 
 
 @Path("/appointments")
@@ -41,7 +41,7 @@ public class AppointmentController {
 
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getAppointments(
+    public Response listAppointments(
         @QueryParam("doctorId") Long doctorId,
         @QueryParam("patientId") Long patientId,
         @QueryParam("status") @NotBlank String status,

@@ -93,9 +93,37 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(requests -> requests
                 // general
+                // appointments
+                .requestMatchers(HttpMethod.GET, "/api/appointments").permitAll()
+
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/**").permitAll()
+                // doctor shifts
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
+
+                // files
+                .requestMatchers(HttpMethod.GET, "/api/files").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/files").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
+
+                // insurances
+                .requestMatchers(HttpMethod.GET, "/api/insurances").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/insurances").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/insurances/**").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/api/insurances/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/insurances/**").hasRole("ADMIN")
+
+                // patients
+                .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/patients/**").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/**").authenticated()
+                // patient studies
+                .requestMatchers(HttpMethod.GET, "/api/patients/**/studies").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/patients/**/studies").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/patients/**/studies/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/patients/**/studies/**").authenticated()
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())
@@ -111,7 +139,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
                 throws IOException {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
@@ -119,7 +147,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
                 throws IOException {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 }

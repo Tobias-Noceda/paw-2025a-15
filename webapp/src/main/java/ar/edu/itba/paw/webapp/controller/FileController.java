@@ -74,20 +74,7 @@ public class FileController {
                 uriInfo
             );
         }
-       return Response.noContent().build();
-    }
-
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.WILDCARD)
-    public Response getById(@PathParam("id") final long id) {
-        File file = fs.findById(id).orElseThrow(NotFoundException::new);
-
-        return Response.ok(file.getContent())
-            .type(file.getType().getName())
-            .header("Content-Disposition",
-                    "inline; filename=\"file_" + file.getId() + file.getType().getExtension() + "\"")
-            .build();
+       return Response.noContent().build(); //TODO que lo maneje el service para devovler [] en todo caso
     }
 
     @POST
@@ -102,5 +89,18 @@ public class FileController {
         File file = fs.create(IOUtils.toByteArray(fileStream), type);
         URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(file.getId())).build();
         return Response.created(uri).build();
+    }
+
+    @GET
+    @Path("/{id:\\d+}")
+    @Produces({"image/png", "image/jpeg", "application/pdf"})
+    public Response getFileById(@PathParam("id") final long id) {
+        File file = fs.findById(id).orElseThrow(NotFoundException::new);
+
+        return Response.ok(file.getContent())
+            .type(file.getType().getName())
+            .header("Content-Disposition",
+                    "inline; filename=\"file_" + file.getId() + file.getType().getExtension() + "\"")
+            .build();
     }
 }
