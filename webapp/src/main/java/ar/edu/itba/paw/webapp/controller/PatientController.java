@@ -161,7 +161,7 @@ public class PatientController {
         StudyTypeEnum type = null;
         if(studyType != null) {
             queryParams.put("studyType", studyType);
-            type = StudyTypeEnum.valueOf(studyType);
+            type = StudyTypeEnum.fromDisplayName(studyType);
         }
 
         queryParams.put("recent", recent.toString());
@@ -190,20 +190,15 @@ public class PatientController {
         @Valid StudyCreateDTO dto
     ) {
         final Study study = ss.create(
-            dto.getType(), 
+            StudyTypeEnum.fromDisplayName(dto.getType()), 
             dto.getComment(), 
-            dto.getFiles().stream().map(this::resolveFile).collect(Collectors.toList()), 
+            dto.getFiles().stream().map(this::extractIdFromUri).collect(Collectors.toList()), 
             id, 
             id,//TODO se podra obtener del auth capaz?
             dto.getStudyDate()
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(study.getId())).build();
         return Response.created(uri).build();
-    }
-
-    private File resolveFile(URI uri) {
-        Long id = extractIdFromUri(uri);
-        return fs.findById(id).orElseThrow(NotFoundException::new);
     }
 
     private Long extractIdFromUri(URI uri) {
@@ -222,7 +217,7 @@ public class PatientController {
         @PathParam("id") final long id,
         @PathParam("studyId") final long studyId
     ) {
-        Study study = ss.getStudyById(studyId).orElseThrow(NotFoundException::new);
+        Study study = ss.getStudyById(27).orElseThrow(NotFoundException::new);
         return Response.ok(StudyDTO.fromStudy(uriInfo, study)).build();
     }
 

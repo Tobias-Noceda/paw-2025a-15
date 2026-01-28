@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,8 +56,8 @@ public class StudyServiceImpl implements StudyService{
 
     @Transactional
     @Override
-    public Study create(StudyTypeEnum type, String comment, List<File> files, long userId, long uploaderId, LocalDate studyDate) {
-        checkAllFilesExist(files);
+    public Study create(StudyTypeEnum type, String comment, List<Long> fileIds, long userId, long uploaderId, LocalDate studyDate) {
+        List<File> files = checkAllFilesExist(fileIds);
         Study study = null;
         Doctor doctor = null;
         Patient patient = ps.getPatientById(userId).orElseThrow(() -> new NotFoundException("Patient with id: " + userId + " does not exist!"));
@@ -140,10 +141,13 @@ public class StudyServiceImpl implements StudyService{
         }
     }
 
-    private void checkAllFilesExist(List<File> files) {
-        for(File file : files) {
-            fs.findById(file.getId()).orElseThrow(() -> new NotFoundException("File not found with ID: " + file.getId()));
+    private List<File> checkAllFilesExist(List<Long> fileIds) {
+        List<File> files = new ArrayList<>();
+        for (Long fileId : fileIds) {
+            File file = fs.findById(fileId).orElseThrow(() ->new NotFoundException("File not found with ID: " + fileId));
+            files.add(file);
         }
+        return files;
     }
 
     @Override

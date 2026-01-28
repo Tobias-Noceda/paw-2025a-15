@@ -6,9 +6,23 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 @Entity
 @Table(name = "studies")
@@ -180,7 +194,7 @@ public class Study {
             "id=" + id +
             ", type=" + type +
             ", comment=" + comment +
-            ", files=" + files +
+            //", files=" + files +
             ", user=" + patient +
             ", uploader=" + uploader +
             ", uploadDate=" + uploadDate +

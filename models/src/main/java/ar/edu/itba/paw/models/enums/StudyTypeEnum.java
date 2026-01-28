@@ -28,4 +28,20 @@ public enum StudyTypeEnum {
         }
         throw new IllegalArgumentException("Number out of StudyType range");
     }
+
+    public static StudyTypeEnum fromDisplayName(String displayName) {
+        if (displayName == null) {
+            return null;
+        }
+
+        for (StudyTypeEnum type : StudyTypeEnum.values()) {
+            if (type.displayName.equalsIgnoreCase(displayName)) {
+                return type;
+            }
+        }
+
+        throw new IllegalArgumentException(
+            "Invalid StudyType display name: " + displayName
+        );
+    }
 }

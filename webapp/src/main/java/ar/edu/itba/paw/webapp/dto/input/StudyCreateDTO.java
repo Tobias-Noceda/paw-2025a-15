@@ -4,6 +4,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -16,7 +17,8 @@ import ar.edu.itba.paw.webapp.form.constraints.ValidStudyFile;
 public class StudyCreateDTO {
 
     @NotNull
-    private StudyTypeEnum type;
+    @NotBlank
+    private String type;
 
     @Size
     private String comment;
@@ -29,11 +31,11 @@ public class StudyCreateDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate studyDate;
 
-    public StudyTypeEnum getType(){
+    public String getType(){
         return type;
     }
 
-    public void setType(StudyTypeEnum type){
+    public void setType(String type){
         this.type = type;
     }
 
