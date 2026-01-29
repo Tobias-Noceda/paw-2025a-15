@@ -3,18 +3,24 @@ package ar.edu.itba.paw.webapp.auth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Controller;
 
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class WebUserAuthDecision {
+
+    @Autowired
+    private UserService us;
 
     @Autowired
     private StudyService ss;
@@ -78,15 +84,53 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(false);
     }
 
+    public AuthorizationDecision canAccessAppointments(Authentication auth, RequestAuthorizationContext context) {
+        // If not authenticated, let Spring Security handle it (will trigger 401)
+        User user = getAuthenticatedUser(auth);
+        if (user == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        // From here on, user is authenticated, so any denial is a 403 (Forbidden)
+        String statusStr = context.getRequest().getParameter("status");
+        String userIdStr = context.getRequest().getParameter("userId");
+
+        if (statusStr == null || userIdStr == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        try {
+            AppointmentStatusEnum status = AppointmentStatusEnum.fromString(statusStr);
+            Long userId = Long.valueOf(userIdStr);
+
+            if (status.equals(AppointmentStatusEnum.FREE) && user.getRole().equals(UserRoleEnum.PATIENT)) {
+                return new AuthorizationDecision(true);
+            } else if (status.equals(AppointmentStatusEnum.COMPLETED) && user.getRole().equals(UserRoleEnum.PATIENT)) {
+                return new AuthorizationDecision(true);  // Only patients can see their completed appointments
+            } else if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+                return new AuthorizationDecision(true);  // Admin can see everything
+            } else {
+                return new AuthorizationDecision(user.getId().equals(userId));  // 403 if not their appointments
+            }
+        } catch (IllegalArgumentException e) {
+            return new AuthorizationDecision(false);  // 403: Invalid parameters
+        }
+    }
+
     private boolean isAuthDoctor(User user, long patientId) {
         return user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(patientId, user.getId());
     }
 
     private User getAuthenticatedUser(Authentication auth) {
-        if (auth == null || !(auth.getPrincipal() instanceof PawAuthUserDetails details)) {
+        if (auth == null) {
             return null;
         }
 
-        return details.getUser();
+        Object principal = auth.getPrincipal();
+        if (principal instanceof String email) {
+            return us.getUserByEmail(email).orElse(null);
+        }
+
+        return null;
     }
 }

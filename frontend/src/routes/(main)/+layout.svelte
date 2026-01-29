@@ -2,7 +2,7 @@
 	import '../layout.css';
 	import { m } from '$lib/paraglide/messages.js';
 	import { base } from '$app/paths';
-	import { apiOrigin, logout } from '$modules/api.svelte';
+	import { logout } from '$modules/api.svelte';
 	import { page } from '$app/stores';
 
 	import { setUserFromSession, user } from '$lib/stores/user';
@@ -95,7 +95,7 @@
 		{#if userDropdownOpen}
 		<div class="user-dropdown-menu">
 			<a href="{base}/profile">{m['topbar.profile']()}</a>
-			<button onclick={() => logout()}>{m['topbar.logout']()}</button>
+			<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
 		</div>
 		{/if}
 		{/if}

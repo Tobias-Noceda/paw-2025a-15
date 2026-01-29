@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.models.enums.AppointmentStatus;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.webapp.controller.util.DatePaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
@@ -42,25 +42,24 @@ public class AppointmentController {
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getAppointments(
-        @QueryParam("doctorId") Long doctorId,
-        @QueryParam("patientId") Long patientId,
+        @QueryParam("userId") Long userId,
         @QueryParam("status") @NotBlank String status,
         @QueryParam("date") String date,
         @QueryParam("page") @DefaultValue("1") int page,
         @QueryParam("pageSize") @DefaultValue("10") int pageSize
     ) {
-        AppointmentStatus appointmentStatus = AppointmentStatus.fromString(status);
+        AppointmentStatusEnum appointmentStatus = AppointmentStatusEnum.fromString(status);
         List<AppointmentDTO> appointmentDTOs;
         Integer totalItems;
         LocalDate today = LocalDate.now(ARGENTINA_ZONE);
         
         switch (appointmentStatus) {
             case FREE -> {
-                if (doctorId == null) {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("doctorId parameter is required for FREE status").build();
+                if (userId == null) {
+                    return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for FREE status").build();
                 }
                 LocalDate selectedDate = date != null ? LocalDate.parse(date) : today;
-                appointmentDTOs = as.getAvailableTurnsByDoctorIdByDate(doctorId, selectedDate)
+                appointmentDTOs = as.getAvailableTurnsByDoctorIdByDate(userId, selectedDate)
                     .stream()
                     .map(AppointmentDTO.mapper(uriInfo))
                     .collect(Collectors.toList());
@@ -79,27 +78,25 @@ public class AppointmentController {
                 );
             }
             case TAKEN -> {
-                if (patientId != null) {
-                    return Response.status(Response.Status.NOT_IMPLEMENTED).entity("Pagination for patient appointments not implemented yet").build();
-                } else if (doctorId != null) {
-                    appointmentDTOs = as.getFutureAppointmentDataPageByDoctorId(doctorId, page, pageSize)
+                if (userId != null) {
+                    appointmentDTOs = as.getFutureAppointmentDataPageByDoctorId(userId, page, pageSize)
                         .stream()
                         .map(AppointmentDTO.mapper(uriInfo))
                         .collect(Collectors.toList());
-                    totalItems = as.getFutureAppointmentTotalByDoctorId(doctorId);
+                    totalItems = as.getFutureAppointmentTotalByDoctorId(userId);
                 } else {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("Either patientId or doctorId parameter is required for TAKEN status").build();
+                    return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for TAKEN status").build();
                 }
             }
             case COMPLETED -> {
-                if (patientId != null) {
-                    appointmentDTOs = as.getOldAppointmentDataPageByPatientId(patientId, page, pageSize)
+                if (userId != null) {
+                    appointmentDTOs = as.getOldAppointmentDataPageByPatientId(userId, page, pageSize)
                         .stream()
                         .map(AppointmentDTO.mapper(uriInfo))
                         .collect(Collectors.toList());
-                    totalItems = as.getOldAppointmentTotalByPatientId(patientId);
+                    totalItems = as.getOldAppointmentTotalByPatientId(userId);
                 } else {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("patientId parameter is required for COMPLETED status").build();
+                    return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for COMPLETED status").build();
                 }
             }
             default -> {

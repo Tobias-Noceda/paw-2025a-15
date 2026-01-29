@@ -1,7 +1,6 @@
-import { get } from "$modules/api.svelte";
-import { baseApiUrl, type Appointment, type Paginated } from "$types/api";
+import { get, getAuth } from "$modules/api.svelte";
+import { type Appointment, type Paginated } from "$types/api";
 import { getPaginationLinks } from "./pagination";
-
 
 // Parse date in local timezone to avoid UTC conversion issues
 export const parseDateInLocalTimezone = (dateStr: string): Date => {
@@ -11,43 +10,39 @@ export const parseDateInLocalTimezone = (dateStr: string): Date => {
 
 export const fetchFreeAppointments = async (
     urlString: string,
-    date?: string
+    date?: string,
+    fetchFn: typeof fetch = fetch
 ): Promise<Paginated<Appointment>> => {
     
-    let appointments: Paginated<Appointment> = { _links: {}, results: [] };
-    try {
-        let url = new URL(urlString);
-        if (date) {
-            url.searchParams.set('date', date);
-        }
+    let url = new URL(urlString);
+    if (date) {
+        url.searchParams.set('date', date);
+    }
 
-        const response = await get(url.toString(), undefined, fetch);
-        if (response.ok) {
-            appointments.results = await response.json();
+    const response = await getAuth(url.toString(), undefined, fetchFn);
 
-            appointments._links = getPaginationLinks(response);
-            if (response.headers.get('X-Current-Date') && response.headers.get('X-Max-Date')) {
-                appointments._pageInfo = {
-                    currentDate: parseDateInLocalTimezone(response.headers.get('X-Current-Date')!),
-                    maxDate: parseDateInLocalTimezone(response.headers.get('X-Max-Date')!)
-                };
-            }
+    const appointments: Paginated<Appointment> = { _links: {}, results: [] };
+    appointments.results = await response.json();
 
-            // Populate doctor data for each appointment
-            for (const appointment of appointments.results) {
-                await populateAppointmentData(appointment);
-            }
-        }
-    } catch (error) {
-        console.error('Failed to fetch appointments:', error);
+    appointments._links = getPaginationLinks(response);
+    if (response.headers.get('X-Current-Date') && response.headers.get('X-Max-Date')) {
+        appointments._pageInfo = {
+            currentDate: parseDateInLocalTimezone(response.headers.get('X-Current-Date')!),
+            maxDate: parseDateInLocalTimezone(response.headers.get('X-Max-Date')!)
+        };
+    }
+
+    // Populate doctor data for each appointment
+    for (const appointment of appointments.results) {
+        await populateAppointmentData(appointment, fetchFn);
     }
 
     return appointments;
 };
 
-const populateAppointmentData = async (appointment: Appointment): Promise<void> => {
+const populateAppointmentData = async (appointment: Appointment, fetchFn: typeof fetch = fetch): Promise<void> => {
     try {
-        const response = await get(appointment.doctor, undefined, fetch);
+        const response = await get(appointment.doctor, undefined, fetchFn);
         if (response.ok) {
             const doctorData = await response.json();
             appointment.doctorData = doctorData;

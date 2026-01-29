@@ -93,6 +93,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(requests -> requests
                 // general
+                // appointments
+                .requestMatchers(HttpMethod.GET, "/api/appointments")
+                    .access((a, c) -> ad.canAccessAppointments(a.get(), c))
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()

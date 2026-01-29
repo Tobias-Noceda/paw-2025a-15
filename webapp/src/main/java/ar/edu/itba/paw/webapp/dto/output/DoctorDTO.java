@@ -7,7 +7,7 @@ import java.util.function.Function;
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.enums.AppointmentStatus;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 
 public class DoctorDTO {
     private String email;
@@ -35,7 +35,7 @@ public class DoctorDTO {
         URI image = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(doctor.getPicture().getId())).build();
         URI schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
         URI insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
-        URI freeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatus.FREE).queryParam("date", LocalDate.now()).build();
+        URI freeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

@@ -1,22 +1,24 @@
 <script lang="ts">
     import { page } from '$app/stores';
 	import Avatar from '$components/Avatar/Avatar.svelte';
-	import { fetchDoctorById } from '$lib/services/doctors';
 	import type { Appointment, Doctor, Paginated } from '$types/api';
-	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
     import { m } from '$lib/paraglide/messages';
 	import Divider from '$components/Divider/Divider.svelte';
 	import Button from '$components/Button/Button.svelte';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Table, { type Column } from '$components/Table/Table.svelte';
-	import { fetchFreeAppointments, parseDateInLocalTimezone } from '$lib/services/appointments';
+	import { fetchFreeAppointments } from '$lib/services/appointments';
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
 	import { goto } from '$app/navigation';
 
-	let doctor: Doctor | null = $state(null);
-    let appointments: Paginated<Appointment> = $state({ _links: {}, results: [] });
+    let { data }: { data: PageData } = $props();
+
+	let doctor: Doctor = $state(data.doctor);
+    let appointments: Paginated<Appointment> = $state(data.appointments);
+    let selectedDate: Date = $state(data.selectedDate);
     let isFetching = $state(false);
 
     // Format date in local timezone (avoid UTC conversion)
@@ -26,8 +28,6 @@
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
-
-    let selectedDate: Date = $state($page.url.searchParams.get('date') ? parseDateInLocalTimezone($page.url.searchParams.get('date')!) : new Date());
 
     let selectedAppointment: Appointment | null = $state(null);
     let reason = $state('');
@@ -40,7 +40,7 @@
     };
 
     const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
-        if (!doctor || isFetching) return;
+        if (isFetching) return;
         
         isFetching = true;
         try {
@@ -50,31 +50,12 @@
             if (updateUrl) {
                 updateUrlDate(newDate);
             }
+        } catch (error) {
+            console.error('Failed to fetch appointments:', error);
         } finally {
             isFetching = false;
         }
     };
-
-    onMount(async () => {
-        const currentDoctorId = $page.params.id!;
-        
-        // Only fetch doctor if ID changed
-        if (!doctor) {
-            doctor = await fetchDoctorById(currentDoctorId)
-                .then((data) => {
-                    return data;
-                })
-                .catch((error) => {
-                    console.error('Failed to fetch doctor:', error);
-                    return null;
-                });
-
-            if (doctor) {
-                // Initialize appointments with current date
-                await fetchAppointments(doctor.links.freeAppointments, selectedDate, false);
-            }
-        }
-    });
 
     const tableColumns: Column<Appointment>[] = [
         {
@@ -175,7 +156,7 @@
             }}
             hover={true}
             striped={true}
-            skeleton={doctor === null}
+            skeleton={false}
             emptyMessage={m['doctor.text.empty_schedule']()}
         />
     </div>

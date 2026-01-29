@@ -4,6 +4,7 @@ import { base } from '$app/paths';
 import { PUBLIC_API_ORIGIN } from '$env/static/public';
 import { user } from '$stores/user';
 import type { Session } from '$types/api';
+import { error } from '@sveltejs/kit';
 
 export const apiOrigin = PUBLIC_API_ORIGIN; 
 
@@ -41,7 +42,7 @@ export function setSession(data: Session) {
 	localStorage.refresh = tokens.refresh;
 }
 
-export async function login(e?: string, pass?: string, fetch = window.fetch): Promise<void> {
+export async function login(e?: string, pass?: string): Promise<void> {
 	let email = '';
 	let password = '';
 
@@ -64,8 +65,7 @@ export async function login(e?: string, pass?: string, fetch = window.fetch): Pr
 						: `Bearer ${tokens.access}`,
 					'X-Refresh-Token': email && password ? '' : `Bearer ${tokens.refresh}`
 				}
-			},
-			fetch
+			}
 		);
 
 		if (!res.ok) {
@@ -85,7 +85,7 @@ export async function login(e?: string, pass?: string, fetch = window.fetch): Pr
 	}
 }
 
-export async function get(path: string, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+export async function get(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
 	let url;
 	try {
 		// Check if the path is a valid URL
@@ -96,48 +96,56 @@ export async function get(path: string, options?: RequestInit, fetch = window.fe
 		url = new URL(base + path, PUBLIC_API_ORIGIN);
 	}
 
-	const response = await fetch(url, options)
+	let response: Response;
+	try {
+		response = await fetchFn(url, options);
+	} catch (err) {
+		// Network errors (CORS, timeout, connection failed) don't have status codes
+		console.error('Network error:', err);
+		throw error(503, `Network error: Unable to reach server`);
+	}
+
+	if (!response.ok) {
+		const message = response.statusText || 'Request failed';
+		throw error(response.status, message);
+	}
 
 	return response;
 }
 
-export async function getAuth(path: string, options?: RequestInit, fetch = window.fetch): Promise<Response> {
-	if (!tokens.access) {
+export async function getAuth(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	let requestToken;
+	if (tokens.access && expiration && new Date() <= expiration) {
+		requestToken = tokens.access;
+	} else if (tokens.refresh) {
+		requestToken = tokens.refresh;
+	} else {
+		// On server-side, throw error instead of calling logout (which uses goto)
+		console.log('Tokens: ', tokens);
+		if (!browser) {
+			throw error(401, 'Authentication required');
+		}
 		logout();
-		return Promise.reject('No access token available');
+		throw error(401, 'Session expired');
 	}
 
-	if (expiration && new Date() <= expiration) {
-		return await get(
-			path,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.access}`
-				}
-			},
-			fetch
-		);
-	} else if (tokens.refresh) {
-		return await get(
-			path,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.refresh}`
-				}
-			},
-			fetch
-		);
-	} else {
-		logout();
-		return Promise.reject('Session expired');
-	}
+	// get() already throws proper SvelteKit errors with status codes
+	const response = await get(
+		path,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+
+	return response;
 };
 
-export async function post(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+export async function post(path: string, body: any, options?: RequestInit): Promise<Response> {
 	return await fetch(new URL(path, PUBLIC_API_ORIGIN), {
 		...options,
 		method: 'POST',
@@ -149,45 +157,34 @@ export async function post(path: string, body: any, options?: RequestInit, fetch
 	});
 };
 
-export async function postAuth(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
-	if (!tokens.access) {
+export async function postAuth(path: string, body: any, options?: RequestInit): Promise<Response> {
+	let requestToken;
+	if (tokens.access && expiration && new Date() <= expiration) {
+		requestToken = tokens.access;
+	} else if (tokens.refresh) {
+		requestToken = tokens.refresh;
+	} else {
+		if (!browser) {
+			throw error(401, 'Authentication required');
+		}
 		logout();
-		return Promise.reject('No access token available');
+		throw error(401, 'Session expired');
 	}
 
-	if (expiration && new Date() <= expiration) {
-		return await post(
-			path,
-			body,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.access}`
-				}
-			},
-			fetch
-		);
-	} else if (tokens.refresh) {
-		return await post(
-			path,
-			body,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.refresh}`
-				}
-			},
-			fetch
-		);
-	} else {
-		logout();
-		return Promise.reject('Session expired');
-	}
+	return await post(
+		path,
+		body,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		}
+	);
 };
 
-export async function put(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+export async function put(path: string, body: any, options?: RequestInit): Promise<Response> {
 	return await fetch(new URL(path, PUBLIC_API_ORIGIN), {
 		...options,
 		method: 'PUT',
@@ -199,50 +196,39 @@ export async function put(path: string, body: any, options?: RequestInit, fetch 
 	});
 };
 
-export async function putAuth(path: string, body: any, options?: RequestInit, fetch = window.fetch): Promise<Response> {
-	if (!tokens.access) {
+export async function putAuth(path: string, body: any, options?: RequestInit): Promise<Response> {
+	let requestToken;
+	if (tokens.access && expiration && new Date() <= expiration) {
+		requestToken = tokens.access;
+	} else if (tokens.refresh) {
+		requestToken = tokens.refresh;
+	} else {
+		if (!browser) {
+			throw error(401, 'Authentication required');
+		}
 		logout();
-		return Promise.reject('No access token available');
+		throw error(401, 'Session expired');
 	}
 
-	if (expiration && new Date() <= expiration) {
-		return await put(
-			path,
-			body,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.access}`
-				}
-			},
-			fetch
-		);
-	} else if (tokens.refresh) {
-		return await put(
-			path,
-			body,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.refresh}`
-				}
-			},
-			fetch
-		);
-	} else {
-		logout();
-		return Promise.reject('Session expired');
-	}
+	return await put(
+		path,
+		body,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		}
+	);
 };
 
-export function logout() {
+export function logout(redirectTo: string = '/login'): void {
 	tokens = { access: null, refresh: null };
 	user.set(null);
 	if (browser) {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
 	}
-	goto(`${base}/login`);
+	goto(`${base}${redirectTo}`);
 }
