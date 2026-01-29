@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import ar.edu.itba.paw.interfaces.persistence.InsuranceDao;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 
@@ -58,12 +59,28 @@ public class InsuranceJpaDao implements InsuranceDao{
     }
 
     @Override
-    public List<Insurance> getInsurancesByDoctorId(long doctorId) {
+    public int getInsurancesByDoctorIdCount(long doctorId) {
+        final TypedQuery<Long> query = em.createQuery(
+            "select count(i) from Doctor d join d.insurances i where d.id = :doctorId",
+            Long.class
+        );
+        query.setParameter("doctorId", doctorId);
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<Insurance> getInsurancesByDoctorIdPage(long doctorId, int page, int pageSize) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
         final TypedQuery<Insurance> query = em.createQuery(
             "select i from Doctor d join d.insurances i where d.id = :doctorId",
             Insurance.class
         );
         query.setParameter("doctorId", doctorId);
+
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
     

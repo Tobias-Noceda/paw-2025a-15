@@ -8,6 +8,9 @@ import java.util.function.Function;
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.enums.UserRoleEnum;
+import ar.edu.itba.paw.webapp.controller.DoctorController;
+import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class StudyDTO {
@@ -31,16 +34,20 @@ public class StudyDTO {
         dto.setUploadDate(study.getUploadDate());
         dto.setStudyDate(study.getStudyDate());
 
-        //dto.setFiles() TODO
-        //dto.uploader = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(patient.getId())).build(); TODO necesitamos saber si es doctor o no antes
-        //dto.authDoctors = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(.getId())).build(); TODO filtered GET in doctors controller
-
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).path("studies").build();
         URI patient =  uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).build();
+        URI uploader = null;
+        if(study.getUploader().getRole().equals(UserRoleEnum.DOCTOR))uploader = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(study.getUploader().getId())).build();
+        else if(study.getUploader().getRole().equals(UserRoleEnum.PATIENT)) uploader = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getUploader().getId())).build();
+        URI files = uriInfo.getBaseUriBuilder().path(FileController.class).queryParam("studyId", study.getId()).build();
+        URI authDoctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("studyId", study.getId()).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
             .setPatient(patient)
+            .setUploader(uploader)
+            .setAuthDoctors(authDoctors)
+            .setFiles(files)
         );
 
         return dto;

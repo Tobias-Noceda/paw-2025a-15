@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -119,6 +121,18 @@ public class PatientServiceImpl implements PatientService{
             realInsuranceNumber
         );        
         LOGGER.info("Updated patient with id: {}", patient.getId());
+    }
+
+    @Override
+    public int getAuthDoctorsByPatientIdAndNameCount(long patientId, String name) {
+        getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        return patientDao.getAuthDoctorsByPatientIdAndNameCount(patientId, name);
+    }
+
+    @Override
+    public List<Doctor> getAuthDoctorsByPatientIdAndNamePage(long patientId, String name, int page, int pageSize) {
+        getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        return patientDao.getAuthDoctorsByPatientIdAndNamePage(patientId, name, page, pageSize);
     }
     
 }

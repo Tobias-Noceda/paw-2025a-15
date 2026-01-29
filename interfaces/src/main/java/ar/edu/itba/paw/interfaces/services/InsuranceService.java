@@ -16,8 +16,10 @@ public interface InsuranceService {
     public Optional<Insurance> getInsuranceByName(String name);
 
     public List<Insurance> getAllInsurances();
+
+    public int getInsurancesByDoctorIdCount(long doctorId);
     
-    public List<Insurance> getInsurancesByDoctorId(long doctorId);
+    public List<Insurance> getInsurancesByDoctorIdPage(long doctorId, int page, int pageSize);
 
     public int getInsurancesCount();
 

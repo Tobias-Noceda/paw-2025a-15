@@ -2,8 +2,10 @@ package ar.edu.itba.paw.interfaces.persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
@@ -35,4 +37,8 @@ public interface PatientDao {
     );
 
     public Optional<Patient> getPatientById(long patientId);
+
+    public int getAuthDoctorsByPatientIdAndNameCount(long patientId, String name);
+
+    public List<Doctor> getAuthDoctorsByPatientIdAndNamePage(long patientId, String name, int page, int pageSize);
 }

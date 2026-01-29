@@ -8,9 +8,13 @@ import java.util.function.Function;
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.webapp.controller.DoctorController;
+import ar.edu.itba.paw.webapp.controller.FileController;
+import ar.edu.itba.paw.webapp.controller.InsuranceController;
+import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class PatientDTO {
-    
+    //BASIC
     private String email;
     private String name;
     private String telephone;
@@ -18,15 +22,21 @@ public class PatientDTO {
     private String bloodtype;
     private BigDecimal height;
     private BigDecimal weight;
-    private Boolean smokes;
-    private Boolean drinks;
+    private String insuranceNumber;
+
+    //MEDICAL
     private String meds;
     private String conditions;
     private String allergies;
+
+    //HABITS
+    private Boolean smokes;
+    private Boolean drinks;
     private String diet;
+
+    //SOCIAL
     private String hobbies;
     private String job;
-    private String insuranceNumber;
 
     private LinkDTO links;
 
@@ -55,16 +65,16 @@ public class PatientDTO {
         dto.setInsuranceNumber(patient.getInsuranceNumber());
 
         URI insurance = null;
-        if(patient.getInsurance()!=null) insurance = uriInfo.getBaseUriBuilder().path("insurances").path(String.valueOf(patient.getInsurance().getId())).build();
-        //dto.setDoctors(uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(patient.getPicture().getId())).build()); TODO filtered GET in doctors controller
-
-        URI self = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(patient.getId())).build();
-        URI picture = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(patient.getPicture().getId())).build();
+        if(patient.getInsurance()!=null) insurance = uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(patient.getInsurance().getId())).build();
+        URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
+        URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
+        URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
-            .setPicture(picture)
+            .setImage(picture)
             .setInsurance(insurance)
+            .setDoctors(doctors)
         );
 
         return dto;

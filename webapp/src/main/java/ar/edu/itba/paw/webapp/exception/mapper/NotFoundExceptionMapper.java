@@ -5,14 +5,18 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException; 
 
 @Provider
-public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException>{
+public class NotFoundExceptionMapper implements ExceptionMapper<RuntimeException>{
 
     @Override
-    public Response toResponse(NotFoundException exception) {
-        return Response.status(Status.NOT_FOUND).build();
+    public Response toResponse(RuntimeException exception) {
+        if (exception instanceof NotFoundException || 
+            exception instanceof ar.edu.itba.paw.webapp.exception.NotFoundException) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        throw exception;
     }
     
 }

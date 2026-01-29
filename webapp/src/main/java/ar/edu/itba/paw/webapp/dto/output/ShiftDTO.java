@@ -7,6 +7,7 @@ import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.webapp.controller.DoctorController;
 
 public class ShiftDTO {
     private WeekdayEnum weekday;
@@ -31,7 +32,7 @@ public class ShiftDTO {
         dto.duration = shift.getDuration();
 
         URI self = uriInfo.getBaseUriBuilder().path("shifts").path(String.valueOf(shift.getId())).build();
-        URI doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
+        URI doctor = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(shift.getDoctor().getId())).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
