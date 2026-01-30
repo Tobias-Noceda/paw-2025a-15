@@ -14,7 +14,7 @@
   }: Props = $props();
 
   const finalClass = cn(
-    'inline-block px-3 py-1 rounded-full text-sm font-medium',
+    'inline-block px-3 py-1 rounded-full text-sm font-medium cursor-default',
     chipClass,
     {
       primary: 'bg-primary text-white border-1 border-primary',
@@ -23,7 +23,7 @@
       success: 'bg-success text-white border-1 border-success',
       destructive: 'bg-red-500 text-white border-1 border-destructive',
     }[variant],
-    "cursor-default select-none"
+    "select-none"
   );
 </script>
 
