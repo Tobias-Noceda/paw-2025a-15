@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
-	import { fetchFreeAppointments } from '$lib/services/appointments';
+	import { fetchFreeAppointments, fetchNonFreeAppointments } from '$lib/services/appointments';
 	import { page } from '$app/stores';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 
@@ -155,7 +155,8 @@
     <div class="page-division flex flex-col h-full w-full gap-2.5">
         <p class="title text-primaryText">{m["appointments.title.future"]()}:</p>
         <Table
-            rows={futureAppointments.results}
+            rows={futureAppointments}
+            nextFetchFunction={(nextUrl: string) => fetchNonFreeAppointments(nextUrl, fetch, true)}
             columns={futureColumns}
             striped
             hover={freeAppointmentsLink !== null}
@@ -166,6 +167,7 @@
                 console.log('Clicked future appointment:', appointment);
             }}
             emptyMessage={m['appointments.empty.future']()}
+            class="shadow-sm rounded-lg"
         />
     </div>
     
@@ -173,15 +175,18 @@
         {#if pastAppointments}
             <p class="title text-primaryText">{m["appointments.title.past"]()}:</p>
             <Table
-                rows={pastAppointments.results}
+                rows={pastAppointments}
+                nextFetchFunction={(nextUrl: string) => fetchNonFreeAppointments(nextUrl, fetch, true)}
                 columns={tableColumns}
                 striped
                 hover
                 onRowClick={(row) => goto(`${base}/${parseDoctorSelf((row as Appointment).doctorData!.links.self)}`)}
                 emptyMessage={m['appointments.empty.past']()}
+                class="shadow-sm rounded-lg"
             />
         {:else if freeAppointments && freeAppointmentsLink}
-            <div class="flex flex-row justify-center items-center p-6 gap-10">
+            <p class="title text-primaryText">{m["appointments.title.free"]()}:</p>
+            <div class="flex flex-row justify-center items-center p-6 pt-0! gap-10">
                 <Button
                     variant="secondary"
                     class="w-fit"
@@ -219,6 +224,7 @@
                 striped={true}
                 skeleton={false}
                 emptyMessage={m['doctor.text.empty_schedule']()}
+                class="shadow-sm rounded-lg"
             />
         {/if}
     </div>

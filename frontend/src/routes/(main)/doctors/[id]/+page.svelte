@@ -158,6 +158,7 @@
             striped={true}
             skeleton={false}
             emptyMessage={m['doctor.text.empty_schedule']()}
+            class="shadow-sm rounded-lg"
         />
     </div>
     {#if selectedAppointment !== null}

@@ -36,7 +36,7 @@
 	let entries = $state(initialItems.results);
 
 	let initialLoadComplete = $state(false);
-	let load = $state(true);
+	let load = $state(false);
 	let done = $state(false);
 	let erro = $state(false);
 
@@ -118,7 +118,6 @@
 			done = data.done;
 			entries = data.entries;
 
-			// Nasty
 			setTimeout(() => (scrollY = data.scrollY), 500);
 		}
 	});

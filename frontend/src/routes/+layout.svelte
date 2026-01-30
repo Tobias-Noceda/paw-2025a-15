@@ -14,6 +14,6 @@
     });
 </script>
 
-<div class="flex flex-col max-h-screen! min-h-screen! min-w-screen! max-w-screen!">
+<div class="flex flex-col max-h-screen! min-h-screen! min-w-screen! max-w-screen! select-none!">
     {@render children()}
 </div>

@@ -32,9 +32,6 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         throw error(401, 'User data not available');
     }
 
-    console.log('Current user:', currentUser);
-    console.log('Current user data:', currentUserData);
-
     try {
         if (currentUser.role === 'DOCTOR' && (currentUserData as Doctor).links.freeAppointments) {
             freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments;

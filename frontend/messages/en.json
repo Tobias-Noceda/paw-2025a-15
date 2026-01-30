@@ -209,7 +209,8 @@
 	"appointments": {
 		"title": {
 			"past": "Past Appointments",
-			"future": "Upcoming Appointments"
+			"future": "Upcoming Appointments",
+			"free": "Available Appointments"
 		},
 		"label": {
 			"doctor": "Doctor",

@@ -135,7 +135,7 @@
 			<Pagination
 				initialFetchFunction={() => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order)}
 				pageFetchFunction={(page) => fetchDoctorsPage(page)}
-				class="flex flex-wrap justify-center gap-5 mb-3"
+				class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
 			>
 				{#snippet loading()}
 					{#each Array(10) as _, i}

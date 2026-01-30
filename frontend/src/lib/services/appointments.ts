@@ -50,9 +50,18 @@ export const fetchFreeAppointments = async (
 
 export const fetchNonFreeAppointments = async (
     urlString: string,
-    fetchFn: typeof fetch = fetch
+    fetchFn: typeof fetch = fetch,
+    isPageinationLink: boolean = false
 ): Promise<Paginated<Appointment>> => {
-    const response = await getAuth(urlString, undefined, fetchFn);
+    let urlStringFinal = urlString;
+
+    if (!isPageinationLink) {
+        const url = new URL(urlString);
+        url.searchParams.set('pageSize', '15');
+        urlStringFinal = url.toString();
+    }
+
+    const response = await getAuth(urlStringFinal, undefined, fetchFn);
     
     const appointments: Paginated<Appointment> = { _links: {}, results: [] };
     appointments.results = await response.json();
@@ -66,9 +75,7 @@ export const fetchNonFreeAppointments = async (
     return appointments;
 };
 
-export 
-
-const populateAppointmentData = async (appointment: Appointment, fetchFn: typeof fetch = fetch): Promise<void> => {
+export const populateAppointmentData = async (appointment: Appointment, fetchFn: typeof fetch = fetch): Promise<void> => {
     try {
         const response = await get(appointment.doctor, undefined, fetchFn);
         if (response.ok) {
