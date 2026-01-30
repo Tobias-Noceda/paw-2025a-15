@@ -19,14 +19,19 @@
 	$effect(() => {
 		const urlSearch = $page.url.searchParams.get('search') || '';
 		// Only update if different to prevent feedback loop
-		searchQuery.update(current => current !== urlSearch ? urlSearch : current);
+		searchQuery.update((current) => (current !== urlSearch ? urlSearch : current));
 	});
 
 	onMount(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			const dropdown = document.querySelector('.user-dropdown-menu');
 			const button = document.querySelector('.user-btn');
-			if (dropdown && button && !dropdown.contains(event.target as Node) && !button.contains(event.target as Node)) {
+			if (
+				dropdown &&
+				button &&
+				!dropdown.contains(event.target as Node) &&
+				!button.contains(event.target as Node)
+			) {
 				userDropdownOpen = false;
 			}
 		};
@@ -53,22 +58,45 @@
 		{#if $user}
 			<nav class="nav-links">
 				<!-- add "active" class when the location matches the link -->
-				<a href="{base}/appointments" class="nav-item {$page.url.pathname === `${base}/appointments` ? 'active' : ''}">{m['topbar.appointments']()}</a>
+				<a
+					href="{base}/appointments"
+					class="nav-item {$page.url.pathname === `${base}/appointments` ? 'active' : ''}"
+					>{m['topbar.appointments']()}</a
+				>
 				{#if $user.role === 'PATIENT'}
-					<a href="{base}/studies" class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}">{m['topbar.studies']()}</a>
+					<a
+						href="{base}/studies"
+						class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}"
+						>{m['topbar.studies']()}</a
+					>
 				{:else if $user.role === 'DOCTOR'}
-					<a href="{base}/vacations" class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}">{m['topbar.vacations']()}</a>
+					<a
+						href="{base}/vacations"
+						class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}"
+						>{m['topbar.vacations']()}</a
+					>
 				{/if}
 			</nav>
 		{/if}
 		<div class="search-bar-container">
 			<div class="search-bar">
-				<form class="search-bar-form" onsubmit={(e) => {
-					e.preventDefault();
-					goto(`/paw-2025a-15/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
-				}}>
+				<form
+					class="search-bar-form"
+					onsubmit={(e) => {
+						e.preventDefault();
+						goto(
+							`/paw-2025a-15/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`,
+							{ replaceState: true, noScroll: true }
+						);
+					}}
+				>
 					<Icon name="search" class="w-4.5 h-4.5 text-white" />
-					<input type="text" class="search-bar-text" placeholder="Search..." bind:value={$searchQuery} />
+					<input
+						type="text"
+						class="search-bar-text"
+						placeholder="Search..."
+						bind:value={$searchQuery}
+					/>
 				</form>
 			</div>
 		</div>
@@ -81,7 +109,7 @@
 			</a>
 		{:else}
 			<button
-				class="user-btn {userDropdownOpen ? 'active' : ''}"
+				class="user-btn {userDropdownOpen ? 'active' : ''} w-50"
 				onclick={() => {
 					userDropdownOpen = !userDropdownOpen;
 				}}
@@ -89,15 +117,17 @@
 				<Avatar size="md" src={$user.image} />
 				<div class="user-info">
 					<p class="user-name">{$user.name}</p>
-					<p class="user-role">{$user.role.charAt(0).toUpperCase() + $user.role.slice(1).toLowerCase()}</p>
+					<p class="user-role">
+						{$user.role.charAt(0).toUpperCase() + $user.role.slice(1).toLowerCase()}
+					</p>
 				</div>
 			</button>
-		{#if userDropdownOpen}
-		<div class="user-dropdown-menu">
-			<a href="{base}/profile">{m['topbar.profile']()}</a>
-			<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
-		</div>
-		{/if}
+			{#if userDropdownOpen}
+				<div class="user-dropdown-menu w-50">
+					<a href="{base}/profile">{m['topbar.profile']()}</a>
+					<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
+				</div>
+			{/if}
 		{/if}
 	</div>
 	<div class="page-container flex-1 w-full!">
@@ -230,8 +260,8 @@
 	.user-btn {
 		display: flex;
 		flex-direction: row;
-    align-items: center;
-    gap: 8px;
+		align-items: center;
+		gap: 8px;
 		background-color: #256395;
 		color: white;
 		border: none;
@@ -244,12 +274,18 @@
 		transition: background-color 0.3s ease;
 		box-sizing: border-box;
 		border-radius: 5px;
+		outline: none !important;
 	}
 
 	.user-btn:hover,
 	.user-btn.active {
 		background-color: #0e3b6b;
 		border-radius: 5px;
+	}
+
+	.user-btn.active {
+		background-color: #0e3b6b;
+		border-radius: 5px 5px 0 0;
 	}
 
 	.user-btn .user-info {
@@ -279,7 +315,7 @@
 		background-color: #256395;
 		border: 1px solid #0e3b6b;
 		border-radius: 0 0 5px 5px;
-		top: 65px;
+		top: 60px;
 		right: 20px;
 		box-sizing: border-box;
 	}
@@ -287,6 +323,8 @@
 	.user-dropdown-menu button,
 	.user-dropdown-menu a {
 		display: block;
+		width: 100%;
+		text-align: left;
 		padding: 8px;
 		text-decoration: none;
 		background-color: #256395;

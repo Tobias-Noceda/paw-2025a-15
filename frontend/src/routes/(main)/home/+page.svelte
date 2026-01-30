@@ -8,7 +8,7 @@
 	import Card from '$components/Card/Card.svelte';
 	import { type Doctor, type Insurance, type Paginated } from '$types/api';
 	import { fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
-	import Pagination from '$components/Pagination/pagination.svelte';
+	import Pagination from '$components/Pagination/Pagination.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
