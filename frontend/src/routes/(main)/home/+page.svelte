@@ -89,81 +89,84 @@
 	});
 </script>
 
-<div class="card bg-white mb-3">
-	<h2 class="section-title m-0 mb-5">{m['filters.title']()}</h2>
-	<div class="grid grid-cols-3 gap-5 items-end">
-		<Select
-			label={m['filters.label.ensurance']()}
-			options={[
-				{ value: 'all', label: m['all']() },
-				...insurances.map((ins) => ({ 
-					value: ins.name, 
-					label: ins.name,
-                    avatarSrc: ins.picture
-				}))
-			]}
-			bind:value={$insurance}
-			class="w-full"
-		/>
-
-		<Select
-			label={m['filters.label.workday']()}
-			options={workDays}
-			bind:value={$day}
-			class="w-full"
-		/>
-
-		<Select
-			label={m['filters.label.specialty']()}
-			options={specialties}
-			bind:value={$specialty}
-			class="w-full"
-		/>
-
-		<div></div>
-
-		<Select label={m['filters.label.order']()} options={orders} bind:value={$order} class="w-full" />
-	</div>
-	<Button variant="primary" class="w-full mt-5" onclick={applyFilters}>
-		{m['filters.apply']()}
-	</Button>
-</div>
-<h2 class="section-title m-0 mb-3">{m['doctors_list']()}</h2>
-<div class="flex flex-wrap justify-center gap-5">
-	{#key filterKey}
-		<Pagination
-			initialFetchFunction={() => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order)}
-			pageFetchFunction={(page) => fetchDoctorsPage(page)}
-		>
-		{#snippet loading()}
-			{#each Array(10) as _, i}
-				<Card 
-					variant="doctor"
-					avatarSrc=""
-					userName=""
-					specialization=""
-					schedule={new Set<Weekdays>()}
-					insurances={[]}
-					email=""
-					phone=""
-					skeleton={true}
-				/>
-			{/each}
-		{/snippet}
-
-		{#snippet children(entry: Doctor, i: number)}
-			<Card
-				variant="doctor"
-				avatarSrc={entry.links.image}
-				userName={entry.name}
-				specialization={getSpecialtyLabel(entry.specialty)}
-				schedule={entry.schedule ? new Set(entry.schedule.keys()) : new Set<Weekdays>()}
-				insurances={entry.insurances}
-				email={entry.email}
-				phone={entry.telephone}
-				onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
+<div class="flex flex-col max-w-full! gap-3">
+	<div class="flex flex-col card w-full bg-white">
+		<h2 class="section-title m-0 mb-5">{m['filters.title']()}</h2>
+		<div class="grid grid-cols-3 gap-5 items-end">
+			<Select
+				label={m['filters.label.ensurance']()}
+				options={[
+					{ value: 'all', label: m['all']() },
+					...insurances.map((ins) => ({ 
+						value: ins.name, 
+						label: ins.name,
+						avatarSrc: ins.picture
+					}))
+				]}
+				bind:value={$insurance}
+				class="w-full"
 			/>
-		{/snippet}
-	</Pagination>
-	{/key}
+
+			<Select
+				label={m['filters.label.workday']()}
+				options={workDays}
+				bind:value={$day}
+				class="w-full"
+			/>
+
+			<Select
+				label={m['filters.label.specialty']()}
+				options={specialties}
+				bind:value={$specialty}
+				class="w-full"
+			/>
+
+			<div></div>
+
+			<Select label={m['filters.label.order']()} options={orders} bind:value={$order} class="w-full" />
+		</div>
+		<Button variant="primary" class="w-full mt-5" onclick={applyFilters}>
+			{m['filters.apply']()}
+		</Button>
+	</div>
+	<h2 class="section-title m-0">{m['doctors_list']()}</h2>
+	<div class="flex flex-col justify-center items-center">
+		{#key filterKey}
+			<Pagination
+				initialFetchFunction={() => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order)}
+				pageFetchFunction={(page) => fetchDoctorsPage(page)}
+				class="flex flex-wrap justify-center gap-5 max-w-[90%]"
+			>
+				{#snippet loading()}
+					{#each Array(10) as _, i}
+						<Card 
+							variant="doctor"
+							avatarSrc=""
+							userName=""
+							specialization=""
+							schedule={new Set<Weekdays>()}
+							insurances={[]}
+							email=""
+							phone=""
+							skeleton={true}
+						/>
+					{/each}
+				{/snippet}
+
+				{#snippet children(entry: Doctor, i: number)}
+					<Card
+						variant="doctor"
+						avatarSrc={entry.links.image}
+						userName={entry.name}
+						specialization={getSpecialtyLabel(entry.specialty)}
+						schedule={entry.schedule ? new Set(entry.schedule.keys()) : new Set<Weekdays>()}
+						insurances={entry.insurances}
+						email={entry.email}
+						phone={entry.telephone}
+						onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
+					/>
+				{/snippet}
+			</Pagination>
+		{/key}
+	</div>
 </div>

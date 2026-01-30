@@ -96,13 +96,6 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<AppointmentNew> getFutureAppointmentDataByPatientId(long patientId) {
-        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        return appointmentDao.getFutureAppointmentDataByPatient(patient);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId) {
         Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return appointmentDao.getOldAppointmentDataByPatient(patient);
@@ -131,16 +124,28 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<AppointmentNew> getFutureAppointmentDataPageByDoctorId(long doctorId, int page, int pageSize) {
-        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return appointmentDao.getFutureAppointmentDataPageByDoctor(doctor, page, pageSize);
+    public List<AppointmentNew> getFutureAppointmentDataPageByUserId(long userId, int page, int pageSize) {
+        Doctor doctor = ds.getDoctorById(userId).orElse(null);
+
+        if (doctor != null) {
+            return appointmentDao.getFutureAppointmentDataPageByDoctor(doctor, page, pageSize);
+        } else {
+            Patient patient = ps.getPatientById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " does not exist!"));
+            return appointmentDao.getFutureAppointmentDataPageByPatient(patient, page, pageSize);
+        }
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Integer getFutureAppointmentTotalByDoctorId(long doctorId) {
-        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return appointmentDao.getFutureAppointmentTotalByDoctor(doctor);
+    public Integer getFutureAppointmentTotalByUserId(long userId) {
+        Doctor doctor = ds.getDoctorById(userId).orElse(null);
+
+        if (doctor != null) {
+            return appointmentDao.getFutureAppointmentTotalByDoctor(doctor);
+        } else {
+            Patient patient = ps.getPatientById(userId).orElseThrow(() -> new NotFoundException("User with id: " + userId + " does not exist!"));
+            return appointmentDao.getFutureAppointmentTotalByPatient(patient);
+        }
     }
 
     @Transactional

@@ -8,6 +8,14 @@ export const parseDateInLocalTimezone = (dateStr: string): Date => {
     return new Date(year, month - 1, day);
 };
 
+// Format date for API
+export const formatDateLocal = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export const fetchFreeAppointments = async (
     urlString: string,
     date?: string,
@@ -39,6 +47,26 @@ export const fetchFreeAppointments = async (
 
     return appointments;
 };
+
+export const fetchNonFreeAppointments = async (
+    urlString: string,
+    fetchFn: typeof fetch = fetch
+): Promise<Paginated<Appointment>> => {
+    const response = await getAuth(urlString, undefined, fetchFn);
+    
+    const appointments: Paginated<Appointment> = { _links: {}, results: [] };
+    appointments.results = await response.json();
+    appointments._links = getPaginationLinks(response);
+
+    // Populate doctor data for each appointment
+    for (const appointment of appointments.results) {
+        await populateAppointmentData(appointment, fetchFn);
+    }
+
+    return appointments;
+};
+
+export 
 
 const populateAppointmentData = async (appointment: Appointment, fetchFn: typeof fetch = fetch): Promise<void> => {
     try {

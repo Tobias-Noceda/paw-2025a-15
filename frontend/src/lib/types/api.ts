@@ -42,7 +42,40 @@ export type Doctor = {
 		self: string;
 		schedule: string;
 		freeAppointments: string;
+		futureAppointments: string;
 	}
+}
+
+export type Patient = {
+	email: string;
+	name: string;
+	telephone: string;
+	birthDate: string;
+	bloodType: string;
+	height: number;
+	weight: number;
+	insurance?: string;
+	insuranceNumber: string;
+	meds?: string;
+	conditions?: string;
+	allergies?: string;
+	smokes?: boolean;
+	drinks?: boolean;
+	diet?: string;
+	hobbies?: string;
+	job?: string;
+	links: {
+		doctors: string;
+		image: string;
+		insurance: string;
+		self: string;
+		medical?: string;
+		habits?: string;
+		social?: string;
+		pastAppointments: string;
+		futureAppointments: string;
+	}
+
 }
 
 export type Shift = {

@@ -24,7 +24,7 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.webapp.controller.util.DatePaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
-import ar.edu.itba.paw.webapp.dto.AppointmentDTO;
+import ar.edu.itba.paw.webapp.dto.output.AppointmentDTO;
 
 
 @Path("/appointments")
@@ -78,14 +78,19 @@ public class AppointmentController {
                 );
             }
             case TAKEN -> {
-                if (userId != null) {
-                    appointmentDTOs = as.getFutureAppointmentDataPageByDoctorId(userId, page, pageSize)
-                        .stream()
-                        .map(AppointmentDTO.mapper(uriInfo))
-                        .collect(Collectors.toList());
-                    totalItems = as.getFutureAppointmentTotalByDoctorId(userId);
-                } else {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for TAKEN status").build();
+                try {
+                    if (userId != null) {   
+                        appointmentDTOs = as.getFutureAppointmentDataPageByUserId(userId, page, pageSize)
+                            .stream()
+                            .map(AppointmentDTO.mapper(uriInfo))
+                            .collect(Collectors.toList());
+                        totalItems = as.getFutureAppointmentTotalByUserId(userId);
+                    } else {
+                        return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for TAKEN status").build();
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error fetching TAKEN appointments: " + e.getMessage());
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error fetching TAKEN appointments").build();
                 }
             }
             case COMPLETED -> {

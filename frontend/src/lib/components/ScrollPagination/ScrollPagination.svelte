@@ -5,13 +5,8 @@
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { preserve, restore } from '$modules/statefull.svelte';
 
-	import * as m from '$lib/paraglide/messages';
-
 	interface Props {
-		/**
-		 * The function to fetch data from at the start.
-		 */
-		initialFetchFunction: () => Promise<Paginated<T>>;
+		initialItems: Paginated<T>;
 		/**
 		 * The function to fetch the next page.
 		 */
@@ -31,21 +26,21 @@
 	}
 
 	let {
-		initialFetchFunction,
+		initialItems,
 		nextFetchFunction,
 		children,
 		loading,
 		error,
 	}: Props = $props();
 
-	let entries = $state([] as T[]);
+	let entries = $state(initialItems.results);
 
 	let initialLoadComplete = $state(false);
 	let load = $state(true);
 	let done = $state(false);
 	let erro = $state(false);
 
-	let next: string | undefined = $state(undefined as string | undefined);
+	let next: string | undefined = $state(initialItems._links?.next);
 
 	async function getPage() {
 		if (!initialLoadComplete || !next) {
@@ -80,14 +75,6 @@
 	let sentinel: HTMLElement | null = $state(null);
 	let observer: IntersectionObserver;
 	onMount(() => {
-		const doctorsPage = initialFetchFunction();
-		doctorsPage.then((data) => {
-			entries = data.results;
-			next = data._links?.next;
-			load = false;
-			initialLoadComplete = true;
-		});
-
 		observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) getPage();

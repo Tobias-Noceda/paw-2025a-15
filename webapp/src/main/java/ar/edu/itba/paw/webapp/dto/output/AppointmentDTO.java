@@ -46,7 +46,7 @@ public class AppointmentDTO {
 
         if (appointment.getPatient() != null) {
             dto.patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
-            dto.self = uriInfo.getBaseUriBuilder().path("appointments").path(String.valueOf(appointment.getId())).build();
+            dto.self = uriInfo.getBaseUriBuilder().path("appointments").path(appointment.getId().toIdString()).build();
         }
 
         return dto;

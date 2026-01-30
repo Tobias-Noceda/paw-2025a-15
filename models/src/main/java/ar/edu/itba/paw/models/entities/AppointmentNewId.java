@@ -97,7 +97,34 @@ public class AppointmentNewId implements Serializable {
         return "AppointmentId{" +
             "shiftId=" + shiftId +
             ", date=" + date +
+            ", startTime=" + startTime +
+            ", endTime=" + endTime +
             '}';
     }
+
+    public String toIdString() {
+        return shiftId + "_" + date.toString() + "_" + startTime.toString().replace(':', '-') + "_" + endTime.toString().replace(':', '-');
+    }
     
+    public static AppointmentNewId fromId(String idStr) {
+        String[] parts = idStr.split("_");
+        if (parts.length != 4) {
+            throw new IllegalArgumentException("Invalid appointment ID format");
+        }
+
+        try {
+            Long shiftId = Long.valueOf(parts[0]);
+            LocalDate date = LocalDate.parse(parts[1]);
+            LocalTime startTime = LocalTime.parse(parts[2].replace('-', ':'));
+            LocalTime endTime = LocalTime.parse(parts[3].replace('-', ':'));
+
+            if (shiftId < 0 || date == null || startTime == null || endTime == null) {
+                return null;
+            } else {
+                return new AppointmentNewId(shiftId, date, startTime, endTime);
+            }
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

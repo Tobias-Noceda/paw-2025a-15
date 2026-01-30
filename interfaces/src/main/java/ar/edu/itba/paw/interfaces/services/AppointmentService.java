@@ -12,8 +12,6 @@ public interface AppointmentService {
 
     public Optional<AppointmentNew> getAppointmentByShiftIdDateAndTime(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime);
 
-    public List<AppointmentNew> getFutureAppointmentDataByPatientId(long patientId);
-
     public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId);
 
     public List<AppointmentNew> getOldAppointmentDataPageByPatientId(long patientId, int page, int pageSize);
@@ -22,9 +20,9 @@ public interface AppointmentService {
 
     public List<AppointmentNew> getFutureAppointmentDataByDoctorId(long doctorId);
 
-    public List<AppointmentNew> getFutureAppointmentDataPageByDoctorId(long doctorId, int page, int pageSize);
+    public List<AppointmentNew> getFutureAppointmentDataPageByUserId(long userId, int page, int pageSize);
 
-    public Integer getFutureAppointmentTotalByDoctorId(long doctorId);
+    public Integer getFutureAppointmentTotalByUserId(long userId);
 
     public void cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId);
 

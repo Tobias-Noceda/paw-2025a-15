@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { fetchDoctorById } from '$lib/services/doctors';
-import { fetchFreeAppointments, parseDateInLocalTimezone } from '$lib/services/appointments';
+import { fetchFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
 import type { PageLoad } from './$types';
 
 // Disable SSR since we need localStorage for authentication tokens
@@ -12,14 +12,6 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     const selectedDate = dateParam 
         ? parseDateInLocalTimezone(dateParam) 
         : new Date();
-
-    // Format date for API
-    const formatDateLocal = (date: Date): string => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
 
     try {
         const doctor = await fetchDoctorById(params.id, fetch);

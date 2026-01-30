@@ -77,8 +77,6 @@ export async function login(e?: string, pass?: string): Promise<void> {
 			refresh: res.headers.get('X-Refresh-Token') as string
 		}
 
-		console.log('Logged in, session data:', sessionData);
-
 		setSession(sessionData);
 	} catch (error) {
 		throw error;
@@ -121,7 +119,6 @@ export async function getAuth(path: string, options?: RequestInit, fetchFn: type
 		requestToken = tokens.refresh;
 	} else {
 		// On server-side, throw error instead of calling logout (which uses goto)
-		console.log('Tokens: ', tokens);
 		if (!browser) {
 			throw error(401, 'Authentication required');
 		}
@@ -231,4 +228,4 @@ export function logout(redirectTo: string = '/login'): void {
 		localStorage.removeItem('refresh');
 	}
 	goto(`${base}${redirectTo}`);
-}
+};

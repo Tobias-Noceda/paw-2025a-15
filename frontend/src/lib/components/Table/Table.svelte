@@ -2,39 +2,38 @@
   import { cn } from "$lib/utils";
   import { m } from '$lib/paraglide/messages.js';
 	import ScrollPagination from "$components/ScrollPagination/ScrollPagination.svelte";
+	import type { Paginated } from "$types/api";
 
   export interface Column<RowType> {
     id: keyof RowType | string;
     label: string;
     render?: (row: RowType) => any;
     class?: string;
+    columnClass?: string;
   }
 
   interface Props<RowType> {
-    rows: RowType[];
+    rows: RowType[] | Paginated<RowType>;
+    nextFetchFunction?: (nextUrl: string) => Promise<Paginated<RowType>>;
     columns: Column<RowType>[];
     striped?: boolean;
     bordered?: boolean;
     hover?: boolean;
     skeleton?: boolean;
     emptyMessage?: string;
-    /**
-     * URL source for pagination (auto-pagination wanted)
-     */
-    paginationSource?: string;
     onRowClick?: (row: RowType) => void;
     class?: string;
   }
 
   let {
-    rows,
+    rows = [],
     columns,
     striped = false,
     bordered = false,
     hover = false,
     skeleton = false,
     emptyMessage = m.no_data_available({}),
-    paginationSource,
+    nextFetchFunction,
     onRowClick,
     class: tableClass = ""
   }: Props<any> = $props();
@@ -58,7 +57,7 @@
   {/each}
 {/snippet}
 
-<div class={bordered && rows.length > 0 ? "shadow-lg rounded-lg" : ""}>
+<div class={bordered && (Array.isArray(rows) ? rows.length > 0 : rows.results.length > 0) ? "shadow-lg rounded-lg" : ""}>
   <div class={tableClass}>
     <div class="h-full overflow-hidden">
       <div class="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-table-header scrollbar-track-transparent">
@@ -66,7 +65,7 @@
           <thead class="bg-table-header text-white sticky top-0 z-10 cursor-default! select-none">
             <tr>
               {#each columns as col}
-                <th class={"text-left px-3 py-2 font-semibold first:rounded-tl-lg last:rounded-tr-lg"}>
+                <th class={"text-left px-3 py-2 font-semibold first:rounded-tl-lg last:rounded-tr-lg " + (col.columnClass ?? "")}>
                   {col.label}
                 </th>
               {/each}
@@ -75,9 +74,10 @@
     
           <tbody>
             {#if skeleton}
-              {@render loader(Math.min(5, Math.max(2, rows.length)))}
-            {:else if paginationSource}
-              <ScrollPagination href={paginationSource}>
+              {@render loader(Math.min(5, Math.max(2, Array.isArray(rows) ? rows.length : rows.results.length)))}
+              <!-- if nextFetchFunction is defined and rows is Paginated -->
+            {:else if nextFetchFunction && !Array.isArray(rows)}
+              <ScrollPagination initialItems={rows} nextFetchFunction={nextFetchFunction}>
                 {#snippet loading()}
                   {@render loader(4)}
                 {/snippet}
@@ -111,10 +111,10 @@
                 {/snippet}
               </ScrollPagination>
             {:else}
-              {#each rows as row, i}
+              {#each (Array.isArray(rows) ? rows : rows.results) as row, i}
                 <tr
                   class={cn(
-                    i !== rows.length - 1 ? "border-b border-gray-200" : "",
+                    i !== (Array.isArray(rows) ? rows.length : rows.results.length) - 1 ? "border-b border-gray-200" : "",
                     striped && i % 2 === 1 ? "bg-gray-50" : "",
                     hover ? "hover:bg-gray-100" : "",
                     "last:rounded-b-lg select-none",
