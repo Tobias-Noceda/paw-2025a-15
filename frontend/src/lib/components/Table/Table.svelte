@@ -7,7 +7,7 @@
 	export interface Column<RowType> {
 		id: keyof RowType | string;
 		label: string;
-		render?: (row: RowType) => any;
+		render?: (row: RowType, index: number) => any;
 		class?: string;
 		columnClass?: string;
 	}
@@ -21,7 +21,7 @@
 		hover?: boolean;
 		skeleton?: boolean;
 		emptyMessage?: string;
-		onRowClick?: (row: RowType) => void;
+		onRowClick?: (row: RowType, index: number) => void;
 		class?: string;
 	}
 
@@ -83,39 +83,41 @@
 						)}
 						<!-- if nextFetchFunction is defined and rows is Paginated -->
 					{:else if nextFetchFunction && !Array.isArray(rows)}
-						<ScrollPagination initialItems={rows} {nextFetchFunction}>
-							{#snippet loading()}
-								{@render loader(4)}
-							{/snippet}
+						{#key rows.results.length}
+							<ScrollPagination initialItems={rows} {nextFetchFunction}>
+								{#snippet loading()}
+									{@render loader(4)}
+								{/snippet}
 
-							{#snippet children(row: any, i: number)}
-								<tr
-									class={cn(
-										'border-b border-gray-200 last:border-0!',
-										striped && i % 2 === 1 ? 'bg-gray-50' : '',
-										hover ? 'hover:bg-gray-100' : '',
-										'last:rounded-b-lg select-none',
-										onRowClick ? 'cursor-pointer' : 'cursor-default'
-									)}
-									onclick={() => onRowClick?.(row)}
-								>
-									{#each columns as col}
-										<td class={'px-3 py-2 ' + (col.class ?? '')}>
-											{#if col.render}
-												{@const rendered = col.render(row)}
-												{#if typeof rendered === 'string'}
-													{@html rendered}
+								{#snippet children(row: any, i: number)}
+									<tr
+										class={cn(
+											'border-b border-gray-200 last:border-0!',
+											striped && i % 2 === 1 ? 'bg-gray-50' : '',
+											hover ? 'hover:bg-gray-100' : '',
+											'last:rounded-b-lg select-none',
+											onRowClick ? 'cursor-pointer' : 'cursor-default'
+										)}
+										onclick={() => onRowClick?.(row, i)}
+									>
+										{#each columns as col}
+											<td class={'px-3 py-2 ' + (col.class ?? '')}>
+												{#if col.render}
+													{@const rendered = col.render(row, i)}
+													{#if typeof rendered === 'string'}
+														{@html rendered}
+													{:else}
+														<rendered.component {...rendered.props} />
+													{/if}
 												{:else}
-													<rendered.component {...rendered.props} />
+													{row[col.id]}
 												{/if}
-											{:else}
-												{row[col.id]}
-											{/if}
-										</td>
-									{/each}
-								</tr>
-							{/snippet}
-						</ScrollPagination>
+											</td>
+										{/each}
+									</tr>
+								{/snippet}
+							</ScrollPagination>
+						{/key}
 					{:else}
 						{#each Array.isArray(rows) ? rows : rows.results as row, i}
 							<tr
@@ -128,12 +130,12 @@
 									'last:rounded-b-lg select-none',
 									onRowClick ? 'cursor-pointer' : 'cursor-default'
 								)}
-								onclick={() => onRowClick?.(row)}
+								onclick={() => onRowClick?.(row, i)}
 							>
 								{#each columns as col}
 									<td class={'px-3 py-2 ' + (col.class ?? '')}>
 										{#if col.render}
-											{@const rendered = col.render(row)}
+											{@const rendered = col.render(row, i)}
 											{#if typeof rendered === 'string'}
 												{@html rendered}
 											{:else}

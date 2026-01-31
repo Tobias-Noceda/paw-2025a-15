@@ -9,10 +9,12 @@ import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public class AppointmentDTO {
     
+    private AppointmentStatusEnum status;
     private String weekday;
     private String address;
     private LocalDate date;
@@ -21,19 +23,21 @@ public class AppointmentDTO {
     private int duration; // Duration in minutes
     private String detail;
 
-    private URI doctor;
-    private URI patient;
-    private URI self;
+    private String patientName;
+    private String patientEmail;
+
+    private LinkDTO links;
     
-    public static Function<AppointmentNew, AppointmentDTO> mapper(final UriInfo uriInfo) {
-        return d -> fromAppointment(d, uriInfo);
+    public static Function<AppointmentNew, AppointmentDTO> mapper(final AppointmentStatusEnum status, final UriInfo uriInfo) {
+        return d -> fromAppointment(d, status, uriInfo);
     }
 
-    public static AppointmentDTO fromAppointment(final AppointmentNew appointment, final UriInfo uriInfo) {
+    public static AppointmentDTO fromAppointment(final AppointmentNew appointment, final AppointmentStatusEnum status, final UriInfo uriInfo) {
         final AppointmentDTO dto = new AppointmentDTO();
 
         DoctorSingleShift shift = appointment.getShift();
         
+        dto.status = status;
         dto.weekday = shift.getWeekday().toString();
         dto.address = shift.getAddress();
         dto.date = appointment.getDate();
@@ -42,17 +46,33 @@ public class AppointmentDTO {
         dto.duration = shift.getDuration();
         dto.detail = appointment.getDetail();
 
-        dto.doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
+        dto.patientName = appointment.getPatient() != null ? appointment.getPatient().getName() : null;
+        dto.patientEmail = appointment.getPatient() != null ? appointment.getPatient().getEmail() : null;
+
+        LinkDTO links = new LinkDTO();
+
+        URI doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
+        URI self = uriInfo.getBaseUriBuilder().path("appointments").path(appointment.getId().toIdString()).build();
+        
+        links.setDoctor(doctor);
+        links.setSelf(self);
 
         if (appointment.getPatient() != null) {
-            dto.patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
-            dto.self = uriInfo.getBaseUriBuilder().path("appointments").path(appointment.getId().toIdString()).build();
+            URI patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
+
+            links.setPatient(patient);
         }
+
+        dto.links = links;
 
         return dto;
     }
 
     // getters
+    public AppointmentStatusEnum getStatus() {
+        return status;
+    }
+
     public String getWeekday() {
         return weekday;
     }
@@ -81,19 +101,23 @@ public class AppointmentDTO {
         return detail;
     }
 
-    public URI getDoctor() {
-        return doctor;
+    public String getPatientName() {
+        return patientName;
     }
 
-    public URI getPatient() {
-        return patient;
+    public String getPatientEmail() {
+        return patientEmail;
     }
 
-    public URI getSelf() {
-        return self;
+    public LinkDTO getLinks() {
+        return links;
     }
 
     // setters
+    public void setStatus(AppointmentStatusEnum status) {
+        this.status = status;
+    }
+
     public void setWeekday(String weekday) {
         this.weekday = weekday;
     }
@@ -126,15 +150,15 @@ public class AppointmentDTO {
         this.detail = detail;
     }
 
-    public void setDoctor(URI doctor) {
-        this.doctor = doctor;
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 
-    public void setPatient(URI patient) {
-        this.patient = patient;
+    public void setPatientEmail(String patientEmail) {
+        this.patientEmail = patientEmail;
     }
 
-    public void setSelf(URI self) {
-        this.self = self;
+    public void setLinks(LinkDTO links) {
+        this.links = links;
     }
 }

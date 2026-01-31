@@ -96,6 +96,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // appointments
                 .requestMatchers(HttpMethod.GET, "/api/appointments")
                     .access((a, c) -> ad.canAccessAppointments(a.get(), c))
+                .requestMatchers(HttpMethod.PATCH, "/api/appointments/**")
+                    .access((a, c) -> ad.canModifyAppointment(a.get(), c.getRequest().getRequestURI().split("/")[4]))
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()

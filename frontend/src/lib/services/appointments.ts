@@ -1,5 +1,7 @@
-import { get, getAuth } from "$modules/api.svelte";
+import { get, getAuth, patchAuth } from "$modules/api.svelte";
 import { type Appointment, type Paginated } from "$types/api";
+import { AppointmentStatus } from "$types/enums/AppointmentStatus";
+import { error } from "@sveltejs/kit";
 import { getPaginationLinks } from "./pagination";
 
 // Parse date in local timezone to avoid UTC conversion issues
@@ -77,14 +79,59 @@ export const fetchNonFreeAppointments = async (
 
 export const populateAppointmentData = async (appointment: Appointment, fetchFn: typeof fetch = fetch): Promise<void> => {
     try {
-        const response = await get(appointment.doctor, undefined, fetchFn);
+        const response = await get(appointment.links.doctor, undefined, fetchFn);
         if (response.ok) {
-            const doctorData = await response.json();
-            appointment.doctorData = doctorData;
+            const doctor = await response.json();
+            appointment.doctor = doctor;
         }
     } catch (error) {
         console.error('Failed to populate appointment data:', error);
     }
     
     return;
+};
+
+export const takeAppointment = async (
+    url: string,
+    details: string,
+    fetchFn: typeof fetch = fetch
+): Promise<Appointment> => {
+    const response = await patchAuth(
+        url,
+        {
+            status: AppointmentStatus.TAKEN,
+            description: details
+        },
+        undefined,
+        fetchFn
+    );
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw error(response.status, 'Failed to take appointment: ' + text);
+    }
+
+    return response.json();
+};
+
+export const cancelAppointment = async (
+    url: string,
+    fetchFn: typeof fetch = fetch
+): Promise<Appointment> => {
+    const response = await patchAuth(
+        url,
+        {
+            status: AppointmentStatus.FREE,
+            description: null
+        },
+        undefined,
+        fetchFn
+    );
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw error(response.status, 'Failed to cancel appointment: ' + text);
+    }
+
+    return response.json();
 };

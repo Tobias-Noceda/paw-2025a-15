@@ -3,14 +3,15 @@ package ar.edu.itba.paw.interfaces.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.AppointmentNew;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.models.utils.Pair;
 
 public interface AppointmentService {
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail);
 
-    public Optional<AppointmentNew> getAppointmentByShiftIdDateAndTime(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime);
+    public Pair<AppointmentNew, AppointmentStatusEnum> getAppointmentByShiftIdDateAndTime(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime);
 
     public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId);
 
@@ -24,7 +25,7 @@ public interface AppointmentService {
 
     public Integer getFutureAppointmentTotalByUserId(long userId);
 
-    public void cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId);
+    public AppointmentNew cancelAppointment(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime, long cancellerId);
 
     public void removeAppointment(long shiftId, LocalDate date, long doctorId, LocalTime startTime, LocalTime endTime);
 

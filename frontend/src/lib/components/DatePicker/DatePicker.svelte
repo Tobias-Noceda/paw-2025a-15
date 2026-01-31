@@ -6,6 +6,7 @@
 	import Button from "$components/Button/Button.svelte";
 	import Icon from "$components/Icon/Icon.svelte";
 
+  import { getLocale } from '$lib/paraglide/runtime'
   import * as m from '$lib/paraglide/messages.js';
 
   interface Props {
@@ -155,7 +156,7 @@
     }
   >
     <Icon name={'calendar'} class="w-5 h-5 text-secondaryText mr-2" />
-    {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "dd/mm/aaaa"}
+    {selectedDate ? format(selectedDate, getLocale() === 'es' ? "dd/MM/yyyy" : "MM/dd/yyyy") : m['date_format']().toLowerCase()}
   </button>
   {#if showCalendar}
     <div

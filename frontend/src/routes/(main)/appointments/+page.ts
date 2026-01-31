@@ -19,6 +19,8 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     let pastAppointments: Paginated<Appointment> | null = null;
     let futureAppointments: Paginated<Appointment> | null = null;
+    let futureAppointmentsLink: string | null = null;
+
     let freeAppointments: Paginated<Appointment> | null = null;
     let freeAppointmentsLink: string | null = null;
 
@@ -37,14 +39,17 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
             freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments;
             freeAppointments = await fetchFreeAppointments(freeAppointmentsLink, formatDateLocal(selectedDate), fetch);
         } else if (currentUser.role === 'PATIENT' && (currentUserData as Patient).links.pastAppointments) {
+            console.log('Fetching past appointments for patient: ', currentUserData);
             pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, fetch);
         }
 
-        futureAppointments = await fetchNonFreeAppointments(currentUserData.links.futureAppointments, fetch);
+        futureAppointmentsLink = currentUserData.links.futureAppointments;
+        futureAppointments = await fetchNonFreeAppointments(futureAppointmentsLink, fetch);
 
         return {
             pastAppointments,
             futureAppointments,
+            futureAppointmentsLink,
             freeAppointments,
             freeAppointmentsLink,
             selectedDate

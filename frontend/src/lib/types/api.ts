@@ -1,4 +1,5 @@
 import type { insurance } from "$stores/filters";
+import type { AppointmentStatus } from "./enums/AppointmentStatus";
 import type { Specialties } from "./enums/specialties";
 import type { Weekdays } from "./enums/weekdays";
 
@@ -95,14 +96,21 @@ export type Insurance = {
 }
 
 export type Appointment = {
+	status: AppointmentStatus;
 	weekday: string;
 	address: string;
 	date: string;
 	startTime: string;
 	endTime: string;
 	durationMinutes: number;
-	self: string;
-	doctor: string;
-	patient: string;
-	doctorData?: Doctor;
-}
+	doctor?: Doctor;
+	patient?: Patient;
+	patientName?: string;
+	patientEmail?: string;
+	detail?: string;
+	links: {
+		self: string;
+		doctor: string;
+		patient: string;
+	}
+};

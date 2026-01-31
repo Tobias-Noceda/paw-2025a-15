@@ -222,8 +222,35 @@
 		"empty": {
 			"past": "No tienes turnos pasados",
 			"future": "No tienes turnos futuros"
+		},
+		"taken": {
+			"success_title": "¡Turno tomado con éxito!",
+			"success_message": "Has tomado un turno con {doctorName} el {day} de {month} a las {startTime}.",
+			"error_title": "Error al tomar el turno",
+			"error_message": "Ocurrió un error al intentar tomar el turno. Por favor, inténtelo de nuevo más tarde."
+		},
+		"canceled": {
+			"success_title": "¡Turno cancelado con éxito!",
+			"success_message": "Has cancelado tu turno del {day} de {month} a las {startTime}.",
+			"error_title": "Error al cancelar el turno",
+			"error_message": "Ocurrió un error al intentar cancelar el turno. Por favor, inténtelo de nuevo más tarde."
+		},
+		"pop_up": {
+			"cancel": {
+				"title": "¿Está seguro de que desea cancelar el turno?",
+				"confirm": "Cancelar turno"
+			},
+			"delete": {
+				"title": "¿Está seguro de que desea eliminar este turno de la lista?",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar turno"
+			},
+			"back": "Cancelar",
+			"unknown_patient": "Paciente desconocido",
+			"see_patient": "Ver paciente"
 		}
 	},
+	"date_format": "dd/MM/yyyy",
 	"next": "Siguiente",
 	"previous": "Anterior"
 }

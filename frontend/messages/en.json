@@ -222,8 +222,35 @@
 		"empty": {
 			"past": "You have no past appointments",
 			"future": "You have no upcoming appointments"
+		},
+		"taken": {
+			"success_title": "Appointment successfully taken!",
+			"success_message": "You have taken an appointment with {doctorName} on {day} of {month} at {startTime}.",
+			"error_title": "Error taking appointment",
+			"error_message": "An error occurred while trying to take the appointment. Please try again later."
+		},
+		"canceled": {
+			"success_title": "Appointment successfully canceled!",
+			"success_message": "You have canceled your appointment on {day} of {month} at {startTime}.",
+			"error_title": "Error canceling appointment",
+			"error_message": "An error occurred while trying to cancel the appointment. Please try again later."
+		},
+		"pop_up": {
+			"cancel": {
+				"title": "Are you sure you want to cancel the appointment?",
+				"confirm": "Cancel appointment"
+			},
+			"delete": {
+				"title": "Are you sure you want to delete this appointment from the list?",
+				"subtitle": "This action cannot be undone.",
+				"confirm": "Delete appointment"
+			},
+			"back": "Cancel",
+			"unknown_patient": "Unknown patient",
+			"see_patient": "See patient"
 		}
 	},
+	"date_format": "MM/dd/yyyy",
 	"next": "Next",
 	"previous": "Previous"
 }

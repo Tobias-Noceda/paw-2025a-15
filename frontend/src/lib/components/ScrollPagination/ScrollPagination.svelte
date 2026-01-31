@@ -34,6 +34,13 @@
 	}: Props = $props();
 
 	let entries = $state(initialItems.results);
+	let additionalEntries = $state<T[]>([]);
+
+	// Keep entries in sync with initialItems changes
+	$effect(() => {
+		// Reset entries when initialItems changes, preserving additional paginated items
+		entries = [...initialItems.results, ...additionalEntries];
+	});
 
 	let initialLoadComplete = $state(false);
 	let load = $state(false);
@@ -54,7 +61,8 @@
 
 		await nextFetchFunction(next)
 			.then((response) => {
-				entries.push(...response.results);
+				additionalEntries.push(...response.results);
+				entries = [...initialItems.results, ...additionalEntries];
 				next = response._links?.next;
 			})
 			.catch((e) => {
@@ -96,6 +104,7 @@
 		load: boolean;
 		done: boolean;
 		entries: T[];
+		additionalEntries: T[];
 		scrollY: number;
 	};
 
@@ -105,6 +114,7 @@
 			load,
 			done,
 			entries,
+			additionalEntries,
 			scrollY
 		} satisfies State);
 	});
@@ -117,6 +127,7 @@
 			load = data.load;
 			done = data.done;
 			entries = data.entries;
+			additionalEntries = data.additionalEntries;
 
 			setTimeout(() => (scrollY = data.scrollY), 500);
 		}

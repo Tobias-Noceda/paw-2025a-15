@@ -5,6 +5,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
+
+@NonEmptyBody
 public class NewPasswordSetDto {
     @NotNull
     @NotBlank

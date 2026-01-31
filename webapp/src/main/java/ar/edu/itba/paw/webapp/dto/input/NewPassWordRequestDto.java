@@ -4,7 +4,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 
+@NonEmptyBody
 public class NewPassWordRequestDto {
     @NotNull
     @NotBlank

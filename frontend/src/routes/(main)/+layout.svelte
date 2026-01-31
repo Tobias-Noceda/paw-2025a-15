@@ -109,7 +109,7 @@
 			</a>
 		{:else}
 			<button
-				class="user-btn {userDropdownOpen ? 'active' : ''} w-50"
+				class="user-btn {userDropdownOpen ? 'active' : ''} flex w-50 items-center justify-center"
 				onclick={() => {
 					userDropdownOpen = !userDropdownOpen;
 				}}

@@ -83,6 +83,20 @@ export async function login(e?: string, pass?: string): Promise<void> {
 	}
 }
 
+function getToken(): string | null {
+	if (tokens.access && expiration && new Date() <= expiration) {
+		return tokens.access;
+	} else if (tokens.refresh) {
+		return tokens.refresh;
+	} else {
+		if (!browser) {
+			throw error(401, 'Authentication required');
+		}
+		logout();
+		return null;
+	}
+}
+
 export async function get(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
 	let url;
 	try {
@@ -112,19 +126,7 @@ export async function get(path: string, options?: RequestInit, fetchFn: typeof f
 }
 
 export async function getAuth(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
-	let requestToken;
-	if (tokens.access && expiration && new Date() <= expiration) {
-		requestToken = tokens.access;
-	} else if (tokens.refresh) {
-		requestToken = tokens.refresh;
-	} else {
-		// On server-side, throw error instead of calling logout (which uses goto)
-		if (!browser) {
-			throw error(401, 'Authentication required');
-		}
-		logout();
-		throw error(401, 'Session expired');
-	}
+	const requestToken = getToken();
 
 	// get() already throws proper SvelteKit errors with status codes
 	const response = await get(
@@ -142,8 +144,8 @@ export async function getAuth(path: string, options?: RequestInit, fetchFn: type
 	return response;
 };
 
-export async function post(path: string, body: any, options?: RequestInit): Promise<Response> {
-	return await fetch(new URL(path, PUBLIC_API_ORIGIN), {
+export async function post(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
 		...options,
 		method: 'POST',
 		headers: {
@@ -154,19 +156,8 @@ export async function post(path: string, body: any, options?: RequestInit): Prom
 	});
 };
 
-export async function postAuth(path: string, body: any, options?: RequestInit): Promise<Response> {
-	let requestToken;
-	if (tokens.access && expiration && new Date() <= expiration) {
-		requestToken = tokens.access;
-	} else if (tokens.refresh) {
-		requestToken = tokens.refresh;
-	} else {
-		if (!browser) {
-			throw error(401, 'Authentication required');
-		}
-		logout();
-		throw error(401, 'Session expired');
-	}
+export async function postAuth(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
 
 	return await post(
 		path,
@@ -177,12 +168,13 @@ export async function postAuth(path: string, body: any, options?: RequestInit): 
 				...options?.headers,
 				Authorization: `Bearer ${requestToken}`
 			}
-		}
+		},
+		fetchFn
 	);
 };
 
-export async function put(path: string, body: any, options?: RequestInit): Promise<Response> {
-	return await fetch(new URL(path, PUBLIC_API_ORIGIN), {
+export async function put(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
 		...options,
 		method: 'PUT',
 		headers: {
@@ -193,19 +185,8 @@ export async function put(path: string, body: any, options?: RequestInit): Promi
 	});
 };
 
-export async function putAuth(path: string, body: any, options?: RequestInit): Promise<Response> {
-	let requestToken;
-	if (tokens.access && expiration && new Date() <= expiration) {
-		requestToken = tokens.access;
-	} else if (tokens.refresh) {
-		requestToken = tokens.refresh;
-	} else {
-		if (!browser) {
-			throw error(401, 'Authentication required');
-		}
-		logout();
-		throw error(401, 'Session expired');
-	}
+export async function putAuth(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
 
 	return await put(
 		path,
@@ -216,7 +197,63 @@ export async function putAuth(path: string, body: any, options?: RequestInit): P
 				...options?.headers,
 				Authorization: `Bearer ${requestToken}`
 			}
+		},
+		fetchFn
+	);
+};
+
+export async function patch(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			...options?.headers,
+		},
+		body: JSON.stringify(body)
+	});
+};
+
+export async function patchAuth(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	let requestToken = getToken();
+
+	return await patch(
+		path,
+		body,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+};
+
+export async function del(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'DELETE',
+		headers: {
+			...options?.headers,
 		}
+	});
+};
+
+export async function deleteAuth(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
+
+	return await del(
+		path,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
 	);
 };
 
