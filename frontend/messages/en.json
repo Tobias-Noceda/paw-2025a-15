@@ -206,6 +206,76 @@
 			}
 		}
 	},
+	"profile": {
+		"title": "My Profile",
+		"role": {
+			"label": "Role"
+		},
+		"save": {
+			"button": "Save changes"
+		},
+		"phone": {
+			"label": "Phone number"
+		},
+		"email": {
+			"lang": {
+				"label": "Email language"
+			}
+		},
+		"insurance": {
+			"label": "Insurance:",
+			"placeholder": "Select your insurance"
+		},
+		"insuranceNumber": {
+			"label": "Insurance number:",
+			"placeholder": "Enter your insurance number"
+		},
+		"keep": "I wish to keep my taken turns"
+	},
+	"profileInfo": {
+		"age": "Age:",
+		"bloodType": "Blood Type:",
+		"height": "Height (m):",
+		"weight": "Weight (kg):",
+		"smokes": "Smoking habit:",
+		"drinks": "Drinking habit:",
+		"meds": "Medications:",
+		"conditions": "Conditions:",
+		"allergies": "Allergies:",
+		"diet": "Diet:",
+		"hobbies": "Hobbies:",
+		"job": "Job:",
+		"basic": "Basic Details",
+		"habits": "Habits Details",
+		"social": "Social Details",
+		"medical": "Medical Details",
+		"select": "Select",
+		"yes": "Yes",
+		"no": "No",
+		"notProvided": "Not Provided"
+	},
+	"form": {
+		"birthDate": "Birth date:"
+	},
+	"role": {
+		"PATIENT": "Patient",
+		"DOCTOR": "Doctor",
+		"LABORATORY": "Laboratory",
+		"ADMIN": "Admin"
+	},
+	"locale": {
+		"ES_AR": "Español-(AR)",
+		"ES_US": "Español-(US)",
+		"EN_AR": "English",
+		"EN_US": "English-(US)"
+	},
+	"admin": {
+		"insurances": {
+			"button": {
+				"edit": "Edit"
+			}
+		}
+	},
 	"next": "Next",
 	"previous": "Previous"
 }

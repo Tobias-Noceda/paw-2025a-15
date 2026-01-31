@@ -206,6 +206,76 @@
 			"cancel": "Cancelar"
 		}
 	},
+	"profile": {
+		"title": "Mi Perfil",
+		"role": {
+			"label": "Rol"
+		},
+		"save": {
+			"button": "Guardar cambios"
+		},
+		"phone": {
+			"label": "Teléfono:"
+		},
+		"email": {
+			"lang": {
+				"label": "Idioma de los mails"
+			}
+		},
+		"insurance": {
+			"label": "Obra Social:",
+			"placeholder": "Seleccione su Obra Social"
+		},
+		"insuranceNumber": {
+			"label": "Número de afiliado:",
+			"placeholder": "Ingrese su número de afiliado"
+		},
+		"keep": "Deseo conservar mis turnos tomados con anterioridad"
+	},
+	"profileInfo": {
+		"age": "Edad",
+		"bloodType": "Tipo de sangre",
+		"height": "Altura (m):",
+		"weight": "Peso (kg):",
+		"smokes": "Fuma habitualmente:",
+		"drinks": "Bebe habitualmente:",
+		"meds": "Medicaciones:",
+		"conditions": "Condiciones:",
+		"allergies": "Alergias:",
+		"diet": "Dieta:",
+		"hobbies": "Hobbies:",
+		"job": "Trabajo:",
+		"basic": "Detalles Básicos",
+		"habits": "Detalles de Habitos",
+		"social": "Detalles Sociales",
+		"medical": "Detalles Médicos",
+		"select": "Seleccionar",
+		"yes": "Si",
+		"no": "No",
+		"notProvided": "No Provisto"
+	},
+	"form": {
+		"birthDate": "Fecha de nacimiento:"
+	},
+	"role": {
+		"PATIENT": "Paciente",
+		"DOCTOR": "Médico",
+		"LABORATORY": "Laboratorio",
+		"ADMIN": "Admin"
+	},
+	"locale": {
+		"ES_AR": "Español-(AR)",
+		"ES_US": "Español-(US)",
+		"EN_AR": "English",
+		"EN_US": "English-(US)"
+	},
+	"admin": {
+		"insurances": {
+			"button": {
+				"edit": "Editar"
+			}
+		}
+	},
 	"next": "Siguiente",
 	"previous": "Anterior"
 }
