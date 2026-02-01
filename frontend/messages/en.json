@@ -252,5 +252,58 @@
 	},
 	"date_format": "MM/dd/yyyy",
 	"next": "Next",
-	"previous": "Previous"
+	"previous": "Previous",
+	"vacations": {
+		"title": "Vacation Management",
+		"create": {
+			"title": "Add New Vacation",
+			"submit": "Create Vacation"
+		},
+		"table": {
+			"startDate": "Start Date",
+			"endDate": "End Date",
+			"actions": "Actions"
+		},
+		"past": {
+			"title": "Past Vacations",
+			"empty": "No past vacations on record"
+		},
+		"future": {
+			"title": "Future Vacations",
+			"empty": "No future vacations scheduled"
+		},
+		"created": {
+			"title": "Vacation created!",
+			"message": "The vacation has been successfully registered."
+		},
+		"deleted": {
+			"title": "Vacation deleted!",
+			"message": "The vacation has been successfully deleted."
+		},
+		"delete": {
+			"confirm": {
+				"title": "Delete vacation?",
+				"message": "Are you sure you want to delete the vacation from {startDate} to {endDate}?",
+				"button": "Delete"
+			}
+		},
+		"error": {
+			"startRequired": "Start date is required",
+			"endRequired": "End date is required",
+			"endBeforeStart": "End date must be after start date",
+			"pastDate": "Start date cannot be in the past",
+			"load": {
+				"title": "Loading error",
+				"message": "Could not load vacations. Please try again."
+			},
+			"create": {
+				"title": "Creation error",
+				"message": "Could not create the vacation. Please try again."
+			},
+			"delete": {
+				"title": "Deletion error",
+				"message": "Could not delete the vacation. Please try again."
+			}
+		}
+	}
 }

@@ -101,6 +101,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/**/vacations").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/doctors/**/vacations").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/doctors/**/vacations").authenticated()
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())
