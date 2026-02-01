@@ -252,5 +252,58 @@
 	},
 	"date_format": "dd/MM/yyyy",
 	"next": "Siguiente",
-	"previous": "Anterior"
+	"previous": "Anterior",
+	"vacations": {
+		"title": "Gestión de Vacaciones",
+		"create": {
+			"title": "Agregar Nueva Vacación",
+			"submit": "Crear Vacación"
+		},
+		"table": {
+			"startDate": "Fecha de Inicio",
+			"endDate": "Fecha de Fin",
+			"actions": "Acciones"
+		},
+		"past": {
+			"title": "Vacaciones Pasadas",
+			"empty": "No hay vacaciones pasadas registradas"
+		},
+		"future": {
+			"title": "Vacaciones Futuras",
+			"empty": "No hay vacaciones futuras programadas"
+		},
+		"created": {
+			"title": "¡Vacación creada!",
+			"message": "La vacación ha sido registrada exitosamente."
+		},
+		"deleted": {
+			"title": "¡Vacación eliminada!",
+			"message": "La vacación ha sido eliminada exitosamente."
+		},
+		"delete": {
+			"confirm": {
+				"title": "¿Eliminar vacación?",
+				"message": "¿Está seguro de que desea eliminar la vacación del {startDate} al {endDate}?",
+				"button": "Eliminar"
+			}
+		},
+		"error": {
+			"startRequired": "La fecha de inicio es requerida",
+			"endRequired": "La fecha de fin es requerida",
+			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
+			"pastDate": "La fecha de inicio no puede ser en el pasado",
+			"load": {
+				"title": "Error al cargar",
+				"message": "No se pudieron cargar las vacaciones. Por favor, intente de nuevo."
+			},
+			"create": {
+				"title": "Error al crear",
+				"message": "No se pudo crear la vacación. Por favor, intente de nuevo."
+			},
+			"delete": {
+				"title": "Error al eliminar",
+				"message": "No se pudo eliminar la vacación. Por favor, intente de nuevo."
+			}
+		}
+	}
 }
