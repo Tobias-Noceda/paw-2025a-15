@@ -24,20 +24,6 @@ public class PatientDTO {
     private BigDecimal weight;
     private String insuranceNumber;
 
-    //MEDICAL
-    private String meds;
-    private String conditions;
-    private String allergies;
-
-    //HABITS
-    private Boolean smokes;
-    private Boolean drinks;
-    private String diet;
-
-    //SOCIAL
-    private String hobbies;
-    private String job;
-
     private LinkDTO links;
 
     public static Function<Patient, PatientDTO> mapper(final UriInfo uriInfo){
@@ -54,14 +40,6 @@ public class PatientDTO {
         if(patient.getBloodType()!=null) dto.setBloodtype(patient.getBloodType().getName());
         dto.setHeight(patient.getHeight());
         dto.setWeight(patient.getWeight());
-        dto.setSmokes(patient.getSmokes());
-        dto.setDrinks(patient.getDrinks());
-        dto.setMeds(patient.getMeds());
-        dto.setConditions(patient.getConditions());
-        dto.setAllergies(patient.getAllergies());
-        dto.setDiet(patient.getDiet());
-        dto.setHobbies(patient.getHobbies());
-        dto.setJob(patient.getJob());
         dto.setInsuranceNumber(patient.getInsuranceNumber());
 
         URI insurance = null;
@@ -69,9 +47,15 @@ public class PatientDTO {
         URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
         URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
+        URI medicalInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("medicalInfo").build();
+        URI socialInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("socialInfo").build();
+        URI habitsInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("habitsInfo").build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
+            .setMedicalInfo(medicalInfo)
+            .setSocialInfo(socialInfo)
+            .setHabitsInfo(habitsInfo)
             .setImage(picture)
             .setInsurance(insurance)
             .setDoctors(doctors)
@@ -134,70 +118,6 @@ public class PatientDTO {
 
     public void setWeight(BigDecimal weight){
         this.weight = weight;
-    }
-
-    public Boolean getSmokes(){
-        return smokes;
-    }
-
-    public void setSmokes(Boolean smokes){
-        this.smokes = smokes;
-    }
-
-    public Boolean getDrinks(){
-        return drinks;
-    }
-
-    public void setDrinks(Boolean drinks){
-        this.drinks = drinks;
-    }
-
-    public String getMeds(){
-        return meds;
-    }
-
-    public void setMeds(String meds){
-        this.meds = meds;
-    }
-
-    public String getConditions(){
-        return conditions;
-    }
-
-    public void setConditions(String conditions){
-        this.conditions = conditions;
-    }
-
-    public String getAllergies(){
-        return allergies;
-    }
-
-    public void setAllergies(String allergies){
-        this.allergies = allergies;
-    }
-
-    public String getDiet(){
-        return diet;
-    }
-
-    public void setDiet(String diet){
-        this.diet = diet;
-    }
-
-    public String getHobbies(){
-        return hobbies;
-    }
-
-    public void setHobbies(String hobbies){
-        this.hobbies = hobbies;
-    }
-
-    public String getJob(){
-        return job;
-    }
-
-    public void setJob(String job){
-        this.job = job;
     }
 
     public String getInsuranceNumber(){

@@ -29,21 +29,27 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.DoctorService;
-import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
+import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.PatientCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.PatientEditDTO;
+import ar.edu.itba.paw.webapp.dto.input.PatientEditHabitsInfoDTO;
+import ar.edu.itba.paw.webapp.dto.input.PatientEditMedicalInfoDTO;
+import ar.edu.itba.paw.webapp.dto.input.PatientEditSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.input.StudyCreateDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientDTO;
+import ar.edu.itba.paw.webapp.dto.output.PatientHabitsInfoDTO;
+import ar.edu.itba.paw.webapp.dto.output.PatientMedicalInfoDTO;
+import ar.edu.itba.paw.webapp.dto.output.PatientSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
 import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/patients")
 @Component
@@ -58,14 +64,11 @@ public class PatientController {
     @Autowired
     private StudyService ss;
 
-    @Autowired
-    private FileService fs;
-
     @Context
     private UriInfo uriInfo;
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT)
     public Response listPatients(
         @QueryParam("doctorId") final Long doctorId,
         @QueryParam("name") final String name,
@@ -92,8 +95,7 @@ public class PatientController {
     }
 
     @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PATIENT)
     public Response createPatient(@Valid PatientCreateDTO dto) {
         final Patient patient = ps.createPatient(
             dto.getEmail(), dto.getPassword(), 
@@ -118,27 +120,105 @@ public class PatientController {
     @Path("/{id:\\d+}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response edit(
+    public Response editPatient(
         @PathParam("id") long id,
         @Valid PatientEditDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         ps.updatePatient(
-            patient, dto.getTelephone(), 
+            patient, 
+            dto.getTelephone(), 
             dto.getPictureId(), 
             dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
             dto.getBirthDate(), dto.getBloodtype(), 
             BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight()), 
-            dto.getSmokes(), 
-            dto.getDrinks(), 
+            null, null, null, null, null, null, null, null, 
+            dto.getInsuranceId(), 
+            dto.getInsuranceNumber()
+        );
+        return Response.ok().build();
+    }
+
+    /*========================= INFO =========================*/
+
+    @GET
+    @Path("/{id:\\d+}/medicalInfo")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getPatientMedicalInfoById(@PathParam("id") final long id) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, patient)).build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}/medicalInfo")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response editPatientMedicalInfo(
+        @PathParam("id") long id,
+        @Valid PatientEditMedicalInfoDTO dto
+    ) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        ps.updatePatient(
+            patient, null, null, null, null, null, null, null, null, null, 
             dto.getMeds(), 
             dto.getConditions(), 
             dto.getAllergies(), 
-            dto.getDiet(), dto.getHobbies(), 
-            dto.getJob(), 
-            dto.getInsuranceId(), 
-            dto.getInsuranceNumber()
+            null, null, null, null, null
+        );
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/{id:\\d+}/socialInfo")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getPatientSocialInfoById(@PathParam("id") final long id) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, patient)).build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}/socialInfo")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response editPatientSocialInfo(
+        @PathParam("id") long id,
+        @Valid PatientEditSocialInfoDTO dto
+    ) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        ps.updatePatient(
+            patient, null, null, null, null, null, null, null, null, null, null, null, null, 
+            null, 
+            dto.getHobbies(),
+            dto.getJob(), null, null
+        );
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/{id:\\d+}/habitsInfo")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getPatientHabitsInfoById(@PathParam("id") final long id) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, patient)).build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}/habitsInfo")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response editPatientHabitsInfo(
+        @PathParam("id") long id,
+        @Valid PatientEditHabitsInfoDTO dto
+    ) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        ps.updatePatient(
+            patient, null, null, null, null, null, null, null,
+            dto.getSmokes(), 
+            dto.getDrinks(), 
+            null, null, null, 
+            dto.getDiet(), 
+            null, null, null, null
         );
         return Response.ok().build();
     }
@@ -192,22 +272,18 @@ public class PatientController {
         final Study study = ss.create(
             StudyTypeEnum.fromDisplayName(dto.getType()), 
             dto.getComment(), 
-            dto.getFiles().stream().map(this::extractIdFromUri).collect(Collectors.toList()), 
+            URIHelper.getIds(
+                dto.getFiles(), 
+                uriInfo.getBaseUriBuilder()
+                    .path(FileController.class)
+                    .build()
+            ), 
             id, 
             id,//TODO se podra obtener del auth capaz?
             dto.getStudyDate()
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(study.getId())).build();
         return Response.created(uri).build();
-    }
-
-    private Long extractIdFromUri(URI uri) {
-        String path = uri.getPath(); // "/files/123"
-        try {
-            return Long.parseLong(path.substring(path.lastIndexOf('/') + 1));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid file URI: " + uri);
-        }
     }
 
     @GET
@@ -217,7 +293,7 @@ public class PatientController {
         @PathParam("id") final long id,
         @PathParam("studyId") final long studyId
     ) {
-        Study study = ss.getStudyById(27).orElseThrow(NotFoundException::new);
+        Study study = ss.getStudyById(studyId).orElseThrow(NotFoundException::new);
         return Response.ok(StudyDTO.fromStudy(uriInfo, study)).build();
     }
 

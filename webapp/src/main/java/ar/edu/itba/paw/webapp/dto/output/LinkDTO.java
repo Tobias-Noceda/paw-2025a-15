@@ -11,6 +11,9 @@ public class LinkDTO {
     private URI doctor;
     private URI doctors;
     private URI patient;
+    private URI medicalInfo;
+    private URI socialInfo;
+    private URI habitsInfo;
     private URI uploader;
     private URI authDoctors;
     private URI schedule;
@@ -122,6 +125,33 @@ public class LinkDTO {
 
     public LinkDTO setFreeAppointments(URI freeAppointments) {
         this.freeAppointments = freeAppointments;
+        return this;
+    }
+
+    public URI getMedicalInfo() {
+        return medicalInfo;
+    }
+
+    public LinkDTO setMedicalInfo(URI medicalInfo) {
+        this.medicalInfo = medicalInfo;
+        return this;
+    }
+
+    public URI getSocialInfo() {
+        return socialInfo;
+    }
+
+    public LinkDTO setSocialInfo(URI socialInfo) {
+        this.socialInfo = socialInfo;
+        return this;
+    }
+
+    public URI getHabitsInfo() {
+        return habitsInfo;
+    }
+
+    public LinkDTO setHabitsInfo(URI habitsInfo) {
+        this.habitsInfo = habitsInfo;
         return this;
     }
 }

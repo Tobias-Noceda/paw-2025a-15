@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,28 +35,6 @@ public class PatientEditDTO {
 
     @Range(min = 0, max = 300)
     private Double weight;
-
-    private Boolean smokes;
-
-    private Boolean drinks;
-
-    @Size(max = 250)
-    private String meds;
-
-    @Size(max = 250)
-    private String conditions;
-
-    @Size(max = 250)
-    private String allergies;
-
-    @Size(max = 100)
-    private String diet;
-
-    @Size(max = 100)
-    private String hobbies;
-
-    @Size(max = 50)
-    private String job;
 
     private Long insuranceId;
 
@@ -118,70 +95,6 @@ public class PatientEditDTO {
 
     public void setWeight(Double weight) { 
         this.weight = weight; 
-    }
-
-    public Boolean getSmokes() {
-        return smokes;
-    }
-
-    public void setSmokes(Boolean smokes) {
-        this.smokes = smokes;
-    }
-
-    public Boolean getDrinks() {
-        return drinks;
-    }
-
-    public void setDrinks(Boolean drinks) {
-        this.drinks = drinks;
-    }
-
-    public String getMeds() {
-        return meds;
-    }
-
-    public void setMeds(String meds) {
-        this.meds = meds;
-    }
-
-    public String getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(String conditions) {
-        this.conditions = conditions;
-    }
-
-    public String getAllergies() {
-        return allergies;
-    }
-
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
-    }
-
-    public String getDiet() {
-        return diet;
-    }
-
-    public void setDiet(String diet) {
-        this.diet = diet;
-    }
-
-    public String getHobbies() {
-        return hobbies;
-    }
-
-    public void setHobbies(String hobbies) {
-        this.hobbies = hobbies;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
     }
 
     public Long getInsuranceId() {

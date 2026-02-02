@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.dto.input;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -8,11 +7,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
-import ar.edu.itba.paw.webapp.form.constraints.ValidStudyFile;
 
 public class StudyCreateDTO {
 
@@ -24,8 +22,9 @@ public class StudyCreateDTO {
     private String comment;
 
     @NotNull
-    @ValidStudyFile
-    private List<URI> files;
+    //@ValidStudyFile TODO
+    @Size(min = 1)
+    private List<@URL(protocol = "http")String> files;
 
     @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -47,11 +46,11 @@ public class StudyCreateDTO {
         this.comment = comment;
     }
 
-    public List<URI> getFiles(){
+    public List<String> getFiles(){
         return files;
     }
 
-    public void setFiles(List<URI> files){
+    public void setFiles(List<String> files){
         this.files = files;
     }
 
