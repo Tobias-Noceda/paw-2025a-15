@@ -84,19 +84,17 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     }
 
     @Override
-    public int getActiveShiftsByDoctorIdCount(long doctorId) {
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId) {
         Doctor doctor = em.find(Doctor.class, doctorId);
-        if(doctor==null) return 0;
-        TypedQuery<Long> query = em.createQuery(
+        TypedQuery<DoctorSingleShift> query = em.createQuery(
             """
-                SELECT count(dss)
                 FROM DoctorSingleShift dss 
                 WHERE dss.doctor = :doctor 
                 AND dss.isActive = true
             """, 
-            Long.class);
+            DoctorSingleShift.class);
         query.setParameter("doctor", doctor);
-        return query.getSingleResult().intValue();
+        return query.getResultList();
     }
 
     @Override
@@ -115,5 +113,21 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         query.setFirstResult(offset);
         query.setMaxResults(pageSize);
         return query.getResultList();
-    } 
+    }
+
+    @Override
+    public int getActiveShiftsByDoctorIdCount(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
+        TypedQuery<Long> query = em.createQuery(
+            """
+                SELECT count(dss)
+                FROM DoctorSingleShift dss 
+                WHERE dss.doctor = :doctor 
+                AND dss.isActive = true
+            """, 
+            Long.class);
+        query.setParameter("doctor", doctor);
+        return query.getSingleResult().intValue();
+    }
 }

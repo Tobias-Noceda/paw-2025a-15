@@ -141,24 +141,15 @@ public class DoctorController {
     @Path("/{id:\\d+}/shifts")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response listShifts(
-        @PathParam("id") Integer doctorId,
-        @QueryParam("page") @DefaultValue("1") Integer page,
-        @QueryParam("pageSize") @DefaultValue("100") Integer pageSize
+        @PathParam("id") Integer doctorId
     ) {
-        Map<String, String> queryParams = new HashMap<>();
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {
+            throw new NotFoundException();
+        }
 
-        if (doctorId != null) queryParams.put("id", doctorId.toString());
-
-        List<ShiftDTO> shifts = dss.getActiveShiftsByDoctorIdPage(doctorId, page, pageSize)
+        List<ShiftDTO> shifts = dss.getActiveShiftsByDoctorId(doctorId)
             .stream().map(ShiftDTO.mapper(uriInfo)).collect(Collectors.toList());
 
-        return PaginationBuilder.buildResponse(
-            Response.ok(new GenericEntity<List<ShiftDTO>>(shifts) {}),
-            page,
-            pageSize,
-            dss.getActiveShiftsByDoctorIdCount(doctorId),
-            queryParams,
-            uriInfo
-        );
+        return Response.ok(new GenericEntity<List<ShiftDTO>>(shifts) {}).build();
     }
 }

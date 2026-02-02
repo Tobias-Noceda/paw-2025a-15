@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.models.enums;
 
-public enum AppointmentStatus {
+public enum AppointmentStatusEnum {
     FREE("Free"),
     TAKEN("Taken"),
     COMPLETED("Completed");
 
     private final String displayName;
 
-    AppointmentStatus(String displayName) {
+    AppointmentStatusEnum(String displayName) {
         this.displayName = displayName;
     }
 
@@ -15,8 +15,8 @@ public enum AppointmentStatus {
         return displayName;
     }
 
-    public static AppointmentStatus fromString(String status) {
-        for (AppointmentStatus s : AppointmentStatus.values()) {
+    public static AppointmentStatusEnum fromString(String status) {
+        for (AppointmentStatusEnum s : AppointmentStatusEnum.values()) {
             if (s.displayName.equalsIgnoreCase(status)) {
                 return s;
             }

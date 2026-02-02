@@ -19,6 +19,6 @@ public class TakenAppointmentValidator implements ConstraintValidator<TakenAppoi
 
     @Override
     public boolean isValid(AppointmentForm form, ConstraintValidatorContext context) {
-        return !as.getAppointmentByShiftIdDateAndTime(form.getShiftId(), form.getDate(), form.getStartTime(), form.getEndTime()).isEmpty();
+        return as.getAppointmentByShiftIdDateAndTime(form.getShiftId(), form.getDate(), form.getStartTime(), form.getEndTime()) == null;
     }
 }

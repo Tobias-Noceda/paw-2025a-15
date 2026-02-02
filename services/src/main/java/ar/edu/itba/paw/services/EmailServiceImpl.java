@@ -305,7 +305,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("imageSource", baseURL + "resources/icono.jpg");
         templateModel.put("userName", user.getName());
 
-        String recoveryLink = baseURL + "change-password/" + token + "/" + user.getId();
+        String recoveryLink = baseURL + "change-password/" + token;
         templateModel.put("recoveryLink", recoveryLink);
 
         Locale locale = user.getLocale().toLocale();

@@ -18,6 +18,8 @@ public class LinkDTO {
     private URI authDoctors;
     private URI schedule;
     private URI freeAppointments;
+    private URI pastAppointments;
+    private URI futureAppointments;
     private URI files;
 
     public URI getSelf() {
@@ -125,6 +127,24 @@ public class LinkDTO {
 
     public LinkDTO setFreeAppointments(URI freeAppointments) {
         this.freeAppointments = freeAppointments;
+        return this;
+    }
+
+    public URI getPastAppointments() {
+        return pastAppointments;
+    }
+
+    public LinkDTO setPastAppointments(URI pastAppointments) {
+        this.pastAppointments = pastAppointments;
+        return this;
+    }
+
+    public URI getFutureAppointments() {
+        return futureAppointments;
+    }
+
+    public LinkDTO setFutureAppointments(URI futureAppointments) {
+        this.futureAppointments = futureAppointments;
         return this;
     }
 

@@ -29,6 +29,10 @@
 		 * The error component to render if an error occurs.
 		 */
 		error?: Snippet;
+		/**
+		 * The class for container.
+		 */
+		class?: string;
 	}
 
 	let {
@@ -37,6 +41,7 @@
 		children,
 		loading,
 		error,
+		class: containerClass
 	}: Props = $props();
 
     const ammountClass = cn(
@@ -47,7 +52,6 @@
 
 	let entries = $state([] as T[]);
 
-	let initialLoadComplete = $state(false);
 	let load = $state(true);
 	let done = $state(false);
 	let erro = $state(false);
@@ -104,7 +108,6 @@
 			}
 			
             load = false;
-			initialLoadComplete = true;
 		});
 	});
 
@@ -145,18 +148,20 @@
 
 <svelte:window bind:scrollY />
 
-{#each entries as e, i}
-	{@render children(e, i)}
-{/each}
+<div class={containerClass}>
+	{#each entries as e, i}
+		{@render children(e, i)}
+	{/each}
 
-{#if load}
-	{@render loading()}
-{/if}
+	{#if load}
+		{@render loading()}
+	{/if}
 
-{#if erro && error}
-	{@render error()}
-{/if}
+	{#if erro && error}
+		{@render error()}
+	{/if}
 
+</div>
 {#if totalPages > 0}
 	<div class="flex w-full h-fit justify-center items-center my-2 gap-2">
 		<Button variant="secondary" class="text-sm!" disabled={first === undefined} onclick={() => getPage(first!)}>&laquo;</Button>

@@ -88,6 +88,7 @@ body {
     min-height: calc(100vh - 110px);
     align-items: stretch;
     box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .page-division {

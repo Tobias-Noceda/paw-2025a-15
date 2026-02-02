@@ -86,11 +86,7 @@ public class JwtTokenUtil {
     public Session create(final User user) {
         LOGGER.debug("Creating token for user: {}", user.getEmail());
         
-        final String refresh = Jwts.builder()
-                .subject(user.getEmail())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRY_TIME))
-                .signWith(key, alg).compact();
+        final String refresh = createMailToken(user.getEmail(), REFRESH_EXPIRY_TIME);
 
         final String access = createAccessToken(user);
 
@@ -129,6 +125,14 @@ public class JwtTokenUtil {
 
         LOGGER.debug("Created access token: {}", access);
         return access;
+    }
+
+    public String createMailToken(final String email, final long expiryTime) {
+        return Jwts.builder()
+                .subject(email)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiryTime))
+                .signWith(key, alg).compact();
     }
 
     public record SessionInfo(UserDetails user, boolean isAccess, boolean expired) {

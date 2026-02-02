@@ -7,7 +7,7 @@
     skeleton?: boolean;
     disabled?: boolean;
     children: Snippet;
-    onclick: () => void;
+    onclick: (event: MouseEvent) => void;
     class?: string;
   }
 

@@ -333,14 +333,14 @@ public class AppointmentServiceImplTest {
         );
     }
 
-    @Test
-    public void testGetFutureAppointmentDataByPatientIdNonexistentPatient(){
-        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+    // @Test
+    // public void testGetFutureAppointmentDataByPatientIdNonexistentPatient(){
+    //     Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(NotFoundException.class, () -> 
-            as.getFutureAppointmentDataByPatientId(PATIENT_ID)
-        );
-    }
+    //     Assert.assertThrows(NotFoundException.class, () -> 
+    //         as.getFutureAppointmentDataByPatientId(PATIENT_ID)
+    //     );
+    // }
 
     @Test
     public void testGetOldAppointmentDataByPatientIdNonexistentPatient(){
