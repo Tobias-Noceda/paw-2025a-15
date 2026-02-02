@@ -110,7 +110,7 @@ public class PatientController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT)
     public Response getPatientById(@PathParam("id") final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
@@ -118,8 +118,8 @@ public class PatientController {
 
     @PATCH
     @Path("/{id:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PATIENT)
+    @Produces(value = MediaType.APPLICATION_JSON)//TODO patch produce??
     public Response editPatient(
         @PathParam("id") long id,
         @Valid PatientEditDTO dto
@@ -144,7 +144,7 @@ public class PatientController {
 
     @GET
     @Path("/{id:\\d+}/medicalInfo")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
     public Response getPatientMedicalInfoById(@PathParam("id") final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, patient)).build();
@@ -152,8 +152,7 @@ public class PatientController {
 
     @PATCH
     @Path("/{id:\\d+}/medicalInfo")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
     public Response editPatientMedicalInfo(
         @PathParam("id") long id,
         @Valid PatientEditMedicalInfoDTO dto
@@ -171,7 +170,7 @@ public class PatientController {
 
     @GET
     @Path("/{id:\\d+}/socialInfo")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
     public Response getPatientSocialInfoById(@PathParam("id") final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, patient)).build();
@@ -179,8 +178,7 @@ public class PatientController {
 
     @PATCH
     @Path("/{id:\\d+}/socialInfo")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
     public Response editPatientSocialInfo(
         @PathParam("id") long id,
         @Valid PatientEditSocialInfoDTO dto
@@ -197,7 +195,7 @@ public class PatientController {
 
     @GET
     @Path("/{id:\\d+}/habitsInfo")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT_HABITSINFO)
     public Response getPatientHabitsInfoById(@PathParam("id") final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, patient)).build();
@@ -205,8 +203,7 @@ public class PatientController {
 
     @PATCH
     @Path("/{id:\\d+}/habitsInfo")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PATIENT_HABITSINFO)
     public Response editPatientHabitsInfo(
         @PathParam("id") long id,
         @Valid PatientEditHabitsInfoDTO dto
@@ -227,7 +224,7 @@ public class PatientController {
 
     @GET
     @Path("/{id:\\d+}/studies")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response listStudies(
         @PathParam("id") final long id,
         @QueryParam("doctorId") final Long doctorId,
@@ -263,8 +260,7 @@ public class PatientController {
 
     @POST
     @Path("/{id:\\d+}/studies")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response createStudy(
         @PathParam("id") final long id,
         @Valid StudyCreateDTO dto
@@ -288,7 +284,7 @@ public class PatientController {
 
     @GET
     @Path("/{id:\\d+}/studies/{studyId:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response getStudyById(
         @PathParam("id") final long id,
         @PathParam("studyId") final long studyId

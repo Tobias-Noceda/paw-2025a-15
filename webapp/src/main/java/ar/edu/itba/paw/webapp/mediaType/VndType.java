@@ -7,5 +7,13 @@ public class VndType {
     }
 
     public static final String APPLICATION_PATIENT = "application/vnd.patients.v1+json";
+
+    public static final String APPLICATION_PATIENT_SOCIALINFO = "application/vnd.patients.socialInfo.v1+json";
+
+    public static final String APPLICATION_PATIENT_HABITSINFO = "application/vnd.patients.habitsInfo.v1+json";
+
+    public static final String APPLICATION_PATIENT_MEDICALINFO = "application/vnd.patients.medicalInfo.v1+json";
+
+    public static final String APPLICATION_PATIENT_STUDY = "application/vnd.patients.studies.v1+json";
     
 }
