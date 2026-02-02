@@ -13,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -34,6 +33,7 @@ import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
 import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
 import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/doctors")
 @Component
@@ -58,7 +58,7 @@ public class DoctorController {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
     public Response listDoctors(
         @QueryParam("studyId") Long studyId,
         @QueryParam("patientId") Long patientId,
@@ -129,7 +129,7 @@ public class DoctorController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
     public Response getDoctorById(@PathParam("id") Integer doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
         return Response.ok(DoctorDTO.fromDoctor(uriInfo, doctor)).build();
@@ -139,7 +139,7 @@ public class DoctorController {
 
     @GET
     @Path("/{id:\\d+}/shifts")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
     public Response listShifts(
         @PathParam("id") Integer doctorId,
         @QueryParam("page") @DefaultValue("1") Integer page,

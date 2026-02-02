@@ -35,6 +35,7 @@ import ar.edu.itba.paw.webapp.dto.input.InsuranceCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.InsuranceDTO;
 import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/insurances")
 @Component
@@ -50,7 +51,7 @@ public class InsuranceController {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response listInsurances(
         @QueryParam("supportedBy") final Long doctorId,
         @QueryParam("page") @DefaultValue("1") final int page,
@@ -90,8 +91,7 @@ public class InsuranceController {
     }
 
     @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_INSURANCE)
     public Response createInsurance(@Valid InsuranceCreateDTO dto) {
         File picture = fs.findById(dto.getPictureId()).orElseThrow(NotFoundException::new);
         final Insurance insurance = is.create(dto.getName(), picture);
@@ -101,7 +101,7 @@ public class InsuranceController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response getInsuranceById(@PathParam("id") final long id) {
         Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
@@ -109,8 +109,8 @@ public class InsuranceController {
 
     @PATCH
     @Path("/{id:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_INSURANCE)
+    @Produces(value = MediaType.APPLICATION_JSON)//TODO patch produces??
     public Response editInsurance(
         @PathParam("id") long id,
         @Valid InsuranceEditDTO dto

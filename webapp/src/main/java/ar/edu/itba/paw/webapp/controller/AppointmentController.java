@@ -13,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -25,6 +24,7 @@ import ar.edu.itba.paw.models.enums.AppointmentStatus;
 import ar.edu.itba.paw.webapp.controller.util.DatePaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.output.AppointmentDTO;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 
 @Path("/appointments")
@@ -40,7 +40,7 @@ public class AppointmentController {
     private static final ZoneId ARGENTINA_ZONE = ZoneId.of("America/Argentina/Buenos_Aires");
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response listAppointments(
         @QueryParam("doctorId") Long doctorId,
         @QueryParam("patientId") Long patientId,
