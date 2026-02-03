@@ -8,8 +8,6 @@ import java.util.function.Function;
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Patient;
-import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
-import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
@@ -63,8 +61,6 @@ public class PatientDTO {
             .setImage(picture)
             .setInsurance(insurance)
             .setDoctors(doctors)
-            .setPastAppointments(pastAppointments)
-            .setFutureAppointments(futureAppointments)
         );
 
         return dto;
