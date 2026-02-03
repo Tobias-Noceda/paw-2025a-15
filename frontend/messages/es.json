@@ -184,6 +184,17 @@
 			"license": "Matrícula",
 			"schedule": "Atiende"
 		},
+		"details": {
+			"specialty": {
+				"label": "Especialidad:"
+			}
+		},
+		"profile": {
+			"insurance": {
+				"label": "Obras Sociales:"
+			},
+			"updateSchedule": "¿Desea actualizar sus horarios?"
+		},
 		"table": {
 			"day": "Día",
 			"time": "Horario"

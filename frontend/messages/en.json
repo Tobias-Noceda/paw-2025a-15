@@ -184,6 +184,17 @@
 			"license": "License",
 			"schedule": "Availability"
 		},
+		"details": {
+			"specialty": {
+				"label": "Specialty:"
+			}
+		},
+		"profile": {
+			"insurance": {
+				"label": "Insurances:"
+			},
+			"updateSchedule": "Do you want to update your schedule?"
+		},
 		"table": {
 			"day": "Weekday",
 			"time": "Time"

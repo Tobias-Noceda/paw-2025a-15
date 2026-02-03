@@ -1,15 +1,23 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import Button from '$components/Button/Button.svelte';
+	import Chip from '$components/Chip/Chip.svelte';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
 	import Input from '$components/Input/Input.svelte';
 	import Select from '$components/Select/Select.svelte';
+	import Switch from '$components/Switch/Switch.svelte';
 	import { m } from '$lib/paraglide/messages';
+	import { user } from '$lib/stores/user';
+	import { baseApiUrl, type Profile } from '$types/api';
+	import { getSpecialtyLabel, Specialties } from '$types/enums/specialties';
 
 	const languageOptions = [
-		{ value: 'es-AR', label: m['locale.ES_AR']() },
-		{ value: 'en-US', label: m['locale.EN_US']() }
+		{ value: 'ES_AR', label: m['locale.ES_AR']() },
+		{ value: 'ES_US', label: m['locale.ES_US']() },
+		{ value: 'EN_AR', label: m['locale.EN_AR']() },
+		{ value: 'EN_US', label: m['locale.EN_US']() }
 	];
 
 	const bloodTypeOptions = [
@@ -34,35 +42,94 @@
 		{ value: 'Galeno', label: 'Galeno' }
 	];
 
-	let fullName = $state('Manuel Santamarina');
-	let email = $state('manuelsantamarina03@gmail.com');
-	let role = $state('PATIENT');
+	let fullName = $state('');
+	let email = $state('');
+	let role = $state('');
+	let avatarSrc = $state('');
 
-	let telephone = $state('01157407765');
-	let mailLanguage = $state('en-US');
-	let birthDate: Date | null = $state(new Date('2003-07-27'));
-	let bloodType = $state('AB-');
-	let height = $state('1.75');
-	let weight = $state('79.12');
-	let insurance = $state('OSDE');
-	let insuranceNumber = $state('311133341');
+	let telephone = $state('');
+	let mailLanguage = $state('EN_US');
+	let birthDate: Date | null = $state(null);
+	let bloodType = $state('');
+	let height = $state('');
+	let weight = $state('');
+	let insurance = $state('');
+	let insuranceNumber = $state('');
 
-	let smokes = $state('yes');
-	let drinks = $state('no');
-	let diet = $state('como sano');
+	let smokes = $state('');
+	let drinks = $state('');
+	let diet = $state('');
 
-	let meds = $state('paracetamol todos los dias');
+	let meds = $state('');
 	let conditions = $state('');
 	let allergies = $state('');
 
-	let hobbies = $state('juego al futbol');
-	let job = $state('ingeniero informatico (ojala)');
+	let hobbies = $state('');
+	let job = $state('');
+	let licence = $state('');
+	let specialty = $state('');
+	let doctorInsurances = $state<string[]>([]);
+	let address = $state('');
+	let updateSchedule = $state(false);
+
+	const message = (key: string) => {
+		const fn = (m as Record<string, (() => string) | undefined>)[key];
+		return typeof fn === 'function' ? fn() : '';
+	};
+
+	const roleLabel = $derived(role ? message(`role.${role}`) : '');
+
+	const toYesNo = (value?: boolean | null) => {
+		if (value === true) return 'yes';
+		if (value === false) return 'no';
+		return '';
+	};
+
+	onMount(async () => {
+		if ($user !== 'patient' && $user !== 'doctor') {
+			return;
+		}
+
+		try {
+			const response = await fetch(`${baseApiUrl}/profile`);
+			if (!response.ok) return;
+			const data: Profile = await response.json();
+
+			fullName = data.name ?? '';
+			email = data.email ?? '';
+			role = data.role ?? '';
+			avatarSrc = data.links?.image ?? '';
+			telephone = data.telephone ?? '';
+			mailLanguage = data.mailLanguage ?? 'EN_US';
+			birthDate = data.birthdate ? new Date(data.birthdate) : null;
+			bloodType = data.bloodtype ?? '';
+			height = data.height != null ? String(data.height) : '';
+			weight = data.weight != null ? String(data.weight) : '';
+			smokes = toYesNo(data.smokes);
+			drinks = toYesNo(data.drinks);
+			meds = data.meds ?? '';
+			conditions = data.conditions ?? '';
+			allergies = data.allergies ?? '';
+			diet = data.diet ?? '';
+			hobbies = data.hobbies ?? '';
+			job = data.job ?? '';
+			insurance = data.insuranceName ?? '';
+			insuranceNumber = data.insuranceNumber ?? '';
+			licence = data.licence ?? '';
+			specialty = data.specialty ?? '';
+			doctorInsurances = data.insurances ?? [];
+			address = data.address ?? '';
+		} catch (error) {
+			console.error('Failed to fetch profile:', error);
+		}
+	});
 </script>
 
+{#if $user === 'patient'}
 <div class="profile-page">
 	<div class="card bg-white profile-summary">
 		<div class="profile-avatar">
-			<Avatar size="xl" class="bg-primary" />
+			<Avatar size="xl" src={avatarSrc} class="bg-primary" />
 			<button class="edit-avatar-btn" type="button" aria-label={m['admin.insurances.button.edit']()}>
 				<Icon name="edit" class="w-3.5 h-3.5 text-white" />
 			</button>
@@ -71,7 +138,7 @@
 			<h1 class="text-[1.4rem] font-semibold text-primaryText">{fullName}</h1>
 			<p class="text-secondaryText">{email}</p>
 			<p class="text-secondaryText">
-				<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span> {m[`role.${role}`]()}
+				<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span> {roleLabel}
 			</p>
 		</div>
 	</div>
@@ -144,6 +211,71 @@
 		</div>
 	</div>
 </div>
+{:else if $user === 'doctor'}
+<div class="profile-page">
+	<div class="card bg-white profile-summary">
+		<div class="profile-avatar">
+			<Avatar size="xl" src={avatarSrc} class="bg-primary" />
+			<button class="edit-avatar-btn" type="button" aria-label={m['admin.insurances.button.edit']()}>
+				<Icon name="edit" class="w-3.5 h-3.5 text-white" />
+			</button>
+		</div>
+		<div class="profile-info">
+			<h1 class="text-[1.4rem] font-semibold text-primaryText">{fullName}</h1>
+			<p class="text-secondaryText">{email}</p>
+			<p class="text-secondaryText">
+				<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span> {roleLabel}
+			</p>
+			<p class="text-secondaryText">
+				<span class="font-semibold text-primaryText">{m['doctor.labels.license']()}:</span> {licence}
+			</p>
+			<p class="text-secondaryText">
+				<span class="font-semibold text-primaryText">{m['doctor.details.specialty.label']()}</span>{' '}
+				{getSpecialtyLabel(specialty as Specialties) ?? specialty}
+			</p>
+		</div>
+	</div>
+
+	<div class="card bg-white profile-section">
+		<h2 class="section-title">{m['profileInfo.basic']()}</h2>
+		<div class="grid grid-cols-3 gap-5 mt-6">
+			<Input label={m['profile.phone.label']()} bind:value={telephone} class="col-span-3" />
+			<Select
+				label={m['profile.email.lang.label']()}
+				options={languageOptions}
+				bind:value={mailLanguage}
+				placeholder={m['profileInfo.select']()}
+				class="col-span-3"
+			/>
+			<div class="col-span-3">
+				<label class="text-sm font-medium text-text">{m['doctor.profile.insurance.label']()}</label>
+				<div class="flex flex-wrap gap-2 mt-2">
+					{#each doctorInsurances as insuranceName, idx}
+						<Chip label={insuranceName} variant={idx === 1 ? 'primary' : 'tertiary'} />
+					{/each}
+				</div>
+			</div>
+			<Input label={m['doctor.labels.address']()} bind:value={address} class="col-span-3" />
+			<div class="col-span-3 flex items-center gap-4">
+				<span class="text-primaryText font-semibold">{m['doctor.profile.updateSchedule']()}</span>
+				<div class="w-14">
+					<Switch bind:checked={updateSchedule} />
+				</div>
+			</div>
+		</div>
+		<div class="flex justify-center mt-6">
+			<Button variant="primary" class="w-fit" onclick={() => {}}>
+				{m['profile.save.button']()}
+			</Button>
+		</div>
+	</div>
+</div>
+{:else}
+<div class="card bg-white profile-section text-center">
+	<h2 class="section-title">{m['profile.title']()}</h2>
+	<p class="text-secondaryText mt-4">{m['no_data_available']()}</p>
+</div>
+{/if}
 
 <style>
 	.profile-page {

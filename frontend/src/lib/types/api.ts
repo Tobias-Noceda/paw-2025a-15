@@ -67,3 +67,35 @@ export type Appointment = {
 	doctor: string;
 	patient: string;
 }
+
+export type Profile = {
+	name: string;
+	email: string;
+	role: string;
+	telephone: string;
+	mailLanguage: string;
+	birthdate?: string;
+	bloodtype?: string;
+	height?: number;
+	weight?: number;
+	smokes?: boolean;
+	drinks?: boolean;
+	meds?: string;
+	conditions?: string;
+	allergies?: string;
+	diet?: string;
+	hobbies?: string;
+	job?: string;
+	insuranceName?: string;
+	insuranceId?: number;
+	insuranceNumber?: string;
+	licence?: string;
+	specialty?: string;
+	insurances?: string[];
+	address?: string;
+	links?: {
+		self?: string;
+		image?: string;
+		insurance?: string;
+	};
+};
