@@ -11,8 +11,7 @@
 
     const handleLogin = () => {
         // Implement login logic here
-        console.log(`Logging in with email: ${email} and password: ${password}`);
-        login(email, password, fetch)
+        login(email, password)
             .then(() => {
                 error = false;
                 goto(`${base}/home`);

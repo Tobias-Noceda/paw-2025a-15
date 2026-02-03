@@ -6,7 +6,7 @@
 		text: string;
 		icon?: boolean;
 		variant?: 'primary' | 'secondary' | 'tertiary' | 'success' | 'destructive';
-		onclick: () => void;
+		onclick: (event: MouseEvent) => void;
 		disabled?: boolean;
 		class?: string;
 	}

@@ -112,7 +112,7 @@
             <Chip
               label={daysShort[index]}
               variant={schedule.has(day) ? 'primary' : 'tertiary'}
-              class="text-[0.8rem] px-2.5 py-[5px] font-bold"
+              class="text-[0.8rem] px-2.5 py-[5px] font-bold cursor-pointer"
             />
           {/each}
         {/if}

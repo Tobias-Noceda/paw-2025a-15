@@ -24,7 +24,7 @@ public class AvailableTurnValidator implements ConstraintValidator<AvailableTurn
 
     @Override
     public boolean isValid(TakeTurnForm form, ConstraintValidatorContext context){
-        if (!as.getAppointmentByShiftIdDateAndTime(form.getShiftId(), form.getDate(), form.getStartTime(), form.getEndTime()).isEmpty()) {
+        if (as.getAppointmentByShiftIdDateAndTime(form.getShiftId(), form.getDate(), form.getStartTime(), form.getEndTime()) != null) {
             return false;
         }
         DoctorSingleShift shift = dss.getShiftById(form.getShiftId()).orElse(null);

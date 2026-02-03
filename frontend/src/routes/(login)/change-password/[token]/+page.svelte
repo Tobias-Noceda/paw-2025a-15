@@ -5,6 +5,7 @@
 	import Input from "$components/Input/Input.svelte";
 	import Toast from "$components/Toast/Toast.svelte";
 	import { m } from "$lib/paraglide/messages";
+	import { resetPassword } from "$lib/services/users";
 
     const token = $derived($page.params.token);
 
@@ -15,13 +16,18 @@
     let error = $state(false);
 
     const handleSubmit = () => {
-        // Implement login logic here
-        console.log(`Using token: ${token}.`);
-        console.log(`Submitting with new password: ${newPassword} and confirm password: ${confirmPassword}`);
-        success = true;
-        setTimeout(() => {
+        if (newPassword !== confirmPassword) {
             error = true;
-        }, 3000);
+            return;
+        }
+        
+        resetPassword(token ?? '', newPassword)
+            .then(() => {
+                success = true;
+            })
+            .catch(() => {
+                error = true;
+            });
     };
 </script>
 

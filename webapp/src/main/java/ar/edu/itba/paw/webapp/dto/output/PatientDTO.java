@@ -8,6 +8,8 @@ import java.util.function.Function;
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
@@ -47,6 +49,8 @@ public class PatientDTO {
         URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
         URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
+        URI pastAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.COMPLETED).build();
+        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.TAKEN).build();
         URI medicalInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("medicalInfo").build();
         URI socialInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("socialInfo").build();
         URI habitsInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("habitsInfo").build();
@@ -59,6 +63,8 @@ public class PatientDTO {
             .setImage(picture)
             .setInsurance(insurance)
             .setDoctors(doctors)
+            .setPastAppointments(pastAppointments)
+            .setFutureAppointments(futureAppointments)
         );
 
         return dto;

@@ -94,12 +94,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             .authorizeHttpRequests(requests -> requests
                 // general
                 // appointments
-                .requestMatchers(HttpMethod.GET, "/api/appointments").permitAll()
-
+                .requestMatchers(HttpMethod.GET, "/api/appointments")
+                    .access((a, c) -> ad.canAccessAppointments(a.get(), c))
+                .requestMatchers(HttpMethod.PATCH, "/api/appointments/**")
+                    .access((a, c) -> ad.canModifyAppointment(a.get(), c.getRequest().getRequestURI().split("/")[4]))
+                    
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/doctors/**").permitAll()
-                // doctor shifts
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
 
                 // files
@@ -146,7 +147,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
                 throws IOException {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
@@ -154,7 +155,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
                 throws IOException {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 }

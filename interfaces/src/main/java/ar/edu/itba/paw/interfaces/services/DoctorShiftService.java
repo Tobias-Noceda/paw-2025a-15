@@ -14,7 +14,9 @@ public interface DoctorShiftService {
 
     public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount, boolean keepTurns);
 
-    public int getActiveShiftsByDoctorIdCount(long doctorId);
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);
 
     public List<DoctorSingleShift> getActiveShiftsByDoctorIdPage(long doctorId, int page, int pageSize);
+    
+    public int getActiveShiftsByDoctorIdCount(long doctorId);
 }

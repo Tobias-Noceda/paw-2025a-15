@@ -10,7 +10,7 @@ import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
-import ar.edu.itba.paw.models.enums.AppointmentStatus;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.webapp.controller.AppointmentController;
 
 public class DoctorDTO {
@@ -39,7 +39,8 @@ public class DoctorDTO {
         URI image = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
         URI schedule = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("shifts").build();
         URI insurances = uriInfo.getBaseUriBuilder().path(InsuranceController.class).queryParam("supportedBy", String.valueOf(doctor.getId())).build();
-        URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatus.FREE).queryParam("date", LocalDate.now()).build();
+        URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
+        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
@@ -47,6 +48,7 @@ public class DoctorDTO {
             .setSchedule(schedule)
             .setInsurances(insurances)
             .setFreeAppointments(freeAppointments)
+            .setFutureAppointments(futureAppointments)
         );
 
         return dto;

@@ -5,13 +5,8 @@
 	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import { preserve, restore } from '$modules/statefull.svelte';
 
-	import * as m from '$lib/paraglide/messages';
-
 	interface Props {
-		/**
-		 * The function to fetch data from at the start.
-		 */
-		initialFetchFunction: () => Promise<Paginated<T>>;
+		initialItems: Paginated<T>;
 		/**
 		 * The function to fetch the next page.
 		 */
@@ -31,21 +26,28 @@
 	}
 
 	let {
-		initialFetchFunction,
+		initialItems,
 		nextFetchFunction,
 		children,
 		loading,
 		error,
 	}: Props = $props();
 
-	let entries = $state([] as T[]);
+	let entries = $state(initialItems.results);
+	let additionalEntries = $state<T[]>([]);
+
+	// Keep entries in sync with initialItems changes
+	$effect(() => {
+		// Reset entries when initialItems changes, preserving additional paginated items
+		entries = [...initialItems.results, ...additionalEntries];
+	});
 
 	let initialLoadComplete = $state(false);
-	let load = $state(true);
+	let load = $state(false);
 	let done = $state(false);
 	let erro = $state(false);
 
-	let next: string | undefined = $state(undefined as string | undefined);
+	let next: string | undefined = $state(initialItems._links?.next);
 
 	async function getPage() {
 		if (!initialLoadComplete || !next) {
@@ -59,7 +61,8 @@
 
 		await nextFetchFunction(next)
 			.then((response) => {
-				entries.push(...response.results);
+				additionalEntries.push(...response.results);
+				entries = [...initialItems.results, ...additionalEntries];
 				next = response._links?.next;
 			})
 			.catch((e) => {
@@ -80,14 +83,6 @@
 	let sentinel: HTMLElement | null = $state(null);
 	let observer: IntersectionObserver;
 	onMount(() => {
-		const doctorsPage = initialFetchFunction();
-		doctorsPage.then((data) => {
-			entries = data.results;
-			next = data._links?.next;
-			load = false;
-			initialLoadComplete = true;
-		});
-
 		observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting) getPage();
@@ -109,6 +104,7 @@
 		load: boolean;
 		done: boolean;
 		entries: T[];
+		additionalEntries: T[];
 		scrollY: number;
 	};
 
@@ -118,6 +114,7 @@
 			load,
 			done,
 			entries,
+			additionalEntries,
 			scrollY
 		} satisfies State);
 	});
@@ -130,8 +127,8 @@
 			load = data.load;
 			done = data.done;
 			entries = data.entries;
+			additionalEntries = data.additionalEntries;
 
-			// Nasty
 			setTimeout(() => (scrollY = data.scrollY), 500);
 		}
 	});

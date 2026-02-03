@@ -1,23 +1,31 @@
 <script lang="ts">
     import { page } from '$app/stores';
 	import Avatar from '$components/Avatar/Avatar.svelte';
-	import { fetchDoctorById } from '$lib/services/doctors';
 	import type { Appointment, Doctor, Paginated } from '$types/api';
-	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
     import { m } from '$lib/paraglide/messages';
 	import Divider from '$components/Divider/Divider.svelte';
 	import Button from '$components/Button/Button.svelte';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Table, { type Column } from '$components/Table/Table.svelte';
-	import { fetchFreeAppointments, parseDateInLocalTimezone } from '$lib/services/appointments';
+	import { fetchFreeAppointments, takeAppointment } from '$lib/services/appointments';
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
 	import { goto } from '$app/navigation';
+	import Toast from '$components/Toast/Toast.svelte';
+	import { base } from '$app/paths';
+	import { getLocale } from '$lib/paraglide/runtime';
 
-	let doctor: Doctor | null = $state(null);
-    let appointments: Paginated<Appointment> = $state({ _links: {}, results: [] });
+    let { data }: { data: PageData } = $props();
+
+	let doctor: Doctor = $state(data.doctor);
+    let appointments: Paginated<Appointment> = $state(data.appointments);
+    let selectedDate: Date = $state(data.selectedDate);
     let isFetching = $state(false);
+
+    let showSuccessToast = $state(false);
+    let showErrorToast = $state(false);
 
     // Format date in local timezone (avoid UTC conversion)
     const formatDateLocal = (date: Date): string => {
@@ -27,9 +35,8 @@
         return `${year}-${month}-${day}`;
     };
 
-    let selectedDate: Date = $state($page.url.searchParams.get('date') ? parseDateInLocalTimezone($page.url.searchParams.get('date')!) : new Date());
-
     let selectedAppointment: Appointment | null = $state(null);
+    let selectedAppointmentId: number | null = $state(null);
     let reason = $state('');
 
     const updateUrlDate = (date: Date) => {
@@ -40,7 +47,7 @@
     };
 
     const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
-        if (!doctor || isFetching) return;
+        if (isFetching) return;
         
         isFetching = true;
         try {
@@ -50,31 +57,32 @@
             if (updateUrl) {
                 updateUrlDate(newDate);
             }
+        } catch (error) {
+            console.error('Failed to fetch appointments:', error);
         } finally {
             isFetching = false;
         }
     };
 
-    onMount(async () => {
-        const currentDoctorId = $page.params.id!;
-        
-        // Only fetch doctor if ID changed
-        if (!doctor) {
-            doctor = await fetchDoctorById(currentDoctorId)
-                .then((data) => {
-                    return data;
-                })
-                .catch((error) => {
-                    console.error('Failed to fetch doctor:', error);
-                    return null;
-                });
+    const handleTakeAppointment = async () => {
+        if (!selectedAppointment || !reason || reason.trim() === '') return;
 
-            if (doctor) {
-                // Initialize appointments with current date
-                await fetchAppointments(doctor.links.freeAppointments, selectedDate, false);
-            }
-        }
-    });
+        takeAppointment(selectedAppointment.links.self, reason)
+            .then(() => {
+                showSuccessToast = true;
+                appointments.results.splice(selectedAppointmentId!, 1);
+                selectedAppointment = null;
+                reason = '';
+                
+                setTimeout(() => {
+                    goto(`${base}/appointments`)
+                }, 3000);
+            })
+            .catch((error) => {
+                showErrorToast = true;
+                console.error('Failed to take appointment:', error);
+            });
+    };
 
     const tableColumns: Column<Appointment>[] = [
         {
@@ -170,19 +178,28 @@
         <Table
             columns={tableColumns}
             rows={appointments.results}
-            onRowClick={(appointment) => {
+            onRowClick={(appointment, index) => {
                 selectedAppointment = appointment;
+                selectedAppointmentId = index;
             }}
             hover={true}
             striped={true}
-            skeleton={doctor === null}
+            skeleton={false}
             emptyMessage={m['doctor.text.empty_schedule']()}
+            class="shadow-sm rounded-lg"
         />
     </div>
     {#if selectedAppointment !== null}
         <PopUp>
             <div class="flex flex-col gap-2">
-                <h1 class="text-primaryText text-[1.17rem] font-bold">{m['doctor.pop_up.title']({month: selectedAppointment.startTime.toString(), day: selectedDate.getDate(), startTime: selectedAppointment.startTime, doctorName: doctor?.name ?? ''})}</h1>
+                <h1 class="text-primaryText text-[1.17rem] font-bold">
+                    {m['doctor.pop_up.title']({
+                        month: new Date(selectedAppointment.date).toLocaleString(getLocale(), { month: 'long' }),
+                        day: new Date(selectedAppointment.date).getDate(),
+                        startTime: selectedAppointment.startTime,
+                        doctorName: doctor?.name ?? ''
+                    })}
+                </h1>
                 <p class="text-primaryText">{m['doctor.pop_up.subtitle']()}</p>
                 <div>
                     <p class="text-primaryText">{m['doctor.pop_up.reason']()}</p>
@@ -204,20 +221,33 @@
                     </Button>
                     <Button
                         variant="primary"
-                        onclick={() => {
-                            // Here you would normally call an API to book the appointment
-                            alert(m['doctor.pop_up.confirm']({date: selectedDate.toDateString(), time: selectedAppointment?.startTime}));
-                            selectedAppointment = null;
-                            reason = '';
-                        }}
+                        disabled={!reason || reason.trim() === ''}
+                        onclick={handleTakeAppointment}
                     >
-                        <!-- disabled={reason.trim() === ''} -->
                         {m['doctor.pop_up.confirm']()}
                     </Button>
                 </div>
             </div>
         </PopUp>
     {/if}
+
+    <Toast
+        show={showSuccessToast}
+        variant="success"
+        title={m['appointments.taken.success_title']()}
+        description={m['appointments.taken.success_message']({
+            doctorName: doctor.name ?? '',
+            day: selectedDate.getDate(),
+            month: selectedDate.toLocaleString(getLocale(), { month: 'long' }),
+            startTime: selectedAppointment?.startTime ?? ''
+        })}
+    />
+    <Toast
+        show={showErrorToast}
+        variant="destructive"
+        title={m['appointments.taken.error_title']()}
+        description={m['appointments.taken.error_message']()}
+    />
 </div>
 
 <style>

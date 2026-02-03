@@ -4,6 +4,7 @@ import { base } from '$app/paths';
 import { PUBLIC_API_ORIGIN } from '$env/static/public';
 import { user } from '$stores/user';
 import type { Session } from '$types/api';
+import { error } from '@sveltejs/kit';
 
 export const apiOrigin = PUBLIC_API_ORIGIN; 
 
@@ -41,7 +42,7 @@ export function setSession(data: Session) {
 	localStorage.refresh = tokens.refresh;
 }
 
-export async function login(e?: string, pass?: string, fetch = window.fetch): Promise<void> {
+export async function login(e?: string, pass?: string): Promise<void> {
 	let email = '';
 	let password = '';
 
@@ -64,8 +65,7 @@ export async function login(e?: string, pass?: string, fetch = window.fetch): Pr
 						: `Bearer ${tokens.access}`,
 					'X-Refresh-Token': email && password ? '' : `Bearer ${tokens.refresh}`
 				}
-			},
-			fetch
+			}
 		);
 
 		if (!res.ok) {
@@ -77,15 +77,27 @@ export async function login(e?: string, pass?: string, fetch = window.fetch): Pr
 			refresh: res.headers.get('X-Refresh-Token') as string
 		}
 
-		console.log('Logged in, session data:', sessionData);
-
 		setSession(sessionData);
 	} catch (error) {
 		throw error;
 	}
 }
 
-export async function get(path: string, options?: RequestInit, fetch = window.fetch): Promise<Response> {
+function getToken(): string | null {
+	if (tokens.access && expiration && new Date() <= expiration) {
+		return tokens.access;
+	} else if (tokens.refresh) {
+		return tokens.refresh;
+	} else {
+		if (!browser) {
+			throw error(401, 'Authentication required');
+		}
+		logout();
+		return null;
+	}
+}
+
+export async function get(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
 	let url;
 	try {
 		// Check if the path is a valid URL
@@ -96,53 +108,161 @@ export async function get(path: string, options?: RequestInit, fetch = window.fe
 		url = new URL(base + path, PUBLIC_API_ORIGIN);
 	}
 
-	const response = await fetch(url, options)
+	let response: Response;
+	try {
+		response = await fetchFn(url, options);
+	} catch (err) {
+		// Network errors (CORS, timeout, connection failed) don't have status codes
+		console.error('Network error:', err);
+		throw error(503, `Network error: Unable to reach server`);
+	}
+
+	if (!response.ok) {
+		const message = response.statusText || 'Request failed';
+		throw error(response.status, message);
+	}
 
 	return response;
 }
 
-export async function getAuth(path: string, options?: RequestInit, fetch = window.fetch): Promise<Response> {
-	if (!tokens.access) {
-		logout();
-		return Promise.reject('No access token available');
-	}
+export async function getAuth(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
 
-	if (expiration && new Date() <= expiration) {
-		return await get(
-			path,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.access}`
-				}
-			},
-			fetch
-		);
-	} else if (tokens.refresh) {
-		return await get(
-			path,
-			{
-				...options,
-				headers: {
-					...options?.headers,
-					Authorization: `Bearer ${tokens.refresh}`
-				}
-			},
-			fetch
-		);
-	} else {
-		logout();
-		return Promise.reject('Session expired');
-	}
+	// get() already throws proper SvelteKit errors with status codes
+	const response = await get(
+		path,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+
+	return response;
 };
 
-export function logout() {
+export async function post(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			...options?.headers,
+		},
+		body: JSON.stringify(body)
+	});
+};
+
+export async function postAuth(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
+
+	return await post(
+		path,
+		body,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+};
+
+export async function put(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			...options?.headers,
+		},
+		body: JSON.stringify(body)
+	});
+};
+
+export async function putAuth(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
+
+	return await put(
+		path,
+		body,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+};
+
+export async function patch(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			...options?.headers,
+		},
+		body: JSON.stringify(body)
+	});
+};
+
+export async function patchAuth(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	let requestToken = getToken();
+
+	return await patch(
+		path,
+		body,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+};
+
+export async function del(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
+		...options,
+		method: 'DELETE',
+		headers: {
+			...options?.headers,
+		}
+	});
+};
+
+export async function deleteAuth(path: string, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const requestToken = getToken();
+
+	return await del(
+		path,
+		{
+			...options,
+			headers: {
+				...options?.headers,
+				Authorization: `Bearer ${requestToken}`
+			}
+		},
+		fetchFn
+	);
+};
+
+export function logout(redirectTo: string = '/login'): void {
 	tokens = { access: null, refresh: null };
 	user.set(null);
 	if (browser) {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
 	}
-	goto(`${base}/login`);
-}
+	goto(`${base}${redirectTo}`);
+};
