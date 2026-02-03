@@ -96,21 +96,23 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // appointments
                 .requestMatchers(HttpMethod.GET, "/api/appointments")
                     .access((a, c) -> ad.canAccessAppointments(a.get(), c))
-                .requestMatchers(HttpMethod.PATCH, "/api/appointments/**")
-                    .access((a, c) -> ad.canModifyAppointment(a.get(), c.getRequest().getRequestURI().split("/")[4]))
+                .requestMatchers(HttpMethod.PATCH, "/api/appointments/{id}")
+                    .access((a, c) -> ad.canModifyAppointment(a.get(), c.getVariables().get("id")))
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
-
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/shifts").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
+                    .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
                 // files
                 .requestMatchers(HttpMethod.GET, "/api/files").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/files").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
 
                 // insurances
-                .requestMatchers(HttpMethod.GET, "/api/insurances").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/insurances").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/insurances").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/insurances/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/insurances/**").permitAll()
                 .requestMatchers(HttpMethod.PATCH, "/api/insurances/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/insurances/**").hasRole("ADMIN")
 

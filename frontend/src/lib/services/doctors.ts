@@ -2,7 +2,7 @@ import type { Doctor, Insurance, Paginated, Shift } from "$types/api";
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
 import { getPaginationLinks } from "./pagination";
-import { get } from "$modules/api.svelte";
+import { get, post } from "$modules/api.svelte";
 
 /**
  * Parse time string in HH:mm format and return a Date object
@@ -105,6 +105,42 @@ export const fetchDoctorById = async (id: string, fetchFn: typeof fetch = fetch)
     }
     
     return doctor;
+};
+
+type ShiftCreationData = {
+    startTime: string;
+    endTime: string;
+    duration: number;
+    address: string;
+    weekdays: Weekdays[];
+};
+
+export const createDoctor = async (
+    doctorData: Partial<Doctor>,
+    password: string,
+    shifts: ShiftCreationData
+): Promise<void> => {
+    const response = await post(`${baseApiUrl}/doctors`, {
+            name: doctorData.name,
+            email: doctorData.email,
+            password: password,
+            telephone: doctorData.telephone,
+            license: doctorData.license,
+            specialty: doctorData.specialty,
+            insurances: doctorData.insurances || [],
+            shifts: shifts
+        },
+        { 
+            headers: {
+                'Content-Type': 'application/vnd.doctors.creation.v1+json'
+            }
+        },
+        fetch
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to create doctor");
+    }
 };
 
 const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<Doctor> => {

@@ -71,7 +71,8 @@
     'w-full justify-start flex items-center',
     'px-3 py-2.5 cursor-pointer transition-colors',
     'hover:bg-primary hover:text-white',
-    isSelected ? 'bg-primary/10 font-medium' : ''
+    isSelected ? 'bg-primary/10 font-medium' : '',
+    'overflow-x-hidden'
   );
 </script>
 

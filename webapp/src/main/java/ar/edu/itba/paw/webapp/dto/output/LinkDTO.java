@@ -21,6 +21,7 @@ public class LinkDTO {
     private URI pastAppointments;
     private URI futureAppointments;
     private URI files;
+    private URI patients;
 
     public URI getSelf() {
         return self;
@@ -172,6 +173,15 @@ public class LinkDTO {
 
     public LinkDTO setHabitsInfo(URI habitsInfo) {
         this.habitsInfo = habitsInfo;
+        return this;
+    }
+
+    public URI getPatients() {
+        return patients;
+    }
+
+    public LinkDTO setPatients(URI patients) {
+        this.patients = patients;
         return this;
     }
 }

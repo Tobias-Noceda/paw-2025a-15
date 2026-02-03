@@ -64,7 +64,15 @@
 			"password": "Password",
 			"confirm_password": "Confirm password",
 			"submit_button": "Register",
-			"back_to_login": "Back to login"
+			"back_to_login": "Back to login",
+			"success": {
+				"title": "Success!",
+				"message": "Your account has been created successfully. You can now log in."
+			},
+			"error": {
+				"title": "Error",
+				"message": "An error occurred while trying to create your account. Please try again later."
+			}
 		},
 		"change": {
 			"title": "Change Password",

@@ -3,7 +3,7 @@
 	import Button from '$components/Button/Button.svelte';
 	import Select from '$components/Select/Select.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import { getSpecialtyLabel, Specialties } from '$types/enums/specialties';
+	import { getSpecialtyLabel, Specialty } from '$types/enums/specialties';
 	import { getWeekdayLabel, Weekdays } from '$types/enums/weekdays';
 	import Card from '$components/Card/Card.svelte';
 	import { type Doctor, type Insurance, type Paginated } from '$types/api';
@@ -26,7 +26,7 @@
 
 	const specialties = [
 		{ value: 'all', label: m['all']() },
-		...Object.values(Specialties).map((spec) => ({
+		...Object.values(Specialty).map((spec) => ({
 			value: spec,
 			label: getSpecialtyLabel(spec)
 		}))
