@@ -1,7 +1,7 @@
 import type { Doctor, Insurance, Paginated, Shift } from "$types/api";
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
-import { getPaginationLinks } from "./pagination";
+import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 import { get, post } from "$modules/api.svelte";
 
 /**
@@ -16,17 +16,18 @@ function parseTime(timeStr: string): Date {
 
 export const fetchDoctors = async (
     name: string,
-    ensurance: string,
+    insurance: string,
     day: string,
     specialty: string,
-    order: string
+    order: string,
+    fetchFn: typeof fetch = fetch,
 ): Promise<Paginated<Doctor>> => {
     
     let doctors: Paginated<Doctor> = { results: [], _links: {} };
     try {
         let url = new URL(`${baseApiUrl}/doctors`);
-        if (ensurance !== 'all') {
-            url.searchParams.append('insurance', ensurance);
+        if (insurance !== 'all') {
+            url.searchParams.append('insurance', insurance);
         }
         if (day !== 'all') {
             url.searchParams.append('weekday', day);
@@ -41,26 +42,14 @@ export const fetchDoctors = async (
             url.searchParams.append('name', name.trim());
         }
 
-        const response = await get(url.toString());
+        const response = await get(url.toString(), undefined, fetchFn);
         if (response.ok) {
             doctors.results = await response.json();
-            response.headers.get('Link')?.split(',').forEach(link => {
-                const match = link.match(/<([^>]+)>;\s*rel="([^"]+)"/);
-                if (match) {
-                    const [, linkUrl, rel] = match;
-                    doctors._links[rel as keyof typeof doctors._links] = linkUrl;
-                }
-            });
-
-            if (response.headers.get('X-Current-Page') && response.headers.get('X-Total-Pages')) {
-                doctors._pageInfo = {
-                    currentPage: Number(response.headers.get('X-Current-Page')),
-                    totalPages: Number(response.headers.get('X-Total-Pages'))
-                };
-            }
+            doctors._links = getPaginationLinks(response);
+            doctors._pageInfo = getPageInfoFromHeaders(response);
 
             for (const doctor of doctors.results) {
-                await populateDoctorData(doctor);
+                await populateDoctorData(doctor, fetchFn);
             }
         }
     } catch (error) {
@@ -70,22 +59,17 @@ export const fetchDoctors = async (
     return doctors;
 };
 
-export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Doctor>> => {
+export const fetchDoctorsPage = async (nextUrl: string, fetchFn: typeof fetch = fetch): Promise<Paginated<Doctor>> => {
     let doctors: Paginated<Doctor> = { results: [], _links: {} };
     try {
-        const response = await get(nextUrl);
+        const response = await get(nextUrl, undefined, fetchFn);
         if (response.ok) {
             doctors.results = await response.json();
             doctors._links = getPaginationLinks(response);
-            if (response.headers.get('X-Current-Page') && response.headers.get('X-Total-Pages')) {
-                doctors._pageInfo = {
-                    currentPage: Number(response.headers.get('X-Current-Page')),
-                    totalPages: Number(response.headers.get('X-Total-Pages'))
-                };
-            }
+            doctors._pageInfo = getPageInfoFromHeaders(response);
         }
         for (const doctor of doctors.results) {
-            await populateDoctorData(doctor);
+            await populateDoctorData(doctor, fetchFn);
         }
 
         return doctors;

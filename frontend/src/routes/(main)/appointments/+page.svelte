@@ -205,7 +205,6 @@
                 .then(() => {
                     showSuccessToast = true;
 
-                    console.log('Index to remove:', index);
                     futureAppointments = {
                         results: futureAppointments.results.splice(index, 1),
                         _links: futureAppointments._links,

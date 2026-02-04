@@ -125,7 +125,7 @@
 			{#if userDropdownOpen}
 				<div class="user-dropdown-menu w-50">
 					<a href="{base}/profile">{m['topbar.profile']()}</a>
-					<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
+					<button onclick={() => logout('')}>{m['topbar.logout']()}</button>
 				</div>
 			{/if}
 		{/if}

@@ -5,7 +5,7 @@ import { writable } from "svelte/store";
 
 type User = {
 	name: string;
-	role: string;
+	role: 'DOCTOR' | 'PATIENT' | 'ADMIN';
     image: string;
 	self: string;
 	[key: string]: any;
