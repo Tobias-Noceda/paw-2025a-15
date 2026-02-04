@@ -1,6 +1,6 @@
 import type { insurance } from "$stores/filters";
 import type { AppointmentStatus } from "./enums/AppointmentStatus";
-import type { Specialties } from "./enums/specialties";
+import type { Specialty } from "./enums/specialties";
 import type { Weekdays } from "./enums/weekdays";
 
 export const baseApiUrl = 'http://localhost:8080/paw-2025a-15/api'
@@ -33,7 +33,7 @@ export type Doctor = {
 	email: string;
 	telephone: string;
 	license: string;
-	specialty: Specialties;
+	specialty: Specialty;
 	schedule?: Map<Weekdays, [Date, Date]>;
 	direction?: string;
 	insurances?: string[];
@@ -44,6 +44,7 @@ export type Doctor = {
 		schedule: string;
 		freeAppointments: string;
 		futureAppointments: string;
+		patients: string;
 	}
 }
 
@@ -57,26 +58,25 @@ export type Patient = {
 	weight: number;
 	insurance?: string;
 	insuranceNumber: string;
-	meds?: string;
-	conditions?: string;
-	allergies?: string;
-	smokes?: boolean;
-	drinks?: boolean;
-	diet?: string;
-	hobbies?: string;
-	job?: string;
+	meds?: string | null;
+	conditions?: string | null;
+	allergies?: string | null;
+	smokes?: boolean | null;
+	drinks?: boolean | null;
+	diet?: string | null;
+	hobbies?: string | null;
+	job?: string | null;
 	links: {
 		doctors: string;
 		image: string;
-		insurance: string;
+		insurance?: string;
 		self: string;
-		medical?: string;
-		habits?: string;
-		social?: string;
+		medicalInfo: string;
+		habitsInfo: string;
+		socialInfo: string;
 		pastAppointments: string;
 		futureAppointments: string;
 	}
-
 }
 
 export type Shift = {

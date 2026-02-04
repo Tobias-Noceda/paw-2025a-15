@@ -12,3 +12,24 @@ export const getPaginationLinks = (response: Response) => {
 
     return links;
 };
+
+const pageInfoKeys: Map<string, string> = new Map([
+    ['X-Current-Page', 'currentPage'],
+    ['X-Total-Pages', 'totalPages'],
+    ['X-Current-Date', 'currentDate'],
+    ['X-Max-Date', 'maxDate']
+]);
+
+export const getPageInfoFromHeaders = (response: Response) => {
+    let pageInfo: Paginated<unknown>['_pageInfo'] = {};
+    pageInfoKeys.forEach((value, key) => {
+        if (response.headers.get(key)) {
+            pageInfo = {
+                ...pageInfo,
+                [value]: Number(response.headers.get(key)),
+            };
+        }
+    });
+
+    return pageInfo;
+};

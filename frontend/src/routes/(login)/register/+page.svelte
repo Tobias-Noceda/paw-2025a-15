@@ -5,12 +5,15 @@
 	import { base } from "$app/paths";
 	import Tabs from "$components/Tabs/Tabs.svelte";
 	import DatePicker from "$components/DatePicker/DatePicker.svelte";
-	import { getSpecialtyLabel, Specialties } from "$types/enums/specialties";
+	import { getSpecialtyLabel, Specialty } from "$types/enums/specialties";
 	import Select from "$components/Select/Select.svelte";
 	import type { Insurance } from "$types/api";
 	import { onMount } from "svelte";
 	import RadioCheck from "$components/RadioCheck/RadioCheck.svelte";
 	import { Durations, getWeekdayShortLabel, TimeSlots, Weekdays } from "$types/enums/weekdays";
+	import { createPatient } from "$lib/services/patients";
+	import Toast from "$components/Toast/Toast.svelte";
+	import { createDoctor } from "$lib/services/doctors";
 
     let role: string = $state('');
 
@@ -22,11 +25,11 @@
     let confirmPassword: string = $state("");
     
     let birthdate: Date | null = $state(null);
-    let height: string = $state("");
-    let weight: string = $state("");
+    let height: number | string = $state("");
+    let weight: number | string = $state("");
 
     let license: string = $state("");
-    let specialty: Specialties = $state(Specialties.BARIATRIC_SURGERY);
+    let specialty: Specialty = $state(Specialty.BARIATRIC_SURGERY);
     let address: string = $state("");
     let selectedInsurances: string[] = $state([]);
     let selectedWeekdays: string[] = $state([]);
@@ -35,7 +38,7 @@
     let durationTime: string = $state("N/A");
 
     const specialties = [
-		...Object.values(Specialties).map((spec) => ({
+		...Object.values(Specialty).map((spec) => ({
 			value: spec,
 			label: getSpecialtyLabel(spec)
 		}))
@@ -74,6 +77,7 @@
     let insurances: Insurance[] = $state([]);
 
     let error: boolean = $state(false);
+    let success: boolean = $state(false);
 
     const focusInputById = (id: string) => {
         const inputElement = document.getElementById(id) as HTMLInputElement;
@@ -82,27 +86,121 @@
         }
     };
 
+    const canRegister = (): boolean => {
+        if (role === 'patient') {
+            return (
+                name.trim() !== '' &&
+                surname.trim() !== '' &&
+                email.trim() !== '' &&
+                telephone.trim() !== '' &&
+                birthdate !== null &&
+                height !== '' &&
+                weight !== '' &&
+                password.trim() !== '' &&
+                confirmPassword.trim() !== '' &&
+                confirmPassword === password
+            );
+        } else if (role === 'doctor') {
+            return (
+                name.trim() !== '' &&
+                surname.trim() !== '' &&
+                email.trim() !== '' &&
+                telephone.trim() !== '' &&
+                license.trim() !== '' &&
+                specialty.trim() !== '' &&
+                address.trim() !== '' &&
+                password.trim() !== '' &&
+                confirmPassword.trim() !== '' &&
+                confirmPassword === password &&
+                startTime !== 'N/A' &&
+                endTime !== 'N/A' &&
+                durationTime !== 'N/A'
+            );
+        }
+        return false;
+    };
+
+    const redirectToLogin = () => {
+        setTimeout(() => {
+            // Clear form
+            name = '';
+            surname = '';
+            email = '';
+            telephone = '';
+            password = '';
+            confirmPassword = '';
+            birthdate = null;
+            height = '';
+            weight = '';
+            license = '';
+            specialty = Specialty.BARIATRIC_SURGERY;
+            address = '';
+            selectedInsurances = [];
+            selectedWeekdays = [];
+            startTime = 'N/A';
+            endTime = 'N/A';
+            durationTime = 'N/A';
+            role = '';
+
+            window.location.href = `${base}/login`;
+        }, 1500);
+    };
+
     const handleRegister = () => {
-        // Implement registration logic here
-        console.log("Registering with", {
-            name,
-            surname,
-            email,
-            telephone,
-            birthdate,
-            height,
-            weight,
-            license,
-            specialty,
-            address,
-            selectedInsurances,
-            selectedWeekdays,
-            startTime,
-            endTime,
-            durationTime,
-            password,
-            confirmPassword
-        });
+        if (password !== confirmPassword) {
+            error = true;
+            return;
+        }
+        let isOk = false;
+        if (role === 'patient' && canRegister()) {
+            createPatient(
+                {
+                    name: `${name} ${surname}`,
+                    email,
+                    telephone,
+                    height: height as number,
+                    weight: weight as number,
+                    birthDate: birthdate!.toISOString().split('T')[0],
+                },
+                password
+            ).then(() => {
+                success = true;
+                error = false;
+                redirectToLogin();
+            }).catch(() => {
+                error = true;
+                success = false;
+            });
+        } else if (role === 'doctor' && canRegister()) {
+            createDoctor(
+                {
+                    name: `${name} ${surname}`,
+                    email,
+                    telephone,
+                    license,
+                    specialty,
+                    direction: address,
+                    insurances: selectedInsurances
+                },
+                password,
+                {
+                    startTime,
+                    endTime,
+                    duration: Number(durationTime)!,
+                    address,
+                    weekdays: selectedWeekdays as Weekdays[],
+                }
+            ).then(() => {
+                success = true;
+                error = false;
+                redirectToLogin();
+            }).catch(() => {
+                error = true;
+                success = false;
+            });
+        } else {
+            error = true;
+        }
     };
 
     onMount(async () => {
@@ -171,7 +269,10 @@
                 class="w-full"
                 onsubmit={() => {
                     if (role === 'patient') {
-                        focusInputById('birthdate');
+                        const telephoneInput = document.getElementById('telephone') as HTMLInputElement;
+                        if (telephoneInput) {
+                            telephoneInput.blur();
+                        }
                     } else if (role === 'doctor') {
                         focusInputById('license');
                     }
@@ -183,6 +284,8 @@
                     id="birthdate"
                     label={`${m["login.register.birthdate"]()}:`}
                     bind:selectedDate={birthdate}
+                    maxDate={new Date()}
+                    yearRange={Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)}
                     required
                     class="w-full"
                     onSelectDate={() => focusInputById('height') }
@@ -347,6 +450,7 @@
 
             <Button
                 variant="primary"
+                disabled={!canRegister()}
                 onclick={handleRegister}
                 class="w-full rounded-xl mb-3.5"
             >
@@ -354,6 +458,22 @@
             </Button>
         {/if}
     </div>
+
+    <Toast
+        bind:show={success}
+        variant="success"
+        title={m["login.register.success.title"]()}
+        description={m["login.register.success.message"]()}
+        duration={3000}
+    />
+
+    <Toast
+        bind:show={error}
+        variant="destructive"
+        title={m["login.register.error.title"]()}
+        description={m["login.register.error.message"]()}
+        duration={3000}
+    />
 
     <div class="flex flex-col w-full justify-center items-center">
         <a href="{base}/login" class="font-semibold text-primary hover:underline cursor-pointer">

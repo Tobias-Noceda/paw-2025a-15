@@ -64,7 +64,15 @@
 			"password": "Contraseña",
 			"confirm_password": "Confirmar contraseña",
 			"submit_button": "Registrarse",
-			"back_to_login": "Volver a iniciar sesión"
+			"back_to_login": "Volver a iniciar sesión",
+			"success": {
+				"title": "¡Éxito!",
+				"message": "Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión."
+			},
+			"error": {
+				"title": "Error",
+				"message": "Ocurrió un error al intentar crear tu cuenta. Por favor, inténtelo de nuevo más tarde."
+			}
 		},
 		"change": {
 			"title": "Cambiar contraseña",
@@ -164,6 +172,7 @@
 	},
 	"all": "Todos",
 	"doctors_list": "Cartilla médica",
+	"patients_list": "Lista de pacientes",
 	"clear": "Borrar",
 	"today": "Hoy",
 	"topbar": {

@@ -34,12 +34,15 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         throw error(401, 'User data not available');
     }
 
+    if (currentUser.role !== 'DOCTOR' && currentUser.role !== 'PATIENT') {
+        throw error(404, 'Not found');
+    }
+
     try {
         if (currentUser.role === 'DOCTOR' && (currentUserData as Doctor).links.freeAppointments) {
             freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments;
             freeAppointments = await fetchFreeAppointments(freeAppointmentsLink, formatDateLocal(selectedDate), fetch);
         } else if (currentUser.role === 'PATIENT' && (currentUserData as Patient).links.pastAppointments) {
-            console.log('Fetching past appointments for patient: ', currentUserData);
             pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, fetch);
         }
 

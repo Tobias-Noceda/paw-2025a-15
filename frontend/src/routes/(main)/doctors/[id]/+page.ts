@@ -2,11 +2,24 @@ import { error } from '@sveltejs/kit';
 import { fetchDoctorById } from '$lib/services/doctors';
 import { fetchFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
 import type { PageLoad } from './$types';
+import { setUserFromSession, user, userData } from '$stores/user';
+import { get } from 'svelte/store';
 
 // Disable SSR since we need localStorage for authentication tokens
 export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
+
+    if (localStorage.getItem('access')) {
+        await setUserFromSession(localStorage.getItem('access')!, fetch);
+    }
+
+    const currentUser = get(user);
+
+    if (currentUser && currentUser.role !== 'PATIENT') {
+        throw error(404, 'Not found');
+    }
+    
     // Get date from URL or use today
     const dateParam = url.searchParams.get('date');
     const selectedDate = dateParam 

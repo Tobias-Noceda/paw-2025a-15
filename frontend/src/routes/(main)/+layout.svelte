@@ -114,7 +114,7 @@
 					userDropdownOpen = !userDropdownOpen;
 				}}
 			>
-				<Avatar size="md" src={$user.image} />
+				<Avatar size="md" src={$user.image} class="min-w-fit!" />
 				<div class="user-info">
 					<p class="user-name">{$user.name}</p>
 					<p class="user-role">
@@ -125,7 +125,7 @@
 			{#if userDropdownOpen}
 				<div class="user-dropdown-menu w-50">
 					<a href="{base}/profile">{m['topbar.profile']()}</a>
-					<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
+					<button onclick={() => logout('')}>{m['topbar.logout']()}</button>
 				</div>
 			{/if}
 		{/if}
@@ -292,6 +292,9 @@
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
+		min-width: 0;
+		flex: 1;
+		overflow: hidden;
 	}
 
 	.user-btn .user-info .user-name {
