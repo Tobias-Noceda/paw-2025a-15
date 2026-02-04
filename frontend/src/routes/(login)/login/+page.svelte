@@ -30,6 +30,7 @@
 
     <div class="flex flex-col items-center text-start gap-6 w-full">
         <Input
+            id="login-email"
             label={`${m["login.email_label"]()}:`}
             placeholder="you@example.com"
             bind:value={email}

@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import { fetchDoctorById, fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
 import { fetchFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
 import type { PageLoad } from './$types';
-import { setUserFromSession, user, userData } from '$stores/user';
+import { loggedOut, setUserFromSession, user, userData } from '$stores/user';
 import { get } from 'svelte/store';
 import { baseApiUrl, type Doctor, type Insurance, type Paginated, type Patient } from '$types/api';
 import { fetchInsurances } from '$lib/services/insurances';
@@ -12,6 +12,9 @@ import { fetchPatients } from '$lib/services/patients';
 export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
+    if (get(loggedOut)) {
+        loggedOut.set(false);
+    }
 
     if (localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
@@ -22,7 +25,6 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     let insurances: Insurance[] | null = null;
 
-    const searchQuery = url.searchParams.get('search') || '';
     let patientsLink: string | null = null;
 
     if (!currentUser || currentUser.role !== 'DOCTOR') {

@@ -14,6 +14,7 @@
 	import { type PageData } from './$types';
 	import { page } from '$app/stores';
 	import { fetchPatients } from '$lib/services/patients';
+	import { loggedOut } from '$stores/user';
 
 	let { data }: { data: PageData } = $props();
 
@@ -57,6 +58,9 @@
 
 	// Watch URL params and refetch when they change
 	$effect(() => {
+		if ($loggedOut) {
+			return;
+		}
 		const urlSearchQuery = $page.url.searchParams.get('search') || '';
 
 		if (userRole === 'DOCTOR' && data.patientsLink) {

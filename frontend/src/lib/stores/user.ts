@@ -1,4 +1,3 @@
-import { fetchDoctorById } from "$lib/services/doctors";
 import { get, parseJWT } from "$modules/api.svelte";
 import type { Doctor, Patient } from "$types/api";
 import { writable } from "svelte/store";
@@ -12,8 +11,8 @@ type User = {
 };
 
 let user = writable<User | null>(null);
-
 let userData = writable<Doctor | Patient | null>(null);
+let loggedOut = writable<boolean>(false);
 
 export async function setUserFromSession(sessionToken: string, fetchFn: typeof fetch = window.fetch) {
     // Parse user data from session token
@@ -38,4 +37,4 @@ export async function setUserFromSession(sessionToken: string, fetchFn: typeof f
 	}
 };
 
-export { user, userData };
+export { user, userData, loggedOut };
