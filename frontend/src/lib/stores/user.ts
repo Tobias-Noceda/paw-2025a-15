@@ -1,4 +1,4 @@
-import { get, parseJWT } from "$modules/api.svelte";
+import { get, getAuth, parseJWT } from "$modules/api.svelte";
 import type { Doctor, Patient } from "$types/api";
 import { writable } from "svelte/store";
 
@@ -27,7 +27,7 @@ export async function setUserFromSession(sessionToken: string, fetchFn: typeof f
 		});
 
 		if (payload.role === 'DOCTOR' || payload.role === 'PATIENT') {
-			const response = await get(payload.self, undefined, fetchFn).catch(() => null);
+			const response = await getAuth(payload.self, undefined, fetchFn).catch(() => null);
 
 			if (response && response.ok) {
 				const data = await response.json();

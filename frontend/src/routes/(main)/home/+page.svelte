@@ -158,8 +158,6 @@
 			{#key filterKey}
 				<Pagination
 					initialFetchFunction={() => {
-						console.log('Insurances:', insurances.results);
-						console.log('Insurances links:', insurances._links);
 						return Promise.resolve(insurances)
 					}}
 					pageFetchFunction={(page) => fetchInsurancesPage(page)}
@@ -223,7 +221,6 @@
 						],
 					}}
 					fetchNextOptions={async () => {
-						console.log('Fetching next insurances page');
 						if (insurances._links.next) {
 							const newInsurances = fetchInsurancesPage(insurances._links.next, fetch);
 

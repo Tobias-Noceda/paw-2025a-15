@@ -53,8 +53,6 @@
 			done = true;
 			return;
 		}
-		console.log('Fetching next page...');
-
 		load = true;
 
 		await nextFetchFunction(next)

@@ -23,7 +23,6 @@ export const fetchFreeAppointments = async (
     date?: string,
     fetchFn: typeof fetch = fetch
 ): Promise<Paginated<Appointment>> => {
-    
     let url = new URL(urlString);
     if (date) {
         url.searchParams.set('date', date);
@@ -53,6 +52,7 @@ export const fetchNonFreeAppointments = async (
     let urlStringFinal = urlString;
 
     if (!isPaginationLink) {
+        console.log('Non-pagination link, setting pageSize to 15:', urlString);
         const url = new URL(urlString);
         url.searchParams.set('pageSize', '15');
         urlStringFinal = url.toString();
