@@ -91,8 +91,10 @@ export type Shift = {
 
 export type Insurance = {
 	name: string;
-	picture: string;
-	self: string;
+	links: {
+		image: string;
+		self: string;
+	}
 }
 
 export type Appointment = {

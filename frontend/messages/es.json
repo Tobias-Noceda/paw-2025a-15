@@ -259,6 +259,14 @@
 			"see_patient": "Ver paciente"
 		}
 	},
+	"insurances": {
+		"title": "Gestión de obras sociales:",
+		"new": "Nueva obra social",
+		"buttons": {
+			"edit": "Editar",
+			"delete": "Eliminar"
+		}
+	},
 	"date_format": "dd/MM/yyyy",
 	"next": "Siguiente",
 	"previous": "Anterior"

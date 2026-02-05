@@ -259,6 +259,14 @@
 			"see_patient": "See patient"
 		}
 	},
+	"insurances": {
+		"title": "Health Insurances Management:",
+		"new": "Add New Insurance",
+		"buttons": {
+			"edit": "Edit",
+			"delete": "Delete"
+		}
+	},
 	"date_format": "MM/dd/yyyy",
 	"next": "Next",
 	"previous": "Previous"

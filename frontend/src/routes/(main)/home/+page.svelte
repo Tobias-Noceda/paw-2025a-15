@@ -15,13 +15,17 @@
 	import { page } from '$app/stores';
 	import { fetchPatients } from '$lib/services/patients';
 	import { loggedOut } from '$stores/user';
+	import { fetchInsurancesPage } from '$lib/services/insurances';
+	import Divider from '$components/Divider/Divider.svelte';
+	import Icon from '$components/Icon/Icon.svelte';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
 	let userRole = $state(data.userRole);
-    let insurances: Insurance[] = $state(data.insurances || []);
-	let doctors: Paginated<Doctor> = $state(data.doctors || { results: [], _links: {} });
-	let patients: Paginated<Patient> = $state(data.patients || { results: [], _links: {} });
+    let insurances: Paginated<Insurance> = $state(data.insurances || { results: [], _links: {} });
+	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
+	let patients: Paginated<Patient> = $state({ results: [], _links: {} });
 
 	const workDays = [
 		{ value: 'all', label: m['all']() },
@@ -57,7 +61,7 @@
 	}
 
 	// Watch URL params and refetch when they change
-	$effect(() => {
+	onMount(() => {
 		if ($loggedOut) {
 			return;
 		}
@@ -105,7 +109,7 @@
 		<div class="flex flex-col justify-center items-center">
 			{#key filterKey}
 				<Pagination
-					initialFetchFunction={() => fetchPatients($searchQuery, data.patientsLink || '', fetch)}
+					initialFetchFunction={() => Promise.resolve(patients)}
 					pageFetchFunction={(page) => fetchPatients($searchQuery, page)}
 					class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
 				>
@@ -139,21 +143,103 @@
 			{/key}
 		</div>
 	{:else if userRole === 'ADMIN'}
-		<!-- Admin specific content can go here -->
+		<div class="flex justify-between items-center w-full">
+			<h2 class="section-title m-0 text-start after:w-[80%]!">{m['insurances.title']()}</h2>
+			<Button
+				variant="primary"
+				onclick={() => goto(`${base}/admin/insurances/new`)}
+			>
+				<Icon name="plus" class="w-4 h-4 mr-2" />
+				{m['insurances.new']()}
+			</Button>
+		</div>
+		<Divider class="w-full bg-[#D0D5DD] h-px" />
+		<div class="flex flex-col justify-center items-center">
+			{#key filterKey}
+				<Pagination
+					initialFetchFunction={() => {
+						console.log('Insurances:', insurances.results);
+						console.log('Insurances links:', insurances._links);
+						return Promise.resolve(insurances)
+					}}
+					pageFetchFunction={(page) => fetchInsurancesPage(page)}
+					class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
+				>
+					{#snippet loading()}
+						{#each Array(10) as _, i}
+							<Card 
+								variant="insurance"
+								avatarSrc=""
+								userName=""
+								skeleton={true}
+							/>
+						{/each}
+					{/snippet}
+
+					{#snippet children(entry: Insurance, _)}
+						<Card
+							variant="insurance"
+							avatarSrc={entry.links.image}
+							userName={entry.name}
+						>
+							{#snippet buttons()}
+								<div class="flex w-full justify-center gap-4 mt-0 mx-4">
+									<Button
+										variant="primary"
+										class="flex w-full"
+										onclick={() => goto(`${base}/admin/${parseSelf(entry.links.self)}`)}
+									>
+										{m['insurances.buttons.edit']()}
+									</Button>
+									<Button
+										variant="destructive"
+										class="flex w-full"
+										onclick={() => goto(`${base}/admin/${parseSelf(entry.links.self)}`)}
+									>
+										{m['insurances.buttons.delete']()}
+									</Button>
+								</div>
+							{/snippet}
+						</Card>
+					{/snippet}
+				</Pagination>
+			{/key}
+		</div>
 	{:else}
 		<div class="flex flex-col card w-full bg-white">
 			<h2 class="section-title m-0 mb-5">{m['filters.title']()}</h2>
 			<div class="grid grid-cols-3 gap-5 items-end">
 				<Select
 					label={m['filters.label.ensurance']()}
-					options={[
-						{ value: 'all', label: m['all']() },
-						...insurances.map((ins) => ({ 
-							value: ins.name, 
-							label: ins.name,
-							avatarSrc: ins.picture
-						}))
-					]}
+					options={{
+						...insurances,
+						results: [
+							{ value: 'all', label: m['all']() },
+							...insurances.results.map((ins) => ({
+								value: ins.name,
+								label: ins.name,
+								avatarSrc: ins.links.image
+							}))
+						],
+					}}
+					fetchNextOptions={async () => {
+						console.log('Fetching next insurances page');
+						if (insurances._links.next) {
+							const newInsurances = fetchInsurancesPage(insurances._links.next, fetch);
+
+							return newInsurances.then((data) => {
+								return {
+									results: [...data.results.map((ins) => ({ 
+										value: ins.name, 
+										label: ins.name,
+										avatarSrc: ins.links.image
+									}))],
+									_links: data._links
+								};
+							});
+						}
+						return Promise.resolve({ results: [], _links: {} });
+					}}
 					bind:value={$insurance}
 					class="w-full"
 				/>
@@ -184,7 +270,7 @@
 		<div class="flex flex-col justify-center items-center">
 			{#key filterKey}
 				<Pagination
-					initialFetchFunction={() => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order)}
+					initialFetchFunction={() => Promise.resolve(doctors)}
 					pageFetchFunction={(page) => fetchDoctorsPage(page)}
 					class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
 				>

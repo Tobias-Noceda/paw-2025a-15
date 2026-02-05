@@ -23,7 +23,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     const currentUser = get(user);
     const currentUserData = get(userData);
 
-    let insurances: Insurance[] | null = null;
+    let insurances: Paginated<Insurance> | null = null;
 
     let patientsLink: string | null = null;
 

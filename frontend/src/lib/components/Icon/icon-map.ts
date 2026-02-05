@@ -5,6 +5,7 @@ import eye from '$assets/icons/eye.svg';
 import eyeBlind from '$assets/icons/eye-blind.svg';
 import leftArrow from '$assets/icons/left-arrow.svg';
 import login from '$assets/icons/login.svg';
+import plus from '$assets/icons/plus.svg';
 import rightArrow from '$assets/icons/right-arrow.svg';
 import search from '$assets/icons/search.svg';
 import trash from '$assets/icons/trash.svg';
@@ -17,6 +18,7 @@ export const iconMap: Record<string, string> = {
     'eye-blind': eyeBlind,
     'left-arrow': leftArrow,
     login: login,
+    plus: plus,
     'right-arrow': rightArrow,
     search: search,
     trash: trash

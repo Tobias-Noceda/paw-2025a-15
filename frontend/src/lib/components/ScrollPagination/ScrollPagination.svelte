@@ -42,7 +42,6 @@
 		entries = [...initialItems.results, ...additionalEntries];
 	});
 
-	let initialLoadComplete = $state(false);
 	let load = $state(false);
 	let done = $state(false);
 	let erro = $state(false);
@@ -50,12 +49,11 @@
 	let next: string | undefined = $state(initialItems._links?.next);
 
 	async function getPage() {
-		if (!initialLoadComplete || !next) {
-			if (initialLoadComplete && !next) {
-				done = true;
-			}
+		if (!next) {
+			done = true;
 			return;
 		}
+		console.log('Fetching next page...');
 
 		load = true;
 
