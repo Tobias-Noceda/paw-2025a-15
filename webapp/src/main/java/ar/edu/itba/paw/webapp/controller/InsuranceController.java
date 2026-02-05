@@ -53,6 +53,7 @@ public class InsuranceController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response listInsurances(
         @QueryParam("supportedBy") final Long doctorId,
+        @QueryParam("name") @DefaultValue("") final String name,
         @QueryParam("page") @DefaultValue("1") final int page,
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
@@ -74,13 +75,13 @@ public class InsuranceController {
             );
         }
         
-        final List<InsuranceDTO> allInsurances = is.getInsurancesPage(page, pageSize)
+        final List<InsuranceDTO> insurances = is.searchInsurancesByNamePage(name, page, pageSize)
             .stream().map(InsuranceDTO.mapper(uriInfo)).collect(Collectors.toList());
         
-        int totalInsurances = is.getInsurancesCount();
+        int totalInsurances = is.searchInsurancesByNameCount(name);
         
         return PaginationBuilder.buildResponse(
-            Response.ok(new GenericEntity<List<InsuranceDTO>>(allInsurances) {}), 
+            Response.ok(new GenericEntity<List<InsuranceDTO>>(insurances) {}), 
             page, 
             pageSize, 
             totalInsurances, 

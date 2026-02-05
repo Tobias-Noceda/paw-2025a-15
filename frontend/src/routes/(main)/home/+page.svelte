@@ -15,15 +15,15 @@
 	import { page } from '$app/stores';
 	import { fetchPatients } from '$lib/services/patients';
 	import { loggedOut } from '$stores/user';
-	import { fetchInsurancesPage } from '$lib/services/insurances';
+	import { fetchInsurances, fetchInsurancesPage } from '$lib/services/insurances';
 	import Divider from '$components/Divider/Divider.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
-	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
+	let firstLoad = true;
 
 	let userRole = $state(data.userRole);
-    let insurances: Paginated<Insurance> = $state(data.insurances || { results: [], _links: {} });
+    let insurances: Paginated<Insurance> = $state({ results: [], _links: {} });
 	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
 	let patients: Paginated<Patient> = $state({ results: [], _links: {} });
 
@@ -61,11 +61,12 @@
 	}
 
 	// Watch URL params and refetch when they change
-	onMount(() => {
+	$effect(() => {
 		if ($loggedOut) {
 			return;
 		}
 		const urlSearchQuery = $page.url.searchParams.get('search') || '';
+		let insuranceSearch: string | undefined = undefined;
 
 		if (userRole === 'DOCTOR' && data.patientsLink) {
 			fetchPatients(urlSearchQuery, data.patientsLink, fetch).then(result => {
@@ -73,7 +74,7 @@
 				filterKey++;
 			});
 		} else if (userRole === 'ADMIN') {
-			// TODO: implement admin-specific logic if needed
+			insuranceSearch = urlSearchQuery;
 		} else {
 			const insuranceParam = $page.url.searchParams.get('insurance') || 'all';
 			const dayParam = $page.url.searchParams.get('day') || 'all';
@@ -89,6 +90,15 @@
 			// Fetch doctors with current URL params
 			fetchDoctors(urlSearchQuery, insuranceParam, dayParam, specialtyParam, orderParam).then(result => {
 				doctors = result;
+				filterKey++;
+			});
+		}
+
+		if (firstLoad || insuranceSearch) {
+			fetchInsurances(insuranceSearch, fetch).then(result => {
+				insurances = result;
+				
+				firstLoad = false;
 				filterKey++;
 			});
 		}

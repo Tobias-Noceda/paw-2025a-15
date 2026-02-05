@@ -20,23 +20,16 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     const currentUser = get(user);
     const currentUserData = get(userData);
 
-    let insurances: Paginated<Insurance> | null = null;
-
     let patientsLink: string | null = null;
 
-    if (!currentUser || currentUser.role !== 'DOCTOR') {
-        insurances = await fetchInsurances(undefined, fetch);
-    } else if (currentUser.role === 'DOCTOR') {
+    if (currentUser?.role === 'DOCTOR') {
         if (currentUserData && (currentUserData as Doctor).links.patients) {
             patientsLink = (currentUserData as Doctor).links.patients;
         }
-    } else {
-        throw error(500, 'Invalid user role');
     }
 
     return {
         userRole: currentUser?.role || null,
-        insurances,
         patientsLink,
     };
 };

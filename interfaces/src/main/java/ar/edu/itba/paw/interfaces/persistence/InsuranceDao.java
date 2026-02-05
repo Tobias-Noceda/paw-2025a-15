@@ -21,9 +21,13 @@ public interface InsuranceDao {
 
     public List<Insurance> getInsurancesByDoctorIdPage(long doctorId, int page, int pageSize);
 
+    public List<Insurance> getInsurancesPage(int page, int pageSize);
+
     public int getInsurancesCount();
 
-    public List<Insurance> getInsurancesPage(int page, int pageSize);
+    public List<Insurance> searchInsurancesByNamePage(String name, int page, int pageSize);
+
+    public int searchInsurancesByNameCount(String name);
 
     public void delete(Insurance insurance);
 }
