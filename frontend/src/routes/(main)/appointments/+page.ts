@@ -31,7 +31,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         : new Date();
 
     if (!currentUser || !currentUserData) {
-        throw error(401, 'User data not available');
+        throw error(404, 'Not found');
     }
 
     if (currentUser.role !== 'DOCTOR' && currentUser.role !== 'PATIENT') {

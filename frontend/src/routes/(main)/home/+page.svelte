@@ -160,7 +160,7 @@
 					initialFetchFunction={() => {
 						return Promise.resolve(insurances)
 					}}
-					pageFetchFunction={(page) => fetchInsurancesPage(page)}
+					pageFetchFunction={(page) => fetchInsurancesPage(page, fetch)}
 					class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
 				>
 					{#snippet loading()}

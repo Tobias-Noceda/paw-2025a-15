@@ -3,7 +3,7 @@ import { baseApiUrl, type Insurance, type Paginated } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 
-export const fetchInsurances = async (fetchFn: typeof fetch = window.fetch): Promise<Paginated<Insurance>> => {
+export const fetchInsurances = async (search?: string, fetchFn: typeof fetch = window.fetch): Promise<Paginated<Insurance>> => {
     const insurances: Paginated<Insurance> = { results: [], _links: {} };
     
     const response = await get(`${baseApiUrl}/insurances`, undefined, fetchFn);

@@ -1,12 +1,9 @@
 import { error } from '@sveltejs/kit';
-import { fetchDoctorById, fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
-import { fetchFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
 import type { PageLoad } from './$types';
 import { loggedOut, setUserFromSession, user, userData } from '$stores/user';
 import { get } from 'svelte/store';
-import { baseApiUrl, type Doctor, type Insurance, type Paginated, type Patient } from '$types/api';
+import { type Doctor, type Insurance, type Paginated } from '$types/api';
 import { fetchInsurances } from '$lib/services/insurances';
-import { fetchPatients } from '$lib/services/patients';
 
 // Disable SSR since we need localStorage for authentication tokens
 export const ssr = false;
@@ -28,7 +25,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     let patientsLink: string | null = null;
 
     if (!currentUser || currentUser.role !== 'DOCTOR') {
-        insurances = await fetchInsurances(fetch);
+        insurances = await fetchInsurances(undefined, fetch);
     } else if (currentUser.role === 'DOCTOR') {
         if (currentUserData && (currentUserData as Doctor).links.patients) {
             patientsLink = (currentUserData as Doctor).links.patients;

@@ -14,6 +14,7 @@
 	import { createPatient } from "$lib/services/patients";
 	import Toast from "$components/Toast/Toast.svelte";
 	import { createDoctor } from "$lib/services/doctors";
+	import { fetchInsurances, fetchInsurancesPage } from "$lib/services/insurances";
 
     let role: string = $state('');
 
@@ -205,12 +206,12 @@
 
     onMount(async () => {
 		// Fetch insurances list
-		const insurancesResponse = await fetch('http://localhost:8080/paw-2025a-15/api/insurances');
-		if (insurancesResponse.ok) {
-			insurances = await insurancesResponse.json();
-		} else {
-			console.error('Failed to fetch insurances');
-		}
+		let insurancesPage = await fetchInsurances(undefined, fetch);
+		insurances = [...insurancesPage.results];
+        while (insurancesPage._links.next) {
+            insurancesPage = await fetchInsurancesPage(insurancesPage._links.next, fetch);
+            insurances = [...insurances, ...insurancesPage.results];
+        }
 	});
 </script>
 
