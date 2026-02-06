@@ -92,7 +92,7 @@ public class PatientDTO {
         this.telephone = telephone;
     }
 
-    public LocalDate getBirthDate(){
+    public LocalDate getBirthdate(){
         return birthdate;
     }
 

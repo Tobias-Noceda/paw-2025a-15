@@ -161,7 +161,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 throws IOException {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().flush();;
+            response.getWriter().flush();
         }
     }
 

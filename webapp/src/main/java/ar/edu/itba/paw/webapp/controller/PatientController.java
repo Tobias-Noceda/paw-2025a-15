@@ -119,16 +119,20 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}")
     @Consumes(value = VndType.APPLICATION_PATIENT)
-    @Produces(value = MediaType.APPLICATION_JSON)//TODO patch produce??
+    @Produces(value = VndType.APPLICATION_PATIENT)
     public Response editPatient(
         @PathParam("id") long id,
         @Valid PatientEditDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        Long pictureId = URIHelper.getId(
+            dto.getPictureId(), 
+            uriInfo.getBaseUriBuilder().path(FileController.class).build()
+        );
         ps.updatePatient(
             patient, 
             dto.getTelephone(), 
-            dto.getPictureId(), 
+            pictureId, 
             dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
             dto.getBirthDate(), dto.getBloodtype(), 
             BigDecimal.valueOf(dto.getHeight()), 
@@ -137,7 +141,7 @@ public class PatientController {
             dto.getInsuranceId(), 
             dto.getInsuranceNumber()
         );
-        return Response.ok().build();
+        return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
     }
 
     /*========================= INFO =========================*/
@@ -153,6 +157,7 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}/medicalInfo")
     @Consumes(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
+    @Produces(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
     public Response editPatientMedicalInfo(
         @PathParam("id") long id,
         @Valid PatientEditMedicalInfoDTO dto
@@ -165,7 +170,7 @@ public class PatientController {
             dto.getAllergies(), 
             null, null, null, null, null
         );
-        return Response.ok().build();
+        return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, patient)).build();
     }
 
     @GET
@@ -179,6 +184,7 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}/socialInfo")
     @Consumes(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
+    @Produces(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
     public Response editPatientSocialInfo(
         @PathParam("id") long id,
         @Valid PatientEditSocialInfoDTO dto
@@ -190,7 +196,7 @@ public class PatientController {
             dto.getHobbies(),
             dto.getJob(), null, null
         );
-        return Response.ok().build();
+        return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, patient)).build();
     }
 
     @GET
@@ -204,6 +210,7 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}/habitsInfo")
     @Consumes(value = VndType.APPLICATION_PATIENT_HABITSINFO)
+    @Produces(value = VndType.APPLICATION_PATIENT_HABITSINFO)
     public Response editPatientHabitsInfo(
         @PathParam("id") long id,
         @Valid PatientEditHabitsInfoDTO dto
@@ -217,7 +224,7 @@ public class PatientController {
             dto.getDiet(), 
             null, null, null, null
         );
-        return Response.ok().build();
+        return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, patient)).build();
     }
 
     /*========================= STUDIES =========================*/

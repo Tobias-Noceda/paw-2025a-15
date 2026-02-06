@@ -12,14 +12,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -147,7 +145,7 @@ public class AppointmentController {
 
     @GET
     @Path("/{appointmentId}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response getAppointmentById(@PathParam("appointmentId") String appointmentId) {
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
         Pair<AppointmentNew, AppointmentStatusEnum> appointmentPair = as.getAppointmentByShiftIdDateAndTime(id.getShiftId(), id.getDate(), id.getStartTime(), id.getEndTime());
@@ -159,8 +157,8 @@ public class AppointmentController {
 
     @PATCH
     @Path("/{appointmentId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_APPOINTMENT)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response modifyAppointment(
         @PathParam("appointmentId") String appointmentId,
         @Valid AppointmentEditDTO appointmentEditDTO
