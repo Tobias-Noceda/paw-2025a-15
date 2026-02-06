@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -24,6 +25,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -55,6 +58,8 @@ import ar.edu.itba.paw.webapp.mediaType.VndType;
 @Component
 public class PatientController {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
+
     @Autowired
     private PatientService ps;
 
@@ -70,16 +75,16 @@ public class PatientController {
     @GET
     @Produces(value = VndType.APPLICATION_PATIENT)
     public Response listPatients(
-        @QueryParam("doctorId") final Long doctorId,
+        @QueryParam("doctorId") @NotNull final Long doctorId,
         @QueryParam("name") final String name,
         @QueryParam("page") @DefaultValue("1") final int page,
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if(name!=null) queryParams.put("name", name);
+        queryParams.put("doctorId", doctorId.toString());
 
-        if (doctorId != null) queryParams.put("doctorId", doctorId.toString());
+        if(name!=null) queryParams.put("name", name);
 
         final List<PatientDTO> patients = ds.getAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize)
             .stream().map(PatientDTO.mapper(uriInfo)).collect(Collectors.toList());
@@ -111,7 +116,9 @@ public class PatientController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = VndType.APPLICATION_PATIENT)
-    public Response getPatientById(@PathParam("id") final long id) {
+    public Response getPatientById(
+        @PathParam("id") final long id
+    ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
     }
