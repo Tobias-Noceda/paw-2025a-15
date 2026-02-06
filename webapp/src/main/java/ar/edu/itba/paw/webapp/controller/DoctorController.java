@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,6 @@ import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.User;
@@ -74,14 +71,8 @@ public class DoctorController {
     @Autowired
     private DoctorShiftService dss;
 
-    @Autowired
-    private UserService us;
-
     @Context
     private UriInfo uriInfo;
-
-    @Context
-    private SecurityContext securityContext;
 
     @GET
     @Produces(value = MediaType.APPLICATION_JSON)
@@ -250,10 +241,13 @@ public class DoctorController {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response doctorAuthorizations(
         @PathParam("id") Integer doctorId,
-        @QueryParam("patientId") Long patientId
+        @QueryParam("userId") Long patientId
     ) {
-        Principal userPrincipal = securityContext.getUserPrincipal();
-        User user = AuthenticatedUser.get(userPrincipal, email -> us.getUserByEmail(email).orElse(null));
+        User user = AuthenticatedUser.get();
+
+        if (!user.getId().equals(patientId)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
 
         if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
             return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();

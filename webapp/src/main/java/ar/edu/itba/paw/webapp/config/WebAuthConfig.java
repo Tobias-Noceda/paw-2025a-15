@@ -27,6 +27,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.webapp.auth.BasicAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.BearerAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
@@ -117,22 +118,31 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.DELETE, "/api/insurances/**").hasRole("ADMIN")
 
                 // patients
+                //// patient info
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/medicalInfo")
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_MEDICAL))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/medicalInfo")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/socialInfo")
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_SOCIAL))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/socialInfo")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/habitsInfo")
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_HABITS))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/habitsInfo")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                //// patient studies
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies").authenticated()
+                //// patient general
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/patients/**").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/**").authenticated()
-                // patient info
-                .requestMatchers(HttpMethod.GET, "/api/patients/**/medicalInfo").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/**/medicalInfo").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/patients/**/socialInfo").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/**/socialInfo").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/patients/**/habitsInfo").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/**/habitsInfo").authenticated()
-                // patient studies
-                .requestMatchers(HttpMethod.GET, "/api/patients/**/studies").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/patients/**/studies").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/patients/**/studies/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/patients/**/studies/**").authenticated()
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())

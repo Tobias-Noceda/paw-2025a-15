@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller.util;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,7 +35,7 @@ public class URIHelper {
             );
         }
 
-        return Long.parseLong(matcher.group(1));
+        return Long.valueOf(matcher.group(1));
     }
 
 }

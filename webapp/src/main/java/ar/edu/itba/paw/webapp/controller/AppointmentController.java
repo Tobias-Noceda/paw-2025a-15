@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -20,14 +19,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.User;
@@ -48,14 +45,8 @@ public class AppointmentController {
     @Autowired
     private AppointmentService as;
 
-    @Autowired
-    private UserService us;
-
     @Context
     private UriInfo uriInfo;
-
-    @Context
-    private SecurityContext securityContext;
 
     private static final ZoneId ARGENTINA_ZONE = ZoneId.of("America/Argentina/Buenos_Aires");
 
@@ -109,7 +100,6 @@ public class AppointmentController {
                         return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for TAKEN status").build();
                     }
                 } catch (Exception e) {
-                    System.out.println("Error fetching TAKEN appointments: " + e.getMessage());
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error fetching TAKEN appointments").build();
                 }
             }
@@ -165,9 +155,7 @@ public class AppointmentController {
     ) {
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
 
-        Principal userPrincipal = securityContext.getUserPrincipal();
-
-        User user = AuthenticatedUser.get(userPrincipal, email -> us.getUserByEmail(email).orElse(null));
+        User user = AuthenticatedUser.get();
         
         if (user == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();

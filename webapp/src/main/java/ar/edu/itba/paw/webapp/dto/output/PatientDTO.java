@@ -21,7 +21,7 @@ public class PatientDTO {
     private String name;
     private String telephone;
     private LocalDate birthdate;
-    private String bloodtype;
+    private String bloodType;
     private BigDecimal height;
     private BigDecimal weight;
     private String insuranceNumber;
@@ -35,17 +35,16 @@ public class PatientDTO {
     public static PatientDTO fromPatient(final UriInfo uriInfo, Patient patient){
         final PatientDTO dto = new PatientDTO();
 
-        dto.setName(patient.getName());
-        dto.setEmail(patient.getEmail());
-        dto.setTelephone(patient.getTelephone());
-        dto.setBirthdate(patient.getBirthdate());
-        if(patient.getBloodType()!=null) dto.setBloodtype(patient.getBloodType().getName());
-        dto.setHeight(patient.getHeight());
-        dto.setWeight(patient.getWeight());
-        dto.setInsuranceNumber(patient.getInsuranceNumber());
+        dto.name = patient.getName();
+        dto.email = patient.getEmail();
+        dto.telephone = patient.getTelephone();
+        dto.birthdate = patient.getBirthdate();
+        dto.bloodType = patient.getBloodType() != null ? patient.getBloodType().getName() : null;
+        dto.height = patient.getHeight();
+        dto.weight = patient.getWeight();
+        dto.insuranceNumber = patient.getInsuranceNumber();
 
-        URI insurance = null;
-        if(patient.getInsurance()!=null) insurance = uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(patient.getInsurance().getId())).build();
+        URI insurance = patient.getInsurance() != null ? uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(patient.getInsurance().getId())).build() : null;
         URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
         URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
@@ -94,7 +93,7 @@ public class PatientDTO {
         this.telephone = telephone;
     }
 
-    public LocalDate getBirthDate(){
+    public LocalDate getBirthdate(){
         return birthdate;
     }
 
@@ -102,12 +101,12 @@ public class PatientDTO {
         this.birthdate = birthdate;
     }
 
-    public String getBloodtype(){
-        return bloodtype;
+    public String getBloodType(){
+        return bloodType;
     }
 
-    public void setBloodtype(String bloodtype){
-        this.bloodtype = bloodtype;
+    public void setBloodType(String bloodType){
+        this.bloodType = bloodType;
     }
 
     public BigDecimal getHeight(){
