@@ -63,6 +63,8 @@ public class PatientDTO {
             .setImage(picture)
             .setInsurance(insurance)
             .setDoctors(doctors)
+            .setPastAppointments(pastAppointments)
+            .setFutureAppointments(futureAppointments)
         );
 
         return dto;

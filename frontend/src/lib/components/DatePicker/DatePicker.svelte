@@ -8,6 +8,7 @@
 
   import { getLocale } from '$lib/paraglide/runtime'
   import * as m from '$lib/paraglide/messages.js';
+	import Select from "$components/Select/Select.svelte";
 
   interface Props {
     id?: string;
@@ -17,6 +18,7 @@
     onSelectDate?: (date: Date | null) => void;
     minDate?: Date;
     maxDate?: Date;
+    yearRange?: number[];
     erasable?: boolean;
     class?: string;
   }
@@ -35,12 +37,21 @@
      * Maximum selectable date (not inclusive). Dates after this will be disabled.
     */
     maxDate,
+    /**
+     * Array of years to show in the year selector. If not provided, defaults to a range of 3 years centered around the current year.
+    */
+    yearRange,
     erasable,
     class: datePickerClass
   }: Props = $props();
 
   let showCalendar = $state(false);
-  let currentMonth: Date = $state(selectedDate ? new Date(selectedDate) : new Date());
+  let showMonthYearPicker = $state(false);
+
+  let showingMonth: Date = $derived(selectedDate ? new Date(selectedDate) : new Date());
+
+  let currentMonth: string = $state(selectedDate ? new Date(selectedDate).toLocaleDateString(getLocale(), { month: 'numeric' }) : new Date().toLocaleDateString(getLocale(), { month: 'numeric' }));
+  let currentYear: string = $derived(selectedDate ? new Date(selectedDate).getFullYear().toString() : new Date().getFullYear().toString());
 
   let buttonRef: HTMLButtonElement;
 
@@ -87,30 +98,47 @@
   }
 
   function prevMonth() {
-    currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+    showingMonth = new Date(showingMonth.getFullYear(), showingMonth.getMonth() - 1, 1);
+    currentMonth = showingMonth.toLocaleDateString(getLocale(), { month: 'numeric' });
+    currentYear = showingMonth.getFullYear().toString();
   }
 
   function nextMonth() {
-    currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+    showingMonth = new Date(showingMonth.getFullYear(), showingMonth.getMonth() + 1, 1);
+    currentMonth = showingMonth.toLocaleDateString(getLocale(), { month: 'numeric' });
+    currentYear = showingMonth.getFullYear().toString();
+  }
+
+  function setMonthYear(month: number, year: number) {
+    showingMonth = new Date(year, month, 1);
+    showMonthYearPicker = false;
+    currentMonth = showingMonth.toLocaleDateString(getLocale(), { month: 'numeric' });
+    currentYear = showingMonth.getFullYear().toString();
   }
 
   function selectDate(date: Date) {
     selectedDate = date;
     onSelectDate?.(date);
     showCalendar = false;
+    currentMonth = date.toLocaleDateString(getLocale(), { month: 'numeric' });
+    currentYear = date.getFullYear().toString();
   }
 
   function clearDate() {
     selectedDate = null;
     onSelectDate?.(null);
     showCalendar = false;
+    currentMonth = new Date().toLocaleDateString(getLocale(), { month: 'numeric' });
+    currentYear = new Date().getFullYear().toString();
   }
 
   function selectToday() {
     const today = new Date();
     selectedDate = today;
     onSelectDate?.(today);
-    currentMonth = today;
+    showingMonth = today;
+    currentMonth = today.toLocaleDateString(getLocale(), { month: 'numeric' });
+    currentYear = today.getFullYear().toString();
     showCalendar = false;
   }
 
@@ -176,9 +204,35 @@
         >
           <Icon name="left-arrow" class="w-2 h-2" />
         </Button>
-        <span>
-          {getMonthName(currentMonth.getMonth())} {currentMonth.getFullYear()}
-        </span>
+        {#if !showMonthYearPicker}
+          <button
+            type="button"
+            onclick={() => showMonthYearPicker = true}
+            class="font-semibold hover:bg-gray-100 px-2 py-1 rounded"
+          >
+            {getMonthName(showingMonth.getMonth())} {showingMonth.getFullYear()}
+          </button>
+        {:else}
+          <div class="flex gap-1">
+            <Select
+              class="text-[10px] max-w-20! h-fit!"
+              bind:value={currentMonth}
+              options={Array.from({ length: 12 }, (_, i) => ({ value: (i + 1).toString(), label: getMonthName(i) }))}
+              onchange={(e) => setMonthYear(Number(e) - 1, showingMonth.getFullYear())}
+            />
+            <Select
+              class="text-[10px] max-w-fit! h-fit!"
+              options={
+                yearRange ? yearRange.map((year) => ({ value: year.toString(), label: year.toString() })) :
+                Array.from({ length: 3 }, (_, i) => {
+                  const year = new Date().getFullYear() - 1 + i;
+                  return { value: year.toString(), label: year.toString() };
+                })}
+              bind:value={currentYear}
+              onchange={(e) => setMonthYear(showingMonth.getMonth(), Number(e))}
+            />
+          </div>
+        {/if}
         <Button
           variant="secondary"
           onclick={nextMonth}
@@ -193,7 +247,7 @@
         {/each}
       </div>
       <div class="grid grid-cols-7 text-center">
-        {#each getDaysInMonth(currentMonth) as day}
+        {#each getDaysInMonth(showingMonth) as day}
           {#if day}
             <button
               class={

@@ -98,4 +98,9 @@ public class PatientCreateDTO {
         this.birthDate = birthDate; 
     }
     
+    @Override
+    public String toString() {
+        return "PatientCreateDTO [name=" + name + ", email=" + email + ", password=" + password + ", telephone=" + telephone
+                + ", height=" + height + ", weight=" + weight + ", birthDate=" + birthDate + "]";
+    }
 }

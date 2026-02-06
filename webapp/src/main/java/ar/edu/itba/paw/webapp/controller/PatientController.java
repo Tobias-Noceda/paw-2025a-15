@@ -95,7 +95,7 @@ public class PatientController {
     }
 
     @POST
-    @Consumes(value = VndType.APPLICATION_PATIENT)
+    @Consumes(value = VndType.APPLICATION_PATIENT_CREATION)
     public Response createPatient(@Valid PatientCreateDTO dto) {
         final Patient patient = ps.createPatient(
             dto.getEmail(), dto.getPassword(), 

@@ -1,12 +1,12 @@
 import { browser } from '$app/environment';
-import { goto } from '$app/navigation';
+import { goto, invalidateAll } from '$app/navigation';
 import { base } from '$app/paths';
 import { PUBLIC_API_ORIGIN } from '$env/static/public';
-import { user } from '$stores/user';
+import { loggedOut, user, userData } from '$stores/user';
 import type { Session } from '$types/api';
 import { error } from '@sveltejs/kit';
 
-export const apiOrigin = PUBLIC_API_ORIGIN; 
+export const apiOrigin = PUBLIC_API_ORIGIN;
 
 let tokens = $state({
 	access: browser ? (localStorage.access as string) : null,
@@ -257,12 +257,19 @@ export async function deleteAuth(path: string, options?: RequestInit, fetchFn: t
 	);
 };
 
-export function logout(redirectTo: string = '/login'): void {
+export function logout(redirectTo: string = '/home'): void {
+	if (!browser) {
+		return;
+	}
+	loggedOut.set(true);
+	invalidateAll();
+	window.location.href = `${base}${redirectTo}`;
+	
 	tokens = { access: null, refresh: null };
 	user.set(null);
+	userData.set(null);
 	if (browser) {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
 	}
-	goto(`${base}${redirectTo}`);
 };

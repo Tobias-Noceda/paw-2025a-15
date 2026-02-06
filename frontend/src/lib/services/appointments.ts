@@ -2,7 +2,7 @@ import { get, getAuth, patchAuth } from "$modules/api.svelte";
 import { type Appointment, type Paginated } from "$types/api";
 import { AppointmentStatus } from "$types/enums/AppointmentStatus";
 import { error } from "@sveltejs/kit";
-import { getPaginationLinks } from "./pagination";
+import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 
 // Parse date in local timezone to avoid UTC conversion issues
 export const parseDateInLocalTimezone = (dateStr: string): Date => {
@@ -23,7 +23,6 @@ export const fetchFreeAppointments = async (
     date?: string,
     fetchFn: typeof fetch = fetch
 ): Promise<Paginated<Appointment>> => {
-    
     let url = new URL(urlString);
     if (date) {
         url.searchParams.set('date', date);
@@ -35,12 +34,7 @@ export const fetchFreeAppointments = async (
     appointments.results = await response.json();
 
     appointments._links = getPaginationLinks(response);
-    if (response.headers.get('X-Current-Date') && response.headers.get('X-Max-Date')) {
-        appointments._pageInfo = {
-            currentDate: parseDateInLocalTimezone(response.headers.get('X-Current-Date')!),
-            maxDate: parseDateInLocalTimezone(response.headers.get('X-Max-Date')!)
-        };
-    }
+    appointments._pageInfo = getPageInfoFromHeaders(response);
 
     // Populate doctor data for each appointment
     for (const appointment of appointments.results) {
@@ -53,11 +47,12 @@ export const fetchFreeAppointments = async (
 export const fetchNonFreeAppointments = async (
     urlString: string,
     fetchFn: typeof fetch = fetch,
-    isPageinationLink: boolean = false
+    isPaginationLink: boolean = false
 ): Promise<Paginated<Appointment>> => {
     let urlStringFinal = urlString;
 
-    if (!isPageinationLink) {
+    if (!isPaginationLink) {
+        console.log('Non-pagination link, setting pageSize to 15:', urlString);
         const url = new URL(urlString);
         url.searchParams.set('pageSize', '15');
         urlStringFinal = url.toString();

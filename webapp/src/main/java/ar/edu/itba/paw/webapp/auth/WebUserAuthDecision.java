@@ -56,7 +56,20 @@ public class WebUserAuthDecision {
             return new AuthorizationDecision(false);
         }
 
-        if(user.getId().equals(patientId) || isAuthDoctor(user, patientId)) {
+        if(isSelf(auth, patientId) || isAuthDoctor(user, patientId)) {
+            return new AuthorizationDecision(true);
+        }
+
+        return new AuthorizationDecision(false);
+    }
+
+    public AuthorizationDecision isSelfID(Authentication auth, long userId) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        if(isSelf(auth, userId)) {
             return new AuthorizationDecision(true);
         }
 
@@ -200,40 +213,44 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.DOCTOR) && shift.getDoctor().getId().equals(user.getId()));
     }
 
-    public AuthorizationDecision isDoctor(Authentication auth) {
-        User user = getAuthenticatedUser(auth);
-        if (user == null) {
-            return new AuthorizationDecision(false);
-        }
-
-        return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.DOCTOR));
+    public AuthorizationDecision canModifyDoctorShifts(Authentication auth, String doctorIdStr) {
+        return new AuthorizationDecision(isDoctor(auth) && isSelf(auth, Long.parseLong(doctorIdStr)));
     }
 
-    public AuthorizationDecision isPatient(Authentication auth) {
+    public boolean isDoctor(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
-            return new AuthorizationDecision(false);
+            return false;
         }
 
-        return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.PATIENT));
+        return user.getRole().equals(UserRoleEnum.DOCTOR);
     }
 
-    public AuthorizationDecision isAdmin(Authentication auth) {
+    public boolean isPatient(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
-            return new AuthorizationDecision(false);
+            return false;
         }
 
-        return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.ADMIN));
+        return user.getRole().equals(UserRoleEnum.PATIENT);
     }
 
-    public AuthorizationDecision isSelf(Authentication auth, long userId) {
+    public boolean isAdmin(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
-            return new AuthorizationDecision(false);
+            return false;
         }
 
-        return new AuthorizationDecision(user.getId().equals(userId));
+        return user.getRole().equals(UserRoleEnum.ADMIN);
+    }
+
+    public boolean isSelf(Authentication auth, long userId) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null) {
+            return false;
+        }
+
+        return user.getId().equals(userId);
     }
 
     private boolean isAuthDoctor(User user, long patientId) {
