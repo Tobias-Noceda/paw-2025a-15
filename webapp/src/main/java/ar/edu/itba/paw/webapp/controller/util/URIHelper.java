@@ -8,6 +8,22 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class URIHelper {
+
+    public static Long getId(String uri, URI uriExpected) {
+        if (uri == null || uriExpected == null) return null;
+
+        String basePath = uriExpected.getPath();
+
+        basePath = basePath.replaceAll("\\{[^/]+\\}$", "");
+
+        if (!basePath.endsWith("/")) {
+
+            basePath += "/";
+
+        }
+        Pattern pattern = Pattern.compile(Pattern.quote(basePath) + "(\\d+)$");
+        return extractId(URI.create(uri), pattern);
+    }
     
     public static List<Long> getIds(List<String> uris, URI uriExpected) {
         if (uris == null || uris.isEmpty() || uriExpected == null) return Collections.emptyList();

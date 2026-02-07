@@ -58,23 +58,19 @@ public class FileController {
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if(studyId!=null){
-            queryParams.put("studyId", studyId.toString());
+        if(studyId!=null) queryParams.put("studyId", studyId.toString());
             
-            final List<FileDTO> files = ss.getStudyFilesPage(studyId, page, pageSize)
-                .stream().map(FileDTO.mapper(uriInfo)).collect(Collectors.toList());
+        final List<FileDTO> files = ss.getStudyFilesPage(studyId, page, pageSize)
+            .stream().map(FileDTO.mapper(uriInfo)).collect(Collectors.toList());
             
-
-            return PaginationBuilder.buildResponse(
-                Response.ok(new GenericEntity<List<FileDTO>>(files) {}),
-                page, 
-                pageSize, 
-                ss.getStudyFilesCount(studyId), 
-                queryParams, 
-                uriInfo
-            );
-        }
-       return Response.noContent().build(); //TODO que lo maneje el service para devovler [] en todo caso
+        return PaginationBuilder.buildResponse(
+            Response.ok(new GenericEntity<List<FileDTO>>(files) {}),
+            page, 
+            pageSize, 
+            ss.getStudyFilesCount(studyId), 
+            queryParams, 
+            uriInfo
+        );
     }
 
     @POST

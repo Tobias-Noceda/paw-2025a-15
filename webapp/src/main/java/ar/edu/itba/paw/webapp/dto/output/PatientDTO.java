@@ -49,11 +49,11 @@ public class PatientDTO {
         URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
         URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
+        URI pastAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.COMPLETED).build();
+        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.TAKEN).build();
         URI medicalInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("medicalInfo").build();
         URI socialInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("socialInfo").build();
         URI habitsInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("habitsInfo").build();
-        URI pastAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.COMPLETED).build();
-        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.TAKEN).build();
 
         URI baseStudies = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("studies").build();
         TemplatedLinkDTO studies = TemplatedLinkDTO.withQueryParams(baseStudies, List.of("doctorId"));
