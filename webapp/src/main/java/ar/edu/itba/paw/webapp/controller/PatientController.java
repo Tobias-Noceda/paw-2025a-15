@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
@@ -35,7 +33,6 @@ import org.springframework.stereotype.Component;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
@@ -72,12 +69,6 @@ public class PatientController {
 
     @Autowired
     private StudyService ss;
-
-    @Autowired
-    private UserService us;
-
-    @Context
-    private SecurityContext securityContext;
 
     @Context
     private UriInfo uriInfo;
@@ -116,7 +107,7 @@ public class PatientController {
             dto.getEmail(), dto.getPassword(), 
             dto.getName(), dto.getTelephone(), 
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale()), 
-            dto.getBirthDate(), BigDecimal.valueOf(dto.getHeight()), 
+            dto.getBirthdate(), BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight())
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build();
@@ -151,7 +142,7 @@ public class PatientController {
             dto.getTelephone(), 
             pictureId, 
             dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
-            dto.getBirthDate(), dto.getBloodtype(), 
+            dto.getBirthdate(), dto.getBloodtype(), 
             BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight()), 
             null, null, null, null, null, null, null, null, 
@@ -289,8 +280,7 @@ public class PatientController {
         @PathParam("id") final long id,
         @Valid StudyCreateDTO dto
     ) {
-        Principal userPrincipal = securityContext.getUserPrincipal();
-        User user = AuthenticatedUser.get(userPrincipal, email -> us.getUserByEmail(email).orElse(null));
+        User user = AuthenticatedUser.get();
         
         if (user == null) { //jjust in case, authConfig should have make sure of this already
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
