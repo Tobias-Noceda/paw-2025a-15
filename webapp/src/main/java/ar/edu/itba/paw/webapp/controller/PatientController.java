@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,13 @@ import org.springframework.stereotype.Component;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.PatientCreateDTO;
@@ -63,6 +67,12 @@ public class PatientController {
 
     @Autowired
     private StudyService ss;
+
+    @Autowired
+    private UserService us;
+
+    @Context
+    private SecurityContext securityContext;
 
     @Context
     private UriInfo uriInfo;
@@ -272,6 +282,13 @@ public class PatientController {
         @PathParam("id") final long id,
         @Valid StudyCreateDTO dto
     ) {
+        Principal userPrincipal = securityContext.getUserPrincipal();
+        User user = AuthenticatedUser.get(userPrincipal, email -> us.getUserByEmail(email).orElse(null));
+        
+        if (user == null) { //jjust in case, authConfig should have make sure of this already
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+
         final Study study = ss.create(
             StudyTypeEnum.fromDisplayName(dto.getType()), 
             dto.getComment(), 
@@ -282,7 +299,7 @@ public class PatientController {
                     .build()
             ), 
             id, 
-            id,//TODO se podra obtener del auth capaz?
+            user.getId(),
             dto.getStudyDate()
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(study.getId())).build();

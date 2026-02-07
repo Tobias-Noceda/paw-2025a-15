@@ -105,7 +105,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
                 // files
-                .requestMatchers(HttpMethod.GET, "/api/files").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/files")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), c))
                 .requestMatchers(HttpMethod.POST, "/api/files").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/files/{id}").hasRole("ADMIN")
 
@@ -142,7 +143,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.parseLong(c.getVariables().get("studyId"))))
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), c))
                 .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}")
                     .access((a, c) -> ad.isSelfID(a.get(), Long.parseLong(c.getVariables().get("id"))))
             )

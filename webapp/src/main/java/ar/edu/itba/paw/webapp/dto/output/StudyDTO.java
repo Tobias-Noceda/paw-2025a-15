@@ -34,7 +34,7 @@ public class StudyDTO {
         dto.setUploadDate(study.getUploadDate());
         dto.setStudyDate(study.getStudyDate());
 
-        URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).path("studies").build();
+        URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).path("studies").path(String.valueOf(study.getId())).build();
         URI patient =  uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).build();
         URI uploader = null;
         if(study.getUploader().getRole().equals(UserRoleEnum.DOCTOR))uploader = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(study.getUploader().getId())).build();

@@ -127,33 +127,21 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(false);
     }
 
-    public AuthorizationDecision hasStudyAuth(Authentication auth, long studyId) {
+    public AuthorizationDecision hasStudyAuth(Authentication auth, RequestAuthorizationContext context) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
             return new AuthorizationDecision(false);
         }
 
-        Study study = ss.getStudyById(studyId).orElse(null);
+        String studyId = context.getRequest().getParameter("studyId");     
 
-        if (study == null) {
-            return new AuthorizationDecision(false);
-        }
+        if (studyId == null) return new AuthorizationDecision(false);
 
-        if(user.getId().equals(study.getPatient().getId())) {
-            return new AuthorizationDecision(true);
-        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
-            return new AuthorizationDecision(true);
-        }
+        Study study = ss.getStudyById(Long.parseLong(studyId)).orElse(null);
 
-        return new AuthorizationDecision(false);
-    }
+        if (study == null) return new AuthorizationDecision(false);
 
-    public AuthorizationDecision hasFileAuth(Authentication auth, long studyId, long fileId) {
-        Boolean hasStudyAuth = hasStudyAuth(auth, studyId).isGranted();
-
-        if(hasStudyAuth) {
-            return new AuthorizationDecision(ss.isFileInStudy(studyId, fileId));
-        }
+        if(isStudyAuth(user, study)) return new AuthorizationDecision(true);
 
         return new AuthorizationDecision(false);
     }
@@ -261,6 +249,15 @@ public class WebUserAuthDecision {
         return user.getRole().equals(UserRoleEnum.DOCTOR) && 
                 ads.hasAuthDoctor(patientId, user.getId()) &&
                 ads.getAuthAccessLevelEnums(patientId, user.getId()).contains(level);
+    }
+
+    private boolean isStudyAuth(User user, Study study){
+        if(user.getId().equals(study.getPatient().getId())) {
+            return true;
+        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
+            return true;
+        }
+        return false;
     }
 
     private User getAuthenticatedUser(Authentication auth) {
