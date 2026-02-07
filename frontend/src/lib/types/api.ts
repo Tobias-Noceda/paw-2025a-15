@@ -1,5 +1,4 @@
-import type { insurance } from "$stores/filters";
-import type { AppointmentStatus } from "./enums/AppointmentStatus";
+import type { AppointmentStatus } from "./enums/appointmentStatus";
 import type { Specialty } from "./enums/specialties";
 import type { Weekdays } from "./enums/weekdays";
 
@@ -21,6 +20,11 @@ export type Paginated<T> = {
 		maxDate?: Date;
 	};
 	results: T[];
+};
+
+export type UriTemplate = {
+	href: string;
+	templated: boolean;
 };
 
 export type Session = {
@@ -45,6 +49,7 @@ export type Doctor = {
 		freeAppointments: string;
 		futureAppointments: string;
 		patients: string;
+		authorizations?: UriTemplate;
 	}
 }
 
@@ -52,20 +57,23 @@ export type Patient = {
 	email: string;
 	name: string;
 	telephone: string;
-	birthDate: string;
+	birthdate: string;
 	bloodType: string;
 	height: number;
 	weight: number;
 	insurance?: string;
 	insuranceNumber: string;
-	meds?: string | null;
-	conditions?: string | null;
-	allergies?: string | null;
-	smokes?: boolean | null;
-	drinks?: boolean | null;
-	diet?: string | null;
-	hobbies?: string | null;
-	job?: string | null;
+	gaveHabits?: boolean;
+	smokes?: boolean;
+	drinks?: boolean;
+	diet?: string;
+	gaveMedical?: boolean;
+	meds?: string;
+	conditions?: string;
+	allergies?: string;
+	gaveSocial?: boolean;
+	hobbies?: string;
+	job?: string;
 	links: {
 		doctors: string;
 		image: string;
@@ -76,6 +84,8 @@ export type Patient = {
 		socialInfo: string;
 		pastAppointments: string;
 		futureAppointments: string;
+		studies: UriTemplate;
+		resolvedStudies: string;
 	}
 }
 

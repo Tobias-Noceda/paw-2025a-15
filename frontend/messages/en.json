@@ -267,6 +267,62 @@
 			"delete": "Delete"
 		}
 	},
+	"patient": {
+		"titles": {
+			"basic": "Basic Details",
+			"habits": "Habits Details",
+			"medical": "Medical Details",
+			"social": "Social Details"
+		},
+		"labels": {
+			"email": "Email",
+			"telephone": "Phone",
+			"age": "Age",
+			"blood_type": "Blood Type",
+			"height": "Height (m)",
+			"weight": "Weight (kg)",
+			"insurance": "Insurance",
+			"insurance_number": "Insurance Number",
+			"smokes": "Smoking habit",
+			"drinks": "Drinking habit",
+			"diet": "Diet",
+			"medications": "Medications",
+			"conditions": "Conditions",
+			"allergies": "Allergies",
+			"hobbies": "Hobbies",
+			"job": "Job"
+		},
+		"actions": {
+			"upload": "Upload Study",
+			"apply": "Apply"
+		},
+		"values": {
+			"true": "Yes",
+			"false": "No",
+			"unknown": "Not provided"
+		}
+	},
+	"studies": {
+		"title": "Studies",
+		"types": {
+			"title": "Study Type",
+			"options": {
+				"other": "Other",
+				"prescription": "Prescription",
+				"radiography": "Radiography",
+				"laboratory_result": "Laboratory Result",
+				"ultrasound": "Ultrasound",
+				"mri": "MRI",
+				"electrocardiogram": "Electrocardiogram",
+				"vaccination_record": "Vaccination Record"
+			}
+		},
+		"orders": {
+			"title": "Study Date",
+			"m_recent": "Most Recent",
+			"l_recent": "Oldest"
+		}
+	},
 	"date_format": "MM/dd/yyyy",
 	"next": "Next",
 	"previous": "Previous"

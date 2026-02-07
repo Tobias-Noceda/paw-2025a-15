@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.dto.output;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
@@ -54,6 +55,9 @@ public class PatientDTO {
         URI pastAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.COMPLETED).build();
         URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.TAKEN).build();
 
+        URI baseStudies = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("studies").build();
+        TemplatedLinkDTO studies = TemplatedLinkDTO.withQueryParams(baseStudies, List.of("doctorId"));
+        
         dto.setLinks(new LinkDTO()
             .setSelf(self)
             .setMedicalInfo(medicalInfo)
@@ -64,6 +68,7 @@ public class PatientDTO {
             .setDoctors(doctors)
             .setPastAppointments(pastAppointments)
             .setFutureAppointments(futureAppointments)
+            .setStudies(studies)
         );
 
         return dto;

@@ -26,7 +26,7 @@ public class PatientEditDTO {
 
     @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate birthDate;
+    private LocalDate birthdate;
 
     private BloodTypeEnum bloodtype;
 
@@ -65,12 +65,12 @@ public class PatientEditDTO {
         this.mailLanguage = mailLanguage;
     }
 
-    public LocalDate getBirthDate() { 
-        return birthDate; 
+    public LocalDate getBirthdate() { 
+        return birthdate; 
     }
 
-    public void setBirthDate(LocalDate birthDate) { 
-        this.birthDate = birthDate; 
+    public void setBirthdate(LocalDate birthdate) { 
+        this.birthdate = birthdate; 
     }
 
     public BloodTypeEnum getBloodtype() {

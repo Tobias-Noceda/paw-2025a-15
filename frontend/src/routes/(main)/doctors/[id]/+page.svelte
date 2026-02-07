@@ -104,28 +104,28 @@
 
 <div class="flex gap-5">
     <div class="page-division flex-col min-w-[350px]! w-[350px]! sticky">
-        <div class="doctor-card-inner">
-            <h1 class="text-[24px] font-bold mb-2.5">{doctor ? doctor.name : 'Loading...'}</h1>
+        <div class="doctor-card-inner inner-flex flex-col select-text">
+            <h1 class="text-[24px] font-bold mb-2.5">{doctor.name}</h1>
             <div class="flex w-full h-60 justify-center items-center">
                 <div class="flex w-[200px] h-[200px]">
                     <Avatar
                         size="auto"
-                        src={doctor ? doctor.links.image : ''}
+                        src={doctor.links.image}
                         class="bg-primary"
                     />
                 </div>
             </div>
-            <p class="text-line font-bold">{doctor ? doctor.email : 'Loading...'}</p>
-            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.telephone']()}:</span> {doctor ? doctor.telephone : 'Loading...'}</p>
-            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.insurances']()}:</span> {doctor ? doctor.insurances?.join(', ') : 'Loading...'}</p>
-            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.specialty']()}:</span> {doctor ? m[`specialties.${doctor.specialty}`]() : 'Loading...'}</p>
-            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.address']()}:</span> {doctor ? doctor.direction : 'Loading...'}</p>
-            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.license']()}:</span> {doctor ? doctor.license : 'Loading...'}</p>
+            <p class="text-line font-bold">{doctor.email}</p>
+            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.telephone']()}:</span> {doctor.telephone}</p>
+            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.insurances']()}:</span> {doctor.insurances?.join(', ')}</p>
+            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.specialty']()}:</span> {m[`specialties.${doctor.specialty}`]()}</p>
+            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.address']()}:</span> {doctor.direction}</p>
+            <p class="text-line text-secondaryText"><span class="font-bold text-primaryText">{m['doctor.labels.license']()}:</span> {doctor.license}</p>
 
             <div class="flex flex-1 flex-col">
                 <p class="section-title">{m['doctor.labels.schedule']()}:</p>
 
-                {#if doctor && doctor.schedule && doctor.schedule.size > 0}
+                {#if doctor.schedule && doctor.schedule.size > 0}
                     <ul class="mt-2.5 pb-5">
                         {#each Array.from(doctor.schedule.entries()) as [day, [start, end]]}
                             <li class="text-secondaryText">
@@ -160,7 +160,7 @@
                 selectedDate={selectedDate}
                 onSelectDate={(date) => {
                     selectedDate = date ?? new Date();
-                    fetchAppointments(doctor!.links.freeAppointments, selectedDate);
+                    fetchAppointments(doctor.links.freeAppointments, selectedDate);
                 }}
                 minDate={new Date()}
                 maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
@@ -197,7 +197,7 @@
                         month: new Date(selectedAppointment.date).toLocaleString(getLocale(), { month: 'long' }),
                         day: new Date(selectedAppointment.date).getDate(),
                         startTime: selectedAppointment.startTime,
-                        doctorName: doctor?.name ?? ''
+                        doctorName: doctor.name
                     })}
                 </h1>
                 <p class="text-primaryText">{m['doctor.pop_up.subtitle']()}</p>
@@ -252,8 +252,6 @@
 
 <style>
     .doctor-card-inner {
-        display: flex;
-        flex-direction: column;
         height: 100%;
         overflow-y: auto;
         /* Hide scrollbar for all browsers */

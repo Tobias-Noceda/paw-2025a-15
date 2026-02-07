@@ -1,9 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { fetchDoctorById } from '$lib/services/doctors';
-import { fetchFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
 import type { PageLoad } from './$types';
 import { setUserFromSession, user } from '$stores/user';
 import { get } from 'svelte/store';
+import { fetchPatientById } from '$lib/services/patients';
 
 // Disable SSR since we need localStorage for authentication tokens
 export const ssr = false;
@@ -16,32 +15,19 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     const currentUser = get(user);
 
-    if (currentUser && currentUser.role !== 'PATIENT') {
+    if (currentUser && currentUser.role !== 'DOCTOR') {
         throw error(404, 'Not found');
     }
-    
-    // Get date from URL or use today
-    const dateParam = url.searchParams.get('date');
-    const selectedDate = dateParam 
-        ? parseDateInLocalTimezone(dateParam) 
-        : new Date();
 
     try {
-        const doctor = await fetchDoctorById(params.id, fetch);
+        const patient = await fetchPatientById(Number.parseInt(params.id), currentUser, fetch);
 
-        if (!doctor) {
-            throw error(404, 'Doctor not found');
+        if (!patient) {
+            throw error(404, 'Patient not found');
         }
 
-        const appointments = await fetchFreeAppointments(
-            doctor.links.freeAppointments, 
-            formatDateLocal(selectedDate)
-        );
-
         return {
-            doctor,
-            appointments,
-            selectedDate
+            patient
         };
     } catch (err: any) {
         // If it's already a SvelteKit error, rethrow it

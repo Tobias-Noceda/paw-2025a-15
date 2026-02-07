@@ -1,6 +1,6 @@
 import { get, getAuth, patchAuth } from "$modules/api.svelte";
 import { type Appointment, type Paginated } from "$types/api";
-import { AppointmentStatus } from "$types/enums/AppointmentStatus";
+import { AppointmentStatus } from "$types/enums/appointmentStatus";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 
