@@ -7,12 +7,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
-import ar.edu.itba.paw.models.enums.BloodTypeEnum;
-import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.Doctor;
@@ -22,6 +16,12 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 //Readable output of all the data inputed in test/resources

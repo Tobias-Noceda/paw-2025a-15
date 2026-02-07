@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
 
@@ -97,7 +98,13 @@ public class PatientJpaDaoTest {
         PATIENT.setId(TestData.Users.patientId);
         PATIENT.getPicture().setId(TestData.Images.validImageId);
 
+        final String TELEPHONE = "11 1234 5678";
+        //pic
+        //locale
+        //birthdate
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.BLOOD_TYPE_1;
+        final BigDecimal HEIGHT = TestData.PatientDetails.HEIGHT;
+        final BigDecimal WEIGHT = TestData.PatientDetails.WEIGHT;
         final Boolean SMOKES = TestData.PatientDetails.SMOKES_1;
         final Boolean DRINKS = TestData.PatientDetails.DRINKS_1;
         final String MEDS = TestData.PatientDetails.MEDS;
@@ -106,10 +113,18 @@ public class PatientJpaDaoTest {
         final String DIET = TestData.PatientDetails.DIET;
         final String HOBBIES = TestData.PatientDetails.HOBBIES;
         final String JOB = TestData.PatientDetails.JOB_1;
+        //insurance
+        //insuranceNumber
 
-        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null);
+        patientDao.updatePatient(PATIENT, TELEPHONE, PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null);
 
+        Assert.assertEquals(PATIENT.getTelephone(), TELEPHONE);
+        //
+        //
+        //
         Assert.assertEquals(PATIENT.getBloodType(), BLOOD_TYPE);
+        Assert.assertEquals(PATIENT.getHeight(), HEIGHT);
+        Assert.assertEquals(PATIENT.getWeight(), WEIGHT);
         Assert.assertEquals(PATIENT.getSmokes(), SMOKES);
         Assert.assertEquals(PATIENT.getDrinks(), DRINKS);
         Assert.assertEquals(PATIENT.getMeds(), MEDS);
@@ -118,6 +133,8 @@ public class PatientJpaDaoTest {
         Assert.assertEquals(PATIENT.getDiet(), DIET);
         Assert.assertEquals(PATIENT.getHobbies(), HOBBIES);
         Assert.assertEquals(PATIENT.getJob(), JOB);
+        //
+        //
     }
 
     @Test
@@ -156,6 +173,44 @@ public class PatientJpaDaoTest {
 
         Assert.assertNotNull(foundPatient);
         Assert.assertFalse(foundPatient.isPresent());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCount() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, DOC_NAME);
+
+        Assert.assertNotEquals(0, count);
+        Assert.assertEquals(100, count);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCountNullName() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, null);
+
+        Assert.assertNotEquals(0, count);
+        Assert.assertEquals(100, count);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCountNonexistentPatient() {
+        final long PATIENT_ID = 0L;
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, null);
+
+        Assert.assertEquals(0, count);
     }
 
 }
