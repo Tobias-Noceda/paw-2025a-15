@@ -1,5 +1,6 @@
 import type { AppointmentStatus } from "./enums/appointmentStatus";
 import type { Specialty } from "./enums/specialties";
+import type { StudyType } from "./enums/studyTypes";
 import type { Weekdays } from "./enums/weekdays";
 
 export const baseApiUrl = 'http://localhost:8080/paw-2025a-15/api'
@@ -74,6 +75,7 @@ export type Patient = {
 	gaveSocial?: boolean;
 	hobbies?: string;
 	job?: string;
+	studiesPage?: Paginated<Study>;
 	links: {
 		doctors: string;
 		image: string;
@@ -124,5 +126,19 @@ export type Appointment = {
 		self: string;
 		doctor: string;
 		patient: string;
+	}
+};
+
+export type Study = {
+	comment?: string;
+	studyDate: string;
+	type: StudyType;
+	uploadDate: string;
+	links: {
+		authDoctors: string;
+		files: string;
+		patient: string;
+		self: string;
+		uploader: string;
 	}
 };

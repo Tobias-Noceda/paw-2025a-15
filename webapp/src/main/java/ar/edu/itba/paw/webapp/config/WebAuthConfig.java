@@ -109,14 +109,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.GET, "/api/files")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), c))
                 .requestMatchers(HttpMethod.POST, "/api/files").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/files/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()
 
                 // insurances
                 .requestMatchers(HttpMethod.GET, "/api/insurances").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/insurances").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/insurances/**").permitAll()
-                .requestMatchers(HttpMethod.PATCH, "/api/insurances/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/insurances/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/insurances/{id}").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/insurances/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/insurances/{id}").hasRole("ADMIN")
 
                 // patients
                 //// patient info
@@ -132,6 +132,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_HABITS))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/habitsInfo")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+
                 //// patient studies
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))

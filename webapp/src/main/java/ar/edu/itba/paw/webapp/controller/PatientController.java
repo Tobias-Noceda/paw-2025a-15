@@ -249,20 +249,24 @@ public class PatientController {
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
-
+        
         StudyTypeEnum type = null;
+        try {
+            type = StudyTypeEnum.fromDisplayName(studyType);
+        } catch (Exception e) {
+            LOGGER.info("Invalid study type filter: {}", studyType);
+        }
         if(studyType != null) {
             queryParams.put("studyType", studyType);
-            type = StudyTypeEnum.fromDisplayName(studyType);
         }
-
+        
         queryParams.put("recent", recent.toString());
-
+        
         if(doctorId != null) queryParams.put("doctorId", doctorId.toString());
         
         List<StudyDTO> studies = ss.getFilteredStudiesPage(id, doctorId, type, recent, page, pageSize)
             .stream().map(StudyDTO.mapper(uriInfo)).collect(Collectors.toList());
-
+        
         return PaginationBuilder.buildResponse(
             Response.ok(new GenericEntity<List<StudyDTO>>(studies) {}),
             page, 

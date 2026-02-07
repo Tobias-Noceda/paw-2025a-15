@@ -300,6 +300,12 @@
 			"true": "Yes",
 			"false": "No",
 			"unknown": "Not provided"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error fetching studies",
+				"message": "An error occurred while trying to fetch the patient's studies. Please try again later."
+			}
 		}
 	},
 	"studies": {
@@ -321,6 +327,13 @@
 			"title": "Study Date",
 			"m_recent": "Most Recent",
 			"l_recent": "Oldest"
+		},
+		"table": {
+			"type": "Study Type",
+			"details": "Details",
+			"date": "Date",
+			"upload_date": "Upload Date",
+			"empty": "No studies available."
 		}
 	},
 	"date_format": "MM/dd/yyyy",

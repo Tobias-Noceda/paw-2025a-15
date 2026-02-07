@@ -135,14 +135,6 @@ const populatePatientExtraData = async (patient: Patient, loggedUser?: User | nu
 
         console.log('Fetching studies from URL:', url);
         patient.links.resolvedStudies = url; // Store the resolved URL for filtering
-
-        response = await getAuth(url, undefined, fetchFn)
-            .catch(() => null);
-
-        if (response && response.ok) {
-            const studiesData = await response.json();
-            console.log('Fetched studies data:', studiesData);
-        }
     }
 
     return patient;

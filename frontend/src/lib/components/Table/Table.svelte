@@ -82,7 +82,7 @@
 							Math.min(5, Math.max(2, Array.isArray(rows) ? rows.length : rows.results.length))
 						)}
 						<!-- if nextFetchFunction is defined and rows is Paginated -->
-					{:else if nextFetchFunction && !Array.isArray(rows)}
+					{:else if nextFetchFunction && !Array.isArray(rows) && rows.results.length > 0}
 						{#key rows.results.length}
 							<ScrollPagination initialItems={rows} {nextFetchFunction}>
 								{#snippet loading()}

@@ -300,6 +300,12 @@
 			"true": "Sí",
 			"false": "No",
 			"unknown": "No provisto"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error al obtener los estudios",
+				"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+			}
 		}
 	},
 	"studies": {
@@ -323,6 +329,13 @@
 				"m_recent": "Más reciente",
 				"l_recent": "Más antiguo"
 			}
+		},
+		"table": {
+			"type": "Tipo de estudio",
+			"details": "Detalles",
+			"date": "Día",
+			"upload_date": "Fecha de subida",
+			"empty": "No hay estudios disponibles."
 		}
 	},
 	"date_format": "dd/MM/yyyy",
