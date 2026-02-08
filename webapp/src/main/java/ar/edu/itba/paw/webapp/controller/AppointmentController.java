@@ -17,7 +17,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -36,6 +35,7 @@ import ar.edu.itba.paw.webapp.controller.util.DatePaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.AppointmentEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.AppointmentDTO;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 
 @Path("/appointments")
@@ -51,8 +51,8 @@ public class AppointmentController {
     private static final ZoneId ARGENTINA_ZONE = ZoneId.of("America/Argentina/Buenos_Aires");
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getAppointments(
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
+    public Response listAppointments(
         @QueryParam("userId") Long userId,
         @QueryParam("status") @NotBlank String status,
         @QueryParam("date") String date,
@@ -135,7 +135,7 @@ public class AppointmentController {
 
     @GET
     @Path("/{appointmentId}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response getAppointmentById(@PathParam("appointmentId") String appointmentId) {
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
         Pair<AppointmentNew, AppointmentStatusEnum> appointmentPair = as.getAppointmentByShiftIdDateAndTime(id.getShiftId(), id.getDate(), id.getStartTime(), id.getEndTime());
@@ -147,8 +147,8 @@ public class AppointmentController {
 
     @PATCH
     @Path("/{appointmentId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_APPOINTMENT)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response modifyAppointment(
         @PathParam("appointmentId") String appointmentId,
         @Valid AppointmentEditDTO appointmentEditDTO

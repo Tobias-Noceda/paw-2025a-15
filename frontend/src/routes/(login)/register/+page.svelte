@@ -161,7 +161,7 @@
                     telephone,
                     height: height as number,
                     weight: weight as number,
-                    birthDate: birthdate!.toISOString().split('T')[0],
+                    birthdate: birthdate!.toISOString().split('T')[0],
                 },
                 password
             ).then(() => {

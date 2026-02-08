@@ -100,22 +100,24 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.PATCH, "/api/appointments/{id}")
                     .access((a, c) -> ad.canModifyAppointment(a.get(), c.getVariables().get("id")))
                 // doctors
-                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/shifts").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
                     .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
-                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
+                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                
                 // files
-                .requestMatchers(HttpMethod.GET, "/api/files").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/files").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/files")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), c))
+                .requestMatchers(HttpMethod.POST, "/api/files").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()
 
                 // insurances
                 .requestMatchers(HttpMethod.GET, "/api/insurances").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/insurances").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/insurances/**").permitAll()
-                .requestMatchers(HttpMethod.PATCH, "/api/insurances/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/insurances/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/insurances/{id}").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/insurances/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/insurances/{id}").hasRole("ADMIN")
 
                 // patients
                 //// patient info
@@ -131,11 +133,17 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_HABITS))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/habitsInfo")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+
                 //// patient studies
-                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), c))
+                .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                
                 //// patient general
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
@@ -143,6 +151,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())
@@ -158,7 +170,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
                 throws IOException {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().flush();
         }
     }
 
@@ -166,7 +180,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
                 throws IOException {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().flush();
         }
     }
 }

@@ -1,6 +1,7 @@
-import type { insurance } from "$stores/filters";
-import type { AppointmentStatus } from "./enums/AppointmentStatus";
+import type { AccessLevels } from "./enums/accessLevels";
+import type { AppointmentStatus } from "./enums/appointmentStatus";
 import type { Specialty } from "./enums/specialties";
+import type { StudyType } from "./enums/studyTypes";
 import type { Weekdays } from "./enums/weekdays";
 
 export const baseApiUrl = 'http://localhost:8080/paw-2025a-15/api'
@@ -23,10 +24,20 @@ export type Paginated<T> = {
 	results: T[];
 };
 
+export type UriTemplate = {
+	href: string;
+	templated: boolean;
+};
+
 export type Session = {
 	access: string;
 	refresh: string;
 };
+
+export type DoctorAuthorizations = {
+	authorized: boolean;
+	accessLevels: AccessLevels[];
+}
 
 export type Doctor = {
 	name: string;
@@ -45,6 +56,8 @@ export type Doctor = {
 		freeAppointments: string;
 		futureAppointments: string;
 		patients: string;
+		authorization: UriTemplate;
+		authorizationResolved?: string;
 	}
 }
 
@@ -52,20 +65,24 @@ export type Patient = {
 	email: string;
 	name: string;
 	telephone: string;
-	birthDate: string;
+	birthdate: string;
 	bloodType: string;
 	height: number;
 	weight: number;
 	insurance?: string;
 	insuranceNumber: string;
-	meds?: string | null;
-	conditions?: string | null;
-	allergies?: string | null;
-	smokes?: boolean | null;
-	drinks?: boolean | null;
-	diet?: string | null;
-	hobbies?: string | null;
-	job?: string | null;
+	gaveHabits?: boolean;
+	smokes?: boolean;
+	drinks?: boolean;
+	diet?: string;
+	gaveMedical?: boolean;
+	meds?: string;
+	conditions?: string;
+	allergies?: string;
+	gaveSocial?: boolean;
+	hobbies?: string;
+	job?: string;
+	studiesPage?: Paginated<Study>;
 	links: {
 		doctors: string;
 		image: string;
@@ -76,6 +93,8 @@ export type Patient = {
 		socialInfo: string;
 		pastAppointments: string;
 		futureAppointments: string;
+		studies: UriTemplate;
+		resolvedStudies: string;
 	}
 }
 
@@ -114,5 +133,19 @@ export type Appointment = {
 		self: string;
 		doctor: string;
 		patient: string;
+	}
+};
+
+export type Study = {
+	comment?: string;
+	studyDate: string;
+	type: StudyType;
+	uploadDate: string;
+	links: {
+		authDoctors: string;
+		files: string;
+		patient: string;
+		self: string;
+		uploader: string;
 	}
 };

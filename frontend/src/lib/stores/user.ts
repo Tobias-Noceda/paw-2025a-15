@@ -2,7 +2,8 @@ import { get, getAuth, parseJWT } from "$modules/api.svelte";
 import type { Doctor, Patient } from "$types/api";
 import { writable } from "svelte/store";
 
-type User = {
+export type User = {
+	id: number;
 	name: string;
 	role: 'DOCTOR' | 'PATIENT' | 'ADMIN';
     image: string;
@@ -19,6 +20,7 @@ export async function setUserFromSession(sessionToken: string, fetchFn: typeof f
 	const payload = parseJWT(sessionToken);
 	if (payload) {
 		user.set({
+			id: payload.id,
 			name: payload.name,
 			role: payload.role,
             image: payload.image,

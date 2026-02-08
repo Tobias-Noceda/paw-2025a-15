@@ -7,22 +7,15 @@ import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 public class DoctorAuthorizationDTO {
     
     private boolean authorized;
-    private boolean medsAuthorized;
-    private boolean socialAuthorized;
-    private boolean habitsAuthorized;
+    private List<AccessLevelEnum> accessLevels;
 
-    public DoctorAuthorizationDTO(boolean authorized, boolean medsAuthorized, boolean socialAuthorized, boolean habitsAuthorized) {
-        this.authorized = authorized;
-        this.medsAuthorized = medsAuthorized;
-        this.socialAuthorized = socialAuthorized;
-        this.habitsAuthorized = habitsAuthorized;
+    public DoctorAuthorizationDTO() {
+        // For Jersey
     }
 
     public DoctorAuthorizationDTO(boolean authorized, List<AccessLevelEnum> authorizationLevels) {
         this.authorized = authorized;
-        this.medsAuthorized = authorizationLevels.contains(AccessLevelEnum.VIEW_MEDICAL);
-        this.socialAuthorized = authorizationLevels.contains(AccessLevelEnum.VIEW_SOCIAL);
-        this.habitsAuthorized = authorizationLevels.contains(AccessLevelEnum.VIEW_HABITS);
+        this.accessLevels = authorizationLevels;
     }
 
     // Getters
@@ -30,16 +23,8 @@ public class DoctorAuthorizationDTO {
         return authorized;
     }
 
-    public boolean isMedsAuthorized() {
-        return medsAuthorized;
-    }
-
-    public boolean isSocialAuthorized() {
-        return socialAuthorized;
-    }
-
-    public boolean isHabitsAuthorized() {
-        return habitsAuthorized;
+    public List<AccessLevelEnum> getAccessLevels() {
+        return accessLevels;
     }
 
     // Setters
@@ -55,15 +40,7 @@ public class DoctorAuthorizationDTO {
         this.authorized = false;
     }
 
-    public void setMedsAuthorized(boolean medsAuthorized) {
-        this.medsAuthorized = medsAuthorized;
-    }
-
-    public void setSocialAuthorized(boolean socialAuthorized) {
-        this.socialAuthorized = socialAuthorized;
-    }
-
-    public void setHabitsAuthorized(boolean habitsAuthorized) {
-        this.habitsAuthorized = habitsAuthorized;
+    public void setAccessLevels(List<AccessLevelEnum> accessLevels) {
+        this.accessLevels = accessLevels;
     }
 }

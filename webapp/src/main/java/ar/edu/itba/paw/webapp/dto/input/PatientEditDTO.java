@@ -3,9 +3,9 @@ package ar.edu.itba.paw.webapp.dto.input;
 import java.time.LocalDate;
 
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
 
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
@@ -19,14 +19,14 @@ public class PatientEditDTO {
     @ValidArgPhone
     private String telephone;
 
-    @Positive
-    private Long pictureId;
+    @URL(protocol = "http")
+    private String pictureId;
 
     private String mailLanguage;
 
     @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate birthDate;
+    private LocalDate birthdate;
 
     private BloodTypeEnum bloodtype;
 
@@ -49,11 +49,11 @@ public class PatientEditDTO {
         this.telephone = telephone;
     }
 
-    public Long getPictureId() {
+    public String getPictureId() {
         return pictureId;
     }
 
-    public void setPictureId(Long pictureId) {
+    public void setPictureId(String pictureId) {
         this.pictureId = pictureId;
     }
 
@@ -65,12 +65,12 @@ public class PatientEditDTO {
         this.mailLanguage = mailLanguage;
     }
 
-    public LocalDate getBirthDate() { 
-        return birthDate; 
+    public LocalDate getBirthdate() { 
+        return birthdate; 
     }
 
-    public void setBirthDate(LocalDate birthDate) { 
-        this.birthDate = birthDate; 
+    public void setBirthdate(LocalDate birthdate) { 
+        this.birthdate = birthdate; 
     }
 
     public BloodTypeEnum getBloodtype() {

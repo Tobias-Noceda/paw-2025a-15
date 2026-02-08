@@ -191,7 +191,8 @@
 			"specialty": "Specialty",
 			"address": "Address",
 			"license": "License",
-			"schedule": "Availability"
+			"schedule": "Availability",
+			"accesses": "Current Accesses"
 		},
 		"table": {
 			"day": "Weekday",
@@ -199,7 +200,16 @@
 		},
 		"actions": {
 			"authorize": "Authorize",
-			"de_authorize": "De-authorize"
+			"de_authorize": "De-authorize",
+			"update": "Update"
+		},
+		"authorizations": {
+			"title": "Current Accesses",
+			"options": {
+				"view_medical": "Medical",
+				"view_social": "Social",
+				"view_habits": "Habits"
+			}
 		},
 		"text": {
 			"no_schedule": "No available schedule.",
@@ -265,6 +275,75 @@
 		"buttons": {
 			"edit": "Edit",
 			"delete": "Delete"
+		}
+	},
+	"patient": {
+		"titles": {
+			"basic": "Basic Details",
+			"habits": "Habits Details",
+			"medical": "Medical Details",
+			"social": "Social Details"
+		},
+		"labels": {
+			"email": "Email",
+			"telephone": "Phone",
+			"age": "Age",
+			"blood_type": "Blood Type",
+			"height": "Height (m)",
+			"weight": "Weight (kg)",
+			"insurance": "Insurance",
+			"insurance_number": "Insurance Number",
+			"smokes": "Smoking habit",
+			"drinks": "Drinking habit",
+			"diet": "Diet",
+			"medications": "Medications",
+			"conditions": "Conditions",
+			"allergies": "Allergies",
+			"hobbies": "Hobbies",
+			"job": "Job"
+		},
+		"actions": {
+			"upload": "Upload Study",
+			"apply": "Apply"
+		},
+		"values": {
+			"true": "Yes",
+			"false": "No",
+			"unknown": "Not provided"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error fetching studies",
+				"message": "An error occurred while trying to fetch the patient's studies. Please try again later."
+			}
+		}
+	},
+	"studies": {
+		"title": "Studies",
+		"types": {
+			"title": "Study Type",
+			"options": {
+				"other": "Other",
+				"prescription": "Prescription",
+				"radiography": "Radiography",
+				"laboratory_result": "Laboratory Result",
+				"ultrasound": "Ultrasound",
+				"mri": "MRI",
+				"electrocardiogram": "Electrocardiogram",
+				"vaccination_record": "Vaccination Record"
+			}
+		},
+		"orders": {
+			"title": "Study Date",
+			"m_recent": "Most Recent",
+			"l_recent": "Oldest"
+		},
+		"table": {
+			"type": "Study Type",
+			"details": "Details",
+			"date": "Date",
+			"upload_date": "Upload Date",
+			"empty": "No studies available."
 		}
 	},
 	"date_format": "MM/dd/yyyy",

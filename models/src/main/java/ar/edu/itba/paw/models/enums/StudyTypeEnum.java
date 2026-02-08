@@ -35,7 +35,7 @@ public enum StudyTypeEnum {
         }
 
         for (StudyTypeEnum type : StudyTypeEnum.values()) {
-            if (type.displayName.equalsIgnoreCase(displayName)) {
+            if (type.displayName.equalsIgnoreCase(displayName.replace("_", " "))) {
                 return type;
             }
         }

@@ -21,7 +21,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -36,8 +35,10 @@ import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
+import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.PatientCreateDTO;
@@ -51,7 +52,7 @@ import ar.edu.itba.paw.webapp.dto.output.PatientHabitsInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientMedicalInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/patients")
@@ -106,7 +107,7 @@ public class PatientController {
             dto.getEmail(), dto.getPassword(), 
             dto.getName(), dto.getTelephone(), 
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale()), 
-            dto.getBirthDate(), BigDecimal.valueOf(dto.getHeight()), 
+            dto.getBirthdate(), BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight())
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build();
@@ -126,25 +127,29 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}")
     @Consumes(value = VndType.APPLICATION_PATIENT)
-    @Produces(value = MediaType.APPLICATION_JSON)//TODO patch produce??
+    @Produces(value = VndType.APPLICATION_PATIENT)
     public Response editPatient(
         @PathParam("id") long id,
         @Valid PatientEditDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        Long pictureId = URIHelper.getId(
+            dto.getPictureId(), 
+            uriInfo.getBaseUriBuilder().path(FileController.class).build()
+        );
         ps.updatePatient(
             patient, 
             dto.getTelephone(), 
-            dto.getPictureId(), 
+            pictureId, 
             dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
-            dto.getBirthDate(), dto.getBloodtype(), 
+            dto.getBirthdate(), dto.getBloodtype(), 
             BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight()), 
             null, null, null, null, null, null, null, null, 
             dto.getInsuranceId(), 
             dto.getInsuranceNumber()
         );
-        return Response.ok().build();
+        return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
     }
 
     /*========================= INFO =========================*/
@@ -160,6 +165,7 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}/medicalInfo")
     @Consumes(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
+    @Produces(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
     public Response editPatientMedicalInfo(
         @PathParam("id") long id,
         @Valid PatientEditMedicalInfoDTO dto
@@ -172,7 +178,7 @@ public class PatientController {
             dto.getAllergies(), 
             null, null, null, null, null
         );
-        return Response.ok().build();
+        return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, patient)).build();
     }
 
     @GET
@@ -186,6 +192,7 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}/socialInfo")
     @Consumes(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
+    @Produces(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
     public Response editPatientSocialInfo(
         @PathParam("id") long id,
         @Valid PatientEditSocialInfoDTO dto
@@ -197,7 +204,7 @@ public class PatientController {
             dto.getHobbies(),
             dto.getJob(), null, null
         );
-        return Response.ok().build();
+        return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, patient)).build();
     }
 
     @GET
@@ -211,6 +218,7 @@ public class PatientController {
     @PATCH
     @Path("/{id:\\d+}/habitsInfo")
     @Consumes(value = VndType.APPLICATION_PATIENT_HABITSINFO)
+    @Produces(value = VndType.APPLICATION_PATIENT_HABITSINFO)
     public Response editPatientHabitsInfo(
         @PathParam("id") long id,
         @Valid PatientEditHabitsInfoDTO dto
@@ -224,7 +232,7 @@ public class PatientController {
             dto.getDiet(), 
             null, null, null, null
         );
-        return Response.ok().build();
+        return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, patient)).build();
     }
 
     /*========================= STUDIES =========================*/
@@ -241,20 +249,24 @@ public class PatientController {
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
-
+        
         StudyTypeEnum type = null;
+        try {
+            type = StudyTypeEnum.fromDisplayName(studyType);
+        } catch (Exception e) {
+            LOGGER.info("Invalid study type filter: {}", studyType);
+        }
         if(studyType != null) {
             queryParams.put("studyType", studyType);
-            type = StudyTypeEnum.fromDisplayName(studyType);
         }
-
+        
         queryParams.put("recent", recent.toString());
-
+        
         if(doctorId != null) queryParams.put("doctorId", doctorId.toString());
         
         List<StudyDTO> studies = ss.getFilteredStudiesPage(id, doctorId, type, recent, page, pageSize)
             .stream().map(StudyDTO.mapper(uriInfo)).collect(Collectors.toList());
-
+        
         return PaginationBuilder.buildResponse(
             Response.ok(new GenericEntity<List<StudyDTO>>(studies) {}),
             page, 
@@ -272,6 +284,12 @@ public class PatientController {
         @PathParam("id") final long id,
         @Valid StudyCreateDTO dto
     ) {
+        User user = AuthenticatedUser.get();
+        
+        if (user == null) { //jjust in case, authConfig should have make sure of this already
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
+        }
+
         final Study study = ss.create(
             StudyTypeEnum.fromDisplayName(dto.getType()), 
             dto.getComment(), 
@@ -282,7 +300,7 @@ public class PatientController {
                     .build()
             ), 
             id, 
-            id,//TODO se podra obtener del auth capaz?
+            user.getId(),
             dto.getStudyDate()
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(study.getId())).build();

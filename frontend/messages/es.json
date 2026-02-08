@@ -191,7 +191,8 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"license": "Matrícula",
-			"schedule": "Atiende"
+			"schedule": "Atiende",
+			"accesses": "Accesos actuales"
 		},
 		"table": {
 			"day": "Día",
@@ -199,7 +200,16 @@
 		},
 		"actions": {
 			"authorize": "Autorizar",
-			"de_authorize": "Desautorizar"
+			"de_authorize": "Desautorizar",
+			"update": "Actualizar"
+		},
+		"authorizations": {
+			"title": "Accesos actuales",
+			"options": {
+				"view_medical": "Médico",
+				"view_social": "Social",
+				"view_habits": "A hábitos"
+			}
 		},
 		"text": {
 			"no_schedule": "No hay horario disponible.",
@@ -265,6 +275,77 @@
 		"buttons": {
 			"edit": "Editar",
 			"delete": "Eliminar"
+		}
+	},
+	"patient": {
+		"titles": {
+			"basic": "Detalles básicos",
+			"habits": "Detalles de hábitos",
+			"medical": "Detalles médicos",
+			"social": "Detalles sociales"
+		},
+		"labels": {
+			"email": "Mail",
+			"telephone": "Teléfono",
+			"age": "Edad",
+			"blood_type": "Tipo de sangre",
+			"height": "Altura (m)",
+			"weight": "Peso (kg)",
+			"insurance": "Obra social",
+			"insurance_number": "Número de afiliado",
+			"smokes": "Fuma habitualmente",
+			"drinks": "Bebe habitualmente",
+			"diet": "Dieta",
+			"medications": "Medicaciones",
+			"conditions": "Condiciones",
+			"allergies": "Alergias",
+			"hobbies": "Hobbies",
+			"job": "Trabajo"
+		},
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
+		},
+		"values": {
+			"true": "Sí",
+			"false": "No",
+			"unknown": "No provisto"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error al obtener los estudios",
+				"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+			}
+		}
+	},
+	"studies": {
+		"title": "Estudios",
+		"types": {
+			"title": "Tipo de estudio",
+			"options": {
+				"other": "Otro",
+				"prescription": "Receta médica",
+				"radiography": "Radiografía",
+				"laboratory_result": "Resultados de laboratorio",
+				"ultrasound": "Ecografía",
+				"mri": "Resonancia magnética",
+				"electrocardiogram": "Electrocardiograma",
+				"vaccination_record": "Registro de vacunación"
+			}
+		},
+		"orders": {
+			"title": "Fecha del estudio",
+			"options": {
+				"m_recent": "Más reciente",
+				"l_recent": "Más antiguo"
+			}
+		},
+		"table": {
+			"type": "Tipo de estudio",
+			"details": "Detalles",
+			"date": "Día",
+			"upload_date": "Fecha de subida",
+			"empty": "No hay estudios disponibles."
 		}
 	},
 	"date_format": "dd/MM/yyyy",

@@ -17,7 +17,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -46,7 +45,7 @@ import ar.edu.itba.paw.webapp.dto.input.ShiftsModificationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorAuthorizationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
 import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/doctors")
@@ -75,7 +74,7 @@ public class DoctorController {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
     public Response listDoctors(
         @QueryParam("studyId") Long studyId,
         @QueryParam("patientId") Long patientId,
@@ -187,7 +186,7 @@ public class DoctorController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
     public Response getDoctorById(@PathParam("id") Integer doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
         return Response.ok(DoctorDTO.fromDoctor(uriInfo, doctor)).build();
@@ -197,7 +196,7 @@ public class DoctorController {
 
     @GET
     @Path("/{id:\\d+}/shifts")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
     public Response listShifts(
         @PathParam("id") Integer doctorId
     ) {
@@ -213,7 +212,7 @@ public class DoctorController {
 
     @PUT
     @Path("/{id:\\d+}/shifts")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
     public Response replaceShifts(
         @PathParam("id") Integer doctorId,
         @Valid ShiftsModificationDTO shiftsModificationDTO
@@ -238,39 +237,56 @@ public class DoctorController {
     /*========================= AUTHORIZATIONS =========================*/
     @GET
     @Path("/{id:\\d+}/authorizations")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
     public Response doctorAuthorizations(
         @PathParam("id") Integer doctorId,
-        @QueryParam("userId") Long patientId
+        @QueryParam("patientId") Long patientId
     ) {
-        User user = AuthenticatedUser.get();
-
-        if (!user.getId().equals(patientId)) {
-            return Response.status(Response.Status.FORBIDDEN).build();
+        try {
+            User user = AuthenticatedUser.get();
+            
+            if (!user.getId().equals(patientId)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
+                return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
+            }
+            
+            return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(
+                new DoctorAuthorizationDTO(true, ads.getAuthAccessLevelEnums(user.getId(), doctorId))
+            ) {}).build();
+        } catch (Exception e) {
+            System.out.println("Error fetching doctor authorizations: " + e.getMessage());
+            System.out.println("Exception class: " + e.getClass().getName());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-
-        if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
-            return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
-        }
-        
-        return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(
-            new DoctorAuthorizationDTO(true, ads.getAuthAccessLevelEnums(user.getId(), doctorId))
-        ) {}).build();
     }
 
     @PUT
     @Path("/{id:\\d+}/authorizations")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
     public Response replaceDoctorAuthorizations(
         @PathParam("id") Integer doctorId,
         @Valid DoctorAuthorizationUpdateDTO doctorAuthorizationUpdateDTO
     ) {
-        ads.updateAuthDoctor(doctorId, doctorId, doctorAuthorizationUpdateDTO.getAccessLevels());
-        return Response.created(uriInfo.getBaseUriBuilder()
-            .path(DoctorController.class)
-            .path(doctorId.toString())
-            .path("authorizations")
-            .build()
-        ).build();
+        User loggedUser = AuthenticatedUser.get();
+
+        if (loggedUser == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        if (
+            (doctorAuthorizationUpdateDTO.isAuthorized() && !ads.hasAuthDoctor(loggedUser.getId(), doctorId)) ||
+            (!doctorAuthorizationUpdateDTO.isAuthorized() && ads.hasAuthDoctor(loggedUser.getId(), doctorId))
+        ) {
+            ads.toggleAuthDoctor(loggedUser.getId(), doctorId);
+        }
+
+        if (doctorAuthorizationUpdateDTO.isAuthorized()) {
+            ads.updateAuthDoctor(loggedUser.getId(), doctorId, doctorAuthorizationUpdateDTO.getAccessLevels());
+        }
+
+        return Response.ok().build();
     }
 }

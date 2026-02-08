@@ -19,7 +19,6 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class WebUserAuthDecision {
@@ -46,7 +45,7 @@ public class WebUserAuthDecision {
             return new AuthorizationDecision(true);
         }
 
-        throw new NotFoundException("Patient not found");
+        return new AuthorizationDecision(false);
     }
 
     public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, long patientId) {
@@ -55,36 +54,28 @@ public class WebUserAuthDecision {
             return new AuthorizationDecision(false);
         }
 
-        if(user.getId().equals(patientId) || isAuthDoctor(user, patientId)) {
+        if(isSelf(auth, patientId) || isAuthDoctor(user, patientId)) {
             return new AuthorizationDecision(true);
         }
 
-        throw new NotFoundException("Patient not found");
+        return new AuthorizationDecision(false);
     }
 
-    public AuthorizationDecision hasStudyAuth(Authentication auth, long studyId) {
+    public AuthorizationDecision hasStudyAuth(Authentication auth, RequestAuthorizationContext context) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
             return new AuthorizationDecision(false);
         }
 
-        Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found"));
+        String studyId = context.getRequest().getParameter("studyId");     
 
-        if(user.getId().equals(study.getPatient().getId())) {
-            return new AuthorizationDecision(true);
-        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
-            return new AuthorizationDecision(true);
-        }
+        if (studyId == null) return new AuthorizationDecision(false);
 
-        throw new NotFoundException("Study not found");
-    }
+        Study study = ss.getStudyById(Long.parseLong(studyId)).orElse(null);
 
-    public AuthorizationDecision hasFileAuth(Authentication auth, long studyId, long fileId) {
-        Boolean hasStudyAuth = hasStudyAuth(auth, studyId).isGranted();
+        if (study == null) return new AuthorizationDecision(false);
 
-        if(hasStudyAuth) {
-            return new AuthorizationDecision(ss.isFileInStudy(studyId, fileId));
-        }
+        if(isStudyAuth(user, study)) return new AuthorizationDecision(true);
 
         return new AuthorizationDecision(false);
     }
@@ -135,8 +126,11 @@ public class WebUserAuthDecision {
 
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
 
-        DoctorSingleShift shift = dss.getShiftById(id.getShiftId()).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + id.getShiftId() + " does not exist!"));
+        DoctorSingleShift shift = dss.getShiftById(id.getShiftId()).orElse(null);
 
+        if(shift == null){
+            return new AuthorizationDecision(false);
+        }
 
         return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.DOCTOR) && shift.getDoctor().getId().equals(user.getId()));
     }
@@ -202,6 +196,15 @@ public class WebUserAuthDecision {
 
     private boolean isAuthDoctor(User user, long patientId) {
         return user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(patientId, user.getId());
+    }
+
+    private boolean isStudyAuth(User user, Study study){
+        if(user.getId().equals(study.getPatient().getId())) {
+            return true;
+        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
+            return true;
+        }
+        return false;
     }
 
     private User getAuthenticatedUser(Authentication auth) {
