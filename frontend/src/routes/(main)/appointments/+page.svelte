@@ -17,10 +17,10 @@
 
     let { data }: { data: PageData } = $props();
 
-    const pastAppointments: Paginated<Appointment> | null = data.pastAppointments ?? null;
+    const pastAppointments: Paginated<Appointment> | null = $state(data.pastAppointments ?? null);
     
     let freeAppointments: Paginated<Appointment> | null = $state(data.freeAppointments ?? null);
-    const freeAppointmentsLink: string | null = data.freeAppointmentsLink || null;
+    const freeAppointmentsLink: string | null = $state(data.freeAppointmentsLink || null);
     
     let showSuccessToast = $state(false);
     let showErrorToast = $state(false);
@@ -35,7 +35,6 @@
         results: [],
         _links: {}
     });
-    const futureAppointmentsLink: string | null = data.futureAppointmentsLink || null;
 
     const tableColumns: Column<Appointment>[] = [
         {

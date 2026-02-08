@@ -279,7 +279,7 @@
 			{#key filterKey}
 				<Pagination
 					initialFetchFunction={() => Promise.resolve(doctors)}
-					pageFetchFunction={(page) => fetchDoctorsPage(page)}
+					pageFetchFunction={(page) => fetchDoctorsPage(page, undefined, fetch)}
 					class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
 				>
 					{#snippet loading()}

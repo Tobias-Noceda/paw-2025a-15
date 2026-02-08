@@ -35,7 +35,7 @@
       }[variant],
       skeleton ? '!bg-skeleton animate-pulse !text-transparent cursor-default border-1 border-skeleton' : '',
       disabled ? 'animate-none cursor-not-allowed' : '',
-      "select-none"
+      "select-none border-none"
     )
   );
 </script>

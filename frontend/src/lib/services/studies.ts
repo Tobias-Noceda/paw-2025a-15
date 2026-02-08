@@ -11,6 +11,7 @@ export const fetchStudies = async (url: string, studyType?: string, order?: stri
     if (order && order === 'l_recent') {
         baseUrl.searchParams.append('recent', "false");
     }
+    baseUrl.searchParams.append('pageSize', '15');
 
     const response = await getAuth(baseUrl.toString(), undefined, fetchFn);
 

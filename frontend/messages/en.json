@@ -178,7 +178,7 @@
 	"topbar": {
 		"logo_alt_text": "CareTrace Logo",
 		"appointments": "Appointments",
-		"studies": "Studies",
+		"studies": "My Studies and Doctors",
 		"vacations": "Vacations",
 		"login": "Login",
 		"logout": "Logout",
@@ -320,6 +320,7 @@
 	},
 	"studies": {
 		"title": "Studies",
+		"description": "Click on a study to manage who can see it",
 		"types": {
 			"title": "Study Type",
 			"options": {
@@ -344,9 +345,28 @@
 			"date": "Date",
 			"upload_date": "Upload Date",
 			"empty": "No studies available."
+		},
+		"actions": {
+			"upload": "Upload Study",
+			"apply": "Apply"
+		},
+		"doctors": {
+			"title": "My Doctors",
+			"description": "Click on a doctor or go to their profile to manage access to your personal information",
+			"actions": {
+				"revoke": "Deauthorize",
+				"grant": "Authorize",
+				"revoke_all": "Deauthorize all"
+			},
+			"table": {
+				"name": "Name",
+				"specialty": "Specialty",
+				"empty": "You have no doctors authorized to view your profile."
+			}
 		}
 	},
 	"date_format": "MM/dd/yyyy",
 	"next": "Next",
-	"previous": "Previous"
+	"previous": "Previous",
+	"actions": "Action"
 }

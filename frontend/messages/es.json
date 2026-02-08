@@ -178,7 +178,7 @@
 	"topbar": {
 		"logo_alt_text": "Logo de CareTrace",
 		"appointments": "Turnos",
-		"studies": "Estudios",
+		"studies": "Mis estudios y médicos",
 		"vacations": "Vacaciones",
 		"login": "Iniciar sesión",
 		"logout": "Cerrar sesión",
@@ -320,6 +320,7 @@
 	},
 	"studies": {
 		"title": "Estudios",
+		"description": "Cliqueá en un estudio para administrar quién puede verlo",
 		"types": {
 			"title": "Tipo de estudio",
 			"options": {
@@ -346,9 +347,28 @@
 			"date": "Día",
 			"upload_date": "Fecha de subida",
 			"empty": "No hay estudios disponibles."
+		},
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
+		},
+		"doctors": {
+			"title": "Mis médicos",
+			"description": "Cliquea en un doctor o ve a su perfil para administrar el acceso a tu información personal",
+			"actions": {
+				"revoke": "Desautorizar",
+				"grant": "Autorizar",
+				"revoke_all": "Desautorizar a todos"
+			},
+			"table": {
+				"name": "Doctor",
+				"specialty": "Especialidad",
+				"empty": "No tienes médicos autorizados para ver tu perfil."
+			}
 		}
 	},
 	"date_format": "dd/MM/yyyy",
 	"next": "Siguiente",
-	"previous": "Anterior"
+	"previous": "Anterior",
+	"action": "Acción"
 }

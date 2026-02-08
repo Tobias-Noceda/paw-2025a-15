@@ -43,7 +43,7 @@ export const fetchPatientById = async (id: number, loggedUser?: User | null, fet
     await populatePatientData(patient, fetchFn);
     await populatePatientExtraData(patient, loggedUser, fetchFn);
 
-    return patient;
+    return setPatientsStudyLink(patient, loggedUser);
 };
 
 export const createPatient = async (patient: Partial<Patient>, password: string): Promise<void> => {
@@ -129,12 +129,18 @@ const populatePatientExtraData = async (patient: Patient, loggedUser?: User | nu
         }
     }
 
-    if (patient.links.studies && patient.links.studies.templated && loggedUser && loggedUser.role === 'DOCTOR' && loggedUser.id !== undefined) {
-        const template = UriTemplate(patient.links.studies.href);
-        const url = template.fill({ doctorId: loggedUser.id });
+    return patient;
+};
 
-        console.log('Fetching studies from URL:', url);
-        patient.links.resolvedStudies = url; // Store the resolved URL for filtering
+export const setPatientsStudyLink = (patient: Patient, loggedUser?: User | null): Patient => {
+    if (patient.links.studies && patient.links.studies.templated) {
+        if (loggedUser && loggedUser.role === 'DOCTOR' && loggedUser.id !== undefined) {
+            const template = UriTemplate(patient.links.studies.href);
+            const url = template.fill({ doctorId: loggedUser.id });
+            patient.links.resolvedStudies = url; // Store the resolved URL for filtering
+        } else {
+            patient.links.resolvedStudies = patient.links.studies.href.split('{')[0]; // Remove the template part if user is not a doctor or not logged in
+        }
     }
 
     return patient;
