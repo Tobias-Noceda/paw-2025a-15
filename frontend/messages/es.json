@@ -191,7 +191,8 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"license": "Matrícula",
-			"schedule": "Atiende"
+			"schedule": "Atiende",
+			"accesses": "Accesos actuales"
 		},
 		"table": {
 			"day": "Día",
@@ -199,7 +200,16 @@
 		},
 		"actions": {
 			"authorize": "Autorizar",
-			"de_authorize": "Desautorizar"
+			"de_authorize": "Desautorizar",
+			"update": "Actualizar"
+		},
+		"authorizations": {
+			"title": "Accesos actuales",
+			"options": {
+				"view_medical": "Médico",
+				"view_social": "Social",
+				"view_habits": "A hábitos"
+			}
 		},
 		"text": {
 			"no_schedule": "No hay horario disponible.",

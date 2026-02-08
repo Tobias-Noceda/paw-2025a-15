@@ -1,8 +1,11 @@
-import type { Doctor, Insurance, Paginated, Shift } from "$types/api";
+import type { Doctor, DoctorAuthorizations, Insurance, Paginated, Shift } from "$types/api";
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
-import { get, post } from "$modules/api.svelte";
+import { get, getAuth, post, postAuth, putAuth } from "$modules/api.svelte";
+import UriTemplate from "uri-templates";
+import type { User } from "$stores/user";
+import type { AccessLevels } from "$types/enums/accessLevels";
 
 /**
  * Parse time string in HH:mm format and return a Date object
@@ -79,16 +82,48 @@ export const fetchDoctorsPage = async (nextUrl: string, fetchFn: typeof fetch = 
     }
 };
 
-export const fetchDoctorById = async (id: string, fetchFn: typeof fetch = fetch): Promise<Doctor | null> => {
+export const fetchDoctorById = async (id: string, loggedUser: User, fetchFn: typeof fetch = fetch): Promise<Doctor | null> => {
     const url = new URL(`${baseApiUrl}/doctors/${id}`);
     const response = await get(url.toString(), undefined, fetchFn);
     
     const doctor = await response.json();
     if (doctor) {
         await populateDoctorData(doctor, fetchFn);
+        await populateAuthorizationData(doctor, loggedUser, fetchFn);
     }
     
     return doctor;
+};
+
+export const fetchDoctorAuthorizations = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<DoctorAuthorizations | null> => {
+    if (doctor.links.authorizationResolved) {
+        const response = await getAuth(doctor.links.authorizationResolved, undefined, fetchFn);
+        if (response.ok) {
+            return await response.json();
+        }
+    }
+
+    return null;
+}
+
+export const putAuthorizations = async (stringUrl: string, isAuthorized: boolean, accessLevels: AccessLevels[], fetchFn: typeof fetch = fetch): Promise<void> => {
+    const url = new URL(stringUrl);
+    if (url.searchParams.has('patientId')) {
+        url.searchParams.delete('patientId'); // Remove patientId if present, as it's not needed for the PUT request
+    }
+    
+    const response = await putAuth(url.toString(), {
+        authorized: isAuthorized,
+        accessLevels: accessLevels
+    }, {
+        headers: {
+            'Content-Type': 'application/vnd.doctors.authorizations.v1+json'
+        }
+    }, fetchFn);
+
+    if (!response.ok) {
+        throw new Error("Failed to update authorizations");
+    }
 };
 
 type ShiftCreationData = {
@@ -153,5 +188,17 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
         const insurancesData: Insurance[] = await responseInsurances.json();
         doctor.insurances = insurancesData.map(ins => ins.name);
     }
+
+    return doctor;
+};
+
+const populateAuthorizationData = async (doctor: Doctor, loggedUser: User, fetchFn: typeof fetch = fetch): Promise<Doctor> => {
+    if (doctor.links.authorization) {
+        const template = UriTemplate(doctor.links.authorization.href);
+        const url = template.fill({ patientId: loggedUser.id });
+
+        doctor.links.authorizationResolved = url; // Store the resolved URL for filtering
+    }
+
     return doctor;
 };

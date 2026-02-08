@@ -191,7 +191,8 @@
 			"specialty": "Specialty",
 			"address": "Address",
 			"license": "License",
-			"schedule": "Availability"
+			"schedule": "Availability",
+			"accesses": "Current Accesses"
 		},
 		"table": {
 			"day": "Weekday",
@@ -199,7 +200,16 @@
 		},
 		"actions": {
 			"authorize": "Authorize",
-			"de_authorize": "De-authorize"
+			"de_authorize": "De-authorize",
+			"update": "Update"
+		},
+		"authorizations": {
+			"title": "Current Accesses",
+			"options": {
+				"view_medical": "Medical",
+				"view_social": "Social",
+				"view_habits": "Habits"
+			}
 		},
 		"text": {
 			"no_schedule": "No available schedule.",

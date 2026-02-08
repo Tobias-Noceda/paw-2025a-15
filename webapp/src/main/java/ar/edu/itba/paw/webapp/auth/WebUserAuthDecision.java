@@ -19,7 +19,6 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
 
 @Controller
 public class WebUserAuthDecision {
@@ -46,7 +45,7 @@ public class WebUserAuthDecision {
             return new AuthorizationDecision(true);
         }
 
-        throw new NotFoundException("Patient not found");
+        return new AuthorizationDecision(false);
     }
 
     public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, long patientId) {
@@ -59,7 +58,7 @@ public class WebUserAuthDecision {
             return new AuthorizationDecision(true);
         }
 
-        throw new NotFoundException("Patient not found");
+        return new AuthorizationDecision(false);
     }
 
     public AuthorizationDecision hasStudyAuth(Authentication auth, RequestAuthorizationContext context) {

@@ -2,16 +2,17 @@ package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
-import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
-import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class DoctorDTO {
@@ -43,6 +44,9 @@ public class DoctorDTO {
         URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
         URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
         URI patients = uriInfo.getBaseUriBuilder().path(PatientController.class).queryParam("doctorId", String.valueOf(doctor.getId())).build();
+        
+        URI baseAuthorization = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("authorizations").build();
+        TemplatedLinkDTO authorization = TemplatedLinkDTO.withQueryParams(baseAuthorization, List.of("patientId"));
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
@@ -52,6 +56,7 @@ public class DoctorDTO {
             .setFreeAppointments(freeAppointments)
             .setFutureAppointments(futureAppointments)
             .setPatients(patients)
+            .setAuthorization(authorization)
         );
 
         return dto;

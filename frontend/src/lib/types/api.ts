@@ -1,3 +1,4 @@
+import type { AccessLevels } from "./enums/accessLevels";
 import type { AppointmentStatus } from "./enums/appointmentStatus";
 import type { Specialty } from "./enums/specialties";
 import type { StudyType } from "./enums/studyTypes";
@@ -33,6 +34,11 @@ export type Session = {
 	refresh: string;
 };
 
+export type DoctorAuthorizations = {
+	authorized: boolean;
+	accessLevels: AccessLevels[];
+}
+
 export type Doctor = {
 	name: string;
 	email: string;
@@ -50,7 +56,8 @@ export type Doctor = {
 		freeAppointments: string;
 		futureAppointments: string;
 		patients: string;
-		authorizations?: UriTemplate;
+		authorization: UriTemplate;
+		authorizationResolved?: string;
 	}
 }
 

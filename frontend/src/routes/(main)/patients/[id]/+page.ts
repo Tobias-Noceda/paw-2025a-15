@@ -23,7 +23,13 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     }
 
     try {
-        const patient = await fetchPatientById(Number.parseInt(params.id), currentUser, fetch);
+        const patient = await fetchPatientById(Number.parseInt(params.id), currentUser, fetch)
+            .catch((error) => {
+                if (error.status === 403) {
+                    return null;
+                }
+                throw error;
+            });
         let studies: Paginated<Study> = { _links: {}, results: [] };
         let studyType: string = 'all';
         let order: string = 'm_recent';

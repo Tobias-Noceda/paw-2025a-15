@@ -52,7 +52,7 @@ import ar.edu.itba.paw.webapp.dto.output.PatientHabitsInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientMedicalInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/patients")

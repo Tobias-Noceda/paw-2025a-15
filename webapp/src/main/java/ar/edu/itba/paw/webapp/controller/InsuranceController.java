@@ -34,7 +34,7 @@ import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.InsuranceDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/insurances")

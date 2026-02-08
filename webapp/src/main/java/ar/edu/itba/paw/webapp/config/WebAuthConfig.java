@@ -100,11 +100,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.PATCH, "/api/appointments/{id}")
                     .access((a, c) -> ad.canModifyAppointment(a.get(), c.getVariables().get("id")))
                 // doctors
-                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/shifts").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
                     .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
-                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
+                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                
                 // files
                 .requestMatchers(HttpMethod.GET, "/api/files")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), c))
@@ -142,6 +143,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.hasStudyAuth(a.get(), c))
                 .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                
                 //// patient general
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))

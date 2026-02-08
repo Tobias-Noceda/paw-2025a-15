@@ -16,8 +16,13 @@ public class DoctorAuthorizationUpdateDTO {
     @NotNull
     private List<AccessLevelEnum> accessLevels;
 
+    public DoctorAuthorizationUpdateDTO() {
+        // For Jersey
+    }
+
     public DoctorAuthorizationUpdateDTO(boolean authorized, List<AccessLevelEnum> authorizationLevels) {
         this.authorized = authorized;
+        this.accessLevels = authorizationLevels;
     }
 
     // Getters
