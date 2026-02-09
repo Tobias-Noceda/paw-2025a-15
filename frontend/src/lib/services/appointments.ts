@@ -97,7 +97,11 @@ export const takeAppointment = async (
             status: AppointmentStatus.TAKEN,
             description: details
         },
-        undefined,
+        {
+            headers: {
+                'Content-Type': 'application/vnd.appointments.v1+json'
+            }
+        },
         fetchFn
     );
 
@@ -119,7 +123,11 @@ export const cancelAppointment = async (
             status: AppointmentStatus.FREE,
             description: null
         },
-        undefined,
+        {
+            headers: {
+                'Content-Type': 'application/vnd.appointments.v1+json'
+            }
+        },
         fetchFn
     );
 

@@ -16,6 +16,7 @@
 	import { StudyOrders } from '$types/enums/studyOrders';
 	import { fetchStudies, fetchStudiesPage } from '$lib/services/studies';
 	import { fetchDoctorsPage, putAuthorizations } from '$lib/services/doctors';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
