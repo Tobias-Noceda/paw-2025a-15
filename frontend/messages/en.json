@@ -393,8 +393,52 @@
 			"image_png": "Image (.png)"
 		},
 		"actions": {
-			"delete": "Delete study"
+			"delete": "Delete study",
+			"download_all": "Download all"
+		},
+		"error": {
+			"authorizing": {
+				"title": "Error updating authorizations",
+				"message": "Failed to update the authorization for doctor {doctorName}. Please try again later."
+			},
+			"deleting": {
+				"title": "Error deleting study",
+				"message": "An error occurred while trying to delete the study. Please try again later."
+			},
+			"downloading": {
+				"title": "Error downloading files",
+				"message": "An error occurred while trying to download the study files. Please try again later."
+			}
 		}
+	},
+	"new_file": {
+		"title": "Upload new study for {patientName}",
+		"labels": {
+			"files": "Files",
+			"type": "Study Type",
+			"date": "Study Date",
+			"data": "Additional Data",
+			"auth_doctors": "Select which doctors will be able to see this study"
+		},
+		"table": {
+			"auth_doctors": "Authorized Doctors"
+		},
+		"buttons": {
+			"files": "Choose files",
+			"select_all": "Select all",
+			"deselect_all": "Deselect all",
+			"submit": "Upload study"
+		},
+		"messages": {
+			"no_files": "Please select at least one file to upload the study.",
+			"upload_success_title": "Study uploaded successfully!",
+			"upload_success_message": "You have uploaded a new study for {patientName}.",
+			"upload_error_title": "Error uploading study",
+			"upload_error_message": "An error occurred while trying to upload the study. Please try again later."
+		},
+		"data_placeholder": "Enter a description with data about the study",
+		"no_files": "No files selected",
+		"more_files": "+ {count} more files"
 	},
 	"unknown": "Unknown",
 	"date_format": "MM/dd/yyyy",

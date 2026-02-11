@@ -224,7 +224,7 @@
 	<div class="page-division flex flex-col h-full w-full gap-2.5">
 		<div class="flex flex-row justify-between items-center w-full h-fit">
 			<p class="title text-primaryText">{m['studies.title']()}:</p>
-			<Button variant="secondary" class="w-fit" onclick={() => goto(`${base}/studies/upload/${data.currentUser.id}`)}>
+			<Button variant="secondary" class="w-fit" onclick={() => goto(`${base}/upload-study/${data.currentUser.id}`)}>
 				{m['studies.actions.upload']()}
 			</Button>
 		</div>

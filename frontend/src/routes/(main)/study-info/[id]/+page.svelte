@@ -3,15 +3,16 @@
 	import Table, { type Column } from '$components/Table/Table.svelte';
 	import ButtonCell from '$components/Table/ButtonCell.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import { baseApiUrl, type Doctor, type File, type Paginated, type Study } from '$types/api';
+	import { type Doctor, type File, type Study } from '$types/api';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
 	import { parseDateInLocalTimezone } from '$lib/services/appointments';
-	import { fetchFilesPage, fetchStudies, fetchStudiesPage } from '$lib/services/studies';
-	import { fetchDoctorsPage, putAuthorizations } from '$lib/services/doctors';
+	import { authorizeDoctorsForStudy, deleteStudy, fetchFilesPage, unauthorizeDoctorsForStudy } from '$lib/services/studies';
 	import Icon from '$components/Icon/Icon.svelte';
+	import Toast from '$components/Toast/Toast.svelte';
+	import JSZip from 'jszip';
 
 	let { data }: { data: PageData } = $props();
 
@@ -19,13 +20,56 @@
 	let doctors: Doctor[] = $state(data.doctors ?? []);
 	let authorizedDoctorsEmails: string[] = $state(data.authorizedDoctorsEmails ?? []);
 
-	// parse self (cut after /api/)
-	const parseDoctor = (self: string) => {
-		const limitString = '/api/';
-		const apiIndex = self.indexOf(limitString);
-		const toRet = apiIndex !== -1 ? self.substring(apiIndex + limitString.length) : self;
-		return toRet;
+	// Extract file ID from API URL
+	const getFileId = (fileUrl: string): string => {
+		const match = fileUrl.match(/\/files\/(\d+)$/);
+		return match ? match[1] : '';
 	};
+
+    let showError = $state(false);
+    let errorTitle = $state('');
+    let errorMessage = $state('');
+
+    $effect(() => {
+        if (!showError) {
+            errorTitle = '';
+            errorMessage = '';
+        }
+    });
+
+    const unauthorizeDoctor = async (doctor: Doctor) => {
+        unauthorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+            .then(() => {
+                if (authorizedDoctorsEmails.includes(doctor.email)) {
+                    authorizedDoctorsEmails = authorizedDoctorsEmails.filter(email => email !== doctor.email);
+                } else {
+                    authorizedDoctorsEmails = [...authorizedDoctorsEmails, doctor.email];
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                errorTitle = m['study_info.error.authorizing.title']();
+                errorMessage = m['study_info.error.authorizing.message']({ doctorName: doctor.name });
+                showError = true;
+            });
+    };
+
+    const authorizeDoctor = async (doctor: Doctor) => {
+        authorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+            .then(() => {
+                if (authorizedDoctorsEmails.includes(doctor.email)) {
+                    authorizedDoctorsEmails = authorizedDoctorsEmails.filter(email => email !== doctor.email);
+                } else {
+                    authorizedDoctorsEmails = [...authorizedDoctorsEmails, doctor.email];
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                errorTitle = m['study_info.error.authorizing.title']();
+                errorMessage = m['study_info.error.authorizing.message']({ doctorName: doctor.name });
+                showError = true;
+            });
+    };
 
 	const fileColumns: Column<File>[] = [
 		{
@@ -44,7 +88,7 @@
                         text: 'eye download',
                         icon: true,
                         variant: ['success', 'primary'],
-                        onclick: async (event, index) => {
+                        onclick: async (event: MouseEvent, index?: number) => {
                             event.stopPropagation();
                             if (index) {
                                 // download file
@@ -83,12 +127,12 @@
                                     }, 100);
                                 } catch (error) {
                                     console.error('Download error:', error);
-                                    // Fallback: open in new window
-                                    window.open(file.links.self, '_blank');
+                                    // Fallback: open in new window through frontend wrapper
+                                    window.open(file.links.self.replace('/api', ''), '_blank');
                                 }
                             } else {
-                                // view file in new tab
-                                window.open(file.links.self, '_blank');
+                                // view file in new tab through frontend wrapper
+                                window.open(file.links.self.replace('/api', ''), '_blank');
                             }
                         },
                         class: 'px-2 py-1 text-sm font-semibold'
@@ -99,6 +143,62 @@
             columnClass: 'w-25'
 		}
 	];
+
+    const downloadAllFiles = async () => {
+        let allFiles = study.files?.results ?? [];
+        let files = study.files;
+
+        while (files?._links.next) {
+            const newPage = await fetchFilesPage(files._links.next, fetch)
+                .catch((error) => {
+                    console.error('Error fetching files:', error);
+                });
+
+            if (newPage) {
+                allFiles = [...allFiles, ...newPage.results];
+                files = newPage;
+            }
+        }
+
+        // Put all files in a zip and download it
+        const zip = new JSZip();
+        const folder = zip.folder(study.comment.replace(/\s+/g, '_'));
+        if (!folder) {
+            return;
+        }
+
+        let i = 0;
+        for (const file of allFiles) {
+            try {
+                const response = await fetch(file.links.self);
+                if (!response.ok) throw new Error('Download failed');
+
+                const blob = await response.blob();
+                folder.file(`${i}_${file.type}`, blob);
+                i++;
+            } catch (error) {
+                console.error('Error downloading file:', error);
+                errorTitle = m['study_info.error.downloading.title']();
+                errorMessage = m['study_info.error.downloading.message']()
+                showError = true;
+                return;
+            }
+        }
+
+        const content = await zip.generateAsync({ type: "blob" });
+        const url = window.URL.createObjectURL(content);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = study.comment.replace(/\s+/g, '_') + '.zip';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+
+        setTimeout(() => {
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }, 100);
+    };
 
 	const doctorColumns: Column<Doctor>[] = [
 		{
@@ -126,12 +226,11 @@
 							e.stopPropagation();
 							e.preventDefault();
 
-							putAuthorizations(doctor.links.authorization.resolved!, false, [])
-                                .catch((error) => {
-                                    console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
-                                });
-
-                            doctors.results.splice(index, 1);
+							if (authorizedDoctorsEmails.includes(doctor.email)) {
+                                unauthorizeDoctor(doctor);
+                            } else {
+                                authorizeDoctor(doctor);
+                            }
 						},
 						class: 'px-2 py-1 text-xs! font-semibold'
 					}
@@ -143,13 +242,37 @@
 	];
 
 	const handleDeauthorizeAll = async () => {
-        console.log('Deauthorizing all doctors:', authorizedDoctorsEmails);
-        authorizedDoctorsEmails = [];
+        for (const doctor of doctors) {
+            if (authorizedDoctorsEmails.includes(doctor.email)) {
+                await unauthorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+                    .then(() => {
+                        authorizedDoctorsEmails = authorizedDoctorsEmails.filter(email => email !== doctor.email);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        errorTitle = m['study_info.error.authorizing.title']();
+                        errorMessage = m['study_info.error.authorizing.message']({ doctorName: doctor.name });
+                        showError = true;
+                    });
+            }
+        }
 	};
     
 	const handleAuthorizeAll = async () => {
-        console.log('Authorizing all doctors:', authorizedDoctorsEmails);
-        authorizedDoctorsEmails = doctors.map(doctor => doctor.email);
+        for (const doctor of doctors) {
+            if (!authorizedDoctorsEmails.includes(doctor.email)) {
+                await authorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+                    .then(() => {
+                        authorizedDoctorsEmails = [...authorizedDoctorsEmails, doctor.email];
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        errorTitle = m['study_info.error.authorizing.title']();
+                        errorMessage = m['study_info.error.authorizing.message']({ doctorName: doctor.name });
+                        showError = true;
+                    });
+            }
+        }
 	};
 </script>
 
@@ -185,14 +308,16 @@
                 variant="destructive"
                 class="w-fit"
                 onclick={() => {
-                    console.log('Delete study with:', study);
-                    // deleteStudy(study.links.self, data.currentUser, fetch)
-                    //     .then(() => {
-                    //         goto(`${base}/studies`);
-                    //     })
-                    //     .catch((error) => {
-                    //         console.error('Error deleting study:', error);
-                    //     });
+                    deleteStudy(study.links.self, fetch)
+                        .then(() => {
+                            goto(`${base}/studies`);
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            errorTitle = m['study_info.error.deleting.title']();
+                            errorMessage = m['study_info.error.deleting.message']();
+                            showError = true;
+                        });
                 }}
             >
                 <Icon name="trash" class="w-5 h-5 mr-1" />
@@ -202,7 +327,14 @@
 	</div>
 
 	<div class="page-division flex flex-col h-full w-full gap-2.5">
-		<h1 class="text-[24px] font-bold mb-2.5">{m['study_info.titles.files']()}:</h1>
+        <div class="flex flex-row justify-between items-center w-full h-fit">
+            <h1 class="text-[24px] font-bold mb-2.5">{m['study_info.titles.files']()}:</h1>
+            <div class="flex gap-2">
+                <Button variant="primary" class="w-fit text-[14px]!" onclick={downloadAllFiles}>
+                    {m['study_info.actions.download_all']()}
+                </Button>
+            </div>
+        </div>
         <Table 
             rows={study.files!}
             columns={fileColumns}
@@ -211,8 +343,11 @@
             bordered
             hover
             onRowClick={(file: File) => {
-                // view file in new tab
-                window.open(file.links.self, '_blank');
+                // view file in new tab through frontend wrapper
+                const fileId = getFileId(file.links.self);
+                if (fileId) {
+                    window.open(file.links.self.replace('/api', ''), '_blank');
+                }
             }}
         />
 	</div>
@@ -240,13 +375,15 @@
                 striped
                 bordered
                 hover
-                onRowClick={(doctor: Doctor) => {
-                    const doctorPath = parseDoctor(doctor.links.self);
-                    if (doctorPath) {
-                        goto(`${base}/${doctorPath}`);
-                    }
-                }}
             />
         </div>
     {/if}
+
+    <Toast
+        bind:show={showError}
+        title={errorTitle}
+        description={errorMessage}
+        variant="destructive"
+        duration={3000}
+    />
 </div>

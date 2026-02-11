@@ -7,6 +7,8 @@ public interface AuthStudiesService {
     public boolean authStudyForDoctorId(long studyId, long doctorId);
 
     public void authStudyForDoctorIdList(List<Long> doctorsId, long studyId);
+    
+    public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId);
 
     public boolean hasAuthStudy(long studyId, long doctorId);
 

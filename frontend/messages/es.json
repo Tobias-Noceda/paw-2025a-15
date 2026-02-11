@@ -395,8 +395,52 @@
 			"image_png": "Imagen (.png)"
 		},
 		"actions": {
-			"delete": "Eliminar estudio"
+			"delete": "Eliminar estudio",
+			"download_all": "Descargar todos"
+		},
+		"error": {
+			"authorizing": {
+				"title": "Error al actualizar autorizaciones",
+				"message": "No se pudo actualizar la autorización para el doctor {doctorName}. Por favor, inténtelo de nuevo más tarde."
+			},
+			"deleting": {
+				"title": "Error al eliminar estudio",
+				"message": "Ocurrió un error al intentar eliminar el estudio. Por favor, inténtelo de nuevo más tarde."
+			},
+			"downloading": {
+				"title": "Error al descargar archivos",
+				"message": "Ocurrió un error al intentar descargar los archivos del estudio. Por favor, inténtelo de nuevo más tarde."
+			}
 		}
+	},
+	"new_file": {
+		"title": "Subir nuevo estudio para {patientName}",
+		"labels": {
+			"files": "Archivos",
+			"type": "Tipo de estudio",
+			"date": "Fecha del estudio",
+			"data": "Datos adicionales",
+			"auth_doctors": "Seleccione que médicos podrán ver este estudio"
+		},
+		"table": {
+			"auth_doctors": "Médicos autorizados"
+		},
+		"buttons": {
+			"files": "Elegir archivos",
+			"select_all": "Seleccionar todos",
+			"deselect_all": "Deseleccionar todos",
+			"submit": "Subir estudio"
+		},
+		"messages": {
+			"no_files": "Por favor, seleccione al menos un archivo para subir el estudio.",
+			"upload_success_title": "¡Estudio subido con éxito!",
+			"upload_success_message": "Has subido un nuevo estudio para {patientName}.",
+			"upload_error_title": "Error al subir el estudio",
+			"upload_error_message": "Ocurrió un error al intentar subir el estudio. Por favor, inténtelo de nuevo más tarde."
+		},
+		"data_placeholder": "Ingrese una descripción con datos sobre el estudio",
+		"no_files": "Ningún archivo seleccionado",
+		"more_files": "+ {count} archivos más"
 	},
 	"unknown": "Desconocido",
 	"date_format": "dd/MM/yyyy",

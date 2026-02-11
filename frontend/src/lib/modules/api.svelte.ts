@@ -145,14 +145,16 @@ export async function getAuth(path: string, options?: RequestInit, fetchFn: type
 };
 
 export async function post(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const isFormData = body instanceof FormData;
+	
 	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
 		...options,
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
 			...options?.headers,
 		},
-		body: JSON.stringify(body)
+		// Don't stringify FormData
+		body: isFormData ? body : JSON.stringify(body)
 	});
 };
 
@@ -178,7 +180,6 @@ export async function put(path: string, body: any, options?: RequestInit, fetchF
 		...options,
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json',
 			...options?.headers,
 		},
 		body: JSON.stringify(body)

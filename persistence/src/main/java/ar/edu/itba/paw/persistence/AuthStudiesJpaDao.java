@@ -1,19 +1,19 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.models.entities.AuthStudy;
-import ar.edu.itba.paw.models.entities.AuthStudyId;
-import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.Study;
-
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Repository;
+
 import ar.edu.itba.paw.interfaces.persistence.AuthStudiesDao;
+import ar.edu.itba.paw.models.entities.AuthStudy;
+import ar.edu.itba.paw.models.entities.AuthStudyId;
+import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Repository
 public class AuthStudiesJpaDao implements AuthStudiesDao{
@@ -56,10 +56,25 @@ public class AuthStudiesJpaDao implements AuthStudiesDao{
     }
 
     @Override
+    public void unauthStudyForDoctorIdList(List<Long> doctorIds, long studyId) {
+        if (doctorIds == null || doctorIds.isEmpty()) return;
+        Study study = em.find(Study.class, studyId);
+        if (study == null) throw new NotFoundException("Study with id: " + studyId + " does not exist!");
+        TypedQuery<Doctor> query = em.createQuery("from Doctor as d where d.id in :doctorIds",Doctor.class);
+        query.setParameter("doctorIds", doctorIds);
+        List<Doctor> doctors = query.getResultList();
+
+        for(Doctor doctor : doctors){
+            AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctor.getId(), studyId));
+            if(as != null) em.remove(as);
+        }
+    }
+
+    @Override
     public void unauthStudyForDoctor(long studyId, long doctorId) {
         if(!hasAuthStudy(studyId, doctorId)) return;
         AuthStudy as = em.find(AuthStudy.class, new AuthStudyId(doctorId, studyId));
-        em.remove(as);
+        if(as != null) em.remove(as);
     }
 
     @Override

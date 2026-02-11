@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 
   interface Params {
-    variant: 'primary' | 'secondary' | 'tertiary' | 'success' | 'destructive';
+    variant: 'primary' | 'secondary' | 'tertiary' | 'gray' | 'success' | 'destructive';
     skeleton?: boolean;
     disabled?: boolean;
     children: Snippet;
@@ -30,6 +30,7 @@
         primary: 'bg-primary text-white hover:bg-primary-hover border-1 border-primary disabled:opacity-50',
         secondary: 'bg-secondary text-white hover:bg-secondary-hover border-1 border-secondary disabled:bg-skeleton disabled:border-skeleton disabled:text-gray-500',
         tertiary: 'bg-tertiary text-primaryText hover:bg-primary-hover hover:text-white border-1 border-primaryBorder disabled:opacity-50',
+        gray: 'bg-[#6c757d] text-white hover:bg-[#5a6268] border-1 border-[#6c757d] disabled:opacity-50',
         success: 'bg-success text-white hover:bg-success-hover border-1 border-success disabled:opacity-50',
         destructive: 'bg-red-500 text-white hover:bg-red-600 border-1 border-destructive disabled:opacity-50',
       }[variant],

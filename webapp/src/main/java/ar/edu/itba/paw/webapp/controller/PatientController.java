@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
@@ -53,6 +54,7 @@ import ar.edu.itba.paw.webapp.dto.output.PatientMedicalInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.webapp.dto.input.StudyAuthPatchDTO;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/patients")
@@ -69,6 +71,9 @@ public class PatientController {
 
     @Autowired
     private StudyService ss;
+
+    @Autowired
+    private AuthStudiesService ass;
 
     @Context
     private UriInfo uriInfo;
@@ -303,6 +308,23 @@ public class PatientController {
             user.getId(),
             dto.getStudyDate()
         );
+
+        if (dto.getAuthorizedDoctors() != null) {
+            try {
+                ass.authStudyForDoctorIdList(
+                    URIHelper.getIds(
+                        dto.getAuthorizedDoctors(),
+                        uriInfo.getBaseUriBuilder()
+                            .path(DoctorController.class)
+                            .build()
+                    ),
+                    study.getId()
+                );
+            } catch (NotFoundException nfe) {
+                LOGGER.warn(nfe.getMessage());
+            }
+        }
+
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(study.getId())).build();
         return Response.created(uri).build();
     }
@@ -316,6 +338,46 @@ public class PatientController {
     ) {
         Study study = ss.getStudyById(studyId).orElseThrow(NotFoundException::new);
         return Response.ok(StudyDTO.fromStudy(uriInfo, study)).build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}/studies/{studyId:\\d+}")
+    @Consumes(value = VndType.APPLICATION_PATIENT_STUDY)
+    public Response editStudyById(
+        @PathParam("id") final long id,
+        @PathParam("studyId") final long studyId,
+        @Valid StudyAuthPatchDTO dto
+    ) {
+        Patient patient = ps.getPatientById(id).orElseThrow(() -> new NotFoundException("Patient not found"));
+        Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found"));
+
+        if (!study.getPatient().getId().equals(patient.getId())) {
+            throw new NotFoundException("Study not found for the given patient");
+        }
+
+        if (dto.isAuthorize()) {
+            ass.authStudyForDoctorIdList(
+                URIHelper.getIds(
+                    dto.getDoctors(),
+                    uriInfo.getBaseUriBuilder()
+                        .path(DoctorController.class)
+                        .build()
+                ),
+                study.getId()
+            );
+        } else {
+            ass.unauthStudyForDoctorIdList(
+                URIHelper.getIds(
+                    dto.getDoctors(),
+                    uriInfo.getBaseUriBuilder()
+                        .path(DoctorController.class)
+                        .build()
+                ),
+                study.getId()
+            );
+        }
+
+        return Response.accepted().build();
     }
 
     @DELETE

@@ -36,8 +36,6 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
         study = await fetchSingleStudy(Number(ids[1]), Number(ids[0]), fetch);
 
-        const files = await getAuth(study.links.files, undefined, fetch);
-
         if (currentUser.role === 'PATIENT') {
             const doctorsLink = (currentUserData as Patient).links.doctors;
             if (doctorsLink) {

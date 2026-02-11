@@ -52,6 +52,13 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         authStudiesDao.authStudyForDoctorIdList(doctorsId, studyId);
     }
 
+    @Transactional
+    @Override
+    public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId) {
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        authStudiesDao.unauthStudyForDoctorIdList(doctorsId, studyId);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public boolean hasAuthStudy(long studyId, long doctorId) {
