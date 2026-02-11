@@ -3,33 +3,28 @@ package ar.edu.itba.paw.webapp.dto.output;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Patient;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
 import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class PatientDTO {
-    
+    //BASIC
     private String email;
     private String name;
     private String telephone;
     private LocalDate birthdate;
-    private String bloodtype;
+    private String bloodType;
     private BigDecimal height;
     private BigDecimal weight;
-    private Boolean smokes;
-    private Boolean drinks;
-    private String meds;
-    private String conditions;
-    private String allergies;
-    private String diet;
-    private String hobbies;
-    private String job;
     private String insuranceNumber;
 
     private LinkDTO links;
@@ -41,35 +36,39 @@ public class PatientDTO {
     public static PatientDTO fromPatient(final UriInfo uriInfo, Patient patient){
         final PatientDTO dto = new PatientDTO();
 
-        dto.setName(patient.getName());
-        dto.setEmail(patient.getEmail());
-        dto.setTelephone(patient.getTelephone());
-        dto.setBirthdate(patient.getBirthdate());
-        if(patient.getBloodType()!=null) dto.setBloodtype(patient.getBloodType().getName());
-        dto.setHeight(patient.getHeight());
-        dto.setWeight(patient.getWeight());
-        dto.setSmokes(patient.getSmokes());
-        dto.setDrinks(patient.getDrinks());
-        dto.setMeds(patient.getMeds());
-        dto.setConditions(patient.getConditions());
-        dto.setAllergies(patient.getAllergies());
-        dto.setDiet(patient.getDiet());
-        dto.setHobbies(patient.getHobbies());
-        dto.setJob(patient.getJob());
-        dto.setInsuranceNumber(patient.getInsuranceNumber());
+        dto.name = patient.getName();
+        dto.email = patient.getEmail();
+        dto.telephone = patient.getTelephone();
+        dto.birthdate = patient.getBirthdate();
+        dto.bloodType = patient.getBloodType() != null ? patient.getBloodType().getName() : null;
+        dto.height = patient.getHeight();
+        dto.weight = patient.getWeight();
+        dto.insuranceNumber = patient.getInsuranceNumber();
 
-        URI insurance = null;
-        if(patient.getInsurance()!=null) insurance = uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(patient.getInsurance().getId())).build();
-        //TODO filtered GET in doctors controller
-        URI doctors = null; uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(patient.getPicture().getId())).build();
+        URI insurance = patient.getInsurance() != null ? uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(patient.getInsurance().getId())).build() : null;
+        URI doctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("patientId", patient.getId()).build();
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).build();
         URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(patient.getPicture().getId())).build();
+        URI pastAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.COMPLETED).build();
+        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", patient.getId()).queryParam("status", AppointmentStatusEnum.TAKEN).build();
+        URI medicalInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("medicalInfo").build();
+        URI socialInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("socialInfo").build();
+        URI habitsInfo = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("habitsInfo").build();
 
+        URI baseStudies = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("studies").build();
+        TemplatedLinkDTO studies = TemplatedLinkDTO.withQueryParams(baseStudies, List.of("doctorId"));
+        
         dto.setLinks(new LinkDTO()
             .setSelf(self)
+            .setMedicalInfo(medicalInfo)
+            .setSocialInfo(socialInfo)
+            .setHabitsInfo(habitsInfo)
             .setImage(picture)
             .setInsurance(insurance)
-            .setDoctor(doctors)
+            .setDoctors(doctors)
+            .setPastAppointments(pastAppointments)
+            .setFutureAppointments(futureAppointments)
+            .setStudies(studies)
         );
 
         return dto;
@@ -99,7 +98,7 @@ public class PatientDTO {
         this.telephone = telephone;
     }
 
-    public LocalDate getBirthDate(){
+    public LocalDate getBirthdate(){
         return birthdate;
     }
 
@@ -107,12 +106,12 @@ public class PatientDTO {
         this.birthdate = birthdate;
     }
 
-    public String getBloodtype(){
-        return bloodtype;
+    public String getBloodType(){
+        return bloodType;
     }
 
-    public void setBloodtype(String bloodtype){
-        this.bloodtype = bloodtype;
+    public void setBloodType(String bloodType){
+        this.bloodType = bloodType;
     }
 
     public BigDecimal getHeight(){
@@ -129,70 +128,6 @@ public class PatientDTO {
 
     public void setWeight(BigDecimal weight){
         this.weight = weight;
-    }
-
-    public Boolean getSmokes(){
-        return smokes;
-    }
-
-    public void setSmokes(Boolean smokes){
-        this.smokes = smokes;
-    }
-
-    public Boolean getDrinks(){
-        return drinks;
-    }
-
-    public void setDrinks(Boolean drinks){
-        this.drinks = drinks;
-    }
-
-    public String getMeds(){
-        return meds;
-    }
-
-    public void setMeds(String meds){
-        this.meds = meds;
-    }
-
-    public String getConditions(){
-        return conditions;
-    }
-
-    public void setConditions(String conditions){
-        this.conditions = conditions;
-    }
-
-    public String getAllergies(){
-        return allergies;
-    }
-
-    public void setAllergies(String allergies){
-        this.allergies = allergies;
-    }
-
-    public String getDiet(){
-        return diet;
-    }
-
-    public void setDiet(String diet){
-        this.diet = diet;
-    }
-
-    public String getHobbies(){
-        return hobbies;
-    }
-
-    public void setHobbies(String hobbies){
-        this.hobbies = hobbies;
-    }
-
-    public String getJob(){
-        return job;
-    }
-
-    public void setJob(String job){
-        this.job = job;
     }
 
     public String getInsuranceNumber(){

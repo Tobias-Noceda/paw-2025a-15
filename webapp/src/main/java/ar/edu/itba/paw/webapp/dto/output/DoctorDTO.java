@@ -2,11 +2,18 @@ package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.webapp.controller.AppointmentController;
+import ar.edu.itba.paw.webapp.controller.DoctorController;
+import ar.edu.itba.paw.webapp.controller.FileController;
+import ar.edu.itba.paw.webapp.controller.InsuranceController;
+import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class DoctorDTO {
     private String email;
@@ -18,10 +25,10 @@ public class DoctorDTO {
     private LinkDTO links;
 
     public static Function<Doctor, DoctorDTO> mapper(final UriInfo uriInfo) {
-        return d -> fromDoctor(d,uriInfo);
+        return d -> fromDoctor(uriInfo, d);
     }
 
-    public static DoctorDTO fromDoctor(final Doctor doctor, final UriInfo uriInfo) {
+    public static DoctorDTO fromDoctor(final UriInfo uriInfo, final Doctor doctor) {
         final DoctorDTO dto = new DoctorDTO();
 
         dto.email = doctor.getEmail();
@@ -30,18 +37,26 @@ public class DoctorDTO {
         dto.license = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
 
-        URI self = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).build();
-        URI image = uriInfo.getBaseUriBuilder().path("files").path(String.valueOf(doctor.getPicture().getId())).build();
-        URI schedule = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(doctor.getId())).path("shifts").build();
-        URI todaysFreeAppointments = uriInfo.getBaseUriBuilder().path("appointments").queryParam("doctorId", String.valueOf(doctor.getId())).queryParam("date", LocalDate.now()).build();
-        URI insurances = uriInfo.getBaseUriBuilder().path("insurances").queryParam("supportedBy", String.valueOf(doctor.getId())).build();
+        URI self = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).build();
+        URI image = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
+        URI schedule = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("shifts").build();
+        URI insurances = uriInfo.getBaseUriBuilder().path(InsuranceController.class).queryParam("supportedBy", String.valueOf(doctor.getId())).build();
+        URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
+        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
+        URI patients = uriInfo.getBaseUriBuilder().path(PatientController.class).queryParam("doctorId", String.valueOf(doctor.getId())).build();
+        
+        URI baseAuthorization = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("authorizations").build();
+        TemplatedLinkDTO authorization = TemplatedLinkDTO.withQueryParams(baseAuthorization, List.of("patientId"));
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
             .setImage(image)
             .setSchedule(schedule)
             .setInsurances(insurances)
-            .setTodaysFreeAppointments(todaysFreeAppointments)
+            .setFreeAppointments(freeAppointments)
+            .setFutureAppointments(futureAppointments)
+            .setPatients(patients)
+            .setAuthorization(authorization)
         );
 
         return dto;

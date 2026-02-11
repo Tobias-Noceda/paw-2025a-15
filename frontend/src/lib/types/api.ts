@@ -1,4 +1,7 @@
-import type { Specialties } from "./enums/specialties";
+import type { AccessLevels } from "./enums/accessLevels";
+import type { AppointmentStatus } from "./enums/appointmentStatus";
+import type { Specialty } from "./enums/specialties";
+import type { StudyType } from "./enums/studyTypes";
 import type { Weekdays } from "./enums/weekdays";
 
 export const baseApiUrl = 'http://localhost:8080/paw-2025a-15/api'
@@ -13,31 +16,86 @@ export type Paginated<T> = {
         last?: string;
 	};
 	_pageInfo?: {
-		currentPage: number;
-		totalPages: number;
+		currentPage?: number;
+		totalPages?: number;
+		currentDate?: Date;
+		maxDate?: Date;
 	};
 	results: T[];
 };
 
+export type UriTemplate = {
+	href: string;
+	templated: boolean;
+};
+
 export type Session = {
-	session: string;
+	access: string;
 	refresh: string;
 };
 
+export type DoctorAuthorizations = {
+	authorized: boolean;
+	accessLevels: AccessLevels[];
+}
+
 export type Doctor = {
 	name: string;
-	image: string;
 	email: string;
 	telephone: string;
 	license: string;
-	specialty: Specialties;
-	schedule: string;
-	todaysFreeAppointments: string;
-	insurances: string;
-	self: string;
-	scheduleDays?: Map<Weekdays, [Date, Date]>;
+	specialty: Specialty;
+	schedule?: Map<Weekdays, [Date, Date]>;
 	direction?: string;
-	insuranceNames?: string[];
+	insurances?: string[];
+	links: {
+		image: string;
+		insurances: string;
+		self: string;
+		schedule: string;
+		freeAppointments: string;
+		futureAppointments: string;
+		patients: string;
+		authorization: UriTemplate;
+		authorizationResolved?: string;
+	}
+}
+
+export type Patient = {
+	email: string;
+	name: string;
+	telephone: string;
+	birthdate: string;
+	bloodType: string;
+	height: number;
+	weight: number;
+	insurance?: string;
+	insuranceNumber: string;
+	gaveHabits?: boolean;
+	smokes?: boolean;
+	drinks?: boolean;
+	diet?: string;
+	gaveMedical?: boolean;
+	meds?: string;
+	conditions?: string;
+	allergies?: string;
+	gaveSocial?: boolean;
+	hobbies?: string;
+	job?: string;
+	studiesPage?: Paginated<Study>;
+	links: {
+		doctors: string;
+		image: string;
+		insurance?: string;
+		self: string;
+		medicalInfo: string;
+		habitsInfo: string;
+		socialInfo: string;
+		pastAppointments: string;
+		futureAppointments: string;
+		studies: UriTemplate;
+		resolvedStudies: string;
+	}
 }
 
 export type Shift = {
@@ -52,21 +110,31 @@ export type Shift = {
 
 export type Insurance = {
 	name: string;
-	picture: string;
-	self: string;
+	links: {
+		image: string;
+		self: string;
+	}
 }
 
 export type Appointment = {
+	status: AppointmentStatus;
 	weekday: string;
 	address: string;
 	date: string;
 	startTime: string;
 	endTime: string;
 	durationMinutes: number;
-	self: string;
-	doctor: string;
-	patient: string;
-}
+	doctor?: Doctor;
+	patient?: Patient;
+	patientName?: string;
+	patientEmail?: string;
+	detail?: string;
+	links: {
+		self: string;
+		doctor: string;
+		patient: string;
+	}
+};
 
 export type Profile = {
 	name: string;
@@ -98,4 +166,18 @@ export type Profile = {
 		image?: string;
 		insurance?: string;
 	};
+};
+
+export type Study = {
+	comment?: string;
+	studyDate: string;
+	type: StudyType;
+	uploadDate: string;
+	links: {
+		authDoctors: string;
+		files: string;
+		patient: string;
+		self: string;
+		uploader: string;
+	}
 };

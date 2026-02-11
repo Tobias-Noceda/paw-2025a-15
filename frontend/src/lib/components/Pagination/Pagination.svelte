@@ -29,6 +29,10 @@
 		 * The error component to render if an error occurs.
 		 */
 		error?: Snippet;
+		/**
+		 * The class for container.
+		 */
+		class?: string;
 	}
 
 	let {
@@ -37,6 +41,7 @@
 		children,
 		loading,
 		error,
+		class: containerClass
 	}: Props = $props();
 
     const ammountClass = cn(
@@ -47,7 +52,6 @@
 
 	let entries = $state([] as T[]);
 
-	let initialLoadComplete = $state(false);
 	let load = $state(true);
 	let done = $state(false);
 	let erro = $state(false);
@@ -60,7 +64,7 @@
 	let totalPages: number = $state(0);
 	let currentPage: number = $state(0);
 
-	async function get(pageUrl: string) {
+	async function getPage(pageUrl: string) {
         load = true;
         entries = [];
 
@@ -74,8 +78,8 @@
                 last = response._links?.last;
 
 				if (response._pageInfo) {
-					currentPage = response._pageInfo.currentPage;
-					totalPages = response._pageInfo.totalPages;
+					currentPage = response._pageInfo.currentPage!;
+					totalPages = response._pageInfo.totalPages!;
 				}
 			})
 			.catch((e) => {
@@ -89,8 +93,8 @@
 	}
 
 	onMount(() => {
-		const doctorsPage = initialFetchFunction();
-		doctorsPage.then((data) => {
+		const page = initialFetchFunction();
+		page.then((data) => {
 			entries = data.results;
 
             first = data._links?.first;
@@ -99,12 +103,11 @@
             last = data._links?.last;
 
 			if (data._pageInfo) {
-				currentPage = data._pageInfo.currentPage;
-				totalPages = data._pageInfo.totalPages;
+				currentPage = data._pageInfo.currentPage!;
+				totalPages = data._pageInfo.totalPages!;
 			}
 			
             load = false;
-			initialLoadComplete = true;
 		});
 	});
 
@@ -145,24 +148,26 @@
 
 <svelte:window bind:scrollY />
 
-{#each entries as e, i}
-	{@render children(e, i)}
-{/each}
+<div class={containerClass}>
+	{#each entries as e, i}
+		{@render children(e, i)}
+	{/each}
 
-{#if load}
-	{@render loading()}
-{/if}
+	{#if load}
+		{@render loading()}
+	{/if}
 
-{#if erro && error}
-	{@render error()}
-{/if}
+	{#if erro && error}
+		{@render error()}
+	{/if}
 
+</div>
 {#if totalPages > 0}
 	<div class="flex w-full h-fit justify-center items-center my-2 gap-2">
-		<Button variant="secondary" class="text-sm!" disabled={first === undefined} onclick={() => get(first!)}>&laquo;</Button>
-		<Button variant="secondary" class="text-sm!" disabled={prev === undefined} onclick={() => get(prev!)}>&lt;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={first === undefined} onclick={() => getPage(first!)}>&laquo;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={prev === undefined} onclick={() => getPage(prev!)}>&lt;</Button>
 		<span class={ammountClass}>{currentPage} / {totalPages}</span>
-		<Button variant="secondary" class="text-sm!" disabled={next === undefined} onclick={() => get(next!)}>&gt;</Button>
-		<Button variant="secondary" class="text-sm!" disabled={last === undefined} onclick={() => get(last!)}>&raquo;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={next === undefined} onclick={() => getPage(next!)}>&gt;</Button>
+		<Button variant="secondary" class="text-sm!" disabled={last === undefined} onclick={() => getPage(last!)}>&raquo;</Button>
 	</div>
 {/if}

@@ -123,5 +123,9 @@ public class AppointmentNew {
             "," + "patient=" + patient +
             '}';
     }
+
+    public AppointmentNew free() {
+        return new AppointmentNew(shift, null, id.getDate(), id.getStartTime(), id.getEndTime(), null);
+    }
 }
 

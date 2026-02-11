@@ -8,7 +8,7 @@
     label?: string;
     placeholder?: string;
     type?: 'text' | 'password' | 'number';
-    value?: string;
+    value?: string | number;
     min?: number;
     errorMessage?: string;
     disabled?: boolean;

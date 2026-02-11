@@ -41,7 +41,7 @@
 
 {#if show}
 	<div
-		class="fixed z-50 {positionClasses}"
+		class="fixed z-1000 {positionClasses}"
 		transition:fly={{ y: -20, duration: 300 }}
 		role="alert"
 	>

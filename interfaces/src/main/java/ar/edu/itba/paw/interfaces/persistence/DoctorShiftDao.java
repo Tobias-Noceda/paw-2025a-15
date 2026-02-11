@@ -17,5 +17,9 @@ public interface DoctorShiftDao {
 
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
 
-    public List<DoctorSingleShift> getActiveShiftsByDoctor(Doctor doctor);
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);
+
+    public List<DoctorSingleShift> getActiveShiftsByDoctorIdPage(long doctorId, int page, int pageSize);
+    
+    public int getActiveShiftsByDoctorIdCount(long doctorId);
 }

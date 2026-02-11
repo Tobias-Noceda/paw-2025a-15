@@ -64,7 +64,15 @@
 			"password": "Contraseña",
 			"confirm_password": "Confirmar contraseña",
 			"submit_button": "Registrarse",
-			"back_to_login": "Volver a iniciar sesión"
+			"back_to_login": "Volver a iniciar sesión",
+			"success": {
+				"title": "¡Éxito!",
+				"message": "Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión."
+			},
+			"error": {
+				"title": "Error",
+				"message": "Ocurrió un error al intentar crear tu cuenta. Por favor, inténtelo de nuevo más tarde."
+			}
 		},
 		"change": {
 			"title": "Cambiar contraseña",
@@ -164,6 +172,7 @@
 	},
 	"all": "Todos",
 	"doctors_list": "Cartilla médica",
+	"patients_list": "Lista de pacientes",
 	"clear": "Borrar",
 	"today": "Hoy",
 	"topbar": {
@@ -182,7 +191,8 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"license": "Matrícula",
-			"schedule": "Atiende"
+			"schedule": "Atiende",
+			"accesses": "Accesos actuales"
 		},
 		"details": {
 			"specialty": {
@@ -201,7 +211,16 @@
 		},
 		"actions": {
 			"authorize": "Autorizar",
-			"de_authorize": "Desautorizar"
+			"de_authorize": "Desautorizar",
+			"update": "Actualizar"
+		},
+		"authorizations": {
+			"title": "Accesos actuales",
+			"options": {
+				"view_medical": "Médico",
+				"view_social": "Social",
+				"view_habits": "A hábitos"
+			}
 		},
 		"text": {
 			"no_schedule": "No hay horario disponible.",
@@ -287,6 +306,130 @@
 			}
 		}
 	},
+	"appointments": {
+		"title": {
+			"past": "Turnos pasados",
+			"future": "Turnos futuros",
+			"free": "Turnos disponibles"
+		},
+		"label": {
+			"doctor": "Doctor",
+			"date": "Día",
+			"time": "Horario",
+			"address": "Dirección",
+			"action": "Acción"
+		},
+		"empty": {
+			"past": "No tienes turnos pasados",
+			"future": "No tienes turnos futuros"
+		},
+		"taken": {
+			"success_title": "¡Turno tomado con éxito!",
+			"success_message": "Has tomado un turno con {doctorName} el {day} de {month} a las {startTime}.",
+			"error_title": "Error al tomar el turno",
+			"error_message": "Ocurrió un error al intentar tomar el turno. Por favor, inténtelo de nuevo más tarde."
+		},
+		"canceled": {
+			"success_title": "¡Turno cancelado con éxito!",
+			"success_message": "Has cancelado tu turno del {day} de {month} a las {startTime}.",
+			"error_title": "Error al cancelar el turno",
+			"error_message": "Ocurrió un error al intentar cancelar el turno. Por favor, inténtelo de nuevo más tarde."
+		},
+		"pop_up": {
+			"cancel": {
+				"title": "¿Está seguro de que desea cancelar el turno?",
+				"confirm": "Cancelar turno"
+			},
+			"delete": {
+				"title": "¿Está seguro de que desea eliminar este turno de la lista?",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar turno"
+			},
+			"back": "Cancelar",
+			"unknown_patient": "Paciente desconocido",
+			"see_patient": "Ver paciente"
+		}
+	},
+	"insurances": {
+		"title": "Gestión de obras sociales:",
+		"new": "Nueva obra social",
+		"buttons": {
+			"edit": "Editar",
+			"delete": "Eliminar"
+		}
+	},
+	"patient": {
+		"titles": {
+			"basic": "Detalles básicos",
+			"habits": "Detalles de hábitos",
+			"medical": "Detalles médicos",
+			"social": "Detalles sociales"
+		},
+		"labels": {
+			"email": "Mail",
+			"telephone": "Teléfono",
+			"age": "Edad",
+			"blood_type": "Tipo de sangre",
+			"height": "Altura (m)",
+			"weight": "Peso (kg)",
+			"insurance": "Obra social",
+			"insurance_number": "Número de afiliado",
+			"smokes": "Fuma habitualmente",
+			"drinks": "Bebe habitualmente",
+			"diet": "Dieta",
+			"medications": "Medicaciones",
+			"conditions": "Condiciones",
+			"allergies": "Alergias",
+			"hobbies": "Hobbies",
+			"job": "Trabajo"
+		},
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
+		},
+		"values": {
+			"true": "Sí",
+			"false": "No",
+			"unknown": "No provisto"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error al obtener los estudios",
+				"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+			}
+		}
+	},
+	"studies": {
+		"title": "Estudios",
+		"types": {
+			"title": "Tipo de estudio",
+			"options": {
+				"other": "Otro",
+				"prescription": "Receta médica",
+				"radiography": "Radiografía",
+				"laboratory_result": "Resultados de laboratorio",
+				"ultrasound": "Ecografía",
+				"mri": "Resonancia magnética",
+				"electrocardiogram": "Electrocardiograma",
+				"vaccination_record": "Registro de vacunación"
+			}
+		},
+		"orders": {
+			"title": "Fecha del estudio",
+			"options": {
+				"m_recent": "Más reciente",
+				"l_recent": "Más antiguo"
+			}
+		},
+		"table": {
+			"type": "Tipo de estudio",
+			"details": "Detalles",
+			"date": "Día",
+			"upload_date": "Fecha de subida",
+			"empty": "No hay estudios disponibles."
+		}
+	},
+	"date_format": "dd/MM/yyyy"
 	"next": "Siguiente",
 	"previous": "Anterior"
 }

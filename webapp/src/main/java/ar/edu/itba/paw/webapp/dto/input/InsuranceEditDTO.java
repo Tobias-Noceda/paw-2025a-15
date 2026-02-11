@@ -1,7 +1,8 @@
 package ar.edu.itba.paw.webapp.dto.input;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+
+import org.hibernate.validator.constraints.URL;
 
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 
@@ -11,8 +12,8 @@ public class InsuranceEditDTO {
     @NotBlank
     private String name;
 
-    @Positive
-    private Long pictureId;
+    @URL(protocol = "http")
+    private String pictureId;
 
     public String getName(){
         return name;
@@ -22,11 +23,11 @@ public class InsuranceEditDTO {
         this.name = name;
     }
 
-    public Long getPictureId(){
+    public String getPictureId(){
         return pictureId;
     }
 
-    public void setPictureId(Long pictureId){
+    public void setPictureId(String pictureId){
         this.pictureId = pictureId;
     }
 }

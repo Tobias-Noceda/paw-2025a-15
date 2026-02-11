@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,6 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
-
-import java.util.List;
 
 @Service
 public class AuthStudiesServiceImpl implements AuthStudiesService{

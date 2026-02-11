@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,8 +16,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -49,6 +52,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 @EnableScheduling
 @EnableCaching
 @ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
+@PropertySource("classpath:application.properties")
 @Configuration
 @SuppressWarnings("deprecation")
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -56,17 +60,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("classpath:schema.sql")
     private Resource schemaSql;
 
+    @Autowired
+    private Environment env;
+
     @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        ds.setUrl("jdbc:postgresql://localhost:5432/paw-2025a-15");
-        ds.setUsername("paw-2025a-15");
-        ds.setPassword("0meJb9emM");
-
-        // ds.setUrl("jdbc:postgresql://localhost:5432/paw");
-        // ds.setUsername("root");
-        // ds.setPassword("root");
+        ds.setUrl("jdbc:postgresql://" + env.getProperty("postgresql.db.url"));
+        ds.setUsername(env.getProperty("postgresql.db.name"));
+        ds.setPassword(env.getProperty("postgresql.db.pswd"));
 
         return ds;
     }
@@ -114,14 +117,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername("caretracehealth@gmail.com");
-        mailSender.setPassword("roih npoe lsry pltz");
+        mailSender.setUsername(env.getProperty("app.email.from"));
+        mailSender.setPassword(env.getProperty("app.email.password"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        props.put("mail.debug", env.getProperty("mail.debug", "false"));
 
         return mailSender;
     }
@@ -157,7 +160,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
     }
-
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {

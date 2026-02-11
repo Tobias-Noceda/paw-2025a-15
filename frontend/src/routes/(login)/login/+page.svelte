@@ -1,15 +1,24 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { base } from "$app/paths";
 	import Button from "$components/Button/Button.svelte";
 	import Input from "$components/Input/Input.svelte";
 	import { m } from "$lib/paraglide/messages";
+	import { login } from "$modules/api.svelte";
 
     let email = $state('');
     let password = $state('');
 
     const handleLogin = () => {
         // Implement login logic here
-        console.log(`Logging in with email: ${email} and password: ${password}`);
+        login(email, password)
+            .then(() => {
+                error = false;
+                goto(`${base}/home`);
+            })
+            .catch(() => {
+                error = true;
+            });
     };
 
     let error = $state(false);
@@ -21,6 +30,7 @@
 
     <div class="flex flex-col items-center text-start gap-6 w-full">
         <Input
+            id="login-email"
             label={`${m["login.email_label"]()}:`}
             placeholder="you@example.com"
             bind:value={email}

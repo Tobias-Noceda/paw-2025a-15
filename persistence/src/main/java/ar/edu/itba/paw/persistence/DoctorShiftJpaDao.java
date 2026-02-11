@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -83,19 +84,50 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
     }
 
     @Override
-    public List<DoctorSingleShift> getActiveShiftsByDoctor(Doctor doctor) {
-        if (doctor == null) {
-            return Collections.emptyList();
-        }
-        final List<DoctorSingleShift> activeShifts = em.createQuery(
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        TypedQuery<DoctorSingleShift> query = em.createQuery(
             """
                 FROM DoctorSingleShift dss 
                 WHERE dss.doctor = :doctor 
                 AND dss.isActive = true
             """, 
-            DoctorSingleShift.class)
-                .setParameter("doctor", doctor)
-                .getResultList();
-        return activeShifts.isEmpty() ? Collections.emptyList() : activeShifts;
-    } 
+            DoctorSingleShift.class);
+        query.setParameter("doctor", doctor);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<DoctorSingleShift> getActiveShiftsByDoctorIdPage(long doctorId, int page, int pageSize) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        TypedQuery<DoctorSingleShift> query = em.createQuery(
+            """
+                FROM DoctorSingleShift dss 
+                WHERE dss.doctor = :doctor 
+                AND dss.isActive = true
+            """, 
+            DoctorSingleShift.class);
+        query.setParameter("doctor", doctor);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public int getActiveShiftsByDoctorIdCount(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
+        TypedQuery<Long> query = em.createQuery(
+            """
+                SELECT count(dss)
+                FROM DoctorSingleShift dss 
+                WHERE dss.doctor = :doctor 
+                AND dss.isActive = true
+            """, 
+            Long.class);
+        query.setParameter("doctor", doctor);
+        return query.getSingleResult().intValue();
+    }
 }
