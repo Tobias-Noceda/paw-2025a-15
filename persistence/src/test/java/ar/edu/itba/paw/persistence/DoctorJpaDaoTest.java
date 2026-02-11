@@ -735,9 +735,9 @@
 
 //         Assert.assertNotNull(vacas);
 //         Assert.assertEquals(1, vacas.size());
-//         Assert.assertEquals(dvpFound.getId(), vacas.get(0).getId());
 //         Assert.assertNotNull(dvFound);        
 //         Assert.assertNotNull(dvpFound);        
+//         Assert.assertEquals(dvpFound.getId(), vacas.get(0).getId());
 //     }
 
 //     @Test
@@ -753,9 +753,9 @@
 
 //         Assert.assertNotNull(vacas);
 //         Assert.assertEquals(1, vacas.size());
-//         Assert.assertEquals(dvFound.getId(), vacas.get(0).getId());
 //         Assert.assertNotNull(dvFound);        
-//         Assert.assertNotNull(dvpFound);        
+//         Assert.assertNotNull(dvpFound); 
+//         Assert.assertEquals(dvFound.getId(), vacas.get(0).getId());       
 //     }
 
 //     @Test

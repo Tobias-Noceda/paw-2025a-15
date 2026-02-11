@@ -76,8 +76,8 @@ public class DoctorShiftJpaDao implements DoctorShiftDao{
         for (DoctorSingleShift shift : shiftsToAdd) {
             shift.setIsActive(true);
             shift.setDoctor(doctor);
-            em.persist(shift);
-            doctor.addSingleShift(shift);
+            DoctorSingleShift managedShift = em.merge(shift);
+            doctor.addSingleShift(managedShift);
         }
         
         em.merge(doctor);

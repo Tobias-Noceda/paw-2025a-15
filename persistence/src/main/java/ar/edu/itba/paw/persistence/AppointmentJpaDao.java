@@ -97,7 +97,7 @@ public class AppointmentJpaDao implements AppointmentDao {
                         .getResultList();
     }
 
-    @Override
+    @Override //TODO check there isnt a "count" method for this paginated?
     public List<AppointmentNew> getFutureAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
         String query = PATIENTS_FUTURE_APPOINTMENTS_QUERY;
 
