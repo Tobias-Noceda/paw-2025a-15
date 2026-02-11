@@ -31,7 +31,9 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         let studyType: string = 'all';
         let order: string = 'm_recent';
 
-        if ((currentUserData as Patient).links.studies) {
+        const loggedPatient = currentUserData as Patient;
+
+        if (loggedPatient.links.studies.resolved) {
             const typeParam = url.searchParams.get('type');
             if (typeParam && typeParam as StudyType) {
                 studyType = typeParam;
@@ -42,11 +44,11 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
                 order = orderParam;
             }
 
-            studiesLink = (currentUserData as Patient).links.resolvedStudies;
+            studiesLink = loggedPatient.links.studies.resolved;
             studies = await fetchStudies(studiesLink, studyType, order, fetch);
 
             // Fetch doctors for the doctor list
-            const doctorsLink = (currentUserData as Patient).links.doctors;
+            const doctorsLink = loggedPatient.links.doctors;
             if (doctorsLink) {
                 doctors = await fetchDoctorsPage(doctorsLink, currentUser, fetch);
             }

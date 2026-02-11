@@ -1,5 +1,6 @@
 import type { AccessLevels } from "./enums/accessLevels";
 import type { AppointmentStatus } from "./enums/appointmentStatus";
+import type { FileTypes } from "./enums/fileTypes";
 import type { Specialty } from "./enums/specialties";
 import type { StudyType } from "./enums/studyTypes";
 import type { Weekdays } from "./enums/weekdays";
@@ -27,6 +28,7 @@ export type Paginated<T> = {
 export type UriTemplate = {
 	href: string;
 	templated: boolean;
+	resolved?: string;
 };
 
 export type Session = {
@@ -57,7 +59,6 @@ export type Doctor = {
 		futureAppointments: string;
 		patients: string;
 		authorization: UriTemplate;
-		authorizationResolved?: string;
 	}
 }
 
@@ -94,7 +95,6 @@ export type Patient = {
 		pastAppointments: string;
 		futureAppointments: string;
 		studies: UriTemplate;
-		resolvedStudies: string;
 	}
 }
 
@@ -136,11 +136,20 @@ export type Appointment = {
 	}
 };
 
+export type File = {
+	type: FileTypes;
+	links: {
+		self: string;
+	}
+};
+
 export type Study = {
-	comment?: string;
+	comment: string;
 	studyDate: string;
 	type: StudyType;
 	uploadDate: string;
+	uploaderName?: string;
+	files?: Paginated<File>;
 	links: {
 		authDoctors: string;
 		files: string;

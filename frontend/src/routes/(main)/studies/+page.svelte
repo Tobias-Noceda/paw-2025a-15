@@ -149,7 +149,7 @@
 							e.stopPropagation();
 							e.preventDefault();
 
-							putAuthorizations(doctor.links.authorizationResolved!, false, [])
+							putAuthorizations(doctor.links.authorization.resolved!, false, [])
                                 .catch((error) => {
                                     console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
                                 });
@@ -207,7 +207,7 @@
         }
 
 		for (const doctor of doctorsList) {
-			putAuthorizations(doctor.links.authorizationResolved!, false, [])
+			putAuthorizations(doctor.links.authorization.resolved!, false, [])
                 .catch((error) => {
                     console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
                 });
@@ -264,7 +264,7 @@
 			onRowClick={(study) => {
 				const studyId = parseStudyId(study.links.self);
 				if (studyId) {
-					goto(`${base}/study-info/${studyId}`);
+					goto(`${base}/study-info/${studyId}-${data.currentUser.id}`);
 				} else {
 					console.error('Could not parse study ID from URL:', study.links.self);
 				}

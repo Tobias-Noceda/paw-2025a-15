@@ -48,9 +48,9 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(false);
     }
 
-    public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, long patientId) {
+    public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, Long patientId) {
         User user = getAuthenticatedUser(auth);
-        if (user == null) {
+        if (user == null || patientId == null) {
             return new AuthorizationDecision(false);
         }
 
@@ -61,23 +61,35 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(false);
     }
 
-    public AuthorizationDecision hasStudyAuth(Authentication auth, RequestAuthorizationContext context) {
+    public AuthorizationDecision hasStudyAuth(Authentication auth, Long studyId) {
         User user = getAuthenticatedUser(auth);
-        if (user == null) {
+        System.out.println("User in hasStudyAuth: " + (user != null ? user.getId() : "null"));
+        if (user == null || studyId == null) {
             return new AuthorizationDecision(false);
         }
 
-        String studyId = context.getRequest().getParameter("studyId");     
-
-        if (studyId == null) return new AuthorizationDecision(false);
-
-        Study study = ss.getStudyById(Long.parseLong(studyId)).orElse(null);
+        Study study = ss.getStudyById(studyId).orElse(null);
 
         if (study == null) return new AuthorizationDecision(false);
 
         if(isStudyAuth(user, study)) return new AuthorizationDecision(true);
 
         return new AuthorizationDecision(false);
+    }
+
+    public AuthorizationDecision canDeleteStudy(Authentication auth, Long studyId) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null || studyId == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        Study study = ss.getStudyById(studyId).orElse(null);
+
+        if (study == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        return new AuthorizationDecision(isSelf(auth, study.getPatient().getId()));
     }
 
     public AuthorizationDecision canAccessAppointments(Authentication auth, RequestAuthorizationContext context) {

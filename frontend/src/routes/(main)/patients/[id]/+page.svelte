@@ -105,7 +105,7 @@
 
 	const handleStudySearch = async () => {
 		try {
-			if (patient.links.resolvedStudies === undefined) {
+			if (patient.links.studies.resolved === undefined) {
 				return;
 			}
 
@@ -126,7 +126,7 @@
 			}
 
 			studies = await fetchStudies(
-				patient.links.resolvedStudies,
+				patient.links.studies.resolved,
 				selectedStudyType,
 				selectedStudyOrder,
 				fetch
@@ -313,7 +313,7 @@
 			onRowClick={(study) => {
 				const studyId = parseStudyId(study.links.self);
 				if (studyId) {
-					goto(`${base}/study-info/${studyId}`);
+					goto(`${base}/study-info/${studyId}-${$page.params.id}`);
 				} else {
 					console.error('Could not parse study ID from URL:', study.links.self);
 				}

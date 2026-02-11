@@ -99,8 +99,8 @@ export const fetchDoctorById = async (id: string, loggedUser: User, fetchFn: typ
 };
 
 export const fetchDoctorAuthorizations = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<DoctorAuthorizations | null> => {
-    if (doctor.links.authorizationResolved) {
-        const response = await getAuth(doctor.links.authorizationResolved, undefined, fetchFn);
+    if (doctor.links.authorization.resolved) {
+        const response = await getAuth(doctor.links.authorization.resolved, undefined, fetchFn);
         if (response.ok) {
             return await response.json();
         }
@@ -200,7 +200,7 @@ const populateAuthorizationData = (doctor: Doctor, loggedUser: User): Doctor => 
         const template = UriTemplate(doctor.links.authorization.href);
         const url = template.fill({ patientId: loggedUser.id });
 
-        doctor.links.authorizationResolved = url; // Store the resolved URL for filtering
+        doctor.links.authorization.resolved = url; // Store the resolved URL for filtering
     }
 
     return doctor;

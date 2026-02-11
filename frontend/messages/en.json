@@ -365,8 +365,41 @@
 			}
 		}
 	},
+	"study_info": {
+		"titles": {
+			"files": "Files",
+			"doctors": "Authorized Doctors"
+		},
+		"labels": {
+			"type": "Study Type",
+			"date": "Study Date",
+			"upload_date": "Upload Date",
+			"uploader": "Uploaded by"
+		},
+		"doctors": {
+			"actions": {
+				"revoke": "Deauthorize",
+				"grant": "Authorize",
+				"revoke_all": "Deauthorize all",
+				"grant_all": "Authorize all"
+			}
+		},
+		"table": {
+			"file_type": "File Type"
+		},
+		"file_types": {
+			"application_pdf": "PDF (.pdf)",
+			"image_jpeg": "Image (.jpeg)",
+			"image_png": "Image (.png)"
+		},
+		"actions": {
+			"delete": "Delete study"
+		}
+	},
+	"unknown": "Unknown",
 	"date_format": "MM/dd/yyyy",
 	"next": "Next",
 	"previous": "Previous",
-	"actions": "Action"
+	"action": "Action",
+	"actions": "Actions"
 }

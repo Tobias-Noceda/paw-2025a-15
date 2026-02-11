@@ -137,9 +137,9 @@ export const setPatientsStudyLink = (patient: Patient, loggedUser?: User | null)
         if (loggedUser && loggedUser.role === 'DOCTOR' && loggedUser.id !== undefined) {
             const template = UriTemplate(patient.links.studies.href);
             const url = template.fill({ doctorId: loggedUser.id });
-            patient.links.resolvedStudies = url; // Store the resolved URL for filtering
+            patient.links.studies.resolved = url; // Store the resolved URL for filtering
         } else {
-            patient.links.resolvedStudies = patient.links.studies.href.split('{')[0]; // Remove the template part if user is not a doctor or not logged in
+            patient.links.studies.resolved = patient.links.studies.href.split('{')[0]; // Remove the template part if user is not a doctor or not logged in
         }
     }
 

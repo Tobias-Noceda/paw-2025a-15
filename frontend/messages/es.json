@@ -367,8 +367,41 @@
 			}
 		}
 	},
+	"study_info": {
+		"titles": {
+			"files": "Archivos",
+			"doctors": "Médicos autorizados"
+		},
+		"labels": {
+			"type": "Tipo de estudio",
+			"date": "Fecha del estudio",
+			"upload_date": "Fecha de subida",
+			"uploader": "Subido por"
+		},
+		"doctors": {
+			"actions": {
+				"revoke": "Desautorizar",
+				"grant": "Autorizar",
+				"revoke_all": "Desautorizar a todos",
+				"grant_all": "Autorizar a todos"
+			}
+		},
+		"table": {
+			"file_type": "Tipo de archivo"
+		},
+		"file_types": {
+			"application_pdf": "PDF (.pdf)",
+			"image_jpeg": "Imagen (.jpeg)",
+			"image_png": "Imagen (.png)"
+		},
+		"actions": {
+			"delete": "Eliminar estudio"
+		}
+	},
+	"unknown": "Desconocido",
 	"date_format": "dd/MM/yyyy",
 	"next": "Siguiente",
 	"previous": "Anterior",
-	"action": "Acción"
+	"action": "Acción",
+	"actions": "Acciones"
 }
