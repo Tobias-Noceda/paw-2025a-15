@@ -71,6 +71,7 @@
 		if (userRole === 'DOCTOR' && data.patientsLink) {
 			fetchPatients(urlSearchQuery, data.patientsLink, fetch).then(result => {
 				patients = result;
+				console.log('Fetched patients with query:', urlSearchQuery, 'Result:', result);
 				filterKey++;
 			});
 		} else if (userRole === 'ADMIN') {

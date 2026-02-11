@@ -27,6 +27,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.webapp.auth.BasicAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.BearerAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
@@ -99,45 +100,41 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.PATCH, "/api/appointments/{id}")
                     .access((a, c) -> ad.canModifyAppointment(a.get(), c.getVariables().get("id")))
                 // doctors
-                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/shifts").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
                     .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
-                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
+                .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                
                 // files
                 .requestMatchers(HttpMethod.GET, "/api/files")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), c))
                 .requestMatchers(HttpMethod.POST, "/api/files").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/files/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()
 
                 // insurances
                 .requestMatchers(HttpMethod.GET, "/api/insurances").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/insurances").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/insurances/**").permitAll()
-                .requestMatchers(HttpMethod.PATCH, "/api/insurances/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/insurances/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/insurances/{id}").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/insurances/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/insurances/{id}").hasRole("ADMIN")
 
                 // patients
-                .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
-                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
-                    .access((a, c) -> ad.isSelfID(a.get(), Long.parseLong(c.getVariables().get("id"))))
-                // patient info
+                //// patient info
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/medicalInfo")
-                    .access((a, c) -> ad.isMedicalAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_MEDICAL))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/medicalInfo")
-                    .access((a, c) -> ad.isSelfID(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/socialInfo")
-                    .access((a, c) -> ad.isSocialAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_SOCIAL))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/socialInfo")
-                    .access((a, c) -> ad.isSelfID(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/habitsInfo")
-                    .access((a, c) -> ad.isHabitsAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_HABITS))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/habitsInfo")
-                    .access((a, c) -> ad.isSelfID(a.get(), Long.parseLong(c.getVariables().get("id"))))
-                // patient studies
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+
+                //// patient studies
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies")
@@ -145,7 +142,19 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), c))
                 .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}")
-                    .access((a, c) -> ad.isSelfID(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                
+                //// patient general
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())

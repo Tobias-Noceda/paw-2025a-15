@@ -2,13 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -22,9 +22,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,6 @@ import org.springframework.stereotype.Component;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
@@ -52,13 +52,15 @@ import ar.edu.itba.paw.webapp.dto.output.PatientHabitsInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientMedicalInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/patients")
 @Component
 public class PatientController {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
+
     @Autowired
     private PatientService ps;
 
@@ -68,28 +70,22 @@ public class PatientController {
     @Autowired
     private StudyService ss;
 
-    @Autowired
-    private UserService us;
-
-    @Context
-    private SecurityContext securityContext;
-
     @Context
     private UriInfo uriInfo;
 
     @GET
     @Produces(value = VndType.APPLICATION_PATIENT)
     public Response listPatients(
-        @QueryParam("doctorId") final Long doctorId,
+        @QueryParam("doctorId") @NotNull final Long doctorId,
         @QueryParam("name") final String name,
         @QueryParam("page") @DefaultValue("1") final int page,
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if(name!=null) queryParams.put("name", name);
+        queryParams.put("doctorId", doctorId.toString());
 
-        if (doctorId != null) queryParams.put("doctorId", doctorId.toString());
+        if(name!=null) queryParams.put("name", name);
 
         final List<PatientDTO> patients = ds.getAuthPatientsPageByDoctorIdAndName(doctorId, name, page, pageSize)
             .stream().map(PatientDTO.mapper(uriInfo)).collect(Collectors.toList());
@@ -111,7 +107,7 @@ public class PatientController {
             dto.getEmail(), dto.getPassword(), 
             dto.getName(), dto.getTelephone(), 
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale()), 
-            dto.getBirthDate(), BigDecimal.valueOf(dto.getHeight()), 
+            dto.getBirthdate(), BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight())
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build();
@@ -121,7 +117,9 @@ public class PatientController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = VndType.APPLICATION_PATIENT)
-    public Response getPatientById(@PathParam("id") final long id) {
+    public Response getPatientById(
+        @PathParam("id") final long id
+    ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
     }
@@ -144,7 +142,7 @@ public class PatientController {
             dto.getTelephone(), 
             pictureId, 
             dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
-            dto.getBirthDate(), dto.getBloodtype(), 
+            dto.getBirthdate(), dto.getBloodtype(), 
             BigDecimal.valueOf(dto.getHeight()), 
             BigDecimal.valueOf(dto.getWeight()), 
             null, null, null, null, null, null, null, null, 
@@ -251,20 +249,24 @@ public class PatientController {
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
-
+        
         StudyTypeEnum type = null;
+        try {
+            type = StudyTypeEnum.fromDisplayName(studyType);
+        } catch (Exception e) {
+            LOGGER.info("Invalid study type filter: {}", studyType);
+        }
         if(studyType != null) {
             queryParams.put("studyType", studyType);
-            type = StudyTypeEnum.fromDisplayName(studyType);
         }
-
+        
         queryParams.put("recent", recent.toString());
-
+        
         if(doctorId != null) queryParams.put("doctorId", doctorId.toString());
         
         List<StudyDTO> studies = ss.getFilteredStudiesPage(id, doctorId, type, recent, page, pageSize)
             .stream().map(StudyDTO.mapper(uriInfo)).collect(Collectors.toList());
-
+        
         return PaginationBuilder.buildResponse(
             Response.ok(new GenericEntity<List<StudyDTO>>(studies) {}),
             page, 
@@ -282,8 +284,7 @@ public class PatientController {
         @PathParam("id") final long id,
         @Valid StudyCreateDTO dto
     ) {
-        Principal userPrincipal = securityContext.getUserPrincipal();
-        User user = AuthenticatedUser.get(userPrincipal, email -> us.getUserByEmail(email).orElse(null));
+        User user = AuthenticatedUser.get();
         
         if (user == null) { //jjust in case, authConfig should have make sure of this already
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();

@@ -23,6 +23,9 @@ public class LinkDTO {
     private URI files;
     private URI patients;
 
+    private TemplatedLinkDTO authorization;
+    private TemplatedLinkDTO studies;
+
     public URI getSelf() {
         return self;
     }
@@ -182,6 +185,24 @@ public class LinkDTO {
 
     public LinkDTO setPatients(URI patients) {
         this.patients = patients;
+        return this;
+    }
+
+    public TemplatedLinkDTO getAuthorization() {
+        return authorization;
+    }
+
+    public LinkDTO setAuthorization(TemplatedLinkDTO authorization) {
+        this.authorization = authorization;
+        return this;
+    }
+
+    public TemplatedLinkDTO getStudies() {
+        return studies;
+    }
+
+    public LinkDTO setStudies(TemplatedLinkDTO studies) {
+        this.studies = studies;
         return this;
     }
 }

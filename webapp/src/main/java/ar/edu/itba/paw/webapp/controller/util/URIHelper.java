@@ -51,7 +51,7 @@ public class URIHelper {
             );
         }
 
-        return Long.parseLong(matcher.group(1));
+        return Long.valueOf(matcher.group(1));
     }
 
 }
