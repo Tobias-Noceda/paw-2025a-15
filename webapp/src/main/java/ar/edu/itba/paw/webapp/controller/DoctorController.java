@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -41,6 +42,7 @@ import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.DoctorAuthorizationUpdateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorCreateDTO;
+import ar.edu.itba.paw.webapp.dto.input.DoctorEditDTO;
 import ar.edu.itba.paw.webapp.dto.input.ShiftsModificationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorAuthorizationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
@@ -190,6 +192,52 @@ public class DoctorController {
     public Response getDoctorById(@PathParam("id") Integer doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
         return Response.ok(DoctorDTO.fromDoctor(uriInfo, doctor)).build();
+    }
+
+    @PATCH
+    @Path("/{id:\\d+}")
+    @Consumes(value = VndType.APPLICATION_DOCTOR)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
+    public Response editDoctor(
+        @PathParam("id") Integer doctorId,
+        @Valid DoctorEditDTO doctorEditDTO
+    ) {
+        Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
+
+        List<Long> insuranceIds = doctorEditDTO.getInsuranceIds();
+        if (insuranceIds == null) {
+            insuranceIds = doctor.getInsurances().stream()
+                .map(Insurance::getId)
+                .collect(Collectors.toList());
+        }
+
+        ds.updateDoctor(
+            doctor,
+            doctorEditDTO.getTelephone() != null ? doctorEditDTO.getTelephone() : doctor.getTelephone(),
+            doctor.getPicture(),
+            doctorEditDTO.getMailLanguage() != null ? LocaleEnum.valueOf(doctorEditDTO.getMailLanguage()) : doctor.getLocale(),
+            insuranceIds
+        );
+
+        if (Boolean.TRUE.equals(doctorEditDTO.getUpdateSchedule())) {
+            ShiftsModificationDTO shiftsModificationDTO = doctorEditDTO.getShifts();
+            if (shiftsModificationDTO == null) {
+                throw new IllegalArgumentException("Shifts payload is required when updateSchedule is true.");
+            }
+
+            dss.updateShifts(
+                doctor.getId(),
+                shiftsModificationDTO.getWeekdays(),
+                shiftsModificationDTO.getAddress(),
+                shiftsModificationDTO.getStartTime(),
+                shiftsModificationDTO.getEndTime(),
+                shiftsModificationDTO.getDuration(),
+                doctorEditDTO.getKeepTurns() == null || doctorEditDTO.getKeepTurns()
+            );
+        }
+
+        Doctor updatedDoctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
+        return Response.ok(DoctorDTO.fromDoctor(uriInfo, updatedDoctor)).build();
     }
 
     /*========================= SHIFTS =========================*/

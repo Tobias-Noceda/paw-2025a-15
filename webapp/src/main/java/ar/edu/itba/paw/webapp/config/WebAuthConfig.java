@@ -105,6 +105,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
                     .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/doctors").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/doctors/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 
                 // files
                 .requestMatchers(HttpMethod.GET, "/api/files")

@@ -242,7 +242,9 @@
 			"label": "Role"
 		},
 		"save": {
-			"button": "Save changes"
+			"button": "Save changes",
+			"success_title": "Changes saved!",
+			"success_message": "Your profile was updated successfully."
 		},
 		"phone": {
 			"label": "Phone number"
@@ -427,7 +429,7 @@
 			"empty": "No studies available."
 		}
 	},
-	"date_format": "MM/dd/yyyy"
+	"date_format": "MM/dd/yyyy",
 	"next": "Next",
 	"previous": "Previous"
 }

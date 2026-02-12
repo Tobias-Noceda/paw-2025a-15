@@ -10,10 +10,10 @@ export type Languages = 'es' | 'en';
 
 export type Paginated<T> = {
 	_links: {
-        first?: string;
+		first?: string;
 		prev?: string;
 		next?: string;
-        last?: string;
+		last?: string;
 	};
 	_pageInfo?: {
 		currentPage?: number;
@@ -45,6 +45,13 @@ export type Doctor = {
 	telephone: string;
 	license: string;
 	specialty: Specialty;
+	mailLanguage?: string;
+	insuranceIds?: number[];
+	address?: string;
+	startTime?: string;
+	endTime?: string;
+	duration?: number;
+	weekdays?: Weekdays[];
 	schedule?: Map<Weekdays, [Date, Date]>;
 	direction?: string;
 	insurances?: string[];
@@ -69,17 +76,15 @@ export type Patient = {
 	bloodType: string;
 	height: number;
 	weight: number;
+	mailLanguage?: string;
 	insurance?: string;
 	insuranceNumber: string;
-	gaveHabits?: boolean;
 	smokes?: boolean;
 	drinks?: boolean;
 	diet?: string;
-	gaveMedical?: boolean;
 	meds?: string;
 	conditions?: string;
 	allergies?: string;
-	gaveSocial?: boolean;
 	hobbies?: string;
 	job?: string;
 	studiesPage?: Paginated<Study>;
@@ -88,9 +93,6 @@ export type Patient = {
 		image: string;
 		insurance?: string;
 		self: string;
-		medicalInfo: string;
-		habitsInfo: string;
-		socialInfo: string;
 		pastAppointments: string;
 		futureAppointments: string;
 		studies: UriTemplate;
@@ -136,37 +138,6 @@ export type Appointment = {
 	}
 };
 
-export type Profile = {
-	name: string;
-	email: string;
-	role: string;
-	telephone: string;
-	mailLanguage: string;
-	birthdate?: string;
-	bloodtype?: string;
-	height?: number;
-	weight?: number;
-	smokes?: boolean;
-	drinks?: boolean;
-	meds?: string;
-	conditions?: string;
-	allergies?: string;
-	diet?: string;
-	hobbies?: string;
-	job?: string;
-	insuranceName?: string;
-	insuranceId?: number;
-	insuranceNumber?: string;
-	licence?: string;
-	specialty?: string;
-	insurances?: string[];
-	address?: string;
-	links?: {
-		self?: string;
-		image?: string;
-		insurance?: string;
-	};
-};
 
 export type Study = {
 	comment?: string;

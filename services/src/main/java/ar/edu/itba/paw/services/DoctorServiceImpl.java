@@ -54,7 +54,9 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public Optional<Doctor> getDoctorById(long id) {
-        return doctorDao.getDoctorById(id);
+        Optional<Doctor> doctor = doctorDao.getDoctorById(id);
+        doctor.ifPresent(this::initializeDoctorRelations);
+        return doctor;
     }
 
     @Override
@@ -112,7 +114,9 @@ public class DoctorServiceImpl implements DoctorService {
         }
 
         LOGGER.info("Fetching doctors page: {} with page size: {}", page, pageSize);
-        return doctorDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
+        doctors.forEach(this::initializeDoctorRelations);
+        return doctors;
     }
 
     @Transactional(readOnly = true)
@@ -187,5 +191,20 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
         return doctorDao.vacationExists(doctorId, startDate, endDate);
+    }
+
+    private void initializeDoctorRelations(Doctor doctor) {
+        if (doctor == null) {
+            return;
+        }
+        if (doctor.getPicture() != null) {
+            doctor.getPicture().getId();
+        }
+        if (doctor.getInsurances() != null) {
+            doctor.getInsurances().size();
+        }
+        if (doctor.getSingleShifts() != null) {
+            doctor.getSingleShifts().size();
+        }
     }
 }

@@ -242,7 +242,9 @@
 			"label": "Rol"
 		},
 		"save": {
-			"button": "Guardar cambios"
+			"button": "Guardar cambios",
+			"success_title": "¡Cambios guardados!",
+			"success_message": "Tu perfil se actualizó correctamente."
 		},
 		"phone": {
 			"label": "Teléfono:"
@@ -429,7 +431,7 @@
 			"empty": "No hay estudios disponibles."
 		}
 	},
-	"date_format": "dd/MM/yyyy"
+	"date_format": "dd/MM/yyyy",
 	"next": "Siguiente",
 	"previous": "Anterior"
 }
