@@ -75,7 +75,10 @@
 		{
 			id: 'type',
 			label: m['study_info.table.file_type'](),
-			render: (file: File) => m[`study_info.file_types.${file.type.replace('/', '_')}`](),
+			render: (file: File) => {
+                console.log('Type: ', file.type);
+                return m[`study_info.file_types.${file.type.replace('/', '_')}`]();
+			},
 			class: 'font-medium'
 		},
 		{
@@ -281,7 +284,7 @@
         <h1 class="text-[24px] font-bold mb-2.5">{study.comment}</h1>
         <p class="text-line text-primaryText">
             <span class="font-bold select-none">{m['study_info.labels.type']()}:</span>
-            {m[`studies.types.options.${study.type.toLocaleLowerCase()}`]()}
+            {m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]()}
         </p>
         <p class="text-line text-primaryText">
             <span class="font-bold select-none">{m['study_info.labels.date']()}:</span>

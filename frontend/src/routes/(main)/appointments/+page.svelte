@@ -6,7 +6,7 @@
 	import type { Appointment, Paginated } from "$types/api";
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
 	import { cancelAppointment, fetchFreeAppointments, fetchNonFreeAppointments, takeAppointment } from '$lib/services/appointments';
@@ -115,7 +115,7 @@
         const dateStr = formatDateLocal(date);
         const newUrl = new URL($page.url);
         newUrl.searchParams.set('date', dateStr);
-        goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+        pushState(newUrl.toString(), {});
     };
 
     const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
@@ -225,7 +225,7 @@
         if (freeAppointments === null) {
             const newUrl = new URL($page.url);
             newUrl.searchParams.delete('date');
-            goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+            pushState(newUrl.toString(), {});
         }
     });
 </script>

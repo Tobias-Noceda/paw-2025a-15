@@ -1,10 +1,10 @@
 export enum StudyType {
-    OTHER = "OTHER",
-    PRESCRIPTION = "PRESCRIPTION",
-    RADIOGRAPHY = "RADIOGRAPHY",
-    LABORATORY_RESULT = "LABORATORY_RESULT",
-    ULTRASOUND = "ULTRASOUND",
+    OTHER = "Other",
+    PRESCRIPTION = "Prescription",
+    RADIOGRAPHY = "Radiography",
+    LABORATORY_RESULT = "Laboratory Result",
+    ULTRASOUND = "Ultrasound",
     MRI = "MRI",
-    ELECTROCARDIOGRAM = "ELECTROCARDIOGRAM",
-    VACCINATION_RECORD = "VACCINATION_RECORD",
+    ELECTROCARDIOGRAM = "Electrocardiogram",
+    VACCINATION_RECORD = "Vaccination Record",
 };

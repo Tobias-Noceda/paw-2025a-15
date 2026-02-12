@@ -5,18 +5,16 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { Doctor, Paginated, Study } from '$types/api';
 	import type { PageData } from './$types';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
 	import { parseDateInLocalTimezone } from '$lib/services/appointments';
 	import { page } from '$app/stores';
-	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Select from '$components/Select/Select.svelte';
 	import { StudyType } from '$types/enums/studyTypes';
 	import { StudyOrders } from '$types/enums/studyOrders';
 	import { fetchStudies, fetchStudiesPage } from '$lib/services/studies';
 	import { fetchDoctorsPage, putAuthorizations } from '$lib/services/doctors';
-	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -63,15 +61,16 @@
 			id: 'type',
 			label: m['studies.table.type'](),
 			render: (study: Study) => {
-				return m[`studies.types.options.${study.type.toLowerCase()}`]();
+				return m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]();
 			},
-			class: 'font-medium'
+			class: 'font-medium',
+			columnClass: 'w-56'
 		},
 		{
 			id: 'details',
 			label: m['studies.table.details'](),
 			render: (study: Study) => study.comment,
-			class: 'text-start'
+			class: 'text-start',
 		},
 		{
 			id: 'date',
@@ -133,7 +132,7 @@
 		{
 			id: 'specialty',
 			label: m['studies.doctors.table.specialty'](),
-			render: (doctor: Doctor) => m[`specialties.${doctor.specialty}`](),
+			render: (doctor: Doctor) => doctor.specialty ? m[`specialties.${doctor.specialty}`]() : '',
 			class: 'text-start'
 		},
 		{
@@ -176,7 +175,7 @@
 			const pageUrl = new URL($page.url);
 
 			if (selectedStudyType !== 'all') {
-				pageUrl.searchParams.set('type', selectedStudyType);
+				pageUrl.searchParams.set('type', selectedStudyType.replace(/\s/g, '_'));
 			} else {
 				pageUrl.searchParams.delete('type');
 			}
@@ -189,7 +188,7 @@
 
 			studies = await fetchStudies(studiesLink, selectedStudyType, selectedStudyOrder, fetch);
 
-			goto(pageUrl.toString());
+			pushState(pageUrl.toString(), {});
 		} catch (error) {
 			console.error('Error fetching studies:', error);
 			showErrorToast = true;

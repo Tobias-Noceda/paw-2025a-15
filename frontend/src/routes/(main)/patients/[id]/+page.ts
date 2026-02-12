@@ -25,11 +25,15 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     try {
         const patient = await fetchPatientById(Number.parseInt(params.id), currentUser, fetch)
             .catch((error) => {
+                console.log('Error fetching patient: ', error);
                 if (error.status === 403) {
                     return null;
                 }
                 throw error;
             });
+
+        console.log('Fetched patient: ', patient);
+
         let studies: Paginated<Study> = { _links: {}, results: [] };
         let studyType: string = 'all';
         let order: string = 'm_recent';
@@ -39,7 +43,8 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         }
 
         if (patient.links.studies.resolved) {
-            const typeParam = url.searchParams.get('type');
+            let typeParam = url.searchParams.get('type');
+            typeParam = typeParam ? typeParam.replace(/_/g, ' ') : null;
             if (typeParam && typeParam as StudyType) {
                 studyType = typeParam;
             }

@@ -8,7 +8,7 @@
 	import { type Doctor, type Insurance, type Paginated, type Patient } from '$types/api';
 	import { fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
 	import Pagination from '$components/Pagination/Pagination.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
 	import { type PageData } from './$types';
@@ -54,7 +54,7 @@
 	let filterKey = $state(0);
 
 	async function applyFilters() {
-		goto(`?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
+		pushState(`${base}/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
 		
 		doctors = await fetchDoctors($searchQuery, $insurance, $day, $specialty, $order);
 		filterKey++; // Force Pagination to remount

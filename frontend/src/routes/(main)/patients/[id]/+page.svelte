@@ -8,7 +8,7 @@
 	import Divider from '$components/Divider/Divider.svelte';
 	import Button from '$components/Button/Button.svelte';
 	import Table, { type Column } from '$components/Table/Table.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import Toast from '$components/Toast/Toast.svelte';
 	import { base } from '$app/paths';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -65,14 +65,14 @@
 			id: 'type',
 			label: m['studies.table.type'](),
 			render: (study: Study) => {
-				return m[`studies.types.options.${study.type.toLowerCase()}`]();
+				return m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]();
 			},
 			class: 'font-medium'
 		},
 		{
 			id: 'details',
 			label: m['studies.table.details'](),
-			render: (study: Study) => study.comment,
+			render: (study: Study) => study.comment || '',
 			class: 'text-start'
 		},
 		{
@@ -114,7 +114,7 @@
 			const pageUrl = new URL($page.url);
 
 			if (selectedStudyType !== 'all') {
-				pageUrl.searchParams.set('type', selectedStudyType);
+				pageUrl.searchParams.set('type', selectedStudyType.replace(/\s/g, '_'));
 			} else {
 				pageUrl.searchParams.delete('type');
 			}
@@ -132,7 +132,7 @@
 				fetch
 			);
 
-			goto(pageUrl.toString());
+			pushState(pageUrl.toString(), {});
 		} catch (error) {
 			console.error('Error fetching studies:', error);
 			showErrorToast = true;
@@ -300,7 +300,7 @@
 			</div>
 		</div>
 		<Table
-			rows={data.studies}
+			rows={studies}
 			nextFetchFunction={(url) => {
 				return fetchStudiesPage(url, fetch);
 			}}

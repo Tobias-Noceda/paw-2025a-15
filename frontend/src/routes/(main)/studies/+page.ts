@@ -34,7 +34,8 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         const loggedPatient = currentUserData as Patient;
 
         if (loggedPatient.links.studies.resolved) {
-            const typeParam = url.searchParams.get('type');
+            let typeParam = url.searchParams.get('type');
+            typeParam = typeParam ? typeParam.replace(/_/g, ' ') : null;
             if (typeParam && typeParam as StudyType) {
                 studyType = typeParam;
             }

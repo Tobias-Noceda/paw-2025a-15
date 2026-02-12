@@ -12,7 +12,7 @@
 	import { fetchFreeAppointments, takeAppointment } from '$lib/services/appointments';
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import Toast from '$components/Toast/Toast.svelte';
 	import { base } from '$app/paths';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -81,7 +81,7 @@
 		const dateStr = formatDateLocal(date);
 		const newUrl = new URL($page.url);
 		newUrl.searchParams.set('date', dateStr);
-		goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+		pushState(newUrl.toString(), {});
 	};
 
 	const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
