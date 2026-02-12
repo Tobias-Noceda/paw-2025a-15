@@ -153,7 +153,7 @@
     
     if (maxDate) {
       const maxDateOnly = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
-      if (dateOnly >= maxDateOnly) return true;
+      if (dateOnly > maxDateOnly) return true;
     }
     
     return false;

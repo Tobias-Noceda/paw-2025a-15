@@ -1,11 +1,12 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import { setUserFromSession, user } from '$stores/user';
+import { setUserFromSession, user, userData } from '$stores/user';
 import { get } from 'svelte/store';
 import { fetchPatientById } from '$lib/services/patients';
-import type { Paginated, Study } from '$types/api';
+import type { Doctor, Paginated, Patient, Study } from '$types/api';
 import { fetchStudies } from '$lib/services/studies';
 import type { StudyType } from '$types/enums/studyTypes';
+import { fetchDoctorsPage } from '$lib/services/doctors';
 
 // Disable SSR since we need localStorage for authentication tokens
 export const ssr = false;
@@ -17,32 +18,22 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     }
 
     const currentUser = get(user);
+    const currentUserData = get(userData)
 
-    if (!currentUser || currentUser.role !== 'DOCTOR') {
+    if (!currentUser || !currentUserData || currentUser.role !== 'PATIENT') {
         throw error(404, 'Not found');
     }
 
     try {
-        const patient = await fetchPatientById(Number.parseInt(params.id), currentUser, fetch)
-            .catch((error) => {
-                console.log('Error fetching patient: ', error);
-                if (error.status === 403) {
-                    return null;
-                }
-                throw error;
-            });
-
-        console.log('Fetched patient: ', patient);
-
         let studies: Paginated<Study> = { _links: {}, results: [] };
+        let doctors: Paginated<Doctor> = { _links: {}, results: [] };
+        let studiesLink: string | undefined = undefined;
         let studyType: string = 'all';
         let order: string = 'm_recent';
 
-        if (!patient) {
-            throw error(404, 'Patient not found');
-        }
+        const loggedPatient = currentUserData as Patient;
 
-        if (patient.links.studies.resolved) {
+        if (loggedPatient.links.studies.resolved) {
             let typeParam = url.searchParams.get('type');
             typeParam = typeParam ? typeParam.replace(/_/g, ' ') : null;
             if (typeParam && typeParam as StudyType) {
@@ -54,12 +45,21 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
                 order = orderParam;
             }
 
-            studies = await fetchStudies(patient.links.studies.resolved, studyType, order, fetch);
+            studiesLink = loggedPatient.links.studies.resolved;
+            studies = await fetchStudies(studiesLink, studyType, order, fetch);
+
+            // Fetch doctors for the doctor list
+            const doctorsLink = loggedPatient.links.doctors;
+            if (doctorsLink) {
+                doctors = await fetchDoctorsPage(doctorsLink, currentUser, fetch);
+            }
         }
 
         return {
-            patient,
+            currentUser,
+            doctors,
             studies,
+            studiesLink,
             studyType,
             order
         };

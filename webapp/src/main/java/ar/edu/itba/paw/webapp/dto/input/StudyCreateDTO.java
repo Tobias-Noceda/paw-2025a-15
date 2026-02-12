@@ -19,6 +19,8 @@ public class StudyCreateDTO {
     private String type;
 
     @Size
+    @NotNull
+    @NotBlank
     private String comment;
 
     @NotNull
@@ -29,6 +31,9 @@ public class StudyCreateDTO {
     @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate studyDate;
+
+    // TODO: Validate that these are valid doctor URNs
+    private List<@URL(protocol = "http") String> authorizedDoctors;
 
     public String getType(){
         return type;
@@ -62,4 +67,11 @@ public class StudyCreateDTO {
         this.studyDate = studyDate;
     }
     
+    public List<String> getAuthorizedDoctors() {
+        return authorizedDoctors;
+    }
+
+    public void setAuthorizedDoctors(List<String> authorizedDoctors) {
+        this.authorizedDoctors = authorizedDoctors;
+    }
 }

@@ -178,7 +178,7 @@
 	"topbar": {
 		"logo_alt_text": "CareTrace Logo",
 		"appointments": "Appointments",
-		"studies": "Studies",
+		"studies": "My Studies and Doctors",
 		"vacations": "Vacations",
 		"login": "Login",
 		"logout": "Logout",
@@ -320,6 +320,7 @@
 	},
 	"studies": {
 		"title": "Studies",
+		"description": "Click on a study to manage who can see it",
 		"types": {
 			"title": "Study Type",
 			"options": {
@@ -344,9 +345,105 @@
 			"date": "Date",
 			"upload_date": "Upload Date",
 			"empty": "No studies available."
+		},
+		"actions": {
+			"upload": "Upload Study",
+			"apply": "Apply"
+		},
+		"doctors": {
+			"title": "My Doctors",
+			"description": "Click on a doctor or go to their profile to manage access to your personal information",
+			"actions": {
+				"revoke": "Deauthorize",
+				"grant": "Authorize",
+				"revoke_all": "Deauthorize all"
+			},
+			"table": {
+				"name": "Name",
+				"specialty": "Specialty",
+				"empty": "You have no doctors authorized to view your profile."
+			}
 		}
 	},
+	"study_info": {
+		"titles": {
+			"files": "Files",
+			"doctors": "Authorized Doctors"
+		},
+		"labels": {
+			"type": "Study Type",
+			"date": "Study Date",
+			"upload_date": "Upload Date",
+			"uploader": "Uploaded by"
+		},
+		"doctors": {
+			"actions": {
+				"revoke": "Deauthorize",
+				"grant": "Authorize",
+				"revoke_all": "Deauthorize all",
+				"grant_all": "Authorize all"
+			}
+		},
+		"table": {
+			"file_type": "File Type"
+		},
+		"file_types": {
+			"application_pdf": "PDF (.pdf)",
+			"image_jpeg": "Image (.jpeg)",
+			"image_png": "Image (.png)"
+		},
+		"actions": {
+			"delete": "Delete study",
+			"download_all": "Download all"
+		},
+		"error": {
+			"authorizing": {
+				"title": "Error updating authorizations",
+				"message": "Failed to update the authorization for doctor {doctorName}. Please try again later."
+			},
+			"deleting": {
+				"title": "Error deleting study",
+				"message": "An error occurred while trying to delete the study. Please try again later."
+			},
+			"downloading": {
+				"title": "Error downloading files",
+				"message": "An error occurred while trying to download the study files. Please try again later."
+			}
+		}
+	},
+	"new_file": {
+		"title": "Upload new study for {patientName}",
+		"labels": {
+			"files": "Files",
+			"type": "Study Type",
+			"date": "Study Date",
+			"data": "Additional Data",
+			"auth_doctors": "Select which doctors will be able to see this study"
+		},
+		"table": {
+			"auth_doctors": "Authorized Doctors"
+		},
+		"buttons": {
+			"files": "Choose files",
+			"select_all": "Select all",
+			"deselect_all": "Deselect all",
+			"submit": "Upload study"
+		},
+		"messages": {
+			"no_files": "Please select at least one file to upload the study.",
+			"upload_success_title": "Study uploaded successfully!",
+			"upload_success_message": "You have uploaded a new study for {patientName}.",
+			"upload_error_title": "Error uploading study",
+			"upload_error_message": "An error occurred while trying to upload the study. Please try again later."
+		},
+		"data_placeholder": "Enter a description with data about the study",
+		"no_files": "No files selected",
+		"more_files": "+ {count} more files"
+	},
+	"unknown": "Unknown",
 	"date_format": "MM/dd/yyyy",
 	"next": "Next",
-	"previous": "Previous"
+	"previous": "Previous",
+	"action": "Action",
+	"actions": "Actions"
 }

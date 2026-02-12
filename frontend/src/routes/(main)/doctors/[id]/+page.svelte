@@ -12,7 +12,7 @@
 	import { fetchFreeAppointments, takeAppointment } from '$lib/services/appointments';
 	import PopUp from '$components/PopUp/PopUp.svelte';
 	import Input from '$components/Input/Input.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import Toast from '$components/Toast/Toast.svelte';
 	import { base } from '$app/paths';
 	import { getLocale } from '$lib/paraglide/runtime';
@@ -22,9 +22,9 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let doctor: Doctor = $state(data.doctor);
-	let appointments: Paginated<Appointment> = $state(data.appointments);
-	let selectedDate: Date = $state(data.selectedDate);
+	let doctor: Doctor = $state(data.doctor!);
+	let appointments: Paginated<Appointment> = $state(data.appointments!);
+	let selectedDate: Date = $state(data.selectedDate!);
 	let isFetching = $state(false);
 
 	let isAuthorized = $state(data.doctorAuthorizations?.authorized ?? false);
@@ -35,7 +35,7 @@
 
 	const handleAuthorize = () => {
 		if (!isAuthorized) {
-			putAuthorizations(doctor.links.authorizationResolved!, true, [AccessLevels.VIEW_BASIC])
+			putAuthorizations(doctor.links.authorization.resolved!, true, [AccessLevels.VIEW_BASIC])
 				.then(() => {
 					isAuthorized = true;
 					authorizationLevels = [AccessLevels.VIEW_BASIC];
@@ -45,7 +45,7 @@
 				});
 		} else {
 			putAuthorizations(
-				doctor.links.authorizationResolved!,
+				doctor.links.authorization.resolved!,
 				isAuthorized,
 				authorizationLevels
 			).catch((error) => {
@@ -55,7 +55,7 @@
 	};
 
     const handleDeauthorize = () => {
-        putAuthorizations(doctor.links.authorizationResolved!, false, [])
+        putAuthorizations(doctor.links.authorization.resolved!, false, [])
             .then(() => {
                 isAuthorized = false;
                 authorizationLevels = [];
@@ -81,7 +81,7 @@
 		const dateStr = formatDateLocal(date);
 		const newUrl = new URL($page.url);
 		newUrl.searchParams.set('date', dateStr);
-		goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+		pushState(newUrl.toString(), {});
 	};
 
 	const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
