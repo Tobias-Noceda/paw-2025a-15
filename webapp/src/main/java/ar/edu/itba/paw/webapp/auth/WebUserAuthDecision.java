@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.Authentication;
@@ -10,20 +12,16 @@ import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.enums.UserRoleEnum;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Controller
 public class WebUserAuthDecision {
-
-    @Autowired
-    private UserService us;
 
     @Autowired
     private DoctorShiftService dss;
@@ -47,47 +45,51 @@ public class WebUserAuthDecision {
             return new AuthorizationDecision(true);
         }
 
-        throw new NotFoundException("Doctor not found");
+        return new AuthorizationDecision(false);
     }
 
-    public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, long patientId) {
+    public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, Long patientId) {
         User user = getAuthenticatedUser(auth);
-        if (user == null) {
+        if (user == null || patientId == null) {
             return new AuthorizationDecision(false);
         }
 
-        if(user.getId().equals(patientId) || isAuthDoctor(user, patientId)) {
+        if(isSelf(auth, patientId) || isAuthDoctor(user, patientId)) {
             return new AuthorizationDecision(true);
-        }
-
-        throw new NotFoundException("Doctor not found");
-    }
-
-    public AuthorizationDecision hasStudyAuth(Authentication auth, long studyId) {
-        User user = getAuthenticatedUser(auth);
-        if (user == null) {
-            return new AuthorizationDecision(false);
-        }
-
-        Study study = ss.getStudyById(studyId).orElseThrow(() -> new NotFoundException("Study not found"));
-
-        if(user.getId().equals(study.getPatient().getId())) {
-            return new AuthorizationDecision(true);
-        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
-            return new AuthorizationDecision(true);
-        }
-
-        throw new NotFoundException("Study not found");
-    }
-
-    public AuthorizationDecision hasFileAuth(Authentication auth, long studyId, long fileId) {
-        Boolean hasStudyAuth = hasStudyAuth(auth, studyId).isGranted();
-
-        if(hasStudyAuth) {
-            return new AuthorizationDecision(ss.isFileInStudy(studyId, fileId));
         }
 
         return new AuthorizationDecision(false);
+    }
+
+    public AuthorizationDecision hasStudyAuth(Authentication auth, Long studyId) {
+        User user = getAuthenticatedUser(auth);
+        System.out.println("User in hasStudyAuth: " + (user != null ? user.getId() : "null"));
+        if (user == null || studyId == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        Study study = ss.getStudyById(studyId).orElse(null);
+
+        if (study == null) return new AuthorizationDecision(false);
+
+        if(isStudyAuth(user, study)) return new AuthorizationDecision(true);
+
+        return new AuthorizationDecision(false);
+    }
+
+    public AuthorizationDecision canDeleteStudy(Authentication auth, Long studyId) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null || studyId == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        Study study = ss.getStudyById(studyId).orElse(null);
+
+        if (study == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        return new AuthorizationDecision(isSelf(auth, study.getPatient().getId()));
     }
 
     public AuthorizationDecision canAccessAppointments(Authentication auth, RequestAuthorizationContext context) {
@@ -136,50 +138,85 @@ public class WebUserAuthDecision {
 
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
 
-        DoctorSingleShift shift = dss.getShiftById(id.getShiftId()).orElseThrow(() -> new NotFoundException("Shift with shiftId: " + id.getShiftId() + " does not exist!"));
+        DoctorSingleShift shift = dss.getShiftById(id.getShiftId()).orElse(null);
 
+        if(shift == null){
+            return new AuthorizationDecision(false);
+        }
 
         return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.DOCTOR) && shift.getDoctor().getId().equals(user.getId()));
     }
 
-    public AuthorizationDecision isDoctor(Authentication auth) {
-        User user = getAuthenticatedUser(auth);
-        if (user == null) {
-            return new AuthorizationDecision(false);
-        }
-
-        return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.DOCTOR));
+    public AuthorizationDecision canModifyDoctorShifts(Authentication auth, String doctorIdStr) {
+        return new AuthorizationDecision(isDoctor(auth) && isSelf(auth, Long.parseLong(doctorIdStr)));
     }
 
-    public AuthorizationDecision isPatient(Authentication auth) {
+    public AuthorizationDecision canSeePatientInfo(Authentication auth, long patientId, AccessLevelEnum accessLevel) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
             return new AuthorizationDecision(false);
         }
 
-        return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.PATIENT));
+        if (isSelf(auth, patientId)) {
+            return new AuthorizationDecision(false);
+        }
+
+        List<AccessLevelEnum> doctorAccessLevel = ads.getAuthAccessLevelEnums(patientId, user.getId());
+
+        return new AuthorizationDecision(doctorAccessLevel.contains(accessLevel));
     }
 
-    public AuthorizationDecision isAdmin(Authentication auth) {
+    public boolean isDoctor(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
-            return new AuthorizationDecision(false);
+            return false;
         }
 
-        return new AuthorizationDecision(user.getRole().equals(UserRoleEnum.ADMIN));
+        return user.getRole().equals(UserRoleEnum.DOCTOR);
     }
 
-    public AuthorizationDecision isSelf(Authentication auth, long userId) {
+    public AuthorizationDecision isSelfDecision(Authentication auth, long userId) {
+        return new AuthorizationDecision(isSelf(auth, userId));
+    }
+
+    private boolean isPatient(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
-            return new AuthorizationDecision(false);
+            return false;
         }
 
-        return new AuthorizationDecision(user.getId().equals(userId));
+        return user.getRole().equals(UserRoleEnum.PATIENT);
+    }
+
+    private boolean isAdmin(Authentication auth) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null) {
+            return false;
+        }
+
+        return user.getRole().equals(UserRoleEnum.ADMIN);
+    }
+
+    private boolean isSelf(Authentication auth, long userId) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null) {
+            return false;
+        }
+
+        return user.getId().equals(userId);
     }
 
     private boolean isAuthDoctor(User user, long patientId) {
         return user.getRole().equals(UserRoleEnum.DOCTOR) && ads.hasAuthDoctor(patientId, user.getId());
+    }
+
+    private boolean isStudyAuth(User user, Study study){
+        if(user.getId().equals(study.getPatient().getId())) {
+            return true;
+        } else if(user.getRole().equals(UserRoleEnum.DOCTOR) && ass.hasAuthStudy(study.getId(), user.getId())) {
+            return true;
+        }
+        return false;
     }
 
     private User getAuthenticatedUser(Authentication auth) {
@@ -188,8 +225,8 @@ public class WebUserAuthDecision {
         }
 
         Object principal = auth.getPrincipal();
-        if (principal instanceof String email) {
-            return us.getUserByEmail(email).orElse(null);
+        if (principal instanceof User user) {
+            return user;
         }
 
         return null;

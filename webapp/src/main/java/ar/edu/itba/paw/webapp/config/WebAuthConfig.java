@@ -27,6 +27,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 import ar.edu.itba.paw.webapp.auth.BasicAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.BearerAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
@@ -96,14 +97,77 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // appointments
                 .requestMatchers(HttpMethod.GET, "/api/appointments")
                     .access((a, c) -> ad.canAccessAppointments(a.get(), c))
-                .requestMatchers(HttpMethod.PATCH, "/api/appointments/**")
-                    .access((a, c) -> ad.canModifyAppointment(a.get(), c.getRequest().getRequestURI().split("/")[4]))
+                .requestMatchers(HttpMethod.PATCH, "/api/appointments/{id}")
+                    .access((a, c) -> ad.canModifyAppointment(a.get(), c.getVariables().get("id")))
                 // doctors
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/shifts").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
+                    .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
                 .requestMatchers(HttpMethod.GET, "/api/doctors").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/doctors/**/vacations").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/doctors/**/vacations").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/api/doctors/**/vacations").authenticated()
+                
+                // files
+                .requestMatchers(HttpMethod.GET, "/api/files")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), c.getRequest().getParameter("studyId") != null ? Long.valueOf(c.getRequest().getParameter("studyId")) : null))
+                .requestMatchers(HttpMethod.POST, "/api/files").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()
+
+                // insurances
+                .requestMatchers(HttpMethod.GET, "/api/insurances").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/insurances").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/insurances/{id}").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/insurances/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/insurances/{id}").hasRole("ADMIN")
+
+                // patients
+                //// patient info
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/medicalInfo")
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_MEDICAL))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/medicalInfo")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/socialInfo")
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_SOCIAL))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/socialInfo")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/habitsInfo")
+                    .access((a, c) -> ad.canSeePatientInfo(a.get(), Long.parseLong(c.getVariables().get("id")), AccessLevelEnum.VIEW_HABITS))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/habitsInfo")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+
+                //// patient studies
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.valueOf(c.getVariables().get("studyId"))))
+                .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                
+                //// patient general
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+
+                // studies
+                .requestMatchers(HttpMethod.GET, "/api/studies")
+                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), c.getVariables().get("patientId") != null ? Long.valueOf(c.getVariables().get("patientId")) : null))
+                .requestMatchers(HttpMethod.POST, "/api/studies").hasAnyRole("PATIENT", "DOCTOR")
+                .requestMatchers(HttpMethod.GET, "/api/studies/{studyId}")
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.valueOf(c.getVariables().get("studyId"))))
+                .requestMatchers(HttpMethod.DELETE, "/api/studies/{studyId}")
+                    .access((a, c) -> ad.canDeleteStudy(a.get(), Long.valueOf(c.getVariables().get("studyId"))))
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())
@@ -119,7 +183,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
                 throws IOException {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().flush();
         }
     }
 
@@ -127,7 +193,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
                 throws IOException {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().flush();
         }
     }
 }

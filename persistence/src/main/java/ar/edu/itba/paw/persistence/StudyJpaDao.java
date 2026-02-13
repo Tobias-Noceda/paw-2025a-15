@@ -118,7 +118,8 @@ public class StudyJpaDao implements StudyDao {
         Patient patient = em.find(Patient.class, patientId);
         if(patient==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
-        String q = "SELECT s from Study s " +
+        String q = "SELECT DISTINCT s from Study s " +
+                "LEFT JOIN FETCH s.files " +
                 "JOIN FETCH s.patient " +
                 "JOIN FETCH s.uploader " +
                 "where s.patient.id = :patientId ";
@@ -169,7 +170,10 @@ public class StudyJpaDao implements StudyDao {
         Doctor doctor = em.find(Doctor.class, doctorId);
         if(patient==null || doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
-        String q = "SELECT s from Study s " +
+        String q = "SELECT DISTINCT s from Study s " +
+                "LEFT JOIN FETCH s.files " +
+                "JOIN FETCH s.patient " +
+                "JOIN FETCH s.uploader " +
                 "join AuthStudy a on a.study = s " +
                 "where s.patient.id = :patientId " +
                 "and a.doctor.id = :doctorId ";

@@ -13,19 +13,21 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
@@ -34,20 +36,32 @@ import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.VacationCreateDTO;
+import ar.edu.itba.paw.webapp.dto.input.DoctorAuthorizationUpdateDTO;
+import ar.edu.itba.paw.webapp.dto.input.DoctorCreateDTO;
+import ar.edu.itba.paw.webapp.dto.input.ShiftsModificationDTO;
+import ar.edu.itba.paw.webapp.dto.output.DoctorAuthorizationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorVacationDTO;
 import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
 import ar.edu.itba.paw.webapp.dto.output.VacationsResponseDTO;
 import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/doctors")
 @Component
 public class DoctorController {
+
+    @Autowired
+    private AuthDoctorService ads;
 
     @Autowired
     private DoctorService ds;
@@ -68,7 +82,7 @@ public class DoctorController {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
     public Response listDoctors(
         @QueryParam("studyId") Long studyId,
         @QueryParam("patientId") Long patientId,
@@ -133,13 +147,54 @@ public class DoctorController {
             pageSize,
             totalDoctors,
             queryParams,
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(DoctorController.class)
         );
+    }
+
+    @POST
+    @Consumes(value = VndType.APPLICATION_DOCTOR_CREATION)
+    public Response createDoctor(
+        @Valid DoctorCreateDTO doctorCreateDTO
+    ) {
+        List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
+            .map(name -> {
+                return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
+            }).collect(Collectors.toList());
+
+        Doctor doctor = ds.createDoctor(
+            doctorCreateDTO.getEmail(),
+            doctorCreateDTO.getPassword(),
+            doctorCreateDTO.getName(),
+            doctorCreateDTO.getTelephone(),
+            doctorCreateDTO.getLicense(),
+            doctorCreateDTO.getSpecialty(),
+            insurances.stream().map((insurance) -> insurance.getId()).collect(Collectors.toList()),
+            LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
+        );
+
+        if (doctorCreateDTO.getShifts() != null) {
+            ShiftsModificationDTO shiftsModificationDTO = doctorCreateDTO.getShifts();
+            dss.createShifts(
+                doctor.getId(),
+                shiftsModificationDTO.getWeekdays(),
+                shiftsModificationDTO.getAddress(),
+                shiftsModificationDTO.getStartTime(),
+                shiftsModificationDTO.getEndTime(),
+                shiftsModificationDTO.getDuration()
+            );
+        }
+
+        return Response.created(
+            uriInfo.getBaseUriBuilder()
+                .path(DoctorController.class)
+                .path(doctor.getId().toString())
+                .build()
+        ).build();
     }
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR)
     public Response getDoctorById(@PathParam("id") Integer doctorId) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
         return Response.ok(DoctorDTO.fromDoctor(uriInfo, doctor)).build();
@@ -149,7 +204,7 @@ public class DoctorController {
 
     @GET
     @Path("/{id:\\d+}/shifts")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
     public Response listShifts(
         @PathParam("id") Integer doctorId
     ) {
@@ -265,5 +320,85 @@ public class DoctorController {
         ds.deleteDoctorVacation(doctorId, startDate, endDate);
 
         return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{id:\\d+}/shifts")
+    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
+    public Response replaceShifts(
+        @PathParam("id") Integer doctorId,
+        @Valid ShiftsModificationDTO shiftsModificationDTO
+    ) {
+        dss.createShifts(
+            doctorId,
+            shiftsModificationDTO.getWeekdays(),
+            shiftsModificationDTO.getAddress(),
+            shiftsModificationDTO.getStartTime(),
+            shiftsModificationDTO.getEndTime(),
+            shiftsModificationDTO.getDuration()
+        );
+
+        return Response.created(uriInfo.getBaseUriBuilder()
+            .path(DoctorController.class)
+            .path(doctorId.toString())
+            .path("shifts")
+            .build()
+        ).build();
+    }
+
+    /*========================= AUTHORIZATIONS =========================*/
+    @GET
+    @Path("/{id:\\d+}/authorizations")
+    @Produces(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
+    public Response doctorAuthorizations(
+        @PathParam("id") Integer doctorId,
+        @QueryParam("patientId") Long patientId
+    ) {
+        try {
+            User user = AuthenticatedUser.get();
+            
+            if (!user.getId().equals(patientId)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
+                return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
+            }
+            
+            return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(
+                new DoctorAuthorizationDTO(true, ads.getAuthAccessLevelEnums(user.getId(), doctorId))
+            ) {}).build();
+        } catch (Exception e) {
+            System.out.println("Error fetching doctor authorizations: " + e.getMessage());
+            System.out.println("Exception class: " + e.getClass().getName());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id:\\d+}/authorizations")
+    @Consumes(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
+    public Response replaceDoctorAuthorizations(
+        @PathParam("id") Integer doctorId,
+        @Valid DoctorAuthorizationUpdateDTO doctorAuthorizationUpdateDTO
+    ) {
+        User loggedUser = AuthenticatedUser.get();
+
+        if (loggedUser == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        if (
+            (doctorAuthorizationUpdateDTO.isAuthorized() && !ads.hasAuthDoctor(loggedUser.getId(), doctorId)) ||
+            (!doctorAuthorizationUpdateDTO.isAuthorized() && ads.hasAuthDoctor(loggedUser.getId(), doctorId))
+        ) {
+            ads.toggleAuthDoctor(loggedUser.getId(), doctorId);
+        }
+
+        if (doctorAuthorizationUpdateDTO.isAuthorized()) {
+            ads.updateAuthDoctor(loggedUser.getId(), doctorId, doctorAuthorizationUpdateDTO.getAccessLevels());
+        }
+
+        return Response.ok().build();
     }
 }

@@ -49,7 +49,7 @@
 	{#each Array(count) as _, i}
 		<tr class={cn(i !== 4 ? 'border-b border-gray-200' : '', 'last:rounded-b-lg')}>
 			{#each columns as col}
-				<td class={'px-3 py-2 ' + (col.class ?? '')}>
+				<td class={'px-3 py-2 ' + (col.class ?? '') + ' truncate'}>
 					<div class="w-full h-4 bg-skeleton animate-pulse rounded-md"></div>
 				</td>
 			{/each}
@@ -82,7 +82,7 @@
 							Math.min(5, Math.max(2, Array.isArray(rows) ? rows.length : rows.results.length))
 						)}
 						<!-- if nextFetchFunction is defined and rows is Paginated -->
-					{:else if nextFetchFunction && !Array.isArray(rows)}
+					{:else if nextFetchFunction && !Array.isArray(rows) && rows.results.length > 0}
 						{#key rows.results.length}
 							<ScrollPagination initialItems={rows} {nextFetchFunction}>
 								{#snippet loading()}
@@ -101,13 +101,15 @@
 										onclick={() => onRowClick?.(row, i)}
 									>
 										{#each columns as col}
-											<td class={'px-3 py-2 ' + (col.class ?? '')}>
+											<td class={'px-3 py-2 ' + (col.class ?? '') + ' truncate'}>
 												{#if col.render}
 													{@const rendered = col.render(row, i)}
 													{#if typeof rendered === 'string'}
 														{@html rendered}
-													{:else}
+													{:else if rendered && typeof rendered.component === 'function'}
 														<rendered.component {...rendered.props} />
+													{:else}
+														{row[col.id]}
 													{/if}
 												{:else}
 													{row[col.id]}
@@ -133,7 +135,7 @@
 								onclick={() => onRowClick?.(row, i)}
 							>
 								{#each columns as col}
-									<td class={'px-3 py-2 ' + (col.class ?? '')}>
+									<td class={'px-3 py-2 ' + (col.class ?? '') + ' truncate'}>
 										{#if col.render}
 											{@const rendered = col.render(row, i)}
 											{#if typeof rendered === 'string'}

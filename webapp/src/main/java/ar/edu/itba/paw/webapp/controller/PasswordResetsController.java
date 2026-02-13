@@ -74,12 +74,7 @@ public class PasswordResetsController {
             return Response.status(Response.Status.GONE).build();
         }
 
-        final User user = us.getUserByEmail(sessionInfo.user().getUsername()).orElse(null);
-        if (user == null) {
-            return Response.accepted().build();
-        }
-
-        us.changePasswordByID(user.getId(), newPassSetDto.getNewPassword());
+        us.changePasswordByID(sessionInfo.user().getUser().getId(), newPassSetDto.getNewPassword());
 
         return Response.accepted().build();
     }

@@ -18,9 +18,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class BearerAuthorizationFilter extends OncePerRequestFilter {
 
@@ -77,9 +74,10 @@ public class BearerAuthorizationFilter extends OncePerRequestFilter {
 
         LOGGER.debug("Setting authentication");
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                info.user().getUsername(),
-                info.user().getPassword(),
-                info.user().getAuthorities());
+            info.user().getUser(),
+            info.user().getPassword(),
+            info.user().getAuthorities()
+        );
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

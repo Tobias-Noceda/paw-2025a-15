@@ -3,11 +3,21 @@
   import { clickOutside } from '$lib/actions/clickOutside';
 	import type { Snippet } from 'svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
+	import ScrollPagination from '$components/ScrollPagination/ScrollPagination.svelte';
+	import type { Paginated } from '$types/api';
+
+  type SelectOption = {
+    value: string;
+    label: string;
+    icon?: Snippet;
+    avatarSrc?: string;
+  };
 
   interface Props {
     label?: string;
     required?: boolean;
-    options?: { value: string; label: string, icon?: Snippet, avatarSrc?: string }[];
+    options?: SelectOption[] | Paginated<SelectOption>;
+    fetchNextOptions?: () => Promise<Paginated<SelectOption>>;
     value?: string;
     disabled?: boolean;
     skeleton?: boolean;
@@ -20,6 +30,7 @@
     label = '',
     required = false,
     options = [],
+    fetchNextOptions,
     value = $bindable(''),
     disabled = false,
     skeleton = false,
@@ -30,7 +41,11 @@
 
   let isOpen = $state(false);
 
-  const selectedOption = $derived(options.find(opt => opt.value === value));
+  const selectedOption = $derived(
+    Array.isArray(options) ? 
+      options.find(opt => opt.value === value)
+      : options.results.find(opt => opt.value === value)
+  );
 
   function handleSelect(optionValue: string) {
     value = optionValue;
@@ -71,7 +86,8 @@
     'w-full justify-start flex items-center',
     'px-3 py-2.5 cursor-pointer transition-colors',
     'hover:bg-primary hover:text-white',
-    isSelected ? 'bg-primary/10 font-medium' : ''
+    isSelected ? 'bg-primary/10 font-medium' : '',
+    'overflow-x-hidden'
   );
 </script>
 
@@ -106,22 +122,51 @@
 
     {#if isOpen && !disabled && !skeleton}
       <div class={dropdownClass}>
-        {#each options as option, index}
-          <button
-            tabindex={index}
-            class={optionClass(option.value === value)}
-            onclick={() => handleSelect(option.value)}
-            role="option"
-            aria-selected={option.value === value}
+        {#if fetchNextOptions && !Array.isArray(options)}
+          <ScrollPagination
+            initialItems={options}
+            nextFetchFunction={fetchNextOptions}
           >
-            {#if option.icon}
-              {@render option.icon()}
-            {:else if option.avatarSrc}
-              <Avatar size="sm" src={option.avatarSrc} class="mr-2" />
-            {/if}
-            {option.label}
-          </button>
-        {/each}
+            {#snippet loading()}
+              <div class="px-3 py-2.5">
+                <div class="w-full h-4 bg-skeleton animate-pulse rounded-md"></div>
+              </div>
+            {/snippet}
+            {#snippet children(option: SelectOption, index: number)}  
+              <button
+                tabindex={index}
+                class={optionClass(option.value === value)}
+                onclick={() => handleSelect(option.value)}
+                role="option"
+                aria-selected={option.value === value}
+              >
+                {#if option.icon}
+                  {@render option.icon()}
+                {:else if option.avatarSrc}
+                  <Avatar size="sm" src={option.avatarSrc} class="mr-2" />
+                {/if}
+                {option.label}
+              </button>
+            {/snippet}
+          </ScrollPagination>
+        {:else if Array.isArray(options)}
+          {#each options as option, index}
+            <button
+              tabindex={index}
+              class={optionClass(option.value === value)}
+              onclick={() => handleSelect(option.value)}
+              role="option"
+              aria-selected={option.value === value}
+            >
+              {#if option.icon}
+                {@render option.icon()}
+              {:else if option.avatarSrc}
+                <Avatar size="sm" src={option.avatarSrc} class="mr-2" />
+              {/if}
+              {option.label}
+            </button>
+          {/each}
+        {/if}
       </div>
     {/if}
   </div>

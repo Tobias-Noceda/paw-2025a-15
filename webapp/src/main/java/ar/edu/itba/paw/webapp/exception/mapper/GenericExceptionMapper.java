@@ -6,10 +6,11 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class GenericExceptionMapper implements ExceptionMapper<Throwable>{
+public class GenericExceptionMapper implements ExceptionMapper<Exception>{
     
     @Override
-    public Response toResponse(Throwable exception) {
+    public Response toResponse(Exception exception) {
+        exception.printStackTrace();
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 }

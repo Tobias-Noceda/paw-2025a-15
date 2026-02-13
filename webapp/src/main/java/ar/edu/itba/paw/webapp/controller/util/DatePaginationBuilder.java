@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 public class DatePaginationBuilder<T> {
     public static Response buildResponse(
@@ -15,10 +14,8 @@ public class DatePaginationBuilder<T> {
         LocalDate minDate,
         LocalDate maxDate,
         Map<String, String> queryParams,
-        UriInfo uriInfo
+        UriBuilder baseUri
     ) {
-        UriBuilder baseUri = uriInfo.getRequestUriBuilder();
-
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
             baseUri.queryParam(entry.getKey(), entry.getValue());
         }

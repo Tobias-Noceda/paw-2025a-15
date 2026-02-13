@@ -64,7 +64,15 @@
 			"password": "Contraseña",
 			"confirm_password": "Confirmar contraseña",
 			"submit_button": "Registrarse",
-			"back_to_login": "Volver a iniciar sesión"
+			"back_to_login": "Volver a iniciar sesión",
+			"success": {
+				"title": "¡Éxito!",
+				"message": "Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión."
+			},
+			"error": {
+				"title": "Error",
+				"message": "Ocurrió un error al intentar crear tu cuenta. Por favor, inténtelo de nuevo más tarde."
+			}
 		},
 		"change": {
 			"title": "Cambiar contraseña",
@@ -164,12 +172,13 @@
 	},
 	"all": "Todos",
 	"doctors_list": "Cartilla médica",
+	"patients_list": "Lista de pacientes",
 	"clear": "Borrar",
 	"today": "Hoy",
 	"topbar": {
 		"logo_alt_text": "Logo de CareTrace",
 		"appointments": "Turnos",
-		"studies": "Estudios",
+		"studies": "Mis estudios y médicos",
 		"vacations": "Vacaciones",
 		"login": "Iniciar sesión",
 		"logout": "Cerrar sesión",
@@ -182,7 +191,8 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"license": "Matrícula",
-			"schedule": "Atiende"
+			"schedule": "Atiende",
+			"accesses": "Accesos actuales"
 		},
 		"table": {
 			"day": "Día",
@@ -190,7 +200,16 @@
 		},
 		"actions": {
 			"authorize": "Autorizar",
-			"de_authorize": "Desautorizar"
+			"de_authorize": "Desautorizar",
+			"update": "Actualizar"
+		},
+		"authorizations": {
+			"title": "Accesos actuales",
+			"options": {
+				"view_medical": "Médico",
+				"view_social": "Social",
+				"view_habits": "A hábitos"
+			}
 		},
 		"text": {
 			"no_schedule": "No hay horario disponible.",
@@ -250,60 +269,210 @@
 			"see_patient": "Ver paciente"
 		}
 	},
-	"date_format": "dd/MM/yyyy",
-	"next": "Siguiente",
-	"previous": "Anterior",
-	"vacations": {
-		"title": "Gestión de Vacaciones",
-		"create": {
-			"title": "Agregar Nueva Vacación",
-			"submit": "Crear Vacación"
+	"insurances": {
+		"title": "Gestión de obras sociales:",
+		"new": "Nueva obra social",
+		"buttons": {
+			"edit": "Editar",
+			"delete": "Eliminar"
+		}
+	},
+	"patient": {
+		"titles": {
+			"basic": "Detalles básicos",
+			"habits": "Detalles de hábitos",
+			"medical": "Detalles médicos",
+			"social": "Detalles sociales"
 		},
-		"table": {
-			"startDate": "Fecha de Inicio",
-			"endDate": "Fecha de Fin",
-			"actions": "Acciones"
+		"labels": {
+			"email": "Mail",
+			"telephone": "Teléfono",
+			"age": "Edad",
+			"blood_type": "Tipo de sangre",
+			"height": "Altura (m)",
+			"weight": "Peso (kg)",
+			"insurance": "Obra social",
+			"insurance_number": "Número de afiliado",
+			"smokes": "Fuma habitualmente",
+			"drinks": "Bebe habitualmente",
+			"diet": "Dieta",
+			"medications": "Medicaciones",
+			"conditions": "Condiciones",
+			"allergies": "Alergias",
+			"hobbies": "Hobbies",
+			"job": "Trabajo"
 		},
-		"past": {
-			"title": "Vacaciones Pasadas",
-			"empty": "No hay vacaciones pasadas registradas"
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
 		},
-		"future": {
-			"title": "Vacaciones Futuras",
-			"empty": "No hay vacaciones futuras programadas"
-		},
-		"created": {
-			"title": "¡Vacación creada!",
-			"message": "La vacación ha sido registrada exitosamente."
-		},
-		"deleted": {
-			"title": "¡Vacación eliminada!",
-			"message": "La vacación ha sido eliminada exitosamente."
-		},
-		"delete": {
-			"confirm": {
-				"title": "¿Eliminar vacación?",
-				"message": "¿Está seguro de que desea eliminar la vacación del {startDate} al {endDate}?",
-				"button": "Eliminar"
-			}
+		"values": {
+			"true": "Sí",
+			"false": "No",
+			"unknown": "No provisto"
 		},
 		"error": {
-			"startRequired": "La fecha de inicio es requerida",
-			"endRequired": "La fecha de fin es requerida",
-			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
-			"pastDate": "La fecha de inicio no puede ser en el pasado",
-			"load": {
-				"title": "Error al cargar",
-				"message": "No se pudieron cargar las vacaciones. Por favor, intente de nuevo."
-			},
-			"create": {
-				"title": "Error al crear",
-				"message": "No se pudo crear la vacación. Por favor, intente de nuevo."
-			},
-			"delete": {
-				"title": "Error al eliminar",
-				"message": "No se pudo eliminar la vacación. Por favor, intente de nuevo."
+			"fetching": {
+				"title": "Error al obtener los estudios",
+				"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
 			}
 		}
-	}
+	},
+	"studies": {
+		"title": "Estudios",
+		"description": "Cliqueá en un estudio para administrar quién puede verlo",
+		"types": {
+			"title": "Tipo de estudio",
+			"options": {
+				"other": "Otro",
+				"prescription": "Receta médica",
+				"radiography": "Radiografía",
+				"laboratory_result": "Resultados de laboratorio",
+				"ultrasound": "Ecografía",
+				"mri": "Resonancia magnética",
+				"electrocardiogram": "Electrocardiograma",
+				"vaccination_record": "Registro de vacunación"
+			}
+		},
+		"orders": {
+			"title": "Fecha del estudio",
+			"options": {
+				"m_recent": "Más reciente",
+				"l_recent": "Más antiguo"
+			}
+		},
+		"table": {
+			"type": "Tipo de estudio",
+			"details": "Detalles",
+			"date": "Día",
+			"upload_date": "Fecha de subida",
+			"empty": "No hay estudios disponibles."
+		},
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
+		},
+		"doctors": {
+			"title": "Mis médicos",
+			"description": "Cliquea en un doctor o ve a su perfil para administrar el acceso a tu información personal",
+			"actions": {
+				"revoke": "Desautorizar",
+				"grant": "Autorizar",
+				"revoke_all": "Desautorizar a todos"
+			},
+			"table": {
+				"name": "Doctor",
+				"specialty": "Especialidad",
+				"empty": "No tienes médicos autorizados para ver tu perfil."
+			}
+		},
+		"pop_up": {
+			"delete": {
+				"title": "¿Está seguro de que desea eliminar este estudio?",
+				"date_info": "El estudio fue subido el {uploadDate}",
+				"comment_label": "Con el comentario:",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar estudio",
+				"cancel": "Volver"
+			}
+		},
+		"messages": {
+			"error": {
+				"fething": {
+					"title": "Error al obtener los estudios",
+					"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+				},
+				"deleting": {
+					"title": "Error al eliminar estudio",
+					"message": "Ocurrió un error al intentar eliminar el estudio. Por favor, inténtelo de nuevo más tarde."
+				}
+			},
+			"success": {
+				"deleting": {
+					"title": "¡Estudio eliminado con éxito!",
+					"message": "Has eliminado un estudio de tu perfil."
+				}
+			}
+		}
+	},
+	"study_info": {
+		"titles": {
+			"files": "Archivos",
+			"doctors": "Médicos autorizados"
+		},
+		"labels": {
+			"type": "Tipo de estudio",
+			"date": "Fecha del estudio",
+			"upload_date": "Fecha de subida",
+			"uploader": "Subido por"
+		},
+		"doctors": {
+			"actions": {
+				"revoke": "Desautorizar",
+				"grant": "Autorizar",
+				"revoke_all": "Desautorizar a todos",
+				"grant_all": "Autorizar a todos"
+			}
+		},
+		"table": {
+			"file_type": "Tipo de archivo"
+		},
+		"file_types": {
+			"application_pdf": "PDF (.pdf)",
+			"image_jpeg": "Imagen (.jpeg)",
+			"image_png": "Imagen (.png)"
+		},
+		"actions": {
+			"delete": "Eliminar estudio",
+			"download_all": "Descargar todos"
+		},
+		"error": {
+			"authorizing": {
+				"title": "Error al actualizar autorizaciones",
+				"message": "No se pudo actualizar la autorización para el doctor {doctorName}. Por favor, inténtelo de nuevo más tarde."
+			},
+			"deleting": {
+				"title": "Error al eliminar estudio",
+				"message": "Ocurrió un error al intentar eliminar el estudio. Por favor, inténtelo de nuevo más tarde."
+			},
+			"downloading": {
+				"title": "Error al descargar archivos",
+				"message": "Ocurrió un error al intentar descargar los archivos del estudio. Por favor, inténtelo de nuevo más tarde."
+			}
+		}
+	},
+	"new_file": {
+		"title": "Subir nuevo estudio para {patientName}",
+		"labels": {
+			"files": "Archivos",
+			"type": "Tipo de estudio",
+			"date": "Fecha del estudio",
+			"data": "Datos adicionales",
+			"auth_doctors": "Seleccione que médicos podrán ver este estudio"
+		},
+		"table": {
+			"auth_doctors": "Médicos autorizados"
+		},
+		"buttons": {
+			"files": "Elegir archivos",
+			"select_all": "Seleccionar todos",
+			"deselect_all": "Deseleccionar todos",
+			"submit": "Subir estudio"
+		},
+		"messages": {
+			"no_files": "Por favor, seleccione al menos un archivo para subir el estudio.",
+			"upload_success_title": "¡Estudio subido con éxito!",
+			"upload_success_message": "Has subido un nuevo estudio para {patientName}.",
+			"upload_error_title": "Error al subir el estudio",
+			"upload_error_message": "Ocurrió un error al intentar subir el estudio. Por favor, inténtelo de nuevo más tarde."
+		},
+		"data_placeholder": "Ingrese una descripción con datos sobre el estudio",
+		"no_files": "Ningún archivo seleccionado",
+		"more_files": "+ {count} archivos más"
+	},
+	"unknown": "Desconocido",
+	"date_format": "dd/MM/yyyy",
+	"next": "Siguiente",
+	"action": "Acción",
+	"actions": "Acciones"
 }

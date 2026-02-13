@@ -1,25 +1,27 @@
-import { fetchDoctorById } from "$lib/services/doctors";
-import { get, parseJWT } from "$modules/api.svelte";
+import { setPatientsStudyLink } from "$lib/services/patients";
+import { get, getAuth, parseJWT } from "$modules/api.svelte";
 import type { Doctor, Patient } from "$types/api";
 import { writable } from "svelte/store";
 
-type User = {
+export type User = {
+	id: number;
 	name: string;
-	role: string;
+	role: 'DOCTOR' | 'PATIENT' | 'ADMIN';
     image: string;
 	self: string;
 	[key: string]: any;
 };
 
 let user = writable<User | null>(null);
-
 let userData = writable<Doctor | Patient | null>(null);
+let loggedOut = writable<boolean>(false);
 
 export async function setUserFromSession(sessionToken: string, fetchFn: typeof fetch = window.fetch) {
     // Parse user data from session token
 	const payload = parseJWT(sessionToken);
 	if (payload) {
 		user.set({
+			id: payload.id,
 			name: payload.name,
 			role: payload.role,
             image: payload.image,
@@ -28,14 +30,19 @@ export async function setUserFromSession(sessionToken: string, fetchFn: typeof f
 		});
 
 		if (payload.role === 'DOCTOR' || payload.role === 'PATIENT') {
-			const response = await get(payload.self, undefined, fetchFn).catch(() => null);
+			const response = await getAuth(payload.self, undefined, fetchFn).catch(() => null);
 
 			if (response && response.ok) {
 				const data = await response.json();
-				userData.set(payload.role === 'DOCTOR' ? data as Doctor : data as Patient);
+				if (payload.role === 'PATIENT') {
+					const patient = setPatientsStudyLink(data as Patient);
+					userData.set(patient);
+				} else {
+					userData.set(data as Doctor);
+				}
 			}
 		}
 	}
 };
 
-export { user, userData };
+export { user, userData, loggedOut };

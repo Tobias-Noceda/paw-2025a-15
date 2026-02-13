@@ -50,6 +50,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Changed password for user with id: {}", id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public void askPasswordRecover(String email) {
         User user = getUserByEmail(email).orElseThrow(() -> new NotFoundException("User with email: " + email + " does not exist!"));

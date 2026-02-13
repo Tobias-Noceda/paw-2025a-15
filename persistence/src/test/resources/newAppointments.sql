@@ -1,2 +1,2 @@
-INSERT INTO appointments_new(shift_id, patient_id, appointment_date, appointment_start_time, appointment_end_time, appointment_detail) VALUES(1, 1, '2025-10-09', '10:00:00', '10:15:00', 'Appointment detail 1');
-INSERT INTO appointments_new(shift_id, patient_id, appointment_date, appointment_start_time, appointment_end_time, appointment_detail) VALUES(1, 1, '2025-10-09', '10:15:00', '10:30:00', 'Appointment detail 2');
+INSERT INTO appointments_new(shift_id, patient_id, appointment_date, appointment_start_time, appointment_end_time, appointment_detail) VALUES(1, 1, '2125-10-11', '10:00:00', '10:15:00', 'Appointment detail 1');
+INSERT INTO appointments_new(shift_id, patient_id, appointment_date, appointment_start_time, appointment_end_time, appointment_detail) VALUES(1, 1, '2125-10-11', '10:15:00', '10:30:00', 'Appointment detail 2');

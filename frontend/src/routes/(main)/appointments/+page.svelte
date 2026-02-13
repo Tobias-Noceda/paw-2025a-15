@@ -6,7 +6,7 @@
 	import type { Appointment, Paginated } from "$types/api";
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
 	import { cancelAppointment, fetchFreeAppointments, fetchNonFreeAppointments, takeAppointment } from '$lib/services/appointments';
@@ -17,10 +17,10 @@
 
     let { data }: { data: PageData } = $props();
 
-    const pastAppointments: Paginated<Appointment> | null = data.pastAppointments ?? null;
+    const pastAppointments: Paginated<Appointment> | null = $state(data.pastAppointments ?? null);
     
     let freeAppointments: Paginated<Appointment> | null = $state(data.freeAppointments ?? null);
-    const freeAppointmentsLink: string | null = data.freeAppointmentsLink || null;
+    const freeAppointmentsLink: string | null = $state(data.freeAppointmentsLink || null);
     
     let showSuccessToast = $state(false);
     let showErrorToast = $state(false);
@@ -35,7 +35,6 @@
         results: [],
         _links: {}
     });
-    const futureAppointmentsLink: string | null = data.futureAppointmentsLink || null;
 
     const tableColumns: Column<Appointment>[] = [
         {
@@ -116,7 +115,7 @@
         const dateStr = formatDateLocal(date);
         const newUrl = new URL($page.url);
         newUrl.searchParams.set('date', dateStr);
-        goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+        pushState(newUrl.toString(), {});
     };
 
     const fetchAppointments = async (url: string, date?: Date | null, updateUrl = true) => {
@@ -142,7 +141,7 @@
             id: 'weekday',
             label: m['doctor.table.day'](),
             render: (appointment: Appointment) => {
-                return m[`filters.weekdays.${appointment.weekday.toLowerCase()}`]();
+                return appointment.weekday ? m[`filters.weekdays.${appointment.weekday.toLowerCase()}`]() : '';
             },
             class: 'font-medium'
         },
@@ -179,7 +178,7 @@
         }
     ];
 
-    const parseDoctorSelf = (self: string) => {
+    const parseSelf = (self: string) => {
 		const apiIndex = self.indexOf('/api/');
 		const toRet = apiIndex !== -1 ? self.substring(apiIndex + 5) : self;
 		return toRet;
@@ -205,7 +204,6 @@
                 .then(() => {
                     showSuccessToast = true;
 
-                    console.log('Index to remove:', index);
                     futureAppointments = {
                         results: futureAppointments.results.splice(index, 1),
                         _links: futureAppointments._links,
@@ -227,7 +225,7 @@
         if (freeAppointments === null) {
             const newUrl = new URL($page.url);
             newUrl.searchParams.delete('date');
-            goto(newUrl, { replaceState: true, noScroll: true, keepFocus: true });
+            pushState(newUrl.toString(), {});
         }
     });
 </script>
@@ -237,7 +235,7 @@
         <p class="title text-primaryText">{m["appointments.title.future"]()}:</p>
         <Table
             rows={futureAppointments}
-            nextFetchFunction={(nextUrl: string) => fetchNonFreeAppointments(nextUrl, fetch, true)}
+            nextFetchFunction={(nextUrl: string) => fetchNonFreeAppointments(nextUrl, freeAppointmentsLink !== undefined, fetch, true)}
             columns={futureColumns}
             striped
             hover
@@ -246,7 +244,7 @@
                     selectedAppointment = appointment;
                     return;
                 }
-                goto(`${base}/${parseDoctorSelf((appointment as Appointment).doctor!.links.self)}`);
+                goto(`${base}/${parseSelf((appointment as Appointment).doctor!.links.self)}`);
             }}
             emptyMessage={m['appointments.empty.future']()}
             class="shadow-sm rounded-lg"
@@ -258,11 +256,11 @@
             <p class="title text-primaryText">{m["appointments.title.past"]()}:</p>
             <Table
                 rows={pastAppointments}
-                nextFetchFunction={(nextUrl: string) => fetchNonFreeAppointments(nextUrl, fetch, true)}
+                nextFetchFunction={(nextUrl: string) => fetchNonFreeAppointments(nextUrl, false, fetch, true)}
                 columns={tableColumns}
                 striped
                 hover
-                onRowClick={(row) => goto(`${base}/${parseDoctorSelf((row as Appointment).doctor!.links.self)}`)}
+                onRowClick={(row) => goto(`${base}/${parseSelf((row as Appointment).doctor!.links.self)}`)}
                 emptyMessage={m['appointments.empty.past']()}
                 class="shadow-sm rounded-lg"
             />
@@ -272,8 +270,8 @@
                 <Button
                     variant="secondary"
                     class="w-fit"
-                    onclick={() => fetchAppointments(freeAppointments!._links.prev!)}
-                    disabled={selectedDate <= new Date() || isFetching}
+                    onclick={() => fetchAppointments(freeAppointments!._links.prev!, new Date(selectedDate.setDate(selectedDate.getDate() - 1)))}
+                    disabled={!freeAppointments!._links.prev || isFetching}
                 >
                     {m['previous']()}
                 </Button>
@@ -284,14 +282,14 @@
                         fetchAppointments(freeAppointmentsLink, selectedDate);
                     }}
                     minDate={new Date()}
-                    maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                    maxDate={(freeAppointments._pageInfo?.maxDate ?? new Date(new Date().setMonth(new Date().getMonth() + 3)))}
                     class="w-fit"
                 />
                 <Button
                     variant="secondary"
                     class="w-fit"
-                    onclick={() => fetchAppointments(freeAppointments!._links.next!)}
-                    disabled={selectedDate >= new Date(new Date().setMonth(new Date().getMonth() + 3)) || isFetching}
+                    onclick={() => fetchAppointments(freeAppointments!._links.next!, new Date(selectedDate.setDate(selectedDate.getDate() + 1)))}
+                    disabled={!freeAppointments!._links.next || isFetching}
                 >
                     {m['next']()}
                 </Button>
@@ -372,7 +370,11 @@
                     {#if selectedAppointment.patient}
                         <Button
                             variant="primary"
-                            onclick={() => console.log('Contact patient')}
+                            onclick={() => {
+                                if (selectedAppointment?.patient) {
+                                    goto(`${base}/${parseSelf(selectedAppointment.patient.links.self)}`);
+                                }
+                            }}
                         >
                             {m['appointments.pop_up.see_patient']()}
                         </Button>

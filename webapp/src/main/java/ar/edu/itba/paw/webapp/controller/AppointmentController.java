@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -12,23 +11,19 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.AppointmentService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.User;
@@ -40,6 +35,7 @@ import ar.edu.itba.paw.webapp.controller.util.DatePaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.AppointmentEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.AppointmentDTO;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 
 @Path("/appointments")
@@ -49,20 +45,14 @@ public class AppointmentController {
     @Autowired
     private AppointmentService as;
 
-    @Autowired
-    private UserService us;
-
     @Context
     private UriInfo uriInfo;
-
-    @Context
-    private SecurityContext securityContext;
 
     private static final ZoneId ARGENTINA_ZONE = ZoneId.of("America/Argentina/Buenos_Aires");
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getAppointments(
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
+    public Response listAppointments(
         @QueryParam("userId") Long userId,
         @QueryParam("status") @NotBlank String status,
         @QueryParam("date") String date,
@@ -95,7 +85,7 @@ public class AppointmentController {
                             e -> e.getKey(),
                             e -> e.getValue().get(0)
                         )),
-                    uriInfo
+                    uriInfo.getBaseUriBuilder().path(AppointmentController.class)
                 );
             }
             case TAKEN -> {
@@ -110,7 +100,6 @@ public class AppointmentController {
                         return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for TAKEN status").build();
                     }
                 } catch (Exception e) {
-                    System.out.println("Error fetching TAKEN appointments: " + e.getMessage());
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error fetching TAKEN appointments").build();
                 }
             }
@@ -140,13 +129,13 @@ public class AppointmentController {
                     e -> e.getKey(),
                     e -> e.getValue().get(0)
                 )),
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(AppointmentController.class)
         );
     }
 
     @GET
     @Path("/{appointmentId}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response getAppointmentById(@PathParam("appointmentId") String appointmentId) {
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
         Pair<AppointmentNew, AppointmentStatusEnum> appointmentPair = as.getAppointmentByShiftIdDateAndTime(id.getShiftId(), id.getDate(), id.getStartTime(), id.getEndTime());
@@ -158,17 +147,15 @@ public class AppointmentController {
 
     @PATCH
     @Path("/{appointmentId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_APPOINTMENT)
+    @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response modifyAppointment(
         @PathParam("appointmentId") String appointmentId,
         @Valid AppointmentEditDTO appointmentEditDTO
     ) {
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
 
-        Principal userPrincipal = securityContext.getUserPrincipal();
-
-        User user = AuthenticatedUser.get(userPrincipal, email -> us.getUserByEmail(email).orElse(null));
+        User user = AuthenticatedUser.get();
         
         if (user == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();

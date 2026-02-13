@@ -1,6 +1,6 @@
 import { m } from "$lib/paraglide/messages";
 
-export enum Specialties {
+export enum Specialty {
     BARIATRIC_SURGERY = "BARIATRIC_SURGERY",
     BREAST_PATHOLOGY = "BREAST_PATHOLOGY",
     CARDIOLOGY = "CARDIOLOGY",
@@ -36,40 +36,40 @@ export enum Specialties {
     UROLOGY = "UROLOGY"
 };
 
-export const getSpecialtyLabel = (spec: Specialties) => {
+export const getSpecialtyLabel = (spec: Specialty) => {
     switch(spec) {
-        case Specialties.BARIATRIC_SURGERY: return m['specialties.BARIATRIC_SURGERY']();
-        case Specialties.BREAST_PATHOLOGY: return m['specialties.BREAST_PATHOLOGY']();
-        case Specialties.CARDIOLOGY: return m['specialties.CARDIOLOGY']();
-        case Specialties.DERMATOLOGY: return m['specialties.DERMATOLOGY']();
-        case Specialties.ENDOCRINOLOGY: return m['specialties.ENDOCRINOLOGY']();
-        case Specialties.GASTROENTEROLOGY: return m['specialties.GASTROENTEROLOGY']();
-        case Specialties.GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY: return m['specialties.GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY']();
-        case Specialties.GYNECOLOGY: return m['specialties.GYNECOLOGY']();
-        case Specialties.HEAD_AND_NECK_SURGERY: return m['specialties.HEAD_AND_NECK_SURGERY']();
-        case Specialties.HEMATOLOGY: return m['specialties.HEMATOLOGY']();
-        case Specialties.INFECTIOUS_DISEASES: return m['specialties.INFECTIOUS_DISEASES']();
-        case Specialties.INTERNAL_MEDICINE: return m['specialties.INTERNAL_MEDICINE']();
-        case Specialties.PEDIATRIC_DERMATOLOGY: return m['specialties.PEDIATRIC_DERMATOLOGY']();
-        case Specialties.PEDIATRIC_CARDIOLOGY: return m['specialties.PEDIATRIC_CARDIOLOGY']();
-        case Specialties.PHLEBOLOGY: return m['specialties.PHLEBOLOGY']();
-        case Specialties.PLASTIC_AND_RECONSTRUCTIVE_SURGERY: return m['specialties.PLASTIC_AND_RECONSTRUCTIVE_SURGERY']();
-        case Specialties.NEPHROLOGY: return m['specialties.NEPHROLOGY']();
-        case Specialties.NEUROLOGY: return m['specialties.NEUROLOGY']();
-        case Specialties.NEUROSURGERY: return m['specialties.NEUROSURGERY']();
-        case Specialties.NUTRITION: return m['specialties.NUTRITION']();
-        case Specialties.ONCOLOGY: return m['specialties.ONCOLOGY']();
-        case Specialties.OTOLARYNGOLOGY: return m['specialties.OTOLARYNGOLOGY']();
-        case Specialties.PEDIATRICS: return m['specialties.PEDIATRICS']();
-        case Specialties.PEDIATRIC_NUTRITION_AND_DIABETOLOGY: return m['specialties.PEDIATRIC_NUTRITION_AND_DIABETOLOGY']();
-        case Specialties.PEDIATRIC_PULMONOLOGY: return m['specialties.PEDIATRIC_PULMONOLOGY']();
-        case Specialties.PULMONOLOGY: return m['specialties.PULMONOLOGY']();
-        case Specialties.OPHTHALMOLOGY: return m['specialties.OPHTHALMOLOGY']();
-        case Specialties.PROCTOLOGY_AND_SURGERY: return m['specialties.PROCTOLOGY_AND_SURGERY']();
-        case Specialties.RHEUMATOLOGY: return m['specialties.RHEUMATOLOGY']();
-        case Specialties.SPEECH_THERAPY: return m['specialties.SPEECH_THERAPY']();
-        case Specialties.SURGERY: return m['specialties.SURGERY']();
-        case Specialties.TRAUMATOLOGY: return m['specialties.TRAUMATOLOGY']();
-        case Specialties.UROLOGY: return m['specialties.UROLOGY']();
+        case Specialty.BARIATRIC_SURGERY: return m['specialties.BARIATRIC_SURGERY']();
+        case Specialty.BREAST_PATHOLOGY: return m['specialties.BREAST_PATHOLOGY']();
+        case Specialty.CARDIOLOGY: return m['specialties.CARDIOLOGY']();
+        case Specialty.DERMATOLOGY: return m['specialties.DERMATOLOGY']();
+        case Specialty.ENDOCRINOLOGY: return m['specialties.ENDOCRINOLOGY']();
+        case Specialty.GASTROENTEROLOGY: return m['specialties.GASTROENTEROLOGY']();
+        case Specialty.GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY: return m['specialties.GYNECOLOGICAL_GENERAL_ENDOCRINOLOGY']();
+        case Specialty.GYNECOLOGY: return m['specialties.GYNECOLOGY']();
+        case Specialty.HEAD_AND_NECK_SURGERY: return m['specialties.HEAD_AND_NECK_SURGERY']();
+        case Specialty.HEMATOLOGY: return m['specialties.HEMATOLOGY']();
+        case Specialty.INFECTIOUS_DISEASES: return m['specialties.INFECTIOUS_DISEASES']();
+        case Specialty.INTERNAL_MEDICINE: return m['specialties.INTERNAL_MEDICINE']();
+        case Specialty.PEDIATRIC_DERMATOLOGY: return m['specialties.PEDIATRIC_DERMATOLOGY']();
+        case Specialty.PEDIATRIC_CARDIOLOGY: return m['specialties.PEDIATRIC_CARDIOLOGY']();
+        case Specialty.PHLEBOLOGY: return m['specialties.PHLEBOLOGY']();
+        case Specialty.PLASTIC_AND_RECONSTRUCTIVE_SURGERY: return m['specialties.PLASTIC_AND_RECONSTRUCTIVE_SURGERY']();
+        case Specialty.NEPHROLOGY: return m['specialties.NEPHROLOGY']();
+        case Specialty.NEUROLOGY: return m['specialties.NEUROLOGY']();
+        case Specialty.NEUROSURGERY: return m['specialties.NEUROSURGERY']();
+        case Specialty.NUTRITION: return m['specialties.NUTRITION']();
+        case Specialty.ONCOLOGY: return m['specialties.ONCOLOGY']();
+        case Specialty.OTOLARYNGOLOGY: return m['specialties.OTOLARYNGOLOGY']();
+        case Specialty.PEDIATRICS: return m['specialties.PEDIATRICS']();
+        case Specialty.PEDIATRIC_NUTRITION_AND_DIABETOLOGY: return m['specialties.PEDIATRIC_NUTRITION_AND_DIABETOLOGY']();
+        case Specialty.PEDIATRIC_PULMONOLOGY: return m['specialties.PEDIATRIC_PULMONOLOGY']();
+        case Specialty.PULMONOLOGY: return m['specialties.PULMONOLOGY']();
+        case Specialty.OPHTHALMOLOGY: return m['specialties.OPHTHALMOLOGY']();
+        case Specialty.PROCTOLOGY_AND_SURGERY: return m['specialties.PROCTOLOGY_AND_SURGERY']();
+        case Specialty.RHEUMATOLOGY: return m['specialties.RHEUMATOLOGY']();
+        case Specialty.SPEECH_THERAPY: return m['specialties.SPEECH_THERAPY']();
+        case Specialty.SURGERY: return m['specialties.SURGERY']();
+        case Specialty.TRAUMATOLOGY: return m['specialties.TRAUMATOLOGY']();
+        case Specialty.UROLOGY: return m['specialties.UROLOGY']();
     }
 };
