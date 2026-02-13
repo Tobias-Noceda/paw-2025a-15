@@ -138,10 +138,6 @@
 			class: 'text-start'
 		}
 	];
-
-    $effect(() => {
-        console.log('Authorization levels changed:', authorizationLevels.forEach(level => console.log(' -', level)));
-    });
 </script>
 
 <div class="flex gap-5">
@@ -203,7 +199,6 @@
                     <RadioCheck
                         optionsClass="w-full mb-5"
                         options={Object.entries(AccessLevels).splice(1, 3).map(([key, value]) => {
-                            console.log('Mapping access level:', key, value, authorizationLevels.includes(value));
                             return {
                                 id: key,
                                 label: m[`doctor.authorizations.options.${value}`](),
@@ -241,7 +236,7 @@
 				variant="secondary"
 				class="w-fit"
 				onclick={() => fetchAppointments(appointments._links.prev!)}
-				disabled={selectedDate <= new Date() || isFetching}
+				disabled={!appointments._links.prev || isFetching}
 			>
 				{m['previous']()}
 			</Button>
@@ -252,15 +247,14 @@
 					fetchAppointments(doctor.links.freeAppointments, selectedDate);
 				}}
 				minDate={new Date()}
-				maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
+				maxDate={(appointments._pageInfo?.maxDate ?? new Date(new Date().setMonth(new Date().getMonth() + 3)))}
 				class="w-fit"
 			/>
 			<Button
 				variant="secondary"
 				class="w-fit"
 				onclick={() => fetchAppointments(appointments._links.next!)}
-				disabled={selectedDate >= new Date(new Date().setMonth(new Date().getMonth() + 3)) ||
-					isFetching}
+				disabled={!appointments._links.next || isFetching}
 			>
 				{m['next']()}
 			</Button>

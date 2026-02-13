@@ -87,7 +87,7 @@ public class StudyController {
             pageSize, 
             ss.getFilteredStudiesCount(patientId, doctorId, type), 
             queryParams, 
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(StudyController.class)
         );
     }
 

@@ -2,7 +2,6 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { setUserFromSession, user, userData } from '$stores/user';
 import { get } from 'svelte/store';
-import { fetchPatientById } from '$lib/services/patients';
 import type { Doctor, Paginated, Patient, Study } from '$types/api';
 import { fetchStudies } from '$lib/services/studies';
 import type { StudyType } from '$types/enums/studyTypes';
@@ -13,11 +12,13 @@ export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
 
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
     const currentUserData = get(userData)
 
     if (!currentUser || !currentUserData || currentUser.role !== 'PATIENT') {

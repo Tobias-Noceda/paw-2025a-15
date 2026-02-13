@@ -22,7 +22,7 @@
 		class: className = ''
 	}: Props = $props();
 
-	const icons = icon ? text.split(' ') : [];
+	const icons = icon && text ? text.split(' ') : [];
 
 	if (
 		(!icon && Array.isArray(variant)) ||

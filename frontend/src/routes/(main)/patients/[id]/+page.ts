@@ -12,11 +12,13 @@ export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
 
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
 
     if (!currentUser || currentUser.role !== 'DOCTOR') {
         throw error(404, 'Not found');
@@ -25,14 +27,11 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
     try {
         const patient = await fetchPatientById(Number.parseInt(params.id), currentUser, fetch)
             .catch((error) => {
-                console.log('Error fetching patient: ', error);
                 if (error.status === 403) {
                     return null;
                 }
                 throw error;
             });
-
-        console.log('Fetched patient: ', patient);
 
         let studies: Paginated<Study> = { _links: {}, results: [] };
         let studyType: string = 'all';

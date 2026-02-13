@@ -363,6 +363,16 @@
 				"specialty": "Specialty",
 				"empty": "You have no doctors authorized to view your profile."
 			}
+		},
+		"pop_up": {
+			"delete": {
+				"title": "Are you sure you want to delete this study?",
+				"date_info": "The study was uploaded on {uploadDate}",
+				"comment_label": "With the comment:",
+				"subtitle": "This action cannot be undone.",
+				"confirm": "Delete study",
+				"cancel": "Go back"
+			}
 		}
 	},
 	"study_info": {

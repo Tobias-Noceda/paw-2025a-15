@@ -11,11 +11,13 @@ export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
 
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
 
     if (!currentUser) {
         window.location.href = `${base}/login`;

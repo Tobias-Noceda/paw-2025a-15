@@ -9,11 +9,13 @@ export const ssr = false;
 
 export const load: PageLoad = async ({ params, fetch }) => {
 
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
     const currentUserData = get(userData);
 
     if (!currentUser || !currentUserData) {
@@ -24,7 +26,6 @@ export const load: PageLoad = async ({ params, fetch }) => {
 	const fileId = params.id;
 	
 	if (!fileId || isNaN(Number(fileId))) {
-        console.log('Invalid file ID:', fileId);
 		throw error(404, 'File not found');
 	}
 

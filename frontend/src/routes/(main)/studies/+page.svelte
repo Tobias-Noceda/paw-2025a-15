@@ -13,14 +13,29 @@
 	import Select from '$components/Select/Select.svelte';
 	import { StudyType } from '$types/enums/studyTypes';
 	import { StudyOrders } from '$types/enums/studyOrders';
-	import { fetchStudies, fetchStudiesPage } from '$lib/services/studies';
+	import { deleteStudy, fetchStudies, fetchStudiesPage } from '$lib/services/studies';
 	import { fetchDoctorsPage, putAuthorizations } from '$lib/services/doctors';
+	import PopUp from '$components/PopUp/PopUp.svelte';
+	import Toast from '$components/Toast/Toast.svelte';
 
 	let { data }: { data: PageData } = $props();
 
 	let isFetching = $state(false);
 
+	let toastTitle: string = $state('');
+	let toastMessage: string = $state('');
 	let showErrorToast = $state(false);
+	let showSuccessToast = $state(false);
+
+	$effect(() => {
+		if (!showErrorToast && !showSuccessToast) {
+			toastTitle = '';
+			toastMessage = '';
+			return;
+		}
+	});
+
+	let deleteStudyData: { study: Study; idx: number } | null = $state(null);
 
 	let selectedStudyType: string = $state(data.studyType ?? 'all');
 	let selectedStudyOrder: string = $state(data.order ?? 'm_recent');
@@ -31,6 +46,9 @@
 	let doctors: Paginated<Doctor> = $state(data.doctors ?? { _links: {}, results: [] });
 
 	const parseStudyId = (studyUrl: string): string | null => {
+		if (!studyUrl) {
+			return null;
+		}
 		const keyword = '/studies/';
 		const parts = studyUrl.split(keyword);
 		return parts[parts.length - 1] || null;
@@ -45,13 +63,13 @@
 	};
 
 	const studyTypeOptions = Object.entries(StudyType).map(([key, value]) => ({
-		label: m[`studies.types.options.${key.toLowerCase()}`](),
+		label: key ? m[`studies.types.options.${key.toLowerCase()}`]() : '',
 		value: value
 	}));
 
 	const studyOrderOptions = [
 		...Object.entries(StudyOrders).map(([key, value]) => ({
-			label: m[`studies.orders.options.${key.toLowerCase()}`](),
+			label: key ? m[`studies.orders.options.${key.toLowerCase()}`]() : '',
 			value: value
 		}))
 	];
@@ -61,7 +79,9 @@
 			id: 'type',
 			label: m['studies.table.type'](),
 			render: (study: Study) => {
-				return m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]();
+				return study.type
+					? m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]()
+					: '';
 			},
 			class: 'font-medium',
 			columnClass: 'w-56'
@@ -70,7 +90,7 @@
 			id: 'details',
 			label: m['studies.table.details'](),
 			render: (study: Study) => study.comment,
-			class: 'text-start',
+			class: 'text-start'
 		},
 		{
 			id: 'date',
@@ -89,7 +109,7 @@
 			id: 'upload-date',
 			label: m['studies.table.upload_date'](),
 			render: (study: Study) => {
-				const date = new Date(study.uploadDate);
+				const date = parseDateInLocalTimezone(study.uploadDate);
 				return date.toLocaleDateString(getLocale(), {
 					year: 'numeric',
 					month: '2-digit',
@@ -112,7 +132,7 @@
 							e.stopPropagation();
 							e.preventDefault();
 
-							console.log('Delete action for study:', study);
+							deleteStudyData = { study, idx: index };
 						}
 					}
 				};
@@ -126,13 +146,13 @@
 		{
 			id: 'name',
 			label: m['studies.doctors.table.name'](),
-			render: (doctor: Doctor) => doctor.name,
+			render: (doctor: Doctor) => doctor.name || '',
 			class: 'font-medium'
 		},
 		{
 			id: 'specialty',
 			label: m['studies.doctors.table.specialty'](),
-			render: (doctor: Doctor) => doctor.specialty ? m[`specialties.${doctor.specialty}`]() : '',
+			render: (doctor: Doctor) => (doctor.specialty ? m[`specialties.${doctor.specialty}`]() : ''),
 			class: 'text-start'
 		},
 		{
@@ -148,12 +168,11 @@
 							e.stopPropagation();
 							e.preventDefault();
 
-							putAuthorizations(doctor.links.authorization.resolved!, false, [])
-                                .catch((error) => {
-                                    console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
-                                });
+							putAuthorizations(doctor.links.authorization.resolved!, false, []).catch((error) => {
+								console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
+							});
 
-                            doctors.results.splice(index, 1);
+							doctors.results.splice(index, 1);
 						},
 						class: 'px-2 py-1 text-sm font-semibold'
 					}
@@ -191,6 +210,8 @@
 			pushState(pageUrl.toString(), {});
 		} catch (error) {
 			console.error('Error fetching studies:', error);
+			toastTitle = m['studies.messages.error.fetching.title']();
+			toastMessage = m['studies.messages.error.fetching.message']();
 			showErrorToast = true;
 		} finally {
 			isFetching = false;
@@ -198,18 +219,17 @@
 	};
 
 	const handleDeauthorizeAll = async () => {
-        let doctorsList = doctors.results;
+		let doctorsList = doctors.results;
 
-        while (doctors._links.next) {
-            doctors = await fetchDoctorsPage(doctors._links.next, data.currentUser, fetch);
-            doctorsList = [...doctorsList, ...doctors.results];
-        }
+		while (doctors._links.next) {
+			doctors = await fetchDoctorsPage(doctors._links.next, data.currentUser, fetch);
+			doctorsList = [...doctorsList, ...doctors.results];
+		}
 
 		for (const doctor of doctorsList) {
-			putAuthorizations(doctor.links.authorization.resolved!, false, [])
-                .catch((error) => {
-                    console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
-                });
+			putAuthorizations(doctor.links.authorization.resolved!, false, []).catch((error) => {
+				console.error(`Error deauthorizing doctor ${doctor.name}:`, error);
+			});
 		}
 
 		doctors = {
@@ -223,7 +243,11 @@
 	<div class="page-division flex flex-col h-full w-full gap-2.5">
 		<div class="flex flex-row justify-between items-center w-full h-fit">
 			<p class="title text-primaryText">{m['studies.title']()}:</p>
-			<Button variant="secondary" class="w-fit" onclick={() => goto(`${base}/upload-study/${data.currentUser.id}`)}>
+			<Button
+				variant="secondary"
+				class="w-fit"
+				onclick={() => goto(`${base}/upload-study/${data.currentUser.id}`)}
+			>
 				{m['studies.actions.upload']()}
 			</Button>
 		</div>
@@ -299,6 +323,74 @@
 			}}
 		/>
 	</div>
+
+	{#if deleteStudyData}
+		<PopUp onClose={() => (deleteStudyData = null)}>
+			<div class="flex flex-col gap-4">
+				<h2 class="text-xl font-bold">{m['studies.pop_up.delete.title']()}</h2>
+				<div class="flex flex-col gap-1.5">
+					<p>
+						{m['studies.pop_up.delete.date_info']({
+							uploadDate: new Date(deleteStudyData.study.uploadDate).toLocaleDateString(
+								getLocale(),
+								{
+									year: 'numeric',
+									month: '2-digit',
+									day: '2-digit'
+								}
+							)
+						})}
+					</p>
+					<p class="font-semibold">
+						{m['studies.pop_up.delete.comment_label']()}
+						<span class="font-normal select-text"> {deleteStudyData.study.comment}</span>
+					</p>
+				</div>
+				<p class="text-red-600 font-semibold">{m['studies.pop_up.delete.subtitle']()}</p>
+				<div class="flex justify-end gap-2 mt-4">
+					<Button
+						variant="primary"
+						onclick={async () => {
+							try {
+								await deleteStudy(deleteStudyData!.study.links.self, fetch);
+								studies.results.splice(deleteStudyData!.idx, 1);
+								toastTitle = m['studies.messages.success.deleting.title']();
+								toastMessage = m['studies.messages.success.deleting.message']();
+								showSuccessToast = true;
+							} catch (error) {
+								console.error('Error deleting study:', error);
+								toastTitle = m['studies.messages.error.deleting.title']();
+								toastMessage = m['studies.messages.error.deleting.message']();
+								showErrorToast = true;
+							} finally {
+								deleteStudyData = null;
+							}
+						}}
+					>
+						{m['studies.pop_up.delete.confirm']()}
+					</Button>
+					<Button variant="destructive" onclick={() => (deleteStudyData = null)}>
+						{m['studies.pop_up.delete.cancel']()}
+					</Button>
+				</div>
+			</div>
+		</PopUp>
+	{/if}
+
+	{#if toastTitle.trim() !== '' && toastMessage.trim() !== ''}
+		<Toast
+			bind:show={showErrorToast}
+			title={toastTitle}
+			description={toastMessage}
+			variant={'error'}
+		/>
+		<Toast
+			bind:show={showSuccessToast}
+			title={toastTitle}
+			description={toastMessage}
+			variant={'success'}
+		/>
+	{/if}
 </div>
 
 <style>

@@ -14,7 +14,6 @@ export const fetchFileById = async (fileId: number, fetchFn: typeof fetch = fetc
 };
 
 export const createFile = async (file: File, fetchFn: typeof fetch = fetch): Promise<string> => {
-    console.log('Creating file:', file);
     const formData = new FormData();
     formData.append('file', file);
 

@@ -9,17 +9,29 @@
 	import Icon from '$components/Icon/Icon.svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import { onMount } from 'svelte';
 
 	let userDropdownOpen = $state(false);
+	let search = $state('');
+	let searching = $state(false);
 
 	let { children } = $props();
 
 	$effect(() => {
-		const urlSearch = $page.url.searchParams.get('search') || '';
-		// Only update if different to prevent feedback loop
-		searchQuery.update((current) => (current !== urlSearch ? urlSearch : current));
+		if (search !== '') {
+			searching = true;
+		}
+	});
+
+	$effect(() => {
+		const searchFromUrl = $page.url.searchParams.get('search');
+		if (!searchFromUrl && !$page.url.pathname.includes('/home')) {
+			search = '';
+			searchQuery.set('');
+		} else {
+			searching = false;
+		}
 	});
 
 	onMount(() => {
@@ -84,10 +96,19 @@
 					class="search-bar-form"
 					onsubmit={(e) => {
 						e.preventDefault();
-						goto(
-							`/paw-2025a-15/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`,
-							{ replaceState: true, noScroll: true }
-						);
+						searchQuery.set(search);
+						searching = false;
+						if (!$page.url.pathname.includes(`/home`)) {
+							goto(
+								`${base}/home?${getFiltersURL(search, $insurance, $day, $specialty, $order)}`,
+								{ replaceState: true, noScroll: true }
+							);
+						} else {
+							pushState(
+								`${base}/home?${getFiltersURL(search, $insurance, $day, $specialty, $order)}`,
+								{ replaceState: true, noScroll: true }
+							);
+						}
 					}}
 				>
 					<Icon name="search" class="w-4.5 h-4.5 text-white" />
@@ -95,7 +116,7 @@
 						type="text"
 						class="search-bar-text"
 						placeholder="Search..."
-						bind:value={$searchQuery}
+						bind:value={search}
 					/>
 				</form>
 			</div>
