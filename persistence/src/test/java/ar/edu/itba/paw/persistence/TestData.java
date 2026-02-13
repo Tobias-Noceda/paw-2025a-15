@@ -7,12 +7,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
-import ar.edu.itba.paw.models.enums.BloodTypeEnum;
-import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.Doctor;
@@ -22,6 +16,12 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 //Readable output of all the data inputed in test/resources
@@ -93,13 +93,15 @@ public class TestData {
     public class DoctorSingleShifts{
         public static final DoctorSingleShift doctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:30:00"), 15);
         public static final Long doctorSingleShiftId = 1L;
+        public static DoctorSingleShift doctorInactiveSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("13:00:00"), LocalTime.parse("13:30:00"), 15);
+        public static final Long doctorInactiveSingleShiftId = 2L;
         public static final DoctorSingleShift newDoctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.MONDAY, "Los Patos", LocalTime.parse("15:00:00"), LocalTime.parse("17:00:00"), 30);
-        public static final Long newDoctorSingleShiftId = 2L;
+        public static final Long newDoctorSingleShiftId = 3L;
     }
 
     public class NewAppointments{
-        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 1");
-        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 2");
+        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2125-10-11"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 1");
+        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2125-10-11"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 2");
         public static final AppointmentNew oldAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 3");
         public static final AppointmentNew oldAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 4");
         public static final AppointmentNew removedAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 5");
@@ -112,7 +114,7 @@ public class TestData {
     }
 
     public class DocVacations{
-        public static final DoctorVacation docVacation = new DoctorVacation(Users.doctor, LocalDate.now().plusDays(2), LocalDate.now().plusDays(5));
-        public static final DoctorVacation docVacationPast = new DoctorVacation(Users.doctor, LocalDate.now().minusDays(2), LocalDate.now());
+        public static final DoctorVacation docVacation = new DoctorVacation(Users.doctor, LocalDate.parse("2125-04-10"), LocalDate.parse("2125-04-19"));
+        public static final DoctorVacation docVacationPast = new DoctorVacation(Users.doctor, LocalDate.parse("2025-04-10"), LocalDate.parse("2025-04-19"));
     }
 }

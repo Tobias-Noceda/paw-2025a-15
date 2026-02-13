@@ -80,7 +80,7 @@ public class AppointmentJpaDao implements AppointmentDao {
         return Optional.of(app);
     }
 
-    @Override
+    @Override//TODO deprecate probably
     public List<AppointmentNew> getFutureAppointmentDataByPatient(Patient patient) {
         String query = "FROM AppointmentNew a " +
                     "WHERE a.patient = :patient " +
@@ -99,6 +99,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public List<AppointmentNew> getFutureAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
+        if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         String query = PATIENTS_FUTURE_APPOINTMENTS_QUERY;
 
         LocalDateTime now = LocalDateTime.now();
@@ -130,7 +131,7 @@ public class AppointmentJpaDao implements AppointmentDao {
         return count.intValue();
     }
 
-    @Override
+    @Override //TODO deprecate probably
     public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient) {
         String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
 
@@ -145,6 +146,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
+        if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
 
         return em.createQuery(query, AppointmentNew.class)
@@ -158,6 +160,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public Integer getOldAppointmentTotalByPatient(Patient patient) {
+        if(patient==null) return 0;
         String query = "SELECT COUNT(a) FROM AppointmentNew a " +
                     "JOIN a.shift s " +
                     "JOIN a.patient p " +
@@ -196,6 +199,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public List<AppointmentNew> getFutureAppointmentDataPageByDoctor(Doctor doctor, int page, int pageSize) {
+        if(doctor==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         String query = DOCTORS_FUTURE_APPOINTMENTS_QUERY;
 
         LocalDateTime now = LocalDateTime.now();
@@ -212,6 +216,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public Integer getFutureAppointmentTotalByDoctor(Doctor doctor) {
+        if(doctor==null) return 0;
         String query = "SELECT COUNT(a) FROM AppointmentNew a " +
                     "JOIN a.shift s " +
                     "JOIN a.patient p " +

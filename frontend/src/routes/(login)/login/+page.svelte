@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 	import { base } from "$app/paths";
 	import Button from "$components/Button/Button.svelte";
 	import Input from "$components/Input/Input.svelte";

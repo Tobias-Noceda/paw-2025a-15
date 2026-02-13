@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -17,6 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
@@ -92,12 +95,18 @@ public class PatientJpaDaoTest {
     }
     
     @Test
-    public void testUpdate(){
+    public void testUpdate(){ //TODO test all null cases
         final Patient PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
         PATIENT.getPicture().setId(TestData.Images.validImageId);
 
+        final String TELEPHONE = "11 1234 5678";
+        //pic
+        //locale
+        //birthdate
         final BloodTypeEnum BLOOD_TYPE = TestData.PatientDetails.BLOOD_TYPE_1;
+        final BigDecimal HEIGHT = TestData.PatientDetails.HEIGHT;
+        final BigDecimal WEIGHT = TestData.PatientDetails.WEIGHT;
         final Boolean SMOKES = TestData.PatientDetails.SMOKES_1;
         final Boolean DRINKS = TestData.PatientDetails.DRINKS_1;
         final String MEDS = TestData.PatientDetails.MEDS;
@@ -106,10 +115,18 @@ public class PatientJpaDaoTest {
         final String DIET = TestData.PatientDetails.DIET;
         final String HOBBIES = TestData.PatientDetails.HOBBIES;
         final String JOB = TestData.PatientDetails.JOB_1;
+        //insurance
+        //insuranceNumber
 
-        patientDao.updatePatient(PATIENT, PATIENT.getTelephone(), PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, PATIENT.getHeight(), PATIENT.getWeight(), SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null);
+        patientDao.updatePatient(PATIENT, TELEPHONE, PATIENT.getPicture(), PATIENT.getLocale(), PATIENT.getBirthdate(), BLOOD_TYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, null, null);
 
+        Assert.assertEquals(PATIENT.getTelephone(), TELEPHONE);
+        //
+        //
+        //
         Assert.assertEquals(PATIENT.getBloodType(), BLOOD_TYPE);
+        Assert.assertEquals(PATIENT.getHeight(), HEIGHT);
+        Assert.assertEquals(PATIENT.getWeight(), WEIGHT);
         Assert.assertEquals(PATIENT.getSmokes(), SMOKES);
         Assert.assertEquals(PATIENT.getDrinks(), DRINKS);
         Assert.assertEquals(PATIENT.getMeds(), MEDS);
@@ -118,6 +135,8 @@ public class PatientJpaDaoTest {
         Assert.assertEquals(PATIENT.getDiet(), DIET);
         Assert.assertEquals(PATIENT.getHobbies(), HOBBIES);
         Assert.assertEquals(PATIENT.getJob(), JOB);
+        //
+        //
     }
 
     @Test
@@ -156,6 +175,159 @@ public class PatientJpaDaoTest {
 
         Assert.assertNotNull(foundPatient);
         Assert.assertFalse(foundPatient.isPresent());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCount() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final long DOC_ID = TestData.Users.doctorId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, DOC_NAME);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertEquals(1, count);
+        Assert.assertNotNull(doctorPersisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCountNullName() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC_ID = TestData.Users.doctorId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, null);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertEquals(1, count);
+        Assert.assertNotNull(doctorPersisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCountEmptyName() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC_ID = TestData.Users.doctorId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, "");
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertEquals(1, count);
+        Assert.assertNotNull(doctorPersisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNameCountNonexistentPatient() {
+        final long PATIENT_ID = 0L;
+
+        int count = patientDao.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, null);
+
+        Assert.assertEquals(0, count);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNamePage() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        final String DOC_NAME = TestData.Users.doctor.getName();
+        final Long DOC_ID = TestData.Users.doctorId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        List<Doctor> docs = patientDao.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, DOC_NAME, 1, 1);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertNotNull(docs);
+        Assert.assertFalse(docs.isEmpty());
+        Assert.assertEquals(DOC_ID, docs.get(0).getId());
+        Assert.assertNotNull(doctorPersisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNamePageNullName() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC_ID = TestData.Users.doctorId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        List<Doctor> docs = patientDao.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, null, 1, 1);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertNotNull(docs);
+        Assert.assertFalse(docs.isEmpty());
+        Assert.assertEquals(DOC_ID, docs.get(0).getId());
+        Assert.assertNotNull(doctorPersisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNamePageEmptyName() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        final Long DOC_ID = TestData.Users.doctorId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        List<Doctor> docs = patientDao.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, "", 1, 1);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertNotNull(docs);
+        Assert.assertFalse(docs.isEmpty());
+        Assert.assertEquals(DOC_ID, docs.get(0).getId());
+        Assert.assertNotNull(doctorPersisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNamePageNonexistentPatient() {
+        final long PATIENT_ID = 0L;
+
+        List<Doctor> docs = patientDao.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, null, 1, 1);
+
+        Assert.assertNotNull(docs);
+        Assert.assertTrue(docs.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNamePageInvalidPage() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        List<Doctor> docs = patientDao.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, null, 0, 1);
+
+        Assert.assertNotNull(docs);
+        Assert.assertTrue(docs.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:patientDetails.sql", "classpath:authDoctors.sql"})
+    public void testGetAuthDoctorsByPatientIdAndNamePageInvalidPageSize() {
+        final Patient PATIENT = TestData.Users.patient;
+        final long PATIENT_ID = TestData.Users.patientId;
+        PATIENT.setId(TestData.Users.patientId);
+        PATIENT.getPicture().setId(TestData.Images.validImageId);
+
+        List<Doctor> docs = patientDao.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, null, 1, 0);
+
+        Assert.assertNotNull(docs);
+        Assert.assertTrue(docs.isEmpty());
     }
 
 }

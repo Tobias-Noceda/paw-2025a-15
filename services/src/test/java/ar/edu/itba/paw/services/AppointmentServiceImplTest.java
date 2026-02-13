@@ -33,6 +33,7 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.models.exceptions.AppointmentAlreadyTakenException;
+import ar.edu.itba.paw.models.exceptions.BadRequestException;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.models.exceptions.UnauthorizedException;
 
@@ -250,7 +251,7 @@ public class AppointmentServiceImplTest {
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.empty());
 
-        Assert.assertThrows(NotFoundException.class, () -> 
+        Assert.assertThrows(BadRequestException.class, () -> 
             as.cancelAppointment(SHIFT_ID, APP_DATE, START_TIME, END_TIME, PATIENT_ID)
         );
     }
@@ -333,15 +334,6 @@ public class AppointmentServiceImplTest {
         );
     }
 
-    // @Test
-    // public void testGetFutureAppointmentDataByPatientIdNonexistentPatient(){
-    //     Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-
-    //     Assert.assertThrows(NotFoundException.class, () -> 
-    //         as.getFutureAppointmentDataByPatientId(PATIENT_ID)
-    //     );
-    // }
-
     @Test
     public void testGetOldAppointmentDataByPatientIdNonexistentPatient(){
         Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
@@ -352,11 +344,58 @@ public class AppointmentServiceImplTest {
     }
 
     @Test
+    public void testGetOldAppointmentDataPageByPatientIdNonexistentPatient(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getOldAppointmentDataPageByPatientId(PATIENT_ID, 1, 100)
+        );
+    }
+
+    @Test
+    public void testGetOldAppointmentTotalByPatientIdNonexistentPatient(){
+        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getOldAppointmentTotalByPatientId(PATIENT_ID)
+        );
+    }
+
+    @Test
     public void testGetFutureAppointmentDataByDoctorIdNonexistentDoc(){
         Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             as.getFutureAppointmentDataByDoctorId(DOC_ID)
+        );
+    }
+
+    @Test
+    public void testGetFutureAppointmentDataPageByUserIdNonexistentDocAndPAt(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(ps.getPatientById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getFutureAppointmentDataPageByUserId(DOC_ID, 1, 100)
+        );
+    }
+
+    @Test
+    public void testGetFutureAppointmentTotalByUserIdNonexistentDocAndPat(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+        Mockito.when(ps.getPatientById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getFutureAppointmentTotalByUserId(DOC_ID)
+        );
+    }
+
+    @Test
+    public void testGetAvailableTurnsByDoctorIdByDateNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            as.getAvailableTurnsByDoctorIdByDate(DOC_ID, LocalDate.now())
         );
     }
 

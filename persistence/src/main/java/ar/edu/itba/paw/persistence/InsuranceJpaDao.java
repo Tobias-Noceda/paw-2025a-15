@@ -60,6 +60,8 @@ public class InsuranceJpaDao implements InsuranceDao{
 
     @Override
     public int getInsurancesByDoctorIdCount(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
         final TypedQuery<Long> query = em.createQuery(
             "select count(i) from Doctor d join d.insurances i where d.id = :doctorId",
             Long.class
@@ -101,22 +103,31 @@ public class InsuranceJpaDao implements InsuranceDao{
 
     @Override
     public int searchInsurancesByNameCount(String name) {
+        String baseQuery = "select count(i) from Insurance as i ";
+        if(name != null && !name.trim().isEmpty()) {
+            baseQuery += "where lower(i.name) like :name";
+        }
         final TypedQuery<Long> query = em.createQuery(
-            "select count(i) from Insurance as i where lower(i.name) like :name",
+            baseQuery,
             Long.class
         );
-        query.setParameter("name", "%" + sanitize(name) + "%");
+        if(name != null && !name.trim().isEmpty()) query.setParameter("name", "%" + sanitize(name) + "%");
         return query.getSingleResult().intValue();
     }
 
     @Override
     public List<Insurance> searchInsurancesByNamePage(String name, int page, int pageSize) {
         if (page < 1 || pageSize <= 0) return Collections.emptyList();
-        final TypedQuery<Insurance> query = em.createQuery(
-            "from Insurance as i where lower(i.name) like :name",
-            Insurance.class
-        );
-        query.setParameter("name", "%" + sanitize(name) + "%");
+        String baseQuery = "from Insurance as i ";
+        if(name != null && !name.trim().isEmpty()) {
+            baseQuery += "where lower(i.name) like :name";
+        }
+        TypedQuery<Insurance> query = em.createQuery(
+                    baseQuery,
+                    Insurance.class
+                );
+
+        if(name != null && !name.trim().isEmpty()) query.setParameter("name", "%" + sanitize(name) + "%");
         query.setFirstResult(page == 0 ? 0 : (page - 1) * pageSize);
         query.setMaxResults(pageSize);
         

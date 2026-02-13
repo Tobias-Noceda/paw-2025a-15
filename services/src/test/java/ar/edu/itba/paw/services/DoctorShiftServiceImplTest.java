@@ -75,13 +75,31 @@ public class DoctorShiftServiceImplTest {
         );
     }
 
-    // @Test
-    // public void testGetAvailableTurnsByDOctorIdByDateNonexistentDoctor(){
-    //     Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+    @Test
+    public void testGetActiveShiftsByDoctorIdNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
-    //     Assert.assertThrows(NotFoundException.class, () -> 
-    //         dss.getAvailableTurnsByDoctorIdByDate(DOC_ID, LocalDate.now())
-    //     );
-    // }
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dss.getActiveShiftsByDoctorId(DOC_ID)
+        );
+    }
+
+    @Test
+    public void testGetActiveShiftsByDoctorIdPageNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dss.getActiveShiftsByDoctorIdPage(DOC_ID,1 ,100)
+        );
+    }
+
+    @Test
+    public void testGetActiveShiftsByDoctorIdCountNonexistentDoc(){
+        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            dss.getActiveShiftsByDoctorIdCount(DOC_ID)
+        );
+    }
 
 }

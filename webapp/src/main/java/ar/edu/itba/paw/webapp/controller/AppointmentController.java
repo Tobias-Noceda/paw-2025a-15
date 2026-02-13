@@ -85,7 +85,7 @@ public class AppointmentController {
                             e -> e.getKey(),
                             e -> e.getValue().get(0)
                         )),
-                    uriInfo
+                    uriInfo.getBaseUriBuilder().path(AppointmentController.class)
                 );
             }
             case TAKEN -> {
@@ -129,7 +129,7 @@ public class AppointmentController {
                     e -> e.getKey(),
                     e -> e.getValue().get(0)
                 )),
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(AppointmentController.class)
         );
     }
 

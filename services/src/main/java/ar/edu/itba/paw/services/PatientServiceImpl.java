@@ -46,7 +46,7 @@ public class PatientServiceImpl implements PatientService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
+    @Transactional(readOnly=true)
     @Override
     public Optional<Patient> getPatientById(long id) {
         return patientDao.getPatientById(id);
@@ -123,12 +123,14 @@ public class PatientServiceImpl implements PatientService{
         LOGGER.info("Updated patient with id: {}", patient.getId());
     }
 
+    @Transactional(readOnly=true)
     @Override
     public int getAuthDoctorsByPatientIdAndNameCount(long patientId, String name) {
         getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return patientDao.getAuthDoctorsByPatientIdAndNameCount(patientId, name);
     }
 
+    @Transactional(readOnly=true)
     @Override
     public List<Doctor> getAuthDoctorsByPatientIdAndNamePage(long patientId, String name, int page, int pageSize) {
         getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));

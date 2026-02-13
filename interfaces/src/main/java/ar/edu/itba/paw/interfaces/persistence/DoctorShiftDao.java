@@ -8,9 +8,10 @@ import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
-public interface DoctorShiftDao {
+public interface DoctorShiftDao {//TODO check deprecated
     public Optional<DoctorSingleShift> getShiftById(long id);
 
+    @Deprecated
     public DoctorSingleShift create(Doctor doctor, WeekdayEnum weekday, String address, LocalTime startTime, LocalTime endTime, int slot);
 
     public void doctorSetShifts(Doctor doctor, List<DoctorSingleShift> shifts);

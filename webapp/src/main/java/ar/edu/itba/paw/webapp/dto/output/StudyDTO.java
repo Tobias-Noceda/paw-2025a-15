@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
@@ -17,7 +16,7 @@ public class StudyDTO {
 
     private String type;
     private String comment;
-    private LocalDateTime uploadDate;
+    private LocalDate uploadDate;
     private LocalDate studyDate;
     
     private LinkDTO links;
@@ -31,7 +30,7 @@ public class StudyDTO {
 
         dto.setType(study.getType().getdisplayName());
         dto.setComment(study.getComment());
-        dto.setUploadDate(study.getUploadDate());
+        dto.setUploadDate(study.getUploadDate().toLocalDate());
         dto.setStudyDate(study.getStudyDate());
 
         URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).path("studies").path(String.valueOf(study.getId())).build();
@@ -69,11 +68,11 @@ public class StudyDTO {
         this.comment = comment;
     }
 
-    public LocalDateTime getUploadDate(){
+    public LocalDate getUploadDate(){
         return uploadDate;
     }
 
-    public void setUploadDate(LocalDateTime uploadDate){
+    public void setUploadDate(LocalDate uploadDate){
         this.uploadDate = uploadDate;
     }
 

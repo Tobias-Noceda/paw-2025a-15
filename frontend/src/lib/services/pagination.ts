@@ -1,4 +1,5 @@
 import type { Paginated } from "$types/api";
+import { parseDateInLocalTimezone } from "./appointments";
 
 export const getPaginationLinks = (response: Response) => {
     let links: Paginated<unknown>['_links'] = {};
@@ -26,7 +27,7 @@ export const getPageInfoFromHeaders = (response: Response) => {
         if (response.headers.get(key)) {
             pageInfo = {
                 ...pageInfo,
-                [value]: Number(response.headers.get(key)),
+                [value]: isNaN(Number(response.headers.get(key))) ? parseDateInLocalTimezone(response.headers.get(key)!) : Number(response.headers.get(key)),
             };
         }
     });

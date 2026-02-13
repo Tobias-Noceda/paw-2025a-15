@@ -6,6 +6,7 @@ import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 
 // Parse date in local timezone to avoid UTC conversion issues
 export const parseDateInLocalTimezone = (dateStr: string): Date => {
+    if (!dateStr) return new Date();
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day);
 };
@@ -46,13 +47,13 @@ export const fetchFreeAppointments = async (
 
 export const fetchNonFreeAppointments = async (
     urlString: string,
+    fetchForPatient: boolean,
     fetchFn: typeof fetch = fetch,
     isPaginationLink: boolean = false
 ): Promise<Paginated<Appointment>> => {
     let urlStringFinal = urlString;
 
     if (!isPaginationLink) {
-        console.log('Non-pagination link, setting pageSize to 15:', urlString);
         const url = new URL(urlString);
         url.searchParams.set('pageSize', '15');
         urlStringFinal = url.toString();
@@ -67,6 +68,17 @@ export const fetchNonFreeAppointments = async (
     // Populate doctor data for each appointment
     for (const appointment of appointments.results) {
         await populateAppointmentData(appointment, fetchFn);
+        if (fetchForPatient) {
+            try {
+                const patientResponse = await getAuth(appointment.links.patient, undefined, fetchFn);
+                if (patientResponse.ok) {
+                    const patient = await patientResponse.json();
+                    appointment.patient = patient;
+                }
+            } catch (error) {
+                console.error('Failed to populate patient data:', error);
+            }
+        }
     }
 
     return appointments;
@@ -97,7 +109,11 @@ export const takeAppointment = async (
             status: AppointmentStatus.TAKEN,
             description: details
         },
-        undefined,
+        {
+            headers: {
+                'Content-Type': 'application/vnd.appointments.v1+json'
+            }
+        },
         fetchFn
     );
 
@@ -119,7 +135,11 @@ export const cancelAppointment = async (
             status: AppointmentStatus.FREE,
             description: null
         },
-        undefined,
+        {
+            headers: {
+                'Content-Type': 'application/vnd.appointments.v1+json'
+            }
+        },
         fetchFn
     );
 

@@ -68,7 +68,7 @@ export const fetchDoctors = async (
     return doctors;
 };
 
-export const fetchDoctorsPage = async (nextUrl: string, fetchFn: typeof fetch = fetch): Promise<Paginated<Doctor>> => {
+export const fetchDoctorsPage = async (nextUrl: string, loggedUser?: User, fetchFn: typeof fetch = fetch): Promise<Paginated<Doctor>> => {
     let doctors: Paginated<Doctor> = { results: [], _links: {} };
     try {
         const response = await get(nextUrl, undefined, fetchFn);
@@ -79,6 +79,9 @@ export const fetchDoctorsPage = async (nextUrl: string, fetchFn: typeof fetch = 
         }
         for (const doctor of doctors.results) {
             await populateDoctorData(doctor, fetchFn);
+            if (loggedUser) {
+                populateAuthorizationData(doctor, loggedUser);
+            }
         }
 
         return doctors;
@@ -95,15 +98,15 @@ export const fetchDoctorById = async (id: string, loggedUser: User, fetchFn: typ
     const doctor = await response.json();
     if (doctor) {
         await populateDoctorData(doctor, fetchFn);
-        await populateAuthorizationData(doctor, loggedUser, fetchFn);
+        populateAuthorizationData(doctor, loggedUser);
     }
     
     return doctor;
 };
 
 export const fetchDoctorAuthorizations = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<DoctorAuthorizations | null> => {
-    if (doctor.links.authorizationResolved) {
-        const response = await getAuth(doctor.links.authorizationResolved, undefined, fetchFn);
+    if (doctor.links.authorization.resolved) {
+        const response = await getAuth(doctor.links.authorization.resolved, undefined, fetchFn);
         if (response.ok) {
             return await response.json();
         }
@@ -249,12 +252,12 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
     return doctor;
 };
 
-const populateAuthorizationData = async (doctor: Doctor, loggedUser: User, fetchFn: typeof fetch = fetch): Promise<Doctor> => {
+const populateAuthorizationData = (doctor: Doctor, loggedUser: User): Doctor => {
     if (doctor.links.authorization) {
         const template = UriTemplate(doctor.links.authorization.href);
         const url = template.fill({ patientId: loggedUser.id });
 
-        doctor.links.authorizationResolved = url; // Store the resolved URL for filtering
+        doctor.links.authorization.resolved = url; // Store the resolved URL for filtering
     }
 
     return doctor;

@@ -109,7 +109,7 @@ public class PatientJpaDao implements PatientDao {
     @Override
     public List<Doctor> getAuthDoctorsByPatientIdAndNamePage(long patientId, String name, int page, int pageSize) {
         Patient patient = em.find(Patient.class, patientId);
-        if(patient==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
         TypedQuery<Doctor> query = em.createQuery(
                 "select distinct ad.doctor from AuthDoctor as ad where ad.patient = :patient ", Doctor.class);

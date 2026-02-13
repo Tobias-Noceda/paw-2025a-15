@@ -141,7 +141,7 @@ public class DoctorController {
             pageSize,
             totalDoctors,
             queryParams,
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(DoctorController.class)
         );
     }
 

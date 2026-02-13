@@ -46,13 +46,7 @@ export const fetchPatientById = async (id: number, loggedUser?: User | null, fet
 
     await populatePatientData(patient, fetchFn);
 
-    if (patient.links.studies && patient.links.studies.templated && loggedUser && loggedUser.role === 'DOCTOR' && loggedUser.id !== undefined) {
-        const template = UriTemplate(patient.links.studies.href);
-        const url = template.fill({ doctorId: loggedUser.id });
-        patient.links.resolvedStudies = url;
-    }
-
-    return patient;
+    return setPatientsStudyLink(patient, loggedUser);
 };
 
 export const createPatient = async (patient: Partial<Patient>, password: string): Promise<void> => {
@@ -114,3 +108,60 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
     return patient;
 };
 
+
+    // Fetch habits info
+    if (patient.links.habitsInfo) {    
+        response = await getAuth(patient.links.habitsInfo, undefined, fetchFn)
+            .catch(() => null);
+        if (response && response.ok) {
+            patient.gaveHabits = true;
+            data = await response.json();
+            patient.drinks = data.drinks;
+            patient.smokes = data.smokes;
+            patient.diet = data.diet;
+        }
+    }
+
+    // Fetch medical info
+    if (patient.links.medicalInfo) {
+        response = await getAuth(patient.links.medicalInfo, undefined, fetchFn)
+            .catch(() => null);
+
+        if (response && response.ok) {
+            patient.gaveMedical = true;
+            data = await response.json();
+            patient.meds = data.meds;
+            patient.conditions = data.conditions;
+            patient.allergies = data.allergies;
+        }
+    }
+
+    // Fetch social info
+    if (patient.links.socialInfo) {
+        response = await getAuth(patient.links.socialInfo, undefined, fetchFn)
+            .catch(() => null);
+
+        if (response && response.ok) {
+            patient.gaveSocial = true;
+            data = await response.json();
+            patient.hobbies = data.hobbies;
+            patient.job = data.job;
+        }
+    }
+
+    return patient;
+};
+
+export const setPatientsStudyLink = (patient: Patient, loggedUser?: User | null): Patient => {
+    if (patient.links.studies && patient.links.studies.templated) {
+        if (loggedUser && loggedUser.role === 'DOCTOR' && loggedUser.id !== undefined) {
+            const template = UriTemplate(patient.links.studies.href);
+            const url = template.fill({ doctorId: loggedUser.id });
+            patient.links.studies.resolved = url; // Store the resolved URL for filtering
+        } else {
+            patient.links.studies.resolved = patient.links.studies.href.split('{')[0]; // Remove the template part if user is not a doctor or not logged in
+        }
+    }
+
+    return patient;
+};
