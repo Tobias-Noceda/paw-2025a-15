@@ -50,7 +50,6 @@
     <jersey.version>2.43</jersey.version>
 
     <jjwt.version>0.12.6</jjwt.version>
-    <lombok.version>1.18.36</lombok.version>
 
     <frontend.plugin.version>1.15.1</frontend.plugin.version>
     <node.version>v22.12.0</node.version>
@@ -306,14 +305,6 @@
         <artifactId>jjwt-jackson</artifactId>
         <version>${jjwt.version}</version>
         <scope>runtime</scope>
-      </dependency>
-
-      <!-- Lombok -->
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
-        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

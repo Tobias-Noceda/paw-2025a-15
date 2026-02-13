@@ -1,8 +1,11 @@
-import type { Doctor, Insurance, Paginated, Shift } from "$types/api";
+import type { Doctor, DoctorAuthorizations, Insurance, Paginated, Shift } from "$types/api";
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
-import { getPaginationLinks } from "./pagination";
-import { get, getAuth, postAuth, deleteAuth } from "$modules/api.svelte";
+import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
+import { get, getAuth, postAuth, deleteAuth, putAuth } from "$modules/api.svelte";
+import UriTemplate from "uri-templates";
+import type { User } from "$stores/user";
+import type { AccessLevels } from "$types/enums/accessLevels";
 
 /**
  * Parse time string in HH:mm format and return a Date object
@@ -16,17 +19,18 @@ function parseTime(timeStr: string): Date {
 
 export const fetchDoctors = async (
     name: string,
-    ensurance: string,
+    insurance: string,
     day: string,
     specialty: string,
-    order: string
+    order: string,
+    fetchFn: typeof fetch = fetch,
 ): Promise<Paginated<Doctor>> => {
     
     let doctors: Paginated<Doctor> = { results: [], _links: {} };
     try {
         let url = new URL(`${baseApiUrl}/doctors`);
-        if (ensurance !== 'all') {
-            url.searchParams.append('insurance', ensurance);
+        if (insurance !== 'all') {
+            url.searchParams.append('insurance', insurance);
         }
         if (day !== 'all') {
             url.searchParams.append('weekday', day);
@@ -41,26 +45,14 @@ export const fetchDoctors = async (
             url.searchParams.append('name', name.trim());
         }
 
-        const response = await get(url.toString());
+        const response = await get(url.toString(), undefined, fetchFn);
         if (response.ok) {
             doctors.results = await response.json();
-            response.headers.get('Link')?.split(',').forEach(link => {
-                const match = link.match(/<([^>]+)>;\s*rel="([^"]+)"/);
-                if (match) {
-                    const [, linkUrl, rel] = match;
-                    doctors._links[rel as keyof typeof doctors._links] = linkUrl;
-                }
-            });
-
-            if (response.headers.get('X-Current-Page') && response.headers.get('X-Total-Pages')) {
-                doctors._pageInfo = {
-                    currentPage: Number(response.headers.get('X-Current-Page')),
-                    totalPages: Number(response.headers.get('X-Total-Pages'))
-                };
-            }
+            doctors._links = getPaginationLinks(response);
+            doctors._pageInfo = getPageInfoFromHeaders(response);
 
             for (const doctor of doctors.results) {
-                await populateDoctorData(doctor);
+                await populateDoctorData(doctor, fetchFn);
             }
         }
     } catch (error) {
@@ -70,22 +62,20 @@ export const fetchDoctors = async (
     return doctors;
 };
 
-export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Doctor>> => {
+export const fetchDoctorsPage = async (nextUrl: string, loggedUser?: User, fetchFn: typeof fetch = fetch): Promise<Paginated<Doctor>> => {
     let doctors: Paginated<Doctor> = { results: [], _links: {} };
     try {
-        const response = await get(nextUrl);
+        const response = await get(nextUrl, undefined, fetchFn);
         if (response.ok) {
             doctors.results = await response.json();
             doctors._links = getPaginationLinks(response);
-            if (response.headers.get('X-Current-Page') && response.headers.get('X-Total-Pages')) {
-                doctors._pageInfo = {
-                    currentPage: Number(response.headers.get('X-Current-Page')),
-                    totalPages: Number(response.headers.get('X-Total-Pages'))
-                };
-            }
+            doctors._pageInfo = getPageInfoFromHeaders(response);
         }
         for (const doctor of doctors.results) {
-            await populateDoctorData(doctor);
+            await populateDoctorData(doctor, fetchFn);
+            if (loggedUser) {
+                populateAuthorizationData(doctor, loggedUser);
+            }
         }
 
         return doctors;
@@ -95,16 +85,84 @@ export const fetchDoctorsPage = async (nextUrl: string): Promise<Paginated<Docto
     }
 };
 
-export const fetchDoctorById = async (id: string, fetchFn: typeof fetch = fetch): Promise<Doctor | null> => {
+export const fetchDoctorById = async (id: string, loggedUser: User, fetchFn: typeof fetch = fetch): Promise<Doctor | null> => {
     const url = new URL(`${baseApiUrl}/doctors/${id}`);
     const response = await get(url.toString(), undefined, fetchFn);
     
     const doctor = await response.json();
     if (doctor) {
         await populateDoctorData(doctor, fetchFn);
+        populateAuthorizationData(doctor, loggedUser);
     }
     
     return doctor;
+};
+
+export const fetchDoctorAuthorizations = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<DoctorAuthorizations | null> => {
+    if (doctor.links.authorization.resolved) {
+        const response = await getAuth(doctor.links.authorization.resolved, undefined, fetchFn);
+        if (response.ok) {
+            return await response.json();
+        }
+    }
+
+    return null;
+}
+
+export const putAuthorizations = async (stringUrl: string, isAuthorized: boolean, accessLevels: AccessLevels[], fetchFn: typeof fetch = fetch): Promise<void> => {
+    const url = new URL(stringUrl);
+    if (url.searchParams.has('patientId')) {
+        url.searchParams.delete('patientId'); // Remove patientId if present, as it's not needed for the PUT request
+    }
+    
+    const response = await putAuth(url.toString(), {
+        authorized: isAuthorized,
+        accessLevels: accessLevels
+    }, {
+        headers: {
+            'Content-Type': 'application/vnd.doctors.authorizations.v1+json'
+        }
+    }, fetchFn);
+
+    if (!response.ok) {
+        throw new Error("Failed to update authorizations");
+    }
+};
+
+type ShiftCreationData = {
+    startTime: string;
+    endTime: string;
+    duration: number;
+    address: string;
+    weekdays: Weekdays[];
+};
+
+export const createDoctor = async (
+    doctorData: Partial<Doctor>,
+    password: string,
+    shifts: ShiftCreationData
+): Promise<void> => {
+    const response = await post(`${baseApiUrl}/doctors`, {
+            name: doctorData.name,
+            email: doctorData.email,
+            password: password,
+            telephone: doctorData.telephone,
+            license: doctorData.license,
+            specialty: doctorData.specialty,
+            insurances: doctorData.insurances || [],
+            shifts: shifts
+        },
+        { 
+            headers: {
+                'Content-Type': 'application/vnd.doctors.creation.v1+json'
+            }
+        },
+        fetch
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to create doctor");
+    }
 };
 
 const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<Doctor> => {
@@ -133,6 +191,7 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
         const insurancesData: Insurance[] = await responseInsurances.json();
         doctor.insurances = insurancesData.map(ins => ins.name);
     }
+
     return doctor;
 };
 
@@ -203,4 +262,15 @@ export const deleteVacation = async (
         console.error('Failed to delete vacation:', error);
         return false;
     }
+};
+
+const populateAuthorizationData = (doctor: Doctor, loggedUser: User): Doctor => {
+    if (doctor.links.authorization) {
+        const template = UriTemplate(doctor.links.authorization.href);
+        const url = template.fill({ patientId: loggedUser.id });
+
+        doctor.links.authorization.resolved = url; // Store the resolved URL for filtering
+    }
+
+    return doctor;
 };

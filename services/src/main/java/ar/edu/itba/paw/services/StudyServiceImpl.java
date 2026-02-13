@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,13 +104,15 @@ public class StudyServiceImpl implements StudyService{
 
     @Transactional(readOnly = true)
     @Override
-    public int getStudyFilesCount(long studyId) {
+    public int getStudyFilesCount(Long studyId) {
+        if (studyId == null) return 0;
         return studyDao.getStudyFilesCount(studyId);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<File> getStudyFilesPage(long studyId, int page, int pageSize) {
+    public List<File> getStudyFilesPage(Long studyId, int page, int pageSize) {
+        if (studyId == null) return Collections.emptyList();
         return studyDao.getStudyFilesPage(studyId, page, pageSize);
     }
 
@@ -122,7 +125,7 @@ public class StudyServiceImpl implements StudyService{
 
             return studyDao.getFilteredStudiesByPatientAndDoctorCount(patientId, doctorId, type);
         }
-        else {
+        else {//TODO check aca no tendria que ir doc tmb entonces?
             return studyDao.getFilteredStudiesByPatientCount(patientId, type);
         }
     }

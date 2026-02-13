@@ -4,13 +4,15 @@ import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.User;
 
-public interface UserService {
+public interface UserService {//TODO check deprecated
 
+    @Deprecated
     public Optional<User> getUserById(long id);
 
     public Optional<User> getUserByEmail(String email);
 
     public void changePasswordByID(long id, String password);
 
+    @Deprecated
     public void askPasswordRecover(String email);
 }

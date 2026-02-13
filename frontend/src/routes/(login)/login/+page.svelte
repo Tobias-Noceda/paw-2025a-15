@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	import { goto, invalidateAll } from "$app/navigation";
 	import { base } from "$app/paths";
 	import Button from "$components/Button/Button.svelte";
 	import Input from "$components/Input/Input.svelte";
@@ -30,6 +30,7 @@
 
     <div class="flex flex-col items-center text-start gap-6 w-full">
         <Input
+            id="login-email"
             label={`${m["login.email_label"]()}:`}
             placeholder="you@example.com"
             bind:value={email}

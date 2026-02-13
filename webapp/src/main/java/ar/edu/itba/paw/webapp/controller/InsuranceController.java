@@ -19,7 +19,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -30,11 +29,13 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
+import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.InsuranceDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/insurances")
 @Component
@@ -50,9 +51,10 @@ public class InsuranceController {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response listInsurances(
         @QueryParam("supportedBy") final Long doctorId,
+        @QueryParam("name") @DefaultValue("") final String name,
         @QueryParam("page") @DefaultValue("1") final int page,
         @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
     ) {
@@ -70,30 +72,33 @@ public class InsuranceController {
                 pageSize, 
                 is.getInsurancesByDoctorIdCount(doctorId), 
                 queryParams, 
-                uriInfo
+                uriInfo.getBaseUriBuilder().path(InsuranceController.class)
             );
         }
         
-        final List<InsuranceDTO> allInsurances = is.getInsurancesPage(page, pageSize)
+        final List<InsuranceDTO> insurances = is.searchInsurancesByNamePage(name, page, pageSize)
             .stream().map(InsuranceDTO.mapper(uriInfo)).collect(Collectors.toList());
         
-        int totalInsurances = is.getInsurancesCount();
+        int totalInsurances = is.searchInsurancesByNameCount(name);
         
         return PaginationBuilder.buildResponse(
-            Response.ok(new GenericEntity<List<InsuranceDTO>>(allInsurances) {}), 
+            Response.ok(new GenericEntity<List<InsuranceDTO>>(insurances) {}), 
             page, 
             pageSize, 
             totalInsurances, 
             queryParams, 
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(InsuranceController.class)
         );
     }
 
     @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_INSURANCE)
     public Response createInsurance(@Valid InsuranceCreateDTO dto) {
-        File picture = fs.findById(dto.getPictureId()).orElseThrow(NotFoundException::new);
+        Long pictureId = URIHelper.getId(
+            dto.getPictureId(), 
+            uriInfo.getBaseUriBuilder().path(FileController.class).build()
+        );
+        File picture = fs.findById(pictureId).orElseThrow(NotFoundException::new);
         final Insurance insurance = is.create(dto.getName(), picture);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(insurance.getId())).build();
         return Response.created(uri).build();
@@ -101,7 +106,7 @@ public class InsuranceController {
 
     @GET
     @Path("/{id:\\d+}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response getInsuranceById(@PathParam("id") final long id) {
         Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
@@ -109,15 +114,19 @@ public class InsuranceController {
 
     @PATCH
     @Path("/{id:\\d+}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_INSURANCE)
+    @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response editInsurance(
         @PathParam("id") long id,
         @Valid InsuranceEditDTO dto
     ) {
-        is.getInsuranceById(id).orElseThrow(NotFoundException::new);
-        is.edit(id, dto.getName(), dto.getPictureId());
-        return Response.ok().build();
+        Long pictureId = URIHelper.getId(
+            dto.getPictureId(), 
+            uriInfo.getBaseUriBuilder().path(FileController.class).build()
+        );
+        Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
+        is.edit(id, dto.getName(), pictureId);
+        return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
     }
 
     @DELETE

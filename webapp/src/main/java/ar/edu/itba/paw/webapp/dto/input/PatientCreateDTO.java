@@ -40,7 +40,7 @@ public class PatientCreateDTO {
 
     @PastDate
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate birthDate;
+    private LocalDate birthdate;
 
     public String getName(){
         return name;
@@ -90,12 +90,17 @@ public class PatientCreateDTO {
         this.weight = weight; 
     }
 
-    public LocalDate getBirthDate() { 
-        return birthDate; 
+    public LocalDate getBirthdate() { 
+        return birthdate; 
     }
 
-    public void setBirthDate(LocalDate birthDate) { 
-        this.birthDate = birthDate; 
+    public void setBirthdate(LocalDate birthdate) { 
+        this.birthdate = birthdate; 
     }
     
+    @Override
+    public String toString() {
+        return "PatientCreateDTO [name=" + name + ", email=" + email + ", password=" + password + ", telephone=" + telephone
+                + ", height=" + height + ", weight=" + weight + ", birthdate=" + birthdate + "]";
+    }
 }

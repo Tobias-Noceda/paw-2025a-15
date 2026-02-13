@@ -60,6 +60,8 @@ public class InsuranceJpaDao implements InsuranceDao{
 
     @Override
     public int getInsurancesByDoctorIdCount(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
         final TypedQuery<Long> query = em.createQuery(
             "select count(i) from Doctor d join d.insurances i where d.id = :doctorId",
             Long.class
@@ -100,9 +102,52 @@ public class InsuranceJpaDao implements InsuranceDao{
     }
 
     @Override
+    public int searchInsurancesByNameCount(String name) {
+        String baseQuery = "select count(i) from Insurance as i ";
+        if(name != null && !name.trim().isEmpty()) {
+            baseQuery += "where lower(i.name) like :name";
+        }
+        final TypedQuery<Long> query = em.createQuery(
+            baseQuery,
+            Long.class
+        );
+        if(name != null && !name.trim().isEmpty()) query.setParameter("name", "%" + sanitize(name) + "%");
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<Insurance> searchInsurancesByNamePage(String name, int page, int pageSize) {
+        if (page < 1 || pageSize <= 0) return Collections.emptyList();
+        String baseQuery = "from Insurance as i ";
+        if(name != null && !name.trim().isEmpty()) {
+            baseQuery += "where lower(i.name) like :name";
+        }
+        TypedQuery<Insurance> query = em.createQuery(
+                    baseQuery,
+                    Insurance.class
+                );
+
+        if(name != null && !name.trim().isEmpty()) query.setParameter("name", "%" + sanitize(name) + "%");
+        query.setFirstResult(page == 0 ? 0 : (page - 1) * pageSize);
+        query.setMaxResults(pageSize);
+        
+        return query.getResultList();
+    }
+
+    @Override
     public void delete(Insurance insurance) {
         if (insurance != null) {
             em.remove(em.contains(insurance) ? insurance : em.merge(insurance));
         }
+    }
+
+    private String sanitize(String name) {
+        if (name == null) return null;
+        return name
+                .replace("\\", "\\\\\\")
+                .replace("%", "\\\\%")
+                .replace("_", "\\\\_")
+                .replaceAll("\\s+", " ")
+                .toLowerCase();
     }
 }

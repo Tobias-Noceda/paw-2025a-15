@@ -11,11 +11,10 @@ import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.Patient;
 
 public interface AppointmentDao {
+
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail);
 
     public Optional<AppointmentNew> getAppointmentByShiftDateAndTime(DoctorSingleShift shift, LocalDate date, LocalTime startTime, LocalTime endTime);
-
-    public List<AppointmentNew> getFutureAppointmentDataByPatient(Patient patient);
 
     public List<AppointmentNew> getFutureAppointmentDataPageByPatient(Patient patient, int page, int pageSize);
 
