@@ -80,23 +80,6 @@ public class AppointmentJpaDao implements AppointmentDao {
         return Optional.of(app);
     }
 
-    @Override//TODO deprecate probably
-    public List<AppointmentNew> getFutureAppointmentDataByPatient(Patient patient) {
-        String query = "FROM AppointmentNew a " +
-                    "WHERE a.patient = :patient " +
-                    "AND (a.id.date > :today " +
-                    "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
-                    "ORDER BY a.id.date ASC, a.id.startTime ASC";
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("patient", patient)
-                        .setParameter("today", now.toLocalDate())
-                        .setParameter("todaysTime", now.toLocalTime())
-                        .getResultList();
-    }
-
     @Override
     public List<AppointmentNew> getFutureAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
         if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();

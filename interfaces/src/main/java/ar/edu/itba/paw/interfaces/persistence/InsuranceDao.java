@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 
 public interface InsuranceDao {
+    
     public Insurance create(String name, File picture);
 
     public Insurance edit(Insurance insurance, String name, File picture);

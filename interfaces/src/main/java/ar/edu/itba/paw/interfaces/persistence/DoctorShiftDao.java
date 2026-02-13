@@ -18,7 +18,7 @@ public interface DoctorShiftDao {//TODO check deprecated
 
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
 
-    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);//TODO deprecar por los paginados
 
     public List<DoctorSingleShift> getActiveShiftsByDoctorIdPage(long doctorId, int page, int pageSize);
     

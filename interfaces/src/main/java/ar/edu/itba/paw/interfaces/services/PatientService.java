@@ -11,6 +11,7 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 
 public interface PatientService {
+    
     public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
 
     public Optional<Patient> getPatientById(long id);

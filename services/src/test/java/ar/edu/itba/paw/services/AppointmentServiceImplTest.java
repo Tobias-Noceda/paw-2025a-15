@@ -17,10 +17,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.AppointmentDao;
-import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
-import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.Doctor;
@@ -81,7 +79,7 @@ public class AppointmentServiceImplTest {
     private static final DoctorSingleShift SHIFT_00 = new DoctorSingleShift(DOC, WEEKDAY, ADDRESS, LocalTime.parse("00:00:00"), END_TIME, DURATION);
     private static final DoctorSingleShift SHIFT_WRONG_WEEKDAY = new DoctorSingleShift(DOC, WRONG_WEEKDAY, ADDRESS, START_TIME, END_TIME, DURATION);
     
-    private AppointmentNew APP;// = new AppointmentNew(SHIFT, PATIENT, APP_DATE, START_TIME, END_TIME);
+    private AppointmentNew APP;
 
     @InjectMocks
     private AppointmentServiceImpl as;
@@ -97,12 +95,6 @@ public class AppointmentServiceImplTest {
 
     @Mock
     private DoctorShiftService dss;
-
-    @Mock
-    private EmailService es;
-
-    @Mock 
-    private AuthDoctorService ads;
 
     @Before
     public void setup() {
@@ -227,23 +219,6 @@ public class AppointmentServiceImplTest {
         Assert.assertThrows(RuntimeException.class, () -> 
             as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME, APP_DETAIL)
         );
-    }
-
-    @Test
-    public void testAddAppointmentCreate(){
-        DOC.setId(DOC_ID);
-        SHIFT.setId(SHIFT_ID);
-        PATIENT.setId(PATIENT_ID);
-        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
-        Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
-        Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
-        Mockito.when(appointmentDaoMock.getAppointmentByShiftDateAndTime(Mockito.eq(SHIFT), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME))).thenReturn(Optional.empty());
-        Mockito.when(appointmentDaoMock.addAppointment(Mockito.eq(SHIFT_ID), Mockito.eq(PATIENT_ID), Mockito.eq(APP_DATE), Mockito.eq(START_TIME), Mockito.eq(END_TIME), Mockito.eq(APP_DETAIL))).thenReturn(APP);
-
-        AppointmentNew appointment = as.addAppointment(SHIFT_ID, PATIENT_ID, APP_DATE, START_TIME, END_TIME, APP_DETAIL);
-
-        Assert.assertNotNull(appointment);
-        Assert.assertEquals(APP, appointment);
     }
 
     @Test

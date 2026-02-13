@@ -931,7 +931,6 @@ public class AppointmentsJpaDaoTest {
         final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
 
         List<AppointmentNew> avTurns = appointmentDao.getAvailableTurnsByDoctorByDate(DOC, DATE);
-        Doctor persistedDOctor = em.find(Doctor.class, DOC_ID);
         AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME1, TIME2));
         AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME2, TIME3));
 
