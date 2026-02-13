@@ -1,0 +1,13 @@
+postgresql.db.url=postgres:5432/paw-2025a-15
+postgresql.db.name=paw-2025a-15
+postgresql.db.pswd=0meJb9emM
+
+security.key=MTBd/06vc81oIJJq13MrsaWMxwei+f2wS9a6Qk1nDTm8ocI2S83JIDxhOMHeRY2sSglahiQ8RJvhuBTQSD1aw2WhTVH0iQBsA+43EcIGXm4M4TTcCtCdGUKwrMuoOQChTe93dkpr/fS6wN/t7E8yoq0Mux6cFcF4sP64TTp/7Z4=
+
+api.base.url=http://localhost:8080/paw-2025a-15/api
+
+app.base-url=http://localhost:8080/paw-2025a-15/
+
+app.email.from=caretracehealth@gmail.com
+app.email.password=roih npoe lsry pltz
+mail.debug=true
