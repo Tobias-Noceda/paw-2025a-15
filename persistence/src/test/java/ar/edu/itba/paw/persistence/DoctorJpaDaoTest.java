@@ -727,7 +727,9 @@ public class DoctorJpaDaoTest {
     public void testGetDoctorVacationsPast(){
         final Long DOC_ID = TestData.Users.doctorId;
         final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
         final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+        DVP.getId().setDoctorId(DOC_ID);
 
         List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPast(DOC_ID);
         DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
@@ -745,7 +747,9 @@ public class DoctorJpaDaoTest {
     public void testGetDoctorVacationsFuture(){
         final Long DOC_ID = TestData.Users.doctorId;
         final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
         final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+        DVP.getId().setDoctorId(DOC_ID);
 
         List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuture(DOC_ID);
         DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
@@ -763,6 +767,7 @@ public class DoctorJpaDaoTest {
     public void testVacationsExists(){
         final Long DOC_ID = TestData.Users.doctorId;
         final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
 
         boolean result = doctorDao.vacationExists(DOC_ID, DV.getId().getStartDate(), DV.getId().getEndDate());
         DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
