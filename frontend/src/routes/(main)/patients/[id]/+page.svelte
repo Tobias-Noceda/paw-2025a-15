@@ -65,7 +65,9 @@
 			id: 'type',
 			label: m['studies.table.type'](),
 			render: (study: Study) => {
-				return m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]();
+				return study.type
+					? m[`studies.types.options.${study.type?.replace(/\s/g, '_').toLowerCase()}`]()
+					: '';
 			},
 			class: 'font-medium'
 		},

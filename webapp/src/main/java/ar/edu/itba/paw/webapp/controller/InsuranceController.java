@@ -29,12 +29,12 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.InsuranceEditDTO;
 import ar.edu.itba.paw.webapp.dto.output.InsuranceDTO;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/insurances")
@@ -72,7 +72,7 @@ public class InsuranceController {
                 pageSize, 
                 is.getInsurancesByDoctorIdCount(doctorId), 
                 queryParams, 
-                uriInfo
+                uriInfo.getBaseUriBuilder().path(InsuranceController.class)
             );
         }
         
@@ -87,7 +87,7 @@ public class InsuranceController {
             pageSize, 
             totalInsurances, 
             queryParams, 
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(InsuranceController.class)
         );
     }
 

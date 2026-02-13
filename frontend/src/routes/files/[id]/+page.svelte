@@ -6,9 +6,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-    console.log('File data:', data.file);
 	let contentType = $state<string>(data.file.type);
-    console.log('File content type:', contentType);
 
 	const isImage = $derived(contentType.startsWith('image/'));
 	const isPdf = $derived(contentType === 'application/pdf');

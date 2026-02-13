@@ -13,6 +13,7 @@
 	import Icon from '$components/Icon/Icon.svelte';
 	import Toast from '$components/Toast/Toast.svelte';
 	import JSZip from 'jszip';
+	import PopUp from '$components/PopUp/PopUp.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,6 +27,7 @@
 		return match ? match[1] : '';
 	};
 
+    let confirmDelete = $state(false);
     let showError = $state(false);
     let errorTitle = $state('');
     let errorMessage = $state('');
@@ -76,7 +78,6 @@
 			id: 'type',
 			label: m['study_info.table.file_type'](),
 			render: (file: File) => {
-                console.log('Type: ', file.type);
                 return m[`study_info.file_types.${file.type.replace('/', '_')}`]();
 			},
 			class: 'font-medium'
@@ -284,7 +285,7 @@
         <h1 class="text-[24px] font-bold mb-2.5">{study.comment}</h1>
         <p class="text-line text-primaryText">
             <span class="font-bold select-none">{m['study_info.labels.type']()}:</span>
-            {m[`studies.types.options.${study.type.replace(/\s/g, '_').toLowerCase()}`]()}
+            {m[`studies.types.options.${study.type?.replace(/\s/g, '_').toLowerCase()}`]()}
         </p>
         <p class="text-line text-primaryText">
             <span class="font-bold select-none">{m['study_info.labels.date']()}:</span>
@@ -311,16 +312,7 @@
                 variant="destructive"
                 class="w-fit"
                 onclick={() => {
-                    deleteStudy(study.links.self, fetch)
-                        .then(() => {
-                            goto(`${base}/studies`);
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                            errorTitle = m['study_info.error.deleting.title']();
-                            errorMessage = m['study_info.error.deleting.message']();
-                            showError = true;
-                        });
+                    confirmDelete = true;
                 }}
             >
                 <Icon name="trash" class="w-5 h-5 mr-1" />
@@ -381,6 +373,55 @@
             />
         </div>
     {/if}
+
+    {#if confirmDelete}
+		<PopUp onClose={() => (confirmDelete = false)}>
+			<div class="flex flex-col gap-4">
+				<h2 class="text-xl font-bold">{m['studies.pop_up.delete.title']()}</h2>
+				<div class="flex flex-col gap-1.5">
+					<p>
+						{m['studies.pop_up.delete.date_info']({
+							uploadDate: new Date(study.uploadDate).toLocaleDateString(
+								getLocale(),
+								{
+									year: 'numeric',
+									month: '2-digit',
+									day: '2-digit'
+								}
+							)
+						})}
+					</p>
+					<p class="font-semibold">
+						{m['studies.pop_up.delete.comment_label']()}
+						<span class="font-normal select-text"> {study.comment}</span>
+					</p>
+				</div>
+				<p class="text-red-600 font-semibold">{m['studies.pop_up.delete.subtitle']()}</p>
+				<div class="flex justify-end gap-2 mt-4">
+					<Button
+						variant="primary"
+						onclick={() => {
+                            deleteStudy(study.links.self, fetch)
+                                .then(() => {
+                                    goto(`${base}/studies`);
+                                })
+                                .catch((error) => {
+                                    console.error(error);
+                                    errorTitle = m['study_info.error.deleting.title']();
+                                    errorMessage = m['study_info.error.deleting.message']();
+                                    showError = true;
+                                });
+                        }}
+					>
+						{m['studies.pop_up.delete.confirm']()}
+					</Button>
+					<Button variant="destructive" onclick={() => (confirmDelete = false)}>
+						{m['studies.pop_up.delete.cancel']()}
+					</Button>
+				</div>
+			</div>
+		</PopUp>
+	{/if}
 
     <Toast
         bind:show={showError}

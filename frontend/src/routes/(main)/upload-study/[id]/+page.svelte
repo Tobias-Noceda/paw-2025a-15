@@ -138,7 +138,6 @@
 							input.onchange = (event) => {
 								const target = event.target as HTMLInputElement;
 								if (target.files) {
-									console.log('Selected files:', Array.from(target.files));
 									files = Array.from(target.files);
 								}
 							};

@@ -365,6 +365,34 @@
 				"specialty": "Especialidad",
 				"empty": "No tienes médicos autorizados para ver tu perfil."
 			}
+		},
+		"pop_up": {
+			"delete": {
+				"title": "¿Está seguro de que desea eliminar este estudio?",
+				"date_info": "El estudio fue subido el {uploadDate}",
+				"comment_label": "Con el comentario:",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar estudio",
+				"cancel": "Volver"
+			}
+		},
+		"messages": {
+			"error": {
+				"fething": {
+					"title": "Error al obtener los estudios",
+					"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+				},
+				"deleting": {
+					"title": "Error al eliminar estudio",
+					"message": "Ocurrió un error al intentar eliminar el estudio. Por favor, inténtelo de nuevo más tarde."
+				}
+			},
+			"success": {
+				"deleting": {
+					"title": "¡Estudio eliminado con éxito!",
+					"message": "Has eliminado un estudio de tu perfil."
+				}
+			}
 		}
 	},
 	"study_info": {

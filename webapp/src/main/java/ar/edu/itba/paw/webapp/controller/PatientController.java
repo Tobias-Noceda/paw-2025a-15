@@ -101,7 +101,7 @@ public class PatientController {
             pageSize, 
             ds.getAuthPatientsCountByDoctorIdAndName(doctorId, name), 
             queryParams, 
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(PatientController.class)
         );
     }
 
@@ -278,7 +278,7 @@ public class PatientController {
             pageSize, 
             ss.getFilteredStudiesCount(id, doctorId, type), 
             queryParams, 
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(id)).path("studies")
         );
     }
 
