@@ -8,7 +8,7 @@
 	import { type Doctor, type Insurance, type Paginated, type Patient } from '$types/api';
 	import { fetchDoctors, fetchDoctorsPage } from '$lib/services/doctors';
 	import Pagination from '$components/Pagination/Pagination.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { searchQuery, insurance, day, specialty, order, getFiltersURL } from '$stores/filters';
 	import { type PageData } from './$types';
@@ -20,12 +20,13 @@
 	import Icon from '$components/Icon/Icon.svelte';
 
 	let { data }: { data: PageData } = $props();
-	let firstLoad = true;
 
 	let userRole = $state(data.userRole);
-    let insurances: Paginated<Insurance> = $state({ results: [], _links: {} });
-	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
-	let patients: Paginated<Patient> = $state({ results: [], _links: {} });
+    let insurances: Paginated<Insurance> = $state(data.insurances || { results: [], _links: {} });
+	let doctors: Paginated<Doctor> = $state(data.doctors || { results: [], _links: {} });
+	let patients: Paginated<Patient> = $state(data.patients || { results: [], _links: {} });
+
+	let firstFetch = true;
 
 	const workDays = [
 		{ value: 'all', label: m['all']() },
@@ -54,10 +55,10 @@
 	let filterKey = $state(0);
 
 	async function applyFilters() {
-		goto(`?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
-		
-		doctors = await fetchDoctors($searchQuery, $insurance, $day, $specialty, $order);
+		doctors = await fetchDoctors($searchQuery, $insurance, $day, $specialty, $order, fetch);
 		filterKey++; // Force Pagination to remount
+
+		pushState(`${base}/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
 	}
 
 	// Watch URL params and refetch when they change
@@ -65,18 +66,8 @@
 		if ($loggedOut) {
 			return;
 		}
-		const urlSearchQuery = $page.url.searchParams.get('search') || '';
-		let insuranceSearch: string | undefined = undefined;
 
-		if (userRole === 'DOCTOR' && data.patientsLink) {
-			fetchPatients(urlSearchQuery, data.patientsLink, fetch).then(result => {
-				patients = result;
-				console.log('Fetched patients with query:', urlSearchQuery, 'Result:', result);
-				filterKey++;
-			});
-		} else if (userRole === 'ADMIN') {
-			insuranceSearch = urlSearchQuery;
-		} else {
+		if (!userRole || userRole === 'PATIENT') {
 			const insuranceParam = $page.url.searchParams.get('insurance') || 'all';
 			const dayParam = $page.url.searchParams.get('day') || 'all';
 			const specialtyParam = $page.url.searchParams.get('specialty') || 'all';
@@ -87,20 +78,36 @@
 			day.set(dayParam);
 			specialty.set(specialtyParam);
 			order.set(orderParam);
+		}
+	});
 
-			// Fetch doctors with current URL params
-			fetchDoctors(urlSearchQuery, insuranceParam, dayParam, specialtyParam, orderParam).then(result => {
+	$effect(() => {
+		if (firstFetch) {
+			firstFetch = false;
+			return;
+		}
+
+		let functionToRun;
+		if (userRole === 'DOCTOR' && data.patientsLink) {
+			functionToRun = () => fetchPatients($searchQuery, data.patientsLink!, fetch).then(result => {
+				patients = result;
+			});
+		} else if (userRole === 'ADMIN') {
+			functionToRun = () => fetchInsurances($searchQuery, fetch).then(result => {
+				insurances = result;
+			});
+		} else {
+			functionToRun = () => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order, fetch).then(result => {
 				doctors = result;
-				filterKey++;
 			});
 		}
 
-		if (firstLoad || insuranceSearch) {
-			fetchInsurances(insuranceSearch, fetch).then(result => {
-				insurances = result;
-				
-				firstLoad = false;
+		if (functionToRun) {
+			functionToRun().then(() => {
+				// Increment filterKey to force Pagination remount and show results
 				filterKey++;
+			}).catch((error) => {
+				console.error('Error fetching data:', error);
 			});
 		}
 	});
@@ -126,7 +133,7 @@
 				>
 					{#snippet loading()}
 						{#each Array(10) as _, i}
-							<Card 
+							<Card
 								variant="patient"
 								avatarSrc=""
 								userName=""
@@ -279,7 +286,7 @@
 			{#key filterKey}
 				<Pagination
 					initialFetchFunction={() => Promise.resolve(doctors)}
-					pageFetchFunction={(page) => fetchDoctorsPage(page)}
+					pageFetchFunction={(page) => fetchDoctorsPage(page, undefined, fetch)}
 					class="flex flex-wrap justify-center gap-5 mb-3 w-[90%]"
 				>
 					{#snippet loading()}

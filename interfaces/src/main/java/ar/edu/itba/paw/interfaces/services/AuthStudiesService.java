@@ -8,6 +8,8 @@ public interface AuthStudiesService {//TODO check deprecated
 
     @Deprecated
     public void authStudyForDoctorIdList(List<Long> doctorsId, long studyId);
+    
+    public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId);
 
     public boolean hasAuthStudy(long studyId, long doctorId);
 

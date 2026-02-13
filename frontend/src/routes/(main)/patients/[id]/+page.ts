@@ -12,13 +12,15 @@ export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
 
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
 
-    if (currentUser && currentUser.role !== 'DOCTOR') {
+    if (!currentUser || currentUser.role !== 'DOCTOR') {
         throw error(404, 'Not found');
     }
 
@@ -30,6 +32,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
                 }
                 throw error;
             });
+
         let studies: Paginated<Study> = { _links: {}, results: [] };
         let studyType: string = 'all';
         let order: string = 'm_recent';
@@ -38,8 +41,9 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
             throw error(404, 'Patient not found');
         }
 
-        if (patient.links.resolvedStudies) {
-            const typeParam = url.searchParams.get('type');
+        if (patient.links.studies.resolved) {
+            let typeParam = url.searchParams.get('type');
+            typeParam = typeParam ? typeParam.replace(/_/g, ' ') : null;
             if (typeParam && typeParam as StudyType) {
                 studyType = typeParam;
             }
@@ -49,7 +53,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
                 order = orderParam;
             }
 
-            studies = await fetchStudies(patient.links.resolvedStudies, studyType, order, fetch);
+            studies = await fetchStudies(patient.links.studies.resolved, studyType, order, fetch);
         }
 
         return {

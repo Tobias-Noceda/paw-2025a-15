@@ -32,9 +32,9 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.output.FileDTO;
-import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Path("/files")
 @Component
@@ -69,7 +69,7 @@ public class FileController {
             pageSize, 
             ss.getStudyFilesCount(studyId), 
             queryParams, 
-            uriInfo
+            uriInfo.getBaseUriBuilder().path(FileController.class)
         );
     }
 

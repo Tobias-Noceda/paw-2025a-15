@@ -10,11 +10,13 @@ import { setUserFromSession } from '../../../lib/stores/user';
 export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
     const currentUserData = get(userData);
 
     let pastAppointments: Paginated<Appointment> | null = null;
@@ -43,11 +45,11 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
             freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments;
             freeAppointments = await fetchFreeAppointments(freeAppointmentsLink, formatDateLocal(selectedDate), fetch);
         } else if (currentUser.role === 'PATIENT' && (currentUserData as Patient).links.pastAppointments) {
-            pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, fetch);
+            pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, false, fetch);
         }
 
         futureAppointmentsLink = currentUserData.links.futureAppointments;
-        futureAppointments = await fetchNonFreeAppointments(futureAppointmentsLink, fetch);
+        futureAppointments = await fetchNonFreeAppointments(futureAppointmentsLink, currentUser.role === 'DOCTOR', fetch);
 
         return {
             pastAppointments,
