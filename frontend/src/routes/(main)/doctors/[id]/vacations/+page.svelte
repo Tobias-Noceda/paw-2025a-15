@@ -1,6 +1,7 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import Button from '$components/Button/Button.svelte';
+    import ButtonCell from '$components/Table/ButtonCell.svelte';
     import DatePicker from '$components/DatePicker/DatePicker.svelte';
     import Icon from '$components/Icon/Icon.svelte';
     import Table, { type Column } from '$components/Table/Table.svelte';
@@ -260,153 +261,134 @@
     ];
 </script>
 
-<div class="vacations-container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1 class="page-title">{m['vacations.title']()}</h1>
-    </div>
+<div class="flex gap-5">
+    <!-- Left Panel: Create Vacation Form + Past Vacations -->
+    <div class="page-division flex flex-col h-full w-full gap-2.5">
+        <p class="title text-primaryText">{m['vacations.create.title']()}:</p>
 
-    <!-- Create Vacation Form -->
-    <div class="form-card">
-        <h2 class="form-title">{m['vacations.create.title']()}</h2>
-        
-        <div class="form-content">
-            <div class="form-row">
-                <div class="form-field">
-                    <DatePicker
-                        id="start-date"
-                        label={m['vacations.table.startDate']()}
-                        bind:selectedDate={startDate}
-                        minDate={minDate}
-                        required
-                        class="w-full"
-                    />
-                </div>
-                <div class="form-field">
-                    <DatePicker
-                        id="end-date"
-                        label={m['vacations.table.endDate']()}
-                        bind:selectedDate={endDate}
-                        minDate={startDate ? minEndDate() : minDate}
-                        required
-                        class="w-full"
-                    />
-                </div>
-                <div class="form-submit">
-                    <Button
-                        variant="primary"
-                        onclick={handleSubmit}
-                        disabled={isSubmitting || !startDate || !endDate}
-                        class="w-full md:w-auto"
-                    >
-                        {#if isSubmitting}
-                            {m['input_loading']()}
-                        {:else}
-                            {m['vacations.create.submit']()}
-                        {/if}
-                    </Button>
-                </div>
-            </div>
-
-            {#if formError}
-                <div class="form-error">
-                    {formError}
-                </div>
-            {/if}
-        </div>
-    </div>
-
-    <!-- Vacations Tables Container -->
-    <div class="tables-container">
-        <!-- Past Vacations -->
-        <div class="table-section">
-            <h3 class="section-title">{m['vacations.past.title']()}</h3>
-            <div class="table-wrapper">
-                <Table
-                    columns={pastColumns}
-                    rows={vacations.past}
-                    skeleton={isLoading}
-                    striped={true}
-                    emptyMessage={m['vacations.past.empty']()}
-                    class="shadow-sm rounded-lg"
+        <div class="flex flex-wrap items-end gap-4">
+            <div class="flex-1 min-w-[180px]">
+                <DatePicker
+                    id="start-date"
+                    label={m['vacations.table.startDate']()}
+                    bind:selectedDate={startDate}
+                    minDate={minDate}
+                    required
+                    class="w-full"
                 />
             </div>
+            <div class="flex-1 min-w-[180px]">
+                <DatePicker
+                    id="end-date"
+                    label={m['vacations.table.endDate']()}
+                    bind:selectedDate={endDate}
+                    minDate={startDate ? minEndDate() : minDate}
+                    required
+                    class="w-full"
+                />
+            </div>
+            <Button
+                variant="primary"
+                onclick={handleSubmit}
+                disabled={isSubmitting || !startDate || !endDate}
+                class="w-fit"
+            >
+                {#if isSubmitting}
+                    {m['input_loading']()}
+                {:else}
+                    {m['vacations.create.submit']()}
+                {/if}
+            </Button>
         </div>
 
-        <!-- Future Vacations -->
-        <div class="table-section">
-            <h3 class="section-title">{m['vacations.future.title']()}</h3>
-            <div class="table-wrapper">
-                {#if isLoading}
-                    <Table
-                        columns={futureColumns}
-                        rows={[]}
-                        skeleton={true}
-                        striped={true}
-                        class="shadow-sm rounded-lg"
-                    />
-                {:else}
-                    <table class="w-full table-fixed border-collapse">
-                        <thead class="bg-table-header text-white sticky top-0 z-10 cursor-default select-none">
-                            <tr>
-                                <th class="text-left px-3 py-2 font-semibold first:rounded-tl-lg">
-                                    {m['vacations.table.startDate']()}
-                                </th>
-                                <th class="text-left px-3 py-2 font-semibold">
-                                    {m['vacations.table.endDate']()}
-                                </th>
-                                <th class="text-center px-3 py-2 font-semibold last:rounded-tr-lg w-20">
-                                    {m['vacations.table.actions']()}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#if vacations.future.length === 0}
-                                <tr>
-                                    <td class="px-3 py-1 text-center font-semibold text-lg text-secondaryText" colspan="3">
-                                        {m['vacations.future.empty']()}
-                                    </td>
-                                </tr>
-                            {:else}
-                                {#each vacations.future as vacation, i}
-                                    <tr class="border-b border-gray-200 last:border-0 {i % 2 === 1 ? 'bg-gray-50' : ''} select-none">
-                                        <td class="px-3 py-2 font-medium">
-                                            {formatDateDisplay(vacation.startDate)}
-                                        </td>
-                                        <td class="px-3 py-2 text-secondaryText">
-                                            {formatDateDisplay(vacation.endDate)}
-                                        </td>
-                                        <td class="px-3 py-2 text-center">
-                                            <Button
-                                                variant="destructive"
-                                                class="p-2 rounded-full"
-                                                onclick={(e) => {
-                                                    e.stopPropagation();
-                                                    vacationToDelete = vacation;
-                                                }}
-                                            >
-                                                <Icon name="trash" class="w-4 h-4" />
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                {/each}
-                            {/if}
-                        </tbody>
-                    </table>
-                {/if}
+        {#if formError}
+            <div class="text-error-text text-sm bg-error-bg px-4 py-2 rounded-md border border-red-200">
+                {formError}
             </div>
-        </div>
+        {/if}
+
+        <p class="title text-primaryText mt-4">{m['vacations.past.title']()}:</p>
+        <Table
+            columns={pastColumns}
+            rows={vacations.past}
+            skeleton={isLoading}
+            striped={true}
+            emptyMessage={m['vacations.past.empty']()}
+            class="shadow-sm rounded-lg"
+        />
+    </div>
+
+    <!-- Right Panel: Future Vacations -->
+    <div class="page-division flex flex-col h-full w-full gap-2.5">
+        <p class="title text-primaryText">{m['vacations.future.title']()}:</p>
+
+        {#if isLoading}
+            <Table
+                columns={futureColumns}
+                rows={[]}
+                skeleton={true}
+                striped={true}
+                class="shadow-sm rounded-lg"
+            />
+        {:else}
+            <table class="w-full table-fixed border-collapse">
+                <thead class="bg-table-header text-white sticky top-0 z-10 cursor-default select-none">
+                    <tr>
+                        <th class="text-left px-3 py-2 font-semibold first:rounded-tl-lg">
+                            {m['vacations.table.startDate']()}
+                        </th>
+                        <th class="text-left px-3 py-2 font-semibold">
+                            {m['vacations.table.endDate']()}
+                        </th>
+                        <th class="text-center px-3 py-2 font-semibold last:rounded-tr-lg w-20">
+                            {m['vacations.table.actions']()}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#if vacations.future.length === 0}
+                        <tr>
+                            <td class="px-3 py-1 text-center font-semibold text-lg text-secondaryText" colspan="3">
+                                {m['vacations.future.empty']()}
+                            </td>
+                        </tr>
+                    {:else}
+                        {#each vacations.future as vacation, i}
+                            <tr class="border-b border-gray-200 last:border-0 {i % 2 === 1 ? 'bg-gray-50' : ''} select-none">
+                                <td class="px-3 py-2 font-medium">
+                                    {formatDateDisplay(vacation.startDate)}
+                                </td>
+                                <td class="px-3 py-2 text-secondaryText">
+                                    {formatDateDisplay(vacation.endDate)}
+                                </td>
+                                <td class="px-3 py-2 flex justify-center items-center">
+                                    <ButtonCell
+                                        text="trash"
+                                        icon={true}
+                                        variant="destructive"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            vacationToDelete = vacation;
+                                        }}
+                                    />
+                                </td>
+                            </tr>
+                        {/each}
+                    {/if}
+                </tbody>
+            </table>
+        {/if}
     </div>
 </div>
 
 <!-- Delete Confirmation PopUp -->
 {#if vacationToDelete}
     <PopUp>
-        <div class="flex flex-col gap-4">
-            <h2 class="text-xl font-bold text-primaryText">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-primaryText text-[1.17rem] font-bold">
                 {m['vacations.delete.confirm.title']()}
-            </h2>
-            <p class="text-secondaryText">
+            </h1>
+            <p class="text-primaryText">
                 {m['vacations.delete.confirm.message']({
                     startDate: formatDateDisplay(vacationToDelete.startDate),
                     endDate: formatDateDisplay(vacationToDelete.endDate)
@@ -450,114 +432,8 @@
 />
 
 <style>
-    .vacations-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        padding: 1rem;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .page-header {
-        margin-bottom: 0.5rem;
-    }
-
-    .page-title {
-        font-size: 1.75rem;
+    .title {
+        font-size: 22px;
         font-weight: 700;
-        color: var(--primary-text, #1a1a1a);
-    }
-
-    .form-card {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--primary-text, #1a1a1a);
-        margin-bottom: 1rem;
-    }
-
-    .form-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: flex-end;
-    }
-
-    .form-field {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .form-submit {
-        display: flex;
-        align-items: flex-end;
-    }
-
-    .form-error {
-        color: #dc2626;
-        font-size: 0.875rem;
-        padding: 0.5rem 1rem;
-        background-color: #fef2f2;
-        border-radius: 0.375rem;
-        border: 1px solid #fecaca;
-    }
-
-    .tables-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .table-section {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 1.25rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-    }
-
-    .section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: white;
-        background-color: #2E4A7D;
-        padding: 0.5rem 1rem;
-        border-radius: 0.25rem;
-        margin-bottom: 1rem;
-    }
-
-    .table-wrapper {
-        flex: 1;
-        overflow: hidden;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-
-    @media (max-width: 768px) {
-        .tables-container {
-            grid-template-columns: 1fr;
-        }
-
-        .form-row {
-            flex-direction: column;
-        }
-
-        .form-field {
-            width: 100%;
-        }
     }
 </style>
