@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,6 +28,7 @@ import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -90,7 +90,7 @@ public class DoctorJpaDaoTest {
         final String LICENCE = DOC.getLicence();
         final SpecialtyEnum SPECIALTY = DOC.getSpecialty();
 
-        Assert.assertThrows(PersistenceException.class,()->{
+        Assert.assertThrows(AlreadyExistsException.class,()->{
             doctorDao.createDoctor(
             DOC.getEmail(),
             DOC.getPassword(),
@@ -104,6 +104,17 @@ public class DoctorJpaDaoTest {
             );
             em.flush();
         });
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testDelete(){
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        doctorDao.deleteDoctor(DOC_ID);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertNull(doctorPersisted);
     }
 
     @Test
