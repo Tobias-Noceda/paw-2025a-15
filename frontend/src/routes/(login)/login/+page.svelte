@@ -5,6 +5,7 @@
 	import Input from "$components/Input/Input.svelte";
 	import { m } from "$lib/paraglide/messages";
 	import { login } from "$modules/api.svelte";
+	import { clearAllFilters, searchQuery } from "$stores/filters";
 
     let email = $state('');
     let password = $state('');
@@ -14,6 +15,7 @@
         login(email, password)
             .then(() => {
                 error = false;
+                clearAllFilters();
                 goto(`${base}/home`);
             })
             .catch(() => {

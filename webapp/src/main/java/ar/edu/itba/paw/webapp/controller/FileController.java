@@ -97,6 +97,7 @@ public class FileController {
             .type(file.getType().getName())
             .header("Content-Disposition",
                     "inline; filename=\"file_" + file.getId() + file.getType().getExtension() + "\"")
+            .header("Content-Security-Policy", "frame-ancestors 'self' http://localhost:5173")
             .build();
     }
 }

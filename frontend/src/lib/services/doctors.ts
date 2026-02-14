@@ -6,6 +6,7 @@ import { get, getAuth, postAuth, deleteAuth, putAuth } from "$modules/api.svelte
 import UriTemplate from "uri-templates";
 import type { User } from "$stores/user";
 import type { AccessLevels } from "$types/enums/accessLevels";
+import { error } from "@sveltejs/kit";
 
 /**
  * Parse time string in HH:mm format and return a Date object
@@ -140,7 +141,7 @@ type ShiftCreationData = {
 export const createDoctor = async (
     doctorData: Partial<Doctor>,
     password: string,
-    shifts: ShiftCreationData
+    shifts?: ShiftCreationData
 ): Promise<void> => {
     const response = await post(`${baseApiUrl}/doctors`, {
             name: doctorData.name,
@@ -161,7 +162,8 @@ export const createDoctor = async (
     );
 
     if (!response.ok) {
-        throw new Error("Failed to create doctor");
+        const text = await response.text();
+        throw error(response.status || 500, text && text !== '' ? text : "Failed to create doctor");
     }
 };
 
