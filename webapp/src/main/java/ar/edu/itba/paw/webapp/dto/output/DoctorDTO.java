@@ -9,6 +9,7 @@ import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.models.enums.VacationsStatusEnum;
 import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
@@ -44,7 +45,9 @@ public class DoctorDTO {
         URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
         URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
         URI patients = uriInfo.getBaseUriBuilder().path(PatientController.class).queryParam("doctorId", String.valueOf(doctor.getId())).build();
-        
+        URI pastVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.COMPLETED.getValue()).build();
+        URI futureVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.PROGRAMMED.getValue()).build();
+
         URI baseAuthorization = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("authorizations").build();
         TemplatedLinkDTO authorization = TemplatedLinkDTO.withQueryParams(baseAuthorization, List.of("patientId"));
 
@@ -57,6 +60,8 @@ public class DoctorDTO {
             .setFutureAppointments(futureAppointments)
             .setPatients(patients)
             .setAuthorization(authorization)
+            .setPastVacations(pastVacations)
+            .setFutureVacations(futureVacations)
         );
 
         return dto;
