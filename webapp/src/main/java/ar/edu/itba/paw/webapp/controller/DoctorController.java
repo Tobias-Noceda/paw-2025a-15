@@ -20,9 +20,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -41,6 +41,7 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.VacationsStatusEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
@@ -52,7 +53,6 @@ import ar.edu.itba.paw.webapp.dto.output.DoctorAuthorizationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorVacationDTO;
 import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
-import ar.edu.itba.paw.webapp.dto.output.DoctorVacationsDTO;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
@@ -187,9 +187,7 @@ public class DoctorController {
                     shiftsModificationDTO.getEndTime(),
                     shiftsModificationDTO.getDuration()
                 );
-            } catch (Exception e) {//TODO sacar sysout??
-                System.out.println("Error creating shifts for doctor: " + e.getMessage());
-                System.out.println("Exception class: " + e.getClass().getName());
+            } catch (Exception e) {
                 // If shift creation fails, we can choose to either delete the created doctor or just return an error response.
                 // For now, we'll just return an error response.
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Doctor created but failed to create shifts").build();
@@ -312,33 +310,60 @@ public class DoctorController {
 
     @GET
     @Path("/{id:\\d+}/vacations")
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response listVacations(@PathParam("id") Long doctorId) {
-        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {
+    @Produces(value = VndType.APPLICATION_DOCTOR_VACATIONS)
+    public Response listVacations(
+        @PathParam("id") Long doctorId,
+        @QueryParam("status") final String status,
+        @QueryParam("page") @DefaultValue("1") final int page,
+        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+    ) {
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){ //TODO capaz en service ekl check?
             throw new NotFoundException();
         }
+        try {
+            VacationsStatusEnum.fromValue(status.toLowerCase());
+        }
+        catch(IllegalArgumentException e){
+            Response.status(Status.BAD_REQUEST).build();
+        }
 
-        List<DoctorVacationDTO> futureVacations = ds.getDoctorVacationsFuture(doctorId)
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("status", status);
+
+        List<DoctorVacationDTO> vacations; 
+        int vacationsCount;
+
+        if("past".equals(status.toLowerCase())){
+            vacations = ds.getDoctorVacationsPastPage(doctorId, page, pageSize)
             .stream()
-            .map(DoctorVacationDTO.mapper())
+            .map(DoctorVacationDTO.mapper(uriInfo))
             .collect(Collectors.toList());
 
-        List<DoctorVacationDTO> pastVacations = ds.getDoctorVacationsPast(doctorId)
+            vacationsCount = ds.getDoctorVacationsPastCount(doctorId);
+        }
+        else{
+            vacations = ds.getDoctorVacationsFuturePage(doctorId, page, pageSize)
             .stream()
-            .map(DoctorVacationDTO.mapper())
+            .map(DoctorVacationDTO.mapper(uriInfo))
             .collect(Collectors.toList());
 
-        //TODO paginated response
-        DoctorVacationsDTO response = new DoctorVacationsDTO(futureVacations, pastVacations);
-
-        return Response.ok(response).build();
+            vacationsCount = ds.getDoctorVacationsFutureCount(doctorId);
+        }
+    
+        return PaginationBuilder.buildResponse(
+            Response.ok(new GenericEntity<List<DoctorVacationDTO>>(vacations) {}), 
+            page, 
+            pageSize, 
+            vacationsCount, 
+            queryParams, 
+            uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctorId)).path("vacations")
+        );
     }
-
 
     @POST
     @Path("/{id:\\d+}/vacations")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_DOCTOR_VACATIONS)
+    @Produces(value = VndType.APPLICATION_DOCTOR_VACATIONS)
     public Response createVacation(
         @PathParam("id") Long doctorId,
         @Valid VacationCreateDTO vacationDTO
@@ -371,7 +396,7 @@ public class DoctorController {
         }
 
         DoctorVacation vacation = ds.createDoctorVacation(doctorId, startDate, endDate);
-        DoctorVacationDTO responseDTO = DoctorVacationDTO.fromVacation(vacation);
+        DoctorVacationDTO responseDTO = DoctorVacationDTO.fromVacation(uriInfo, vacation);
 
         URI location = uriInfo.getAbsolutePathBuilder()
             .queryParam("startDate", startDate.toString())
@@ -383,12 +408,11 @@ public class DoctorController {
 
 
     @DELETE
-    @Path("/{id:\\d+}/vacations")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Path("/{id:\\d+}/vacations/{startDate:\\d{4}-\\d{2}-\\d{2}}/{endDate:\\d{4}-\\d{2}-\\d{2}}")
     public Response deleteVacation(
         @PathParam("id") Long doctorId,
-        @QueryParam("startDate") String startDateStr,
-        @QueryParam("endDate") String endDateStr
+        @PathParam("startDate") String startDateStr,
+        @PathParam("endDate") String endDateStr
     ) {
         if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {//TODO en auth?
             throw new NotFoundException();
@@ -402,11 +426,6 @@ public class DoctorController {
 
         LocalDate startDate = LocalDate.parse(startDateStr);
         LocalDate endDate = LocalDate.parse(endDateStr);
-
-
-        if (!ds.vacationExists(doctorId, startDate, endDate)) {
-            throw new NotFoundException();
-        }
 
         ds.deleteDoctorVacation(doctorId, startDate, endDate);
 

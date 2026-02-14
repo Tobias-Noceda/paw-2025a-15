@@ -37,9 +37,13 @@ public interface DoctorDao {
 
     public void deleteDoctorVacation(DoctorVacationId dvId);
 
-    public List<DoctorVacation> getDoctorVacationsPast(long doctorId);
+    public List<DoctorVacation> getDoctorVacationsPastPage(long doctorId, int page, int pageSize);
 
-    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);
+    public int getDoctorVacationsPastCount(long doctorId);
+
+    public List<DoctorVacation> getDoctorVacationsFuturePage(long doctorId, int page, int pageSize);
+
+    public int getDoctorVacationsFutureCount(long doctorId);
 
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate);
 }
