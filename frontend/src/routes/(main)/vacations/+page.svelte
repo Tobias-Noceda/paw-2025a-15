@@ -9,21 +9,17 @@
 
     import { m } from '$lib/paraglide/messages';
     import { getLocale } from '$lib/paraglide/runtime';
-    import { 
-        fetchVacations, 
-        createVacation, 
-        deleteVacation,
-        type Vacation,
-        type VacationsResponse 
-    } from '$lib/services/doctors';
+
 	import { parseDateInLocalTimezone } from '$lib/services/appointments';
+	import type { Paginated, Vacations } from '$types/api';
+	import type { PageData } from './$types';
+	import { fetchFilesPage } from '$lib/services/studies';
+	import { deleteVacation, fetchVacations } from '$lib/services/vacations';
 
-    // Get doctor ID from route params
-    let doctorId = $derived($page.params.id);
+	let { data }: { data: PageData } = $props();
 
-    // State management with Svelte 5 Runes
-    let vacations = $state<VacationsResponse>({ past: [], future: [] });
-    let isLoading = $state(false);
+    let pastVacations: Paginated<Vacations> = $state(data.pastVacations);
+    let futureVacations: Paginated<Vacations> = $state(data.futureVacations);
     let isSubmitting = $state(false);
 
     // Form state
@@ -37,23 +33,10 @@
     let toastMessage = $state({ title: '', description: '' });
 
     // Delete confirmation popup state
-    let vacationToDelete = $state<Vacation | null>(null);
+    let vacationToDelete = $state<Vacations | null>(null);
 
     // Derived: Get minimum date for pickers (today)
     let minDate = $derived(new Date());
-
-        // Load vacations data
-    const loadVacations = async () => {
-        isLoading = true;
-        try {
-            vacations = await fetchVacations(doctorId);
-        } catch (error) {
-            console.error('Error loading vacations:', error);
-            showError(m['vacations.error.load.title'](), m['vacations.error.load.message']());
-        } finally {
-            isLoading = false;
-        }
-    };
 
     // Validate the form
     const validateForm = (): boolean => {
@@ -91,41 +74,7 @@
 
     // Handle form submission
     const handleSubmit = async () => {
-        if (!validateForm()) return;
-
-        isSubmitting = true;
-        try {
-            const success = await createVacation(
-                doctorId,
-                formatDateISO(startDate!),
-                formatDateISO(endDate!)
-            );
-
-            if (success) {
-                showSuccess(
-                    m['vacations.created.title'](),
-                    m['vacations.created.message']()
-                );
-                // Reset form
-                startDate = null;
-                endDate = null;
-                // Reload vacations
-                await loadVacations();
-            } else {
-                showError(
-                    m['vacations.error.create.title'](),
-                    m['vacations.error.create.message']()
-                );
-            }
-        } catch (error) {
-            console.error('Error creating vacation:', error);
-            showError(
-                m['vacations.error.create.title'](),
-                m['vacations.error.create.message']()
-            );
-        } finally {
-            isSubmitting = false;
-        }
+        
     };
 
     // Handle delete vacation
@@ -134,11 +83,7 @@
 
         isSubmitting = true;
         try {
-            const success = await deleteVacation(
-                doctorId,
-                vacationToDelete.startDate,
-                vacationToDelete.endDate
-            );
+            const success = await deleteVacation(vacationToDelete.links.self);
 
             if (success) {
                 showSuccess(
@@ -146,7 +91,6 @@
                     m['vacations.deleted.message']()
                 );
                 vacationToDelete = null;
-                await loadVacations();
             } else {
                 showError(
                     m['vacations.error.delete.title'](),
@@ -185,33 +129,33 @@
     };
 
     // Table columns for past vacations (no actions)
-    const pastColumns: Column<Vacation>[] = [
+    const pastColumns: Column<Vacations>[] = [
         {
             id: 'startDate',
             label: m['vacations.table.startDate'](),
-            render: (vacation: Vacation) => formatDateDisplay(vacation.startDate),
+            render: (vacation: Vacations) => formatDateDisplay(vacation.startDate),
             class: 'font-medium'
         },
         {
             id: 'endDate',
             label: m['vacations.table.endDate'](),
-            render: (vacation: Vacation) => formatDateDisplay(vacation.endDate),
+            render: (vacation: Vacations) => formatDateDisplay(vacation.endDate),
             class: 'text-secondaryText'
         }
     ];
 
     // Table columns for future vacations (with delete action)
-    const futureColumns: Column<Vacation>[] = [
+    const futureColumns: Column<Vacations>[] = [
         {
             id: 'startDate',
             label: m['vacations.table.startDate'](),
-            render: (vacation: Vacation) => formatDateDisplay(vacation.startDate),
+            render: (vacation: Vacations) => formatDateDisplay(vacation.startDate),
             class: 'font-medium'
         },
         {
             id: 'endDate',
             label: m['vacations.table.endDate'](),
-            render: (vacation: Vacation) => formatDateDisplay(vacation.endDate),
+            render: (vacation: Vacations) => formatDateDisplay(vacation.endDate),
             class: 'text-secondaryText'
         },
         {
@@ -219,7 +163,7 @@
             label: m['vacations.table.actions'](),
             columnClass: 'w-25 text-center',
             class: 'text-center',
-            render: (vacation: Vacation) => {
+            render: (vacation: Vacations) => {
                 return {
                     component: ButtonCell,
                     props: {
@@ -287,20 +231,21 @@
         <p class="title text-primaryText">{m['vacations.future.title']()}:</p>
         <Table
             columns={futureColumns}
-            rows={[]}
-            skeleton={true}
+            rows={futureVacations}
+            nextFetchFunction={(url) => fetchVacations(url, fetch)}
             striped={true}
+            emptyMessage={m['vacations.future.empty']()}
             class="shadow-sm rounded-lg"
         />
     </div>
 
-    <!-- Right Panel: Future Vacations -->
+    <!-- Right Panel: Past Vacations -->
     <div class="page-division flex flex-col h-full w-full gap-2.5">
         <p class="title text-primaryText mt-4">{m['vacations.past.title']()}:</p>
         <Table
             columns={pastColumns}
-            rows={vacations.past}
-            skeleton={isLoading}
+            rows={pastVacations}
+            nextFetchFunction={(url) => fetchVacations(url, fetch)}
             striped={true}
             emptyMessage={m['vacations.past.empty']()}
             class="shadow-sm rounded-lg"
