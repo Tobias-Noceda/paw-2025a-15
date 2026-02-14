@@ -310,15 +310,6 @@ public class AppointmentServiceImplTest {
     }
 
     @Test
-    public void testGetOldAppointmentDataByPatientIdNonexistentPatient(){
-        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            as.getOldAppointmentDataByPatientId(PATIENT_ID)
-        );
-    }
-
-    @Test
     public void testGetOldAppointmentDataPageByPatientIdNonexistentPatient(){
         Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
 

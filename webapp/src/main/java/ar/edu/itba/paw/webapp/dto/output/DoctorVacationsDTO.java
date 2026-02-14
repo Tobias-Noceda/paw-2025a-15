@@ -2,15 +2,15 @@ package ar.edu.itba.paw.webapp.dto.output;
 
 import java.util.List;
 
-public class VacationsResponseDTO {
+public class DoctorVacationsDTO {
     
     private List<DoctorVacationDTO> future;
     private List<DoctorVacationDTO> past;
 
-    public VacationsResponseDTO() {
+    public DoctorVacationsDTO() {
     }
 
-    public VacationsResponseDTO(List<DoctorVacationDTO> future, List<DoctorVacationDTO> past) {
+    public DoctorVacationsDTO(List<DoctorVacationDTO> future, List<DoctorVacationDTO> past) {
         this.future = future;
         this.past = past;
     }

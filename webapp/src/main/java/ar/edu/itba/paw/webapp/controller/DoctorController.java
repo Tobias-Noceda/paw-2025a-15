@@ -52,7 +52,7 @@ import ar.edu.itba.paw.webapp.dto.output.DoctorAuthorizationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorVacationDTO;
 import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
-import ar.edu.itba.paw.webapp.dto.output.VacationsResponseDTO;
+import ar.edu.itba.paw.webapp.dto.output.DoctorVacationsDTO;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
@@ -161,7 +161,7 @@ public class DoctorController {
             return Response.status(Response.Status.BAD_REQUEST).entity("Shift end time cannot be before start time").build();
         }
         List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
-            .map(name -> {
+            .map(name -> {//TODO pasar logica al service
                 return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
             }).collect(Collectors.toList());
 
@@ -187,7 +187,7 @@ public class DoctorController {
                     shiftsModificationDTO.getEndTime(),
                     shiftsModificationDTO.getDuration()
                 );
-            } catch (Exception e) {
+            } catch (Exception e) {//TODO sacar sysout??
                 System.out.println("Error creating shifts for doctor: " + e.getMessage());
                 System.out.println("Exception class: " + e.getClass().getName());
                 // If shift creation fails, we can choose to either delete the created doctor or just return an error response.
@@ -265,11 +265,11 @@ public class DoctorController {
         try {
             User user = AuthenticatedUser.get();
             
-            if (!user.getId().equals(patientId)) {
+            if (!user.getId().equals(patientId)) {//TODO etsa logica no deberia estar en auth?
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             
-            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {//TODO mismo en auth?
                 return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
             }
             
@@ -292,7 +292,7 @@ public class DoctorController {
     ) {
         User loggedUser = AuthenticatedUser.get();
 
-        if (loggedUser == null) {
+        if (loggedUser == null) {//TODO logica en auth??
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -328,8 +328,8 @@ public class DoctorController {
             .map(DoctorVacationDTO.mapper())
             .collect(Collectors.toList());
 
-
-        VacationsResponseDTO response = new VacationsResponseDTO(futureVacations, pastVacations);
+        //TODO paginated response
+        DoctorVacationsDTO response = new DoctorVacationsDTO(futureVacations, pastVacations);
 
         return Response.ok(response).build();
     }
@@ -350,7 +350,7 @@ public class DoctorController {
         LocalDate startDate = LocalDate.parse(vacationDTO.getStartDate());
         LocalDate endDate = LocalDate.parse(vacationDTO.getEndDate());
 
-
+        //TODO toda esta logica en el service o en otra forma
         if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity("{\"error\": \"End date must be after start date\"}")
@@ -390,12 +390,12 @@ public class DoctorController {
         @QueryParam("startDate") String startDateStr,
         @QueryParam("endDate") String endDateStr
     ) {
-        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {//TODO en auth?
             throw new NotFoundException();
         }
 
         if (startDateStr == null || endDateStr == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
+            return Response.status(Response.Status.BAD_REQUEST)//TODO aca??????
                 .entity("{\"error\": \"startDate and endDate query parameters are required\"}")
                 .build();
         }

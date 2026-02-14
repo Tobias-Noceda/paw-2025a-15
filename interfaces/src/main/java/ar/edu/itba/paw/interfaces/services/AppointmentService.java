@@ -14,9 +14,6 @@ public interface AppointmentService {//TODO check deprecated
 
     public Pair<AppointmentNew, AppointmentStatusEnum> getAppointmentByShiftIdDateAndTime(long shiftId, LocalDate date, LocalTime startTime, LocalTime endTime);
 
-    @Deprecated
-    public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId);
-
     public List<AppointmentNew> getOldAppointmentDataPageByPatientId(long patientId, int page, int pageSize);
 
     public Integer getOldAppointmentTotalByPatientId(long patientId);
