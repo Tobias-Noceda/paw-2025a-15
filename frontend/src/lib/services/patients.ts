@@ -63,9 +63,14 @@ export const createPatient = async (patient: Partial<Patient>, password: string)
             }
         },
         fetch
-    );
+    ).catch(async (e) => {
+        const text = await response.text();
+        throw error(response.status || 500, text && text !== '' ? text : 'Failed to create patient');
+    });
+    
     if (!response.ok) {
-        throw new Error("Failed to create patient");
+        const text = await response.text();
+        throw error(response.status || 500, text && text !== '' ? text : 'Failed to create patient');
     }
 };
 

@@ -156,6 +156,10 @@ public class DoctorController {
     public Response createDoctor(
         @Valid DoctorCreateDTO doctorCreateDTO
     ) {
+        ShiftsModificationDTO shiftsModificationDTO = doctorCreateDTO.getShifts();
+        if (shiftsModificationDTO != null && shiftsModificationDTO.getEndTime().isBefore(shiftsModificationDTO.getStartTime())) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Shift end time cannot be before start time").build();
+        }
         List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
             .map(name -> {
                 return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
@@ -172,16 +176,24 @@ public class DoctorController {
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
         );
 
-        if (doctorCreateDTO.getShifts() != null) {
-            ShiftsModificationDTO shiftsModificationDTO = doctorCreateDTO.getShifts();
-            dss.createShifts(
-                doctor.getId(),
-                shiftsModificationDTO.getWeekdays(),
-                shiftsModificationDTO.getAddress(),
-                shiftsModificationDTO.getStartTime(),
-                shiftsModificationDTO.getEndTime(),
-                shiftsModificationDTO.getDuration()
-            );
+        if (shiftsModificationDTO != null) {
+            try {
+                List<WeekdayEnum> weekdays = shiftsModificationDTO.getWeekdays() != null ? shiftsModificationDTO.getWeekdays() : List.of();
+                dss.createShifts(
+                    doctor.getId(),
+                    weekdays,
+                    shiftsModificationDTO.getAddress(),
+                    shiftsModificationDTO.getStartTime(),
+                    shiftsModificationDTO.getEndTime(),
+                    shiftsModificationDTO.getDuration()
+                );
+            } catch (Exception e) {
+                System.out.println("Error creating shifts for doctor: " + e.getMessage());
+                System.out.println("Exception class: " + e.getClass().getName());
+                // If shift creation fails, we can choose to either delete the created doctor or just return an error response.
+                // For now, we'll just return an error response.
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Doctor created but failed to create shifts").build();
+            }
         }
 
         return Response.created(

@@ -53,6 +53,13 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
+    public void deleteDoctor(long doctorId) {
+        doctorDao.deleteDoctor(doctorId);
+        LOGGER.info("Deleted doctor with id: {}", doctorId);
+    }
+
+    @Transactional
+    @Override
     public Optional<Doctor> getDoctorById(long id) {
         return doctorDao.getDoctorById(id);
     }
