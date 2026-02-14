@@ -320,34 +320,40 @@ public class DoctorController {
         if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){ //TODO capaz en service ekl check?
             throw new NotFoundException();
         }
+        VacationsStatusEnum statusEnum;
         try {
-            VacationsStatusEnum.fromValue(status.toLowerCase());
+            statusEnum = VacationsStatusEnum.fromValue(status.toLowerCase());
         }
         catch(IllegalArgumentException e){
-            Response.status(Status.BAD_REQUEST).build();
+            return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
         }
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("status", status);
 
-        List<DoctorVacationDTO> vacations; 
+        List<DoctorVacationDTO> vacations;
         int vacationsCount;
 
-        if("past".equals(status.toLowerCase())){
-            vacations = ds.getDoctorVacationsPastPage(doctorId, page, pageSize)
-            .stream()
-            .map(DoctorVacationDTO.mapper(uriInfo))
-            .collect(Collectors.toList());
+        switch (statusEnum) {
+            case PROGRAMMED -> {
+                vacations = ds.getDoctorVacationsFuturePage(doctorId, page, pageSize)
+                .stream()
+                .map(DoctorVacationDTO.mapper(uriInfo))
+                .collect(Collectors.toList());
 
-            vacationsCount = ds.getDoctorVacationsPastCount(doctorId);
-        }
-        else{
-            vacations = ds.getDoctorVacationsFuturePage(doctorId, page, pageSize)
-            .stream()
-            .map(DoctorVacationDTO.mapper(uriInfo))
-            .collect(Collectors.toList());
+                vacationsCount = ds.getDoctorVacationsFutureCount(doctorId);
+            }
+            case COMPLETED -> {
+                vacations = ds.getDoctorVacationsPastPage(doctorId, page, pageSize)
+                .stream()
+                .map(DoctorVacationDTO.mapper(uriInfo))
+                .collect(Collectors.toList());
 
-            vacationsCount = ds.getDoctorVacationsFutureCount(doctorId);
+                vacationsCount = ds.getDoctorVacationsPastCount(doctorId);
+            }
+            default -> {
+                return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
+            }
         }
     
         return PaginationBuilder.buildResponse(
