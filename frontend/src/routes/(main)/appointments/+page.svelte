@@ -9,7 +9,7 @@
 	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
-	import { cancelAppointment, fetchFreeAppointments, fetchNonFreeAppointments, takeAppointment } from '$lib/services/appointments';
+	import { cancelAppointment, fetchFreeAppointments, fetchNonFreeAppointments, parseDateInLocalTimezone, takeAppointment } from '$lib/services/appointments';
 	import { page } from '$app/stores';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Toast from '$components/Toast/Toast.svelte';
@@ -49,11 +49,11 @@
             id: 'date',
             label: m['appointments.label.date'](),
             render: (appointment: Appointment) => {
-                return appointment.date ? new Date(appointment.date).toLocaleDateString(getLocale(), {
+                return parseDateInLocalTimezone(appointment.date).toLocaleDateString(getLocale(), {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit'
-                }) : '';
+                });
             },
             class: 'text-start'
         },
@@ -266,7 +266,7 @@
                 <Button
                     variant="secondary"
                     class="w-fit"
-                    onclick={() => fetchAppointments(freeAppointments!._links.prev!, new Date(selectedDate.setDate(selectedDate.getDate() - 1)))}
+                    onclick={() => fetchAppointments(freeAppointments!._links.prev!)}
                     disabled={!freeAppointments!._links.prev || isFetching}
                 >
                     {m['previous']()}
@@ -284,7 +284,7 @@
                 <Button
                     variant="secondary"
                     class="w-fit"
-                    onclick={() => fetchAppointments(freeAppointments!._links.next!, new Date(selectedDate.setDate(selectedDate.getDate() + 1)))}
+                    onclick={() => fetchAppointments(freeAppointments!._links.next!)}
                     disabled={!freeAppointments!._links.next || isFetching}
                 >
                     {m['next']()}
