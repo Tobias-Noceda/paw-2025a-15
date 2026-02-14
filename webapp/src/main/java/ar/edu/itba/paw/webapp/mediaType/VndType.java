@@ -18,6 +18,8 @@ public class VndType {
 
     public static final String APPLICATION_DOCTOR_AUTHORIZATION = "application/vnd.doctors.authorizations.v1+json";
 
+    public static final String APPLICATION_DOCTOR_VACATIONS = "application/vnd.doctors.vacations.v1+json";
+
     // Insurance Media Types
     public static final String APPLICATION_INSURANCE = "application/vnd.insurances.v1+json";
 

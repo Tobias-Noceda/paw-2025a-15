@@ -18,7 +18,6 @@ public interface AuthStudiesService {//TODO check deprecated
     @Deprecated
     public void toggleStudyForDoctorId(long studyId, long doctorId);
 
-    @Deprecated
     public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId);
     
     @Deprecated
@@ -27,6 +26,5 @@ public interface AuthStudiesService {//TODO check deprecated
     @Deprecated
     public void deauthorizeAllDoctorsForStudy(long studyId);
 
-    @Deprecated
     public void unauthAllStudiesForAllDocsForPatientId(long patientId);
 }
