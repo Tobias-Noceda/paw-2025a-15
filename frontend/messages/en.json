@@ -457,10 +457,6 @@
 		"no_files": "No files selected",
 		"more_files": "+ {count} more files"
 	},
-	"unknown": "Unknown",
-	"date_format": "MM/dd/yyyy",
-	"next": "Next",
-	"previous": "Previous",
 	"vacations": {
 		"title": "Vacation Management",
 		"create": {
@@ -514,6 +510,10 @@
 			}
 		}
 	},
+	"unknown": "Unknown",
+	"date_format": "MM/dd/yyyy",
+	"previous": "Previous",
+	"next": "Next",
 	"action": "Action",
 	"actions": "Actions"
 }
