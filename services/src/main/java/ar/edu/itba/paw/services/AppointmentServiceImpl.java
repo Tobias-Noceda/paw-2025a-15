@@ -115,13 +115,6 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId) {
-        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        return appointmentDao.getOldAppointmentDataByPatient(patient);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<AppointmentNew> getOldAppointmentDataPageByPatientId(long patientId, int page, int pageSize) {
         Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return appointmentDao.getOldAppointmentDataPageByPatient(patient, page, pageSize);
