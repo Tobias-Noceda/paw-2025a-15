@@ -477,8 +477,62 @@
 		"no_files": "Ningún archivo seleccionado",
 		"more_files": "+ {count} archivos más"
 	},
+	"vacations": {
+		"title": "Gestión de Vacaciones",
+		"create": {
+			"title": "Agregar nuevas vacaciones",
+			"submit": "Crear Vacaciones"
+		},
+		"table": {
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de fin",
+			"actions": "Acciones"
+		},
+		"past": {
+			"title": "Vacaciones pasadas",
+			"empty": "No hay vacaciones pasadas registradas"
+		},
+		"future": {
+			"title": "Vacaciones futuras",
+			"empty": "No hay vacaciones programadas"
+		},
+		"created": {
+			"title": "¡Vacaciones creadas!",
+			"message": "Las vacaciones han sido registradas exitosamente."
+		},
+		"deleted": {
+			"title": "¡Vacaciones eliminadas!",
+			"message": "Las vacaciones han sido eliminadas exitosamente."
+		},
+		"delete": {
+			"confirm": {
+				"title": "¿Eliminar vacaciones?",
+				"message": "¿Está seguro que desea eliminar las vacaciones desde {startDate} hasta {endDate}?",
+				"button": "Eliminar"
+			}
+		},
+		"error": {
+			"startRequired": "La fecha de inicio es requerida",
+			"endRequired": "La fecha de fin es requerida",
+			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
+			"pastDate": "La fecha de inicio no puede ser anterior a la fecha actual",
+			"load": {
+				"title": "Error al cargar vacaciones",
+				"message": "No se pudieron cargar las vacaciones. Por favor, inténtelo de nuevo."
+			},
+			"create": {
+				"title": "Error al crear vacaciones",
+				"message": "No se pudieron crear las vacaciones. Por favor, inténtelo de nuevo."
+			},
+			"delete": {
+				"title": "Error al eliminar vacaciones",
+				"message": "No se pudieron eliminar las vacaciones. Por favor, inténtelo de nuevo."
+			}
+		}
+	},
 	"unknown": "Desconocido",
 	"date_format": "dd/MM/yyyy",
+	"previous": "Anterior",
 	"next": "Siguiente",
 	"action": "Acción",
 	"actions": "Acciones"

@@ -3,7 +3,6 @@
     import Button from '$components/Button/Button.svelte';
     import ButtonCell from '$components/Table/ButtonCell.svelte';
     import DatePicker from '$components/DatePicker/DatePicker.svelte';
-    import Icon from '$components/Icon/Icon.svelte';
     import Table, { type Column } from '$components/Table/Table.svelte';
     import Toast from '$components/Toast/Toast.svelte';
     import PopUp from '$components/PopUp/PopUp.svelte';
@@ -17,13 +16,14 @@
         type Vacation,
         type VacationsResponse 
     } from '$lib/services/doctors';
+	import { parseDateInLocalTimezone } from '$lib/services/appointments';
 
     // Get doctor ID from route params
     let doctorId = $derived($page.params.id);
 
     // State management with Svelte 5 Runes
     let vacations = $state<VacationsResponse>({ past: [], future: [] });
-    let isLoading = $state(true);
+    let isLoading = $state(false);
     let isSubmitting = $state(false);
 
     // Form state
@@ -42,39 +42,7 @@
     // Derived: Get minimum date for pickers (today)
     let minDate = $derived(new Date());
 
-    // Derived: Get minimum end date (start date + 1 day)
-    let minEndDate = $derived(() => {
-        if (!startDate) return minDate;
-        const nextDay = new Date(startDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        return nextDay;
-    });
-
-    // Format date to ISO string (YYYY-MM-DD)
-    const formatDateISO = (date: Date): string => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-
-    // Format date for display based on locale
-    const formatDateDisplay = (dateStr: string): string => {
-        const date = new Date(dateStr + 'T00:00:00');
-        const locale = getLocale();
-        return date.toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
-    };
-
-    // Load vacations on mount
-    $effect(() => {
-        loadVacations();
-    });
-
-    // Load vacations data
+        // Load vacations data
     const loadVacations = async () => {
         isLoading = true;
         try {
@@ -208,6 +176,14 @@
         showErrorToast = true;
     };
 
+    const formatDateDisplay = (date: string) => {
+        return parseDateInLocalTimezone(date).toLocaleDateString(getLocale(), {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    };
+
     // Table columns for past vacations (no actions)
     const pastColumns: Column<Vacation>[] = [
         {
@@ -241,19 +217,20 @@
         {
             id: 'actions',
             label: m['vacations.table.actions'](),
-            columnClass: 'w-20 text-center',
+            columnClass: 'w-25 text-center',
             class: 'text-center',
             render: (vacation: Vacation) => {
                 return {
-                    component: Button,
+                    component: ButtonCell,
                     props: {
+                        text: 'trash',
+                        icon: true,
                         variant: 'destructive',
                         class: 'p-2 rounded-full',
                         onclick: (e: MouseEvent) => {
                             e.stopPropagation();
                             vacationToDelete = vacation;
                         },
-                        children: () => ({})
                     }
                 };
             }
@@ -282,7 +259,7 @@
                     id="end-date"
                     label={m['vacations.table.endDate']()}
                     bind:selectedDate={endDate}
-                    minDate={startDate ? minEndDate() : minDate}
+                    minDate={startDate ?? minDate}
                     required
                     class="w-full"
                 />
@@ -307,6 +284,18 @@
             </div>
         {/if}
 
+        <p class="title text-primaryText">{m['vacations.future.title']()}:</p>
+        <Table
+            columns={futureColumns}
+            rows={[]}
+            skeleton={true}
+            striped={true}
+            class="shadow-sm rounded-lg"
+        />
+    </div>
+
+    <!-- Right Panel: Future Vacations -->
+    <div class="page-division flex flex-col h-full w-full gap-2.5">
         <p class="title text-primaryText mt-4">{m['vacations.past.title']()}:</p>
         <Table
             columns={pastColumns}
@@ -316,68 +305,6 @@
             emptyMessage={m['vacations.past.empty']()}
             class="shadow-sm rounded-lg"
         />
-    </div>
-
-    <!-- Right Panel: Future Vacations -->
-    <div class="page-division flex flex-col h-full w-full gap-2.5">
-        <p class="title text-primaryText">{m['vacations.future.title']()}:</p>
-
-        {#if isLoading}
-            <Table
-                columns={futureColumns}
-                rows={[]}
-                skeleton={true}
-                striped={true}
-                class="shadow-sm rounded-lg"
-            />
-        {:else}
-            <table class="w-full table-fixed border-collapse">
-                <thead class="bg-table-header text-white sticky top-0 z-10 cursor-default select-none">
-                    <tr>
-                        <th class="text-left px-3 py-2 font-semibold first:rounded-tl-lg">
-                            {m['vacations.table.startDate']()}
-                        </th>
-                        <th class="text-left px-3 py-2 font-semibold">
-                            {m['vacations.table.endDate']()}
-                        </th>
-                        <th class="text-center px-3 py-2 font-semibold last:rounded-tr-lg w-20">
-                            {m['vacations.table.actions']()}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#if vacations.future.length === 0}
-                        <tr>
-                            <td class="px-3 py-1 text-center font-semibold text-lg text-secondaryText" colspan="3">
-                                {m['vacations.future.empty']()}
-                            </td>
-                        </tr>
-                    {:else}
-                        {#each vacations.future as vacation, i}
-                            <tr class="border-b border-gray-200 last:border-0 {i % 2 === 1 ? 'bg-gray-50' : ''} select-none">
-                                <td class="px-3 py-2 font-medium">
-                                    {formatDateDisplay(vacation.startDate)}
-                                </td>
-                                <td class="px-3 py-2 text-secondaryText">
-                                    {formatDateDisplay(vacation.endDate)}
-                                </td>
-                                <td class="px-3 py-2 flex justify-center items-center">
-                                    <ButtonCell
-                                        text="trash"
-                                        icon={true}
-                                        variant="destructive"
-                                        onclick={(e) => {
-                                            e.stopPropagation();
-                                            vacationToDelete = vacation;
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                        {/each}
-                    {/if}
-                </tbody>
-            </table>
-        {/if}
     </div>
 </div>
 

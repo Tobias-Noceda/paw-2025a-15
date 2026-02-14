@@ -230,6 +230,85 @@ public class DoctorController {
         return Response.ok(new GenericEntity<List<ShiftDTO>>(shifts) {}).build();
     }
 
+    @PUT
+    @Path("/{id:\\d+}/shifts")
+    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
+    public Response replaceShifts(
+        @PathParam("id") Integer doctorId,
+        @Valid ShiftsModificationDTO shiftsModificationDTO
+    ) {
+        dss.createShifts(
+            doctorId,
+            shiftsModificationDTO.getWeekdays(),
+            shiftsModificationDTO.getAddress(),
+            shiftsModificationDTO.getStartTime(),
+            shiftsModificationDTO.getEndTime(),
+            shiftsModificationDTO.getDuration()
+        );
+
+        return Response.created(uriInfo.getBaseUriBuilder()
+            .path(DoctorController.class)
+            .path(doctorId.toString())
+            .path("shifts")
+            .build()
+        ).build();
+    }
+
+    /*========================= AUTHORIZATIONS =========================*/
+    @GET
+    @Path("/{id:\\d+}/authorizations")
+    @Produces(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
+    public Response doctorAuthorizations(
+        @PathParam("id") Integer doctorId,
+        @QueryParam("patientId") Long patientId
+    ) {
+        try {
+            User user = AuthenticatedUser.get();
+            
+            if (!user.getId().equals(patientId)) {
+                return Response.status(Response.Status.FORBIDDEN).build();
+            }
+            
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
+                return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
+            }
+            
+            return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(
+                new DoctorAuthorizationDTO(true, ads.getAuthAccessLevelEnums(user.getId(), doctorId))
+            ) {}).build();
+        } catch (Exception e) {
+            System.out.println("Error fetching doctor authorizations: " + e.getMessage());
+            System.out.println("Exception class: " + e.getClass().getName());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PUT
+    @Path("/{id:\\d+}/authorizations")
+    @Consumes(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
+    public Response replaceDoctorAuthorizations(
+        @PathParam("id") Integer doctorId,
+        @Valid DoctorAuthorizationUpdateDTO doctorAuthorizationUpdateDTO
+    ) {
+        User loggedUser = AuthenticatedUser.get();
+
+        if (loggedUser == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        if (
+            (doctorAuthorizationUpdateDTO.isAuthorized() && !ads.hasAuthDoctor(loggedUser.getId(), doctorId)) ||
+            (!doctorAuthorizationUpdateDTO.isAuthorized() && ads.hasAuthDoctor(loggedUser.getId(), doctorId))
+        ) {
+            ads.toggleAuthDoctor(loggedUser.getId(), doctorId);
+        }
+
+        if (doctorAuthorizationUpdateDTO.isAuthorized()) {
+            ads.updateAuthDoctor(loggedUser.getId(), doctorId, doctorAuthorizationUpdateDTO.getAccessLevels());
+        }
+
+        return Response.ok().build();
+    }
 
     @GET
     @Path("/{id:\\d+}/vacations")
@@ -332,85 +411,5 @@ public class DoctorController {
         ds.deleteDoctorVacation(doctorId, startDate, endDate);
 
         return Response.noContent().build();
-    }
-
-    @PUT
-    @Path("/{id:\\d+}/shifts")
-    @Produces(value = VndType.APPLICATION_DOCTOR_SHIFT)
-    public Response replaceShifts(
-        @PathParam("id") Integer doctorId,
-        @Valid ShiftsModificationDTO shiftsModificationDTO
-    ) {
-        dss.createShifts(
-            doctorId,
-            shiftsModificationDTO.getWeekdays(),
-            shiftsModificationDTO.getAddress(),
-            shiftsModificationDTO.getStartTime(),
-            shiftsModificationDTO.getEndTime(),
-            shiftsModificationDTO.getDuration()
-        );
-
-        return Response.created(uriInfo.getBaseUriBuilder()
-            .path(DoctorController.class)
-            .path(doctorId.toString())
-            .path("shifts")
-            .build()
-        ).build();
-    }
-
-    /*========================= AUTHORIZATIONS =========================*/
-    @GET
-    @Path("/{id:\\d+}/authorizations")
-    @Produces(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
-    public Response doctorAuthorizations(
-        @PathParam("id") Integer doctorId,
-        @QueryParam("patientId") Long patientId
-    ) {
-        try {
-            User user = AuthenticatedUser.get();
-            
-            if (!user.getId().equals(patientId)) {
-                return Response.status(Response.Status.FORBIDDEN).build();
-            }
-            
-            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
-                return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
-            }
-            
-            return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(
-                new DoctorAuthorizationDTO(true, ads.getAuthAccessLevelEnums(user.getId(), doctorId))
-            ) {}).build();
-        } catch (Exception e) {
-            System.out.println("Error fetching doctor authorizations: " + e.getMessage());
-            System.out.println("Exception class: " + e.getClass().getName());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PUT
-    @Path("/{id:\\d+}/authorizations")
-    @Consumes(value = VndType.APPLICATION_DOCTOR_AUTHORIZATION)
-    public Response replaceDoctorAuthorizations(
-        @PathParam("id") Integer doctorId,
-        @Valid DoctorAuthorizationUpdateDTO doctorAuthorizationUpdateDTO
-    ) {
-        User loggedUser = AuthenticatedUser.get();
-
-        if (loggedUser == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        if (
-            (doctorAuthorizationUpdateDTO.isAuthorized() && !ads.hasAuthDoctor(loggedUser.getId(), doctorId)) ||
-            (!doctorAuthorizationUpdateDTO.isAuthorized() && ads.hasAuthDoctor(loggedUser.getId(), doctorId))
-        ) {
-            ads.toggleAuthDoctor(loggedUser.getId(), doctorId);
-        }
-
-        if (doctorAuthorizationUpdateDTO.isAuthorized()) {
-            ads.updateAuthDoctor(loggedUser.getId(), doctorId, doctorAuthorizationUpdateDTO.getAccessLevels());
-        }
-
-        return Response.ok().build();
     }
 }
