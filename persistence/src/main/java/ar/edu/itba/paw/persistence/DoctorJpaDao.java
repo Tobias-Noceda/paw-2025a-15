@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,7 @@ import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 
 @Repository
 public class DoctorJpaDao implements DoctorDao{
@@ -31,11 +33,26 @@ public class DoctorJpaDao implements DoctorDao{
     private EntityManager em;
 
     @Override
+    public void deleteDoctor(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if (doctor != null) {
+            em.remove(doctor);
+        }
+    }
+
+    @Override
     public Doctor createDoctor(String email, String password, String name, String telephone, long pictureId, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances) {
         File picture = em.find(File.class, pictureId);
         if(picture == null) return null;
-        Doctor doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
-        em.persist(doctor);
+        Doctor doctor;
+
+        try {
+            doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
+            em.persist(doctor);
+            em.flush();
+        } catch (PersistenceException e) {
+            throw new AlreadyExistsException("Medical license already taken!");
+        }
         return doctor;
     }
 

@@ -49,24 +49,24 @@
             id: 'date',
             label: m['appointments.label.date'](),
             render: (appointment: Appointment) => {
-                return new Date(appointment.date).toLocaleDateString(getLocale(), {
+                return appointment.date ? new Date(appointment.date).toLocaleDateString(getLocale(), {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit'
-                });
+                }) : '';
             },
             class: 'text-start'
         },
         {
             id: 'time-span',
             label: m['appointments.label.time'](),
-            render: (appointment: Appointment) => appointment.startTime + ' - ' + appointment.endTime,
+            render: (appointment: Appointment) => (appointment.startTime ?? '') + ' - ' + (appointment.endTime ?? ''),
             class: 'text-start'
         },
         {
             id: 'address',
             label: m['appointments.label.address'](),
-            render: (appointment: Appointment) => appointment.address,
+            render: (appointment: Appointment) => appointment.address ?? '',
             class: 'text-start'
         }
     ];
@@ -148,7 +148,7 @@
         {
             id: 'time-span',
             label: m['doctor.table.time'](),
-            render: (appointment: Appointment) => appointment.startTime + ' - ' + appointment.endTime,
+            render: (appointment: Appointment) => (appointment.startTime ?? '') + ' - ' + (appointment.endTime ?? ''),
             class: 'text-start'
         },
         {
@@ -204,11 +204,7 @@
                 .then(() => {
                     showSuccessToast = true;
 
-                    futureAppointments = {
-                        results: futureAppointments.results.splice(index, 1),
-                        _links: futureAppointments._links,
-                        _pageInfo: futureAppointments._pageInfo
-                    };
+                    futureAppointments.results.splice(index, 1)
                 })
                 .catch((error) => {
                     showErrorToast = true;

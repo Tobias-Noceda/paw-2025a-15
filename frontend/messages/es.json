@@ -54,6 +54,7 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"insurances": "Obras sociales",
+			"add_schedule": "¿Desea agregar horario de atención?",
 			"work_days": "Días laborales",
 			"start_time": "Horario de inicio",
 			"end_time": "Horario de fin",
@@ -72,6 +73,12 @@
 			"error": {
 				"title": "Error",
 				"message": "Ocurrió un error al intentar crear tu cuenta. Por favor, inténtelo de nuevo más tarde."
+			},
+			"form": {
+				"error": {
+					"email": "El mail ya está tomado",
+					"med_license": "La matrícula ya fue usada"
+				}
 			}
 		},
 		"change": {

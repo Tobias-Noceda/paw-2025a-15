@@ -54,6 +54,7 @@
 			"specialty": "Specialty",
 			"address": "Address",
 			"insurances": "Health insurances",
+			"add_schedule": "Do you want to add a schedule of availability?",
 			"work_days": "Work days",
 			"start_time": "Start time",
 			"end_time": "End time",
@@ -72,6 +73,12 @@
 			"error": {
 				"title": "Error",
 				"message": "An error occurred while trying to create your account. Please try again later."
+			},
+			"form": {
+				"error": {
+					"email": "Email already taken",
+					"med_license": "License already taken"
+				}
 			}
 		},
 		"change": {
