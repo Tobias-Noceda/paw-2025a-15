@@ -67,7 +67,7 @@
 				<img src="{base}/cached/resources/icono.jpg" alt={m['topbar.logo_alt_text']()} />
 			</a>
 		</div>
-		{#if $user}
+		{#if $user && ($user.role !== 'ADMIN')}
 			<nav class="nav-links">
 				<!-- add "active" class when the location matches the link -->
 				<a
