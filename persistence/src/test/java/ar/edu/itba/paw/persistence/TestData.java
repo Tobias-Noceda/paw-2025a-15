@@ -61,7 +61,7 @@ public class TestData {
     public class Users{
         public static final Patient patient = new Patient("donna@example.com", "supersecret123", "donna", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
         public static final Long patientId = 1L;
-        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret456", "sophie", "1112345678", Images.validImage2, LocalDate.now() , LocaleEnum.EN_AR, LocalDate.parse("1999-01-01"), BigDecimal.valueOf(1.55), BigDecimal.valueOf(79.00));
+        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret456", "sophie", "1187654321", Images.validImage2, LocalDate.now() , LocaleEnum.EN_AR, LocalDate.parse("1999-01-01"), BigDecimal.valueOf(1.55), BigDecimal.valueOf(79.00));
         public static final Long newPatientId = 3L;
         
 

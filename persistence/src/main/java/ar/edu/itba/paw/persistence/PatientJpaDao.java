@@ -45,7 +45,7 @@ public class PatientJpaDao implements PatientDao {
 
     @Override
     public void updatePatient(
-        Patient patient,
+        Long patientId,
         String phoneNumber,
         File picture,
         LocaleEnum mailLanguage,
@@ -64,6 +64,8 @@ public class PatientJpaDao implements PatientDao {
         Insurance insurance,
         String insuranceNumber
     ) {
+        Patient patient = getPatientById(patientId).orElse(null);
+        if(patient==null) return;
         if (phoneNumber != null) patient.setTelephone(phoneNumber);
         if (picture != null) patient.setPicture(picture);
         if (mailLanguage != null) patient.setLocale(mailLanguage);

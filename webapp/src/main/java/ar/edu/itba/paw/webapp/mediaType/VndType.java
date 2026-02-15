@@ -37,5 +37,7 @@ public class VndType {
     public static final String APPLICATION_PATIENT_STUDY = "application/vnd.patients.studies.v1+json";
 
     // password reset media type
-    public static final String APPLICATION_PASSWORD_RESET = "application/vnd.user-password.v1+json";
+    public static final String APPLICATION_PASSWORD_RESET = "application/vnd.user-password.reset.v1+json";
+
+    public static final String APPLICATION_PASSWORD_CREATE = "application/vnd.user-password.creation.v1+json";
 }
