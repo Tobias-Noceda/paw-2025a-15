@@ -547,6 +547,26 @@
 				"message": "An error occurred while trying to update the insurance. Please try again later."
 			}
 		},
+		"create": {
+			"title": "Create new insurance",
+			"buttons": {
+				"file": "Choose insurance logo",
+				"submit": "Create insurance"
+			},
+			"labels": {
+				"logo": "Insurance Logo"
+			},
+			"toast": {
+				"success": {
+					"title": "Insurance created successfully!",
+					"message": "The insurance has been created successfully."
+				},
+				"error": {
+					"title": "Error creating insurance",
+					"message": "An error occurred while trying to create the insurance. Please try again later."
+				}
+			}
+		},
 		"delete": {
 			"toast": {
 				"success": {

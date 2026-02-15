@@ -6,13 +6,11 @@
 	import Toast from '$components/Toast/Toast.svelte';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
-	import type { Insurance } from '$types/api';
-	import { editInsurance } from '$lib/services/insurances';
+	import { createInsurance } from '$lib/services/insurances';
 
 	let { data }: { data: PageData } = $props();
 
-	let insurance: Insurance = $state(data.insurance);
-	let insuranceName = $state(insurance ? insurance.name : '');
+	let insuranceName = $state('');
 
 	let newImage = $state<File | undefined>(undefined);
 
@@ -22,11 +20,11 @@
 	let showSuccessToast = $state(false);
 
 	const handleSubmit = async () => {
-		if (!insurance) return;
+		if (!insuranceName || insuranceName.trim() === '') return;
 
 		isSubmitting = true;
 
-		editInsurance(insurance.links.self, insuranceName, newImage, fetch)
+		createInsurance(insuranceName, newImage, fetch)
 			.then(() => {
 				showSuccessToast = true;
 				setTimeout(() => {
@@ -47,9 +45,9 @@
 	<div
 		class="page-container-division bg-transparent! h-fit max-h-full! flex flex-col w-200 gap-2.5 select-none"
 	>
-		<div class="page-card flex flex-col gap-5 w-full h-fit max-h-full! overflow-y-auto">
+		<div class="page-card flex flex-col gap-5 w-full h-full max-h-full! overflow-y-auto">
 			<h1 class="w-full text-center text-[24px] font-bold mb-2.5">
-				{m['insurance.title']()}
+				{m['insurance.create.title']()}
 			</h1>
 			<div class="flex flex-col gap-5">
 				<div class="flex flex-col gap-1">
@@ -63,16 +61,24 @@
 					/>
 				</div>
 
-				<div class="flex flex-col w-full items-start justify-center gap-2 rounded-lg border border-primaryBorder p-4 bg-gray-100">
+				<div
+					class="flex flex-col h-128.25! w-full items-start justify-between gap-2 rounded-lg border border-primaryBorder p-4 bg-gray-100"
+				>
 					<p class="w-full text-start text-line text-primaryText font-bold select-none">
-						{m['insurance.labels.logo']()}:
+						{m['insurance.create.labels.logo']()}:
 					</p>
 					{#if newImage}
-						<div class="flex w-full h-fit items-center justify-center">
-							<img src={URL.createObjectURL(newImage)} alt="Logo" class="h-70 object-contain rounded-lg" />
+						<div class="flex w-full h-full items-center justify-center">
+							<img
+								src={URL.createObjectURL(newImage)}
+								alt="Logo"
+								class="h-95 object-contain rounded-lg"
+							/>
 						</div>
 					{:else}
-						{m['insurance.no_logo']()}
+						<div class="flex h-full w-full justify-center items-center rounded-lg">
+							{m['insurance.no_logo']()}
+						</div>
 					{/if}
 					<input
 						id="logo-upload"
@@ -86,29 +92,15 @@
 					/>
 					<label
 						for="logo-upload"
-						class="flex items-center justify-center font-semibold rounded-md px-4 py-2 cursor-pointer transition-colors text-base bg-primary text-white hover:bg-primary-hover select-none"
+						class="flex items-center justify-center font-semibold rounded-md px-4 py-2 cursor-pointer transition-colors text-base bg-primary text-white hover:bg-primary-hover border-1 border-primary select-none"
 					>
-						{m['insurance.buttons.choose_file']()}
+						{m['insurance.create.buttons.file']()}
 					</label>
 				</div>
 				<p class="text-sm text-secondaryText -mt-4">
 					{m['insurance.accepted_files']()}
 				</p>
-				
-				<div class="flex flex-col w-full items-start justify-center gap-2 rounded-lg border border-primaryBorder p-4 bg-gray-100">
-					<div class="flex flex-row w-full h-fit justify-between">
-						<p class="w-full text-start text-line text-primaryText font-bold select-none">
-							{m['insurance.labels.current_logo']()}:
-						</p>
-						<p class="text-sm text-secondaryText text-nowrap">
-							{m['insurance.can_update']()}
-						</p>
-					</div>
-					<div class="flex w-full h-fit items-center justify-center">
-						<img src={insurance.links.image || ''} alt="Logo" class="h-70 object-contain rounded-lg" />
-					</div>
-				</div>
-				
+
 				<div class="flex flex-row w-full gap-2">
 					<Button
 						variant="primary"
@@ -116,7 +108,7 @@
 						onclick={handleSubmit}
 						disabled={isSubmitting}
 					>
-						{m['insurance.buttons.submit']()}
+						{m['insurance.create.buttons.submit']()}
 					</Button>
 					<Button
 						variant="gray"
@@ -133,15 +125,15 @@
 
 	<Toast
 		variant="success"
-		title={m['insurance.toast.success.title']()}
-		description={m['insurance.toast.success.message']()}
+		title={m['insurance.create.toast.success.title']()}
+		description={m['insurance.create.toast.success.message']()}
 		show={showSuccessToast}
 	/>
 
 	<Toast
 		variant="destructive"
-		title={m['insurance.toast.error.title']()}
-		description={m['insurance.toast.error.message']()}
+		title={m['insurance.create.toast.error.title']()}
+		description={m['insurance.create.toast.error.message']()}
 		show={showErrorToast}
 	/>
 </div>

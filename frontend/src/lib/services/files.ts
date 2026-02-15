@@ -1,5 +1,23 @@
 import { apiOrigin, getAuth, postAuth } from "$modules/api.svelte";
 import { error } from "@sveltejs/kit";
+import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
+import type { Paginated, File as ApiFile } from "$types/api";
+
+export const fetchFilesPage = async (url: string, fetchFn: typeof fetch = fetch): Promise<Paginated<ApiFile>> => {
+    const response = await getAuth(url, undefined, fetchFn);
+
+    if (response.ok) {
+        const filesData = await response.json();
+        
+        return {
+            results: filesData,
+            _links: getPaginationLinks(response),
+            _pageInfo: getPageInfoFromHeaders(response)
+        };
+    }
+
+    throw error(response.status || 500, 'Failed to fetch files');
+};
 
 export const fetchFileById = async (fileId: number, fetchFn: typeof fetch = fetch): Promise<Blob> => {
     const url = `${apiOrigin}/files/${fileId}`;

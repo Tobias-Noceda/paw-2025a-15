@@ -1,5 +1,5 @@
 import { apiOrigin, del, deleteAuth, getAuth, patchAuth, postAuth } from "$modules/api.svelte";
-import type { File as ApiFile, Paginated, Study } from "$types/api";
+import type { Paginated, Study } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 import type { StudyType } from "$types/enums/studyTypes";
@@ -82,22 +82,6 @@ export const fetchSingleStudy = async (patientId: number, studyId: number, fetch
     }
 
     throw error(response.status || 500, 'Failed to fetch study');
-};
-
-export const fetchFilesPage = async (url: string, fetchFn: typeof fetch = fetch): Promise<Paginated<ApiFile>> => {
-    const response = await getAuth(url, undefined, fetchFn);
-
-    if (response.ok) {
-        const filesData = await response.json();
-        
-        return {
-            results: filesData,
-            _links: getPaginationLinks(response),
-            _pageInfo: getPageInfoFromHeaders(response)
-        };
-    }
-
-    throw error(response.status || 500, 'Failed to fetch files');
 };
 
 export const authorizeDoctorsForStudy = async (studyPath: string, doctorSelfs: string[], fetchFn: typeof fetch = fetch): Promise<void> => {
