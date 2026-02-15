@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -98,20 +99,37 @@ public class DoctorJpaDao implements DoctorDao{
             insurance = null;
         }
         if (name == null && specialty == null && insurance == null && weekday == null) {
-            return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
-                    .setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
+            Query nativeQuery = em.createNativeQuery("SELECT doctor_id FROM doctor_details ");
+            nativeQuery.setFirstResult((page - 1) * pageSize);
+            nativeQuery.setMaxResults(pageSize);
+            List<Long> filteredIds = (List<Long>) nativeQuery.getResultList()
+                                    .stream()
+                                    .map(id -> ((Number) id).longValue())
+                                    .toList();
+
+            if (filteredIds.isEmpty()) return Collections.emptyList();
+
+            return em.createQuery("SELECT d FROM Doctor d WHERE d.id IN :filteredIds", Doctor.class)
+                    .setParameter("filteredIds", filteredIds)
                     .getResultList();
         }
         
-        StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
+        StringBuilder queryBuilder = new StringBuilder("SELECT dd.doctor_id FROM doctor_details as dd JOIN users as u ON dd.doctor_id = u.user_id WHERE 1=1 ");
         buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, orderBy);
+        Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
+        if (name != null && !name.isEmpty()) {
+            nativeQuery.setParameter("name", "%" + sanitize(name) + "%");
+        }
+        nativeQuery.setFirstResult((page - 1) * pageSize);
+        nativeQuery.setMaxResults(pageSize);
+        List<Long> filteredIds = (List<Long>) nativeQuery.getResultList()
+                                    .stream()
+                                    .map(id -> ((Number) id).longValue())
+                                    .toList();
+        if (filteredIds.isEmpty()) return Collections.emptyList();
 
-        TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
-        setQueryParameters(query, name, specialty, insurance, weekday);
-
-        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
+        List<Doctor> doctors = em.createQuery("SELECT d FROM Doctor d WHERE d.id IN :filteredIds", Doctor.class)
+                    .setParameter("filteredIds", filteredIds)
                     .getResultList();
 
         if(orderBy != null && (orderBy.equals(DoctorOrderEnum.M_POPULAR) || orderBy.equals(DoctorOrderEnum.L_POPULAR))) {
@@ -133,13 +151,15 @@ public class DoctorJpaDao implements DoctorDao{
             return em.createQuery("SELECT COUNT(d) FROM Doctor d", Long.class).getSingleResult().intValue();
         }
         
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(d) FROM Doctor d WHERE 1=1");
+        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(dd.doctor_id) FROM doctor_details as dd JOIN users as u ON dd.doctor_id = u.user_id WHERE 1=1");
         buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, null);
 
-        TypedQuery<Long> query = em.createQuery(queryBuilder.toString(), Long.class);
-        setQueryParameters(query, name, specialty, insurance, weekday);
-
-        return query.getSingleResult().intValue();
+        Query query = em.createNativeQuery(queryBuilder.toString());
+        if (name != null && !name.isEmpty()) {
+            query.setParameter("name", "%" + sanitize(name) + "%");
+        }
+        Number result = (Number) query.getSingleResult();
+        return result.intValue();
     }
 
     @Override
@@ -199,42 +219,26 @@ public class DoctorJpaDao implements DoctorDao{
             WeekdayEnum weekday, DoctorOrderEnum orderBy) {
         // Build the query based on the parameters provided
         if (name != null && !name.isEmpty()) {
-            queryBuilder.append(" AND LOWER(d.name) LIKE :name");
+            queryBuilder.append(" AND LOWER(u.user_name) LIKE :name");
         }
         if (specialty != null) {
-            queryBuilder.append(" AND d.specialty = :specialty");
+            queryBuilder.append(" AND doctor_specialty = " + specialty.ordinal());
         }
         if (insurance != null) {
-            queryBuilder.append(" AND :insurance MEMBER OF d.insurances");
+            queryBuilder.append(" AND").append(insurance.getId()).append("IN (SELECT dc.insurance_id FROM doctor_coverages as dc WHERE dc.doctor_id = dd.doctor_id)");
         }
         if (weekday != null) {
-            queryBuilder.append(" AND EXISTS (SELECT 1 FROM DoctorSingleShift dss WHERE dss.doctor = d AND dss.weekday = :weekday)");
+            queryBuilder.append(" AND EXISTS (SELECT 1 FROM doctor_single_shifts as dss WHERE dss.doctor_id = dd.doctor_id AND dss.shift_weekday =").append(weekday.ordinal()).append(")");
         }
         if (orderBy != null) {
             switch (orderBy) {
-                case M_RECENT -> queryBuilder.append(" ORDER BY d.createDate ASC");
-                case L_RECENT -> queryBuilder.append(" ORDER BY d.createDate DESC");
+                case M_RECENT -> queryBuilder.append(" ORDER BY u.createDate ASC");
+                case L_RECENT -> queryBuilder.append(" ORDER BY u.createDate DESC");
                 default -> {
                     // Imposible to filter by popularity in a query.
                     // If this is the case, the order will be done in Java
                 }
             }
-        }
-    }
-
-    private void setQueryParameters(TypedQuery<?> query, String name, SpecialtyEnum specialty, Insurance insurance,
-            WeekdayEnum weekday) {
-        if (name != null && !name.isEmpty()) {
-            query.setParameter("name", "%" + sanitize(name) + "%");
-        }
-        if (specialty != null) {
-            query.setParameter("specialty", specialty);
-        }
-        if (insurance != null) {
-            query.setParameter("insurance", insurance);
-        }
-        if (weekday != null) {
-            query.setParameter("weekday", weekday);
         }
     }
 
