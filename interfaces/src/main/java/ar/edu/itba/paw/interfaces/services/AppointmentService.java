@@ -29,7 +29,6 @@ public interface AppointmentService {//TODO check deprecated
     @Deprecated
     public void removeAppointment(long shiftId, LocalDate date, long doctorId, LocalTime startTime, LocalTime endTime);
 
-    @Deprecated
     public  void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate);
 
     public List<AppointmentNew> getAvailableTurnsByDoctorIdByDate(long doctorId, LocalDate date);
