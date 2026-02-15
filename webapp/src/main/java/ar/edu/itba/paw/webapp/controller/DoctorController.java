@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -62,6 +63,9 @@ public class DoctorController {
 
     @Autowired
     private AuthDoctorService ads;
+
+    @Autowired
+    private AppointmentService as;
 
     @Autowired
     private DoctorService ds;
@@ -369,7 +373,6 @@ public class DoctorController {
     @POST
     @Path("/{id:\\d+}/vacations")
     @Consumes(value = VndType.APPLICATION_DOCTOR_VACATIONS)
-    @Produces(value = VndType.APPLICATION_DOCTOR_VACATIONS)
     public Response createVacation(
         @PathParam("id") Long doctorId,
         @Valid VacationCreateDTO vacationDTO
@@ -378,8 +381,8 @@ public class DoctorController {
             throw new NotFoundException();
         }
 
-        LocalDate startDate = LocalDate.parse(vacationDTO.getStartDate());
-        LocalDate endDate = LocalDate.parse(vacationDTO.getEndDate());
+        LocalDate startDate = vacationDTO.getStartDate();
+        LocalDate endDate = vacationDTO.getEndDate();
 
         //TODO toda esta logica en el service o en otra forma
         if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
@@ -402,6 +405,11 @@ public class DoctorController {
         }
 
         DoctorVacation vacation = ds.createDoctorVacation(doctorId, startDate, endDate);
+
+        if (vacationDTO.getCancelAppointments()) {
+            as.cancelAppointmentRange(doctorId, startDate, endDate);
+        }
+
         DoctorVacationDTO responseDTO = DoctorVacationDTO.fromVacation(uriInfo, vacation);
 
         URI location = uriInfo.getAbsolutePathBuilder()

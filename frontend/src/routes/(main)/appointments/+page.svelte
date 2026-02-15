@@ -320,7 +320,11 @@
     />
 
     {#if canceledAppointment}
-        <PopUp>
+        <PopUp onClose={() => {
+            canceledAppointment = null;
+            canceledAppointmentId = null;
+            cancelReason = null;
+        }}>
             <div class="flex flex-col gap-2">
                 <h1 class="text-primaryText text-[1.17rem] font-bold">
                     {cancelReason ? m['appointments.pop_up.delete.title']() : m['appointments.pop_up.cancel.title']()}
@@ -352,7 +356,7 @@
     {/if}
 
     {#if selectedAppointment}
-        <PopUp>
+        <PopUp onClose={() => selectedAppointment = null}>
             <div class="flex flex-col gap-2">
                 <h1 class="text-primaryText text-[1.17rem] font-bold">
                     {selectedAppointment.patientName ?? m['appointments.pop_up.unknown_patient']()}

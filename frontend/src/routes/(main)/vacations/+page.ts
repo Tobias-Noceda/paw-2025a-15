@@ -29,7 +29,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         const futureVacations = await fetchVacations(doctor.links.futureVacations, fetch);
 
         return {
-            currentUser,
+            doctor,
             pastVacations,
             futureVacations
         };
