@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { page } from '$app/stores';
     import Button from '$components/Button/Button.svelte';
     import ButtonCell from '$components/Table/ButtonCell.svelte';
     import DatePicker from '$components/DatePicker/DatePicker.svelte';
@@ -13,14 +12,16 @@
 	import { parseDateInLocalTimezone } from '$lib/services/appointments';
 	import type { Paginated, Vacations } from '$types/api';
 	import type { PageData } from './$types';
-	import { fetchFilesPage } from '$lib/services/studies';
-	import { deleteVacation, fetchVacations } from '$lib/services/vacations';
+	import { createVacation, deleteVacation, fetchVacations } from '$lib/services/vacations';
 
 	let { data }: { data: PageData } = $props();
 
     let pastVacations: Paginated<Vacations> = $state(data.pastVacations);
     let futureVacations: Paginated<Vacations> = $state(data.futureVacations);
     let isSubmitting = $state(false);
+
+    let isCreating = $state(false);
+    let isDeleting = $state(false);
 
     // Form state
     let startDate = $state<Date | null>(null);
@@ -34,6 +35,7 @@
 
     // Delete confirmation popup state
     let vacationToDelete = $state<Vacations | null>(null);
+    let deleteingVacationIdx = $state<number | null>(null);
 
     // Derived: Get minimum date for pickers (today)
     let minDate = $derived(new Date());
@@ -73,15 +75,54 @@
     };
 
     // Handle form submission
-    const handleSubmit = async () => {
-        
+    const handleSubmit = async (cancel: boolean = true) => {
+        if (!validateForm() || !startDate || !endDate) return;
+
+        isSubmitting = true;
+        try {
+            const success = await createVacation(
+                data.doctor.links.self,
+                startDate,
+                endDate,
+                cancel
+            ).catch((error) => {
+                console.error('Error creating vacation:', error);
+                return null;
+            });
+
+            if (success) {
+                showSuccess(
+                    m['vacations.created.title'](),
+                    m['vacations.created.message']()
+                );
+                // Reset form
+                startDate = null;
+                endDate = null;
+
+                futureVacations = await fetchVacations(data.doctor.links.futureVacations, fetch);
+            } else {
+                showError(
+                    m['vacations.error.create.title'](),
+                    m['vacations.error.create.message']()
+                );
+            }
+        } catch (error) {
+            console.error('Error creating vacation:', error);
+            showError(
+                m['vacations.error.create.title'](),
+                m['vacations.error.create.message']()
+            );
+        } finally {
+            isSubmitting = false;
+            isCreating = false;
+        }
     };
 
     // Handle delete vacation
     const handleDelete = async () => {
-        if (!vacationToDelete) return;
+        if (!vacationToDelete || deleteingVacationIdx === null) return;
 
-        isSubmitting = true;
+        isDeleting = true;
         try {
             const success = await deleteVacation(vacationToDelete.links.self);
 
@@ -91,6 +132,7 @@
                     m['vacations.deleted.message']()
                 );
                 vacationToDelete = null;
+                futureVacations.results.splice(deleteingVacationIdx, 1);
             } else {
                 showError(
                     m['vacations.error.delete.title'](),
@@ -104,7 +146,7 @@
                 m['vacations.error.delete.message']()
             );
         } finally {
-            isSubmitting = false;
+            isDeleting = false;
         }
     };
 
@@ -120,8 +162,9 @@
         showErrorToast = true;
     };
 
-    const formatDateDisplay = (date: string) => {
-        return parseDateInLocalTimezone(date).toLocaleDateString(getLocale(), {
+    const formatDateDisplay = (date: string | Date) => {
+        const parsedDate = date instanceof Date ? date : parseDateInLocalTimezone(date);
+        return parsedDate.toLocaleDateString(getLocale(), {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
@@ -146,38 +189,29 @@
 
     // Table columns for future vacations (with delete action)
     const futureColumns: Column<Vacations>[] = [
-        {
-            id: 'startDate',
-            label: m['vacations.table.startDate'](),
-            render: (vacation: Vacations) => formatDateDisplay(vacation.startDate),
-            class: 'font-medium'
-        },
-        {
-            id: 'endDate',
-            label: m['vacations.table.endDate'](),
-            render: (vacation: Vacations) => formatDateDisplay(vacation.endDate),
-            class: 'text-secondaryText'
-        },
+        ...pastColumns,
         {
             id: 'actions',
-            label: m['vacations.table.actions'](),
-            columnClass: 'w-25 text-center',
-            class: 'text-center',
-            render: (vacation: Vacations) => {
+            label: m['action'](),
+            render: (vacation: Vacations, index: number) => {
                 return {
                     component: ButtonCell,
                     props: {
                         text: 'trash',
                         icon: true,
                         variant: 'destructive',
-                        class: 'p-2 rounded-full',
                         onclick: (e: MouseEvent) => {
                             e.stopPropagation();
+                            e.preventDefault();
+
                             vacationToDelete = vacation;
-                        },
+                            deleteingVacationIdx = index;
+                        }
                     }
                 };
-            }
+            },
+            class: 'flex justify-center items-center text-center',
+            columnClass: 'w-20'
         }
     ];
 </script>
@@ -210,11 +244,15 @@
             </div>
             <Button
                 variant="primary"
-                onclick={handleSubmit}
-                disabled={isSubmitting || !startDate || !endDate}
+                onclick={() => {
+                    if (validateForm()) {
+                        isCreating = true;
+                    }
+                }}
+                disabled={isCreating || !startDate || !endDate}
                 class="w-fit"
             >
-                {#if isSubmitting}
+                {#if isCreating}
                     {m['input_loading']()}
                 {:else}
                     {m['vacations.create.submit']()}
@@ -233,7 +271,8 @@
             columns={futureColumns}
             rows={futureVacations}
             nextFetchFunction={(url) => fetchVacations(url, fetch)}
-            striped={true}
+            striped
+            hover
             emptyMessage={m['vacations.future.empty']()}
             class="shadow-sm rounded-lg"
         />
@@ -246,16 +285,54 @@
             columns={pastColumns}
             rows={pastVacations}
             nextFetchFunction={(url) => fetchVacations(url, fetch)}
-            striped={true}
+            striped
+            hover
             emptyMessage={m['vacations.past.empty']()}
             class="shadow-sm rounded-lg"
         />
     </div>
 </div>
 
+<!-- Registering decision PopUp -->
+{#if isCreating && startDate && endDate}
+    <PopUp onClose={() => isCreating = false}>
+        <div class="flex flex-col gap-2">
+            <h1 class="text-primaryText text-[1.17rem] font-bold">
+                {m['vacations.creating.confirm.title']()}
+            </h1>
+            <p class="text-primaryText">
+                {m['vacations.creating.confirm.message']({
+                    startDate: formatDateDisplay(startDate),
+                    endDate: formatDateDisplay(endDate)
+                })}
+            </p>
+            <div class="flex justify-end gap-4 mt-2">
+                <Button
+                    variant="primary"
+                    onclick={() => handleSubmit(true)}
+                    disabled={isSubmitting}
+                >
+                    {m['vacations.creating.confirm.yes']()}
+                </Button>
+                <Button
+                    variant="destructive"
+                    onclick={() => handleSubmit(false)}
+                    disabled={isSubmitting}
+                >
+                    {#if isSubmitting}
+                        {m['input_loading']()}
+                    {:else}
+                        {m['vacations.creating.confirm.no']()}
+                    {/if}
+                </Button>
+            </div>
+        </div>
+    </PopUp>
+{/if}
+
 <!-- Delete Confirmation PopUp -->
 {#if vacationToDelete}
-    <PopUp>
+    <PopUp onClose={() => vacationToDelete = null}>
         <div class="flex flex-col gap-2">
             <h1 class="text-primaryText text-[1.17rem] font-bold">
                 {m['vacations.delete.confirm.title']()}
@@ -268,20 +345,20 @@
             </p>
             <div class="flex justify-end gap-4 mt-2">
                 <Button
-                    variant="secondary"
-                    onclick={() => vacationToDelete = null}
+                    variant="primary"
+                    onclick={handleDelete}
                 >
-                    {m['appointments.pop_up.back']()}
+                    {m['vacations.delete.confirm.button']()}
                 </Button>
                 <Button
                     variant="destructive"
-                    onclick={handleDelete}
-                    disabled={isSubmitting}
+                    onclick={() => vacationToDelete = null}
+                    disabled={isDeleting}
                 >
-                    {#if isSubmitting}
+                    {#if isDeleting}
                         {m['input_loading']()}
                     {:else}
-                        {m['vacations.delete.confirm.button']()}
+                        {m['vacations.delete.confirm.back']()}
                     {/if}
                 </Button>
             </div>

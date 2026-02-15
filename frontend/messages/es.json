@@ -201,6 +201,17 @@
 			"schedule": "Atiende",
 			"accesses": "Accesos actuales"
 		},
+		"details": {
+			"specialty": {
+				"label": "Especialidad:"
+			}
+		},
+		"profile": {
+			"insurance": {
+				"label": "Obras Sociales:"
+			},
+			"updateSchedule": "¿Desea actualizar sus horarios?"
+		},
 		"table": {
 			"day": "Día",
 			"time": "Horario"
@@ -230,6 +241,78 @@
 			"reason_placeholder": "Ingrese el motivo de la cita",
 			"confirm": "Tomar turno",
 			"cancel": "Cancelar"
+		}
+	},
+	"profile": {
+		"title": "Mi Perfil",
+		"role": {
+			"label": "Rol"
+		},
+		"save": {
+			"button": "Guardar cambios",
+			"success_title": "¡Cambios guardados!",
+			"success_message": "Tu perfil se actualizó correctamente."
+		},
+		"phone": {
+			"label": "Teléfono:"
+		},
+		"email": {
+			"lang": {
+				"label": "Idioma de los mails"
+			}
+		},
+		"insurance": {
+			"label": "Obra Social:",
+			"placeholder": "Seleccione su Obra Social"
+		},
+		"insuranceNumber": {
+			"label": "Número de afiliado:",
+			"placeholder": "Ingrese su número de afiliado"
+		},
+		"keep": "Deseo conservar mis turnos tomados con anterioridad"
+	},
+	"profileInfo": {
+		"age": "Edad",
+		"bloodType": "Tipo de sangre",
+		"height": "Altura (m):",
+		"weight": "Peso (kg):",
+		"smokes": "Fuma habitualmente:",
+		"drinks": "Bebe habitualmente:",
+		"meds": "Medicaciones:",
+		"conditions": "Condiciones:",
+		"allergies": "Alergias:",
+		"diet": "Dieta:",
+		"hobbies": "Hobbies:",
+		"job": "Trabajo:",
+		"basic": "Detalles Básicos",
+		"habits": "Detalles de Habitos",
+		"social": "Detalles Sociales",
+		"medical": "Detalles Médicos",
+		"select": "Seleccionar",
+		"yes": "Si",
+		"no": "No",
+		"notProvided": "No Provisto"
+	},
+	"form": {
+		"birthDate": "Fecha de nacimiento:"
+	},
+	"role": {
+		"PATIENT": "Paciente",
+		"DOCTOR": "Médico",
+		"LABORATORY": "Laboratorio",
+		"ADMIN": "Admin"
+	},
+	"locale": {
+		"ES_AR": "Español-(AR)",
+		"ES_US": "Español-(US)",
+		"EN_AR": "English",
+		"EN_US": "English-(US)"
+	},
+	"admin": {
+		"insurances": {
+			"button": {
+				"edit": "Editar"
+			}
 		}
 	},
 	"appointments": {
@@ -480,13 +563,12 @@
 	"vacations": {
 		"title": "Gestión de Vacaciones",
 		"create": {
-			"title": "Agregar nuevas vacaciones",
-			"submit": "Crear Vacaciones"
+			"title": "Registrar nuevas vacaciones",
+			"submit": "Registrar vacaciones"
 		},
 		"table": {
 			"startDate": "Fecha de inicio",
-			"endDate": "Fecha de fin",
-			"actions": "Acciones"
+			"endDate": "Fecha de fin"
 		},
 		"past": {
 			"title": "Vacaciones pasadas",
@@ -497,18 +579,27 @@
 			"empty": "No hay vacaciones programadas"
 		},
 		"created": {
-			"title": "¡Vacaciones creadas!",
+			"title": "¡Vacaciones registradas!",
 			"message": "Las vacaciones han sido registradas exitosamente."
 		},
 		"deleted": {
-			"title": "¡Vacaciones eliminadas!",
-			"message": "Las vacaciones han sido eliminadas exitosamente."
+			"title": "¡Vacaciones canceladas!",
+			"message": "Las vacaciones han sido canceladas exitosamente."
 		},
 		"delete": {
 			"confirm": {
-				"title": "¿Eliminar vacaciones?",
-				"message": "¿Está seguro que desea eliminar las vacaciones desde {startDate} hasta {endDate}?",
-				"button": "Eliminar"
+				"title": "Cancelar vacaciones",
+				"message": "¿Está seguro que desea cancelar las vacaciones desde {startDate} hasta {endDate}?",
+				"button": "Cancelar vacaciones",
+				"back": "Volver"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Registrar vacaciones",
+				"message": "Estás por registrar vacaciones desde {startDate} hasta {endDate}, ¿deseas cancelar los turnos que tengas programados durante ese período?",
+				"yes": "Cancelar turnos",
+				"no": "Continuar sin cancelar turnos"
 			}
 		},
 		"error": {
@@ -521,12 +612,12 @@
 				"message": "No se pudieron cargar las vacaciones. Por favor, inténtelo de nuevo."
 			},
 			"create": {
-				"title": "Error al crear vacaciones",
-				"message": "No se pudieron crear las vacaciones. Por favor, inténtelo de nuevo."
+				"title": "Error al registrar vacaciones",
+				"message": "No se pudieron registrar las vacaciones. Por favor, inténtelo de nuevo."
 			},
 			"delete": {
-				"title": "Error al eliminar vacaciones",
-				"message": "No se pudieron eliminar las vacaciones. Por favor, inténtelo de nuevo."
+				"title": "Error al cancelar vacaciones",
+				"message": "No se pudieron cancelar las vacaciones. Por favor, inténtelo de nuevo."
 			}
 		}
 	},
