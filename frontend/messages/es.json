@@ -538,6 +538,54 @@
 			}
 		}
 	},
+	"insurance": {
+		"title": "Editar obra social",
+		"labels": {
+			"name": "Nombre de la obra social",
+			"logo": "Nuevo logo de la obra social",
+			"current_logo": "Logo actual"
+		},
+		"placeholder": {
+			"name": "Ingrese el nombre de la obra social"
+		},
+		"no_logo": "Ningún archivo seleccionado",
+		"accepted_files": "Los tipos de archivo permitidos son: JPEG, PNG. El tamaño máximo del archivo es de 5 MB.",
+		"can_update": "Puede actualizar el logo de la obra social si lo desea.",
+		"buttons": {
+			"choose_file": "Elegir nuevo logo",
+			"submit": "Guardar cambios",
+			"delete": "Eliminar obra social",
+			"cancel": "Cancelar"
+		},
+		"toast": {
+			"success": {
+				"title": "¡Obra social actualizada con éxito!",
+				"message": "La obra social ha sido actualizada exitosamente."
+			},
+			"error": {
+				"title": "Error al actualizar la obra social",
+				"message": "Ocurrió un error al intentar actualizar la obra social. Por favor, inténtelo de nuevo más tarde."
+			}
+		},
+		"delete": {
+			"toast": {
+				"success": {
+					"title": "¡Obra social eliminada con éxito!",
+					"message": "La obra social ha sido eliminada exitosamente."
+				},
+				"error": {
+					"title": "Error al eliminar la obra social",
+					"message": "Ocurrió un error al intentar eliminar la obra social. Por favor, inténtelo de nuevo más tarde."
+				}
+			},
+			"pop_up": {
+				"title": "¿Estás seguro de que quieres eliminar esta obra social?",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar obra social",
+				"cancel": "Cancelar"
+			}
+		}
+	},
 	"unknown": "Desconocido",
 	"date_format": "dd/MM/yyyy",
 	"previous": "Anterior",
