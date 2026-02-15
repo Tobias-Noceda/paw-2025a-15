@@ -92,7 +92,7 @@
 					/>
 					<label
 						for="logo-upload"
-						class="flex items-center justify-center font-semibold rounded-md px-4 py-2 cursor-pointer transition-colors text-base bg-primary text-white hover:bg-primary-hover border-1 border-primary select-none"
+						class="flex items-center justify-center font-semibold rounded-md px-4 py-2 cursor-pointer transition-colors text-base bg-primary text-white hover:bg-primary-hover select-none"
 					>
 						{m['insurance.create.buttons.file']()}
 					</label>

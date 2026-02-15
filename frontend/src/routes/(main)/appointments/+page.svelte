@@ -309,7 +309,6 @@
         description={m['appointments.canceled.success_message']({
             day: canceledAppointment?.date ? new Date(canceledAppointment.date).getDate() : '',
             month: canceledAppointment?.date ? new Date(canceledAppointment.date).toLocaleString(getLocale(), { month: 'long' }) : '',
-            // TODO: CHECK
             startTime: canceledAppointment?.startTime ?? ''}
         )}
     />

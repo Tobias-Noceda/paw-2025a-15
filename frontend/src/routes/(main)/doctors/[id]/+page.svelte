@@ -26,9 +26,24 @@
 	let appointments: Paginated<Appointment> = $state(data.appointments!);
 	let selectedDate: Date = $state(data.selectedDate!);
 	let isFetching = $state(false);
+	let taken = $state(false);
 
 	let isAuthorized = $state(data.doctorAuthorizations?.authorized ?? false);
 	let authorizationLevels: AccessLevels[] = $state(data.doctorAuthorizations?.accessLevels ?? []);
+
+	let accessLevels = Object.entries(AccessLevels)
+		.splice(1, 3)
+		.map(([key, value]) => {
+			return {
+				id: key,
+				label: m[`doctor.authorizations.options.${value}`](),
+				checked: authorizationLevels.includes(key as AccessLevels)
+			};
+		});
+
+	let isAuthorizing = $state(false);
+	let isDeauthorizing = $state(false);
+	let isUpdatingAuthorization = $state(false);
 
 	let showSuccessToast = $state(false);
 	let showErrorToast = $state(false);
@@ -42,6 +57,9 @@
 				})
 				.catch((error) => {
 					console.error('Failed to authorize doctor:', error);
+				})
+				.finally(() => {
+					isAuthorizing = false;
 				});
 		} else {
 			putAuthorizations(
@@ -50,19 +68,24 @@
 				authorizationLevels
 			).catch((error) => {
 				console.error('Failed to update doctor authorizations:', error);
+			}).finally(() => {
+				isUpdatingAuthorization = false;
 			});
 		}
 	};
 
-    const handleDeauthorize = () => {
-        putAuthorizations(doctor.links.authorization.resolved!, false, [])
-            .then(() => {
-                isAuthorized = false;
-                authorizationLevels = [];
-            })
-            .catch((error) => {
-                console.error('Failed to deauthorize doctor:', error);
-            });
+	const handleDeauthorize = () => {
+		putAuthorizations(doctor.links.authorization.resolved!, false, [])
+			.then(() => {
+				isAuthorized = false;
+				authorizationLevels = [];
+			})
+			.catch((error) => {
+				console.error('Failed to deauthorize doctor:', error);
+			})
+			.finally(() => {
+				isDeauthorizing = false;
+			});
 	};
 
 	// Format date in local timezone (avoid UTC conversion)
@@ -108,11 +131,12 @@
 		takeAppointment(selectedAppointment.links.self, reason)
 			.then(() => {
 				showSuccessToast = true;
+				taken = true;
 				appointments.results.splice(selectedAppointmentId!, 1);
-				selectedAppointment = null;
 				reason = '';
 
 				setTimeout(() => {
+					selectedAppointment = null;
 					goto(`${base}/appointments`);
 				}, 3000);
 			})
@@ -193,40 +217,48 @@
 
 			<Divider class="my-5 bg-skeleton h-0.5" size="auto" />
 
-            <div class="flex flex-col mt-3">
-                {#if isAuthorized}
-                    <p class="section-title">{m['doctor.labels.accesses']()}:</p>
-                    <RadioCheck
-                        optionsClass="w-full mb-5"
-                        options={Object.entries(AccessLevels).splice(1, 3).map(([key, value]) => {
-                            return {
-                                id: key,
-                                label: m[`doctor.authorizations.options.${value}`](),
-                                checked: authorizationLevels.includes(key as AccessLevels)
-                            };
-                        })}
-                        onchange={({ id, checked }) => {
-                            if (checked) {
-                                authorizationLevels = [...authorizationLevels, id as AccessLevels];
-                            } else {
-                                authorizationLevels = authorizationLevels.filter(level => level !== id);
-                            }
-                        }}
-                    />
-                {/if}
+			<div class="flex flex-col mt-3">
+				{#if isAuthorized}
+					<p class="section-title">{m['doctor.labels.accesses']()}:</p>
+					<RadioCheck
+						optionsClass="w-full mb-5"
+						options={accessLevels}
+						onchange={({ id, checked }) => {
+							if (checked) {
+								authorizationLevels = [...authorizationLevels, id as AccessLevels];
+							} else {
+								authorizationLevels = authorizationLevels.filter((level) => level !== id);
+							}
+						}}
+					/>
+				{/if}
 
-                <Button variant="success" class={isAuthorized ? 'w-full' : 'w-fit'} onclick={handleAuthorize}>
-                    {isAuthorized ? m['doctor.actions.update']() : m['doctor.actions.authorize']()}
-                </Button>
+				<Button
+					variant="success"
+					class={isAuthorized ? 'w-full' : 'w-fit'}
+					onclick={() => {
+						if (isAuthorized) {
+							isUpdatingAuthorization = true;
+						} else {
+							isAuthorizing = true;
+						}
+					}}
+					disabled={taken}
+				>
+					{isAuthorized ? m['doctor.actions.update']() : m['doctor.actions.authorize']()}
+				</Button>
 
-                {#if isAuthorized}
-                    <Button variant="destructive" class="w-full mt-2" onclick={handleDeauthorize}>
-                        {m['doctor.actions.de_authorize']()}
-                    </Button>
-                {/if}
-
-            </div>
-
+				{#if isAuthorized}
+					<Button
+						variant="destructive"
+						class="w-full mt-2"
+						onclick={() => isDeauthorizing = true}
+						disabled={taken}
+					>
+						{m['doctor.actions.de_authorize']()}
+					</Button>
+				{/if}
+			</div>
 		</div>
 	</div>
 
@@ -236,7 +268,7 @@
 				variant="secondary"
 				class="w-fit"
 				onclick={() => fetchAppointments(appointments._links.prev!)}
-				disabled={!appointments._links.prev || isFetching}
+				disabled={!appointments._links.prev || isFetching || taken}
 			>
 				{m['previous']()}
 			</Button>
@@ -247,14 +279,15 @@
 					fetchAppointments(doctor.links.freeAppointments, selectedDate);
 				}}
 				minDate={new Date()}
-				maxDate={(appointments._pageInfo?.maxDate ?? new Date(new Date().setMonth(new Date().getMonth() + 3)))}
+				maxDate={appointments._pageInfo?.maxDate ??
+					new Date(new Date().setMonth(new Date().getMonth() + 3))}
 				class="w-fit"
 			/>
 			<Button
 				variant="secondary"
 				class="w-fit"
 				onclick={() => fetchAppointments(appointments._links.next!)}
-				disabled={!appointments._links.next || isFetching}
+				disabled={!appointments._links.next || isFetching || taken}
 			>
 				{m['next']()}
 			</Button>
@@ -263,6 +296,7 @@
 			columns={tableColumns}
 			rows={appointments.results}
 			onRowClick={(appointment, index) => {
+				if (isFetching || taken) return;
 				selectedAppointment = appointment;
 				selectedAppointmentId = index;
 			}}
@@ -273,14 +307,17 @@
 			class="shadow-sm rounded-lg"
 		/>
 	</div>
-	{#if selectedAppointment !== null}
-		<PopUp onClose={() => {
-			selectedAppointment = null;
-			reason = '';
-		}}>
+
+	{#if selectedAppointment !== null && !taken}
+		<PopUp
+			onClose={() => {
+				selectedAppointment = null;
+				reason = '';
+			}}
+		>
 			<div class="flex flex-col gap-2">
 				<h1 class="text-primaryText text-[1.17rem] font-bold">
-					{m['doctor.pop_up.title']({
+					{m['doctor.pop_up.appointment.title']({
 						month: new Date(selectedAppointment.date).toLocaleString(getLocale(), {
 							month: 'long'
 						}),
@@ -289,31 +326,119 @@
 						doctorName: doctor.name
 					})}
 				</h1>
-				<p class="text-primaryText">{m['doctor.pop_up.subtitle']()}</p>
+				<p class="text-primaryText">{m['doctor.pop_up.appointment.subtitle']()}</p>
 				<div>
-					<p class="text-primaryText">{m['doctor.pop_up.reason']()}</p>
+					<p class="text-primaryText">{m['doctor.pop_up.appointment.reason']()}</p>
 					<Input
 						multiline
-						placeholder={m['doctor.pop_up.reason_placeholder']()}
+						placeholder={m['doctor.pop_up.appointment.reason_placeholder']()}
 						bind:value={reason}
 					/>
 				</div>
 				<div class="flex justify-end gap-4 mt-2">
 					<Button
+						variant="primary"
+						disabled={!reason || reason.trim() === ''}
+						onclick={handleTakeAppointment}
+					>
+						{m['doctor.pop_up.appointment.confirm']()}
+					</Button>
+					<Button
 						variant="destructive"
 						onclick={() => {
+							console.log('Canceling appointment selection');
 							selectedAppointment = null;
 							reason = '';
 						}}
 					>
 						{m['doctor.pop_up.cancel']()}
 					</Button>
+				</div>
+			</div>
+		</PopUp>
+	{/if}
+
+	{#if isAuthorizing}
+		<PopUp
+			onClose={() => isAuthorizing = false}
+		>
+			<div class="flex flex-col gap-2">
+				<h1 class="text-primaryText text-[1.17rem] font-bold">
+					{m['doctor.pop_up.authorize.title']()}
+				</h1>
+				<div class="flex justify-end gap-4 mt-2">
 					<Button
 						variant="primary"
-						disabled={!reason || reason.trim() === ''}
-						onclick={handleTakeAppointment}
+						onclick={handleAuthorize}
 					>
-						{m['doctor.pop_up.confirm']()}
+						{m['doctor.pop_up.authorize.confirm']()}
+					</Button>
+					<Button
+						variant="destructive"
+						onclick={() => isAuthorizing = false}
+					>
+						{m['doctor.pop_up.cancel']()}
+					</Button>
+				</div>
+			</div>
+		</PopUp>
+	{/if}
+
+	{#if isUpdatingAuthorization}
+		<PopUp onClose={() => (isUpdatingAuthorization = false)}>
+			<div class="flex flex-col gap-2">
+				<h1 class="text-primaryText text-[1.17rem] font-bold">
+					{m['doctor.pop_up.update.title']()}
+				</h1>
+
+
+				<ul class="list-disc list-inside">
+					<!-- All except first -->
+					{#each accessLevels as level}
+						<li class="text-primaryText!">{m[`doctor.pop_up.update.${level.id.toLowerCase()}`]()}</li>
+					{/each}
+				</ul>
+
+				<p class="text-primaryText font-semibold">{m['doctor.pop_up.update.updateable']()}</p>
+
+				<div class="flex justify-end gap-4 mt-2">
+					<Button
+						variant="primary"
+						onclick={handleAuthorize}
+					>
+						{m['doctor.pop_up.update.confirm']()}
+					</Button>
+					<Button
+						variant="destructive"
+						onclick={() => isUpdatingAuthorization = false}
+					>
+						{m['doctor.pop_up.cancel']()}
+					</Button>
+				</div>
+			</div>
+		</PopUp>
+	{/if}
+	
+	{#if isDeauthorizing}
+		<PopUp
+			onClose={() => isDeauthorizing = false}
+		>
+			<div class="flex flex-col gap-2">
+				<h1 class="text-primaryText text-[1.17rem] font-bold">
+					{m['doctor.pop_up.de_authorize.title']()}
+				</h1>
+				<div class="flex justify-end gap-4 mt-2">
+					<Button
+						variant="primary"
+						onclick={handleDeauthorize}
+					>
+						{m['doctor.pop_up.de_authorize.confirm']()}
+					</Button>
+					<Button
+						variant="destructive"
+						onclick={() => isDeauthorizing = false}
+					>
+						{m['doctor.pop_up.cancel']()}
 					</Button>
 				</div>
 			</div>
