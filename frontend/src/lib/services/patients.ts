@@ -98,24 +98,20 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
         return patient;
     }
 
-    const response = await get(patient.links.insurance, undefined, fetchFn);
+    const insuranceResponse = await get(patient.links.insurance, undefined, fetchFn);
 
-    if (response.ok) {
-        const insurancesData: Insurance = await response.json();
+    if (insuranceResponse.ok) {
+        const insurancesData: Insurance = await insuranceResponse.json();
         patient.insurance = insurancesData.name;
     }
 
-    return patient;
-};
-
-
     // Fetch habits info
-    if (patient.links.habitsInfo) {    
-        response = await getAuth(patient.links.habitsInfo, undefined, fetchFn)
+    if (patient.links.habitsInfo) {
+        const habitsResponse = await getAuth(patient.links.habitsInfo, undefined, fetchFn)
             .catch(() => null);
-        if (response && response.ok) {
+        if (habitsResponse && habitsResponse.ok) {
             patient.gaveHabits = true;
-            data = await response.json();
+            const data = await habitsResponse.json();
             patient.drinks = data.drinks;
             patient.smokes = data.smokes;
             patient.diet = data.diet;
@@ -124,12 +120,12 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
 
     // Fetch medical info
     if (patient.links.medicalInfo) {
-        response = await getAuth(patient.links.medicalInfo, undefined, fetchFn)
+        const medicalResponse = await getAuth(patient.links.medicalInfo, undefined, fetchFn)
             .catch(() => null);
 
-        if (response && response.ok) {
+        if (medicalResponse && medicalResponse.ok) {
             patient.gaveMedical = true;
-            data = await response.json();
+            const data = await medicalResponse.json();
             patient.meds = data.meds;
             patient.conditions = data.conditions;
             patient.allergies = data.allergies;
@@ -138,12 +134,12 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
 
     // Fetch social info
     if (patient.links.socialInfo) {
-        response = await getAuth(patient.links.socialInfo, undefined, fetchFn)
+        const socialResponse = await getAuth(patient.links.socialInfo, undefined, fetchFn)
             .catch(() => null);
 
-        if (response && response.ok) {
+        if (socialResponse && socialResponse.ok) {
             patient.gaveSocial = true;
-            data = await response.json();
+            const data = await socialResponse.json();
             patient.hobbies = data.hobbies;
             patient.job = data.job;
         }
