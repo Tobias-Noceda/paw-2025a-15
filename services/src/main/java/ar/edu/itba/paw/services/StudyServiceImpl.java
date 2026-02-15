@@ -125,7 +125,7 @@ public class StudyServiceImpl implements StudyService{
 
             return studyDao.getFilteredStudiesByPatientAndDoctorCount(patientId, doctorId, type);
         }
-        else {//TODO check aca no tendria que ir doc tmb entonces?
+        else {
             return studyDao.getFilteredStudiesByPatientCount(patientId, type);
         }
     }

@@ -457,20 +457,15 @@
 		"no_files": "No files selected",
 		"more_files": "+ {count} more files"
 	},
-	"unknown": "Unknown",
-	"date_format": "MM/dd/yyyy",
-	"next": "Next",
-	"previous": "Previous",
 	"vacations": {
-		"title": "Vacation Management",
+		"title": "Vacations Management",
 		"create": {
-			"title": "Add New Vacation",
-			"submit": "Create Vacation"
+			"title": "Register New Vacations",
+			"submit": "Register Vacations"
 		},
 		"table": {
 			"startDate": "Start Date",
-			"endDate": "End Date",
-			"actions": "Actions"
+			"endDate": "End Date"
 		},
 		"past": {
 			"title": "Past Vacations",
@@ -481,18 +476,27 @@
 			"empty": "No future vacations scheduled"
 		},
 		"created": {
-			"title": "Vacation created!",
-			"message": "The vacation has been successfully registered."
+			"title": "Vacations registered!",
+			"message": "The vacations have been successfully registered."
 		},
 		"deleted": {
-			"title": "Vacation deleted!",
-			"message": "The vacation has been successfully deleted."
+			"title": "Vacations canceled!",
+			"message": "The vacations have been successfully canceled."
 		},
 		"delete": {
 			"confirm": {
-				"title": "Delete vacation?",
-				"message": "Are you sure you want to delete the vacation from {startDate} to {endDate}?",
-				"button": "Delete"
+				"title": "Cancel vacations",
+				"message": "Are you sure you want to cancel the vacations from {startDate} to {endDate}?",
+				"button": "Cancel vacations",
+				"back": "Go back"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Register Vacations",
+				"message": "You are about to register vacations from {startDate} to {endDate}, do you want to cancel the appointments you have scheduled during that period?",
+				"yes": "Cancel appointments",
+				"no": "Continue without canceling appointments"
 			}
 		},
 		"error": {
@@ -505,15 +509,19 @@
 				"message": "Could not load vacations. Please try again."
 			},
 			"create": {
-				"title": "Creation error",
-				"message": "Could not create the vacation. Please try again."
+				"title": "Registration error",
+				"message": "Could not register the vacations. Please try again."
 			},
 			"delete": {
-				"title": "Deletion error",
-				"message": "Could not delete the vacation. Please try again."
+				"title": "Cancellation error",
+				"message": "Could not cancel the vacations. Please try again."
 			}
 		}
 	},
+	"unknown": "Unknown",
+	"date_format": "MM/dd/yyyy",
+	"previous": "Previous",
+	"next": "Next",
 	"action": "Action",
 	"actions": "Actions"
 }

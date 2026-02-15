@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.springframework.stereotype.Component;
-
+//TODO delete
 @Path("/hello")
 @Component
 public class JerseyHelloWorld {

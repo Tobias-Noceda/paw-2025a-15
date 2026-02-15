@@ -14,6 +14,7 @@ import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 public interface DoctorService {//TODO check deprecated
+    
     public void deleteDoctor(long doctorId);
 
     public Doctor createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale);
@@ -33,17 +34,17 @@ public interface DoctorService {//TODO check deprecated
 
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name);
 
-    @Deprecated
     public DoctorVacation createDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
-    @Deprecated
     public void deleteDoctorVacation(long doctorId, LocalDate startDate, LocalDate endDate);
 
-    @Deprecated
-    public List<DoctorVacation> getDoctorVacationsPast(long doctorId);//TODO paginar?
+    public List<DoctorVacation> getDoctorVacationsPastPage(long doctorId, int page, int pageSize);
 
-    @Deprecated
-    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId);//TODO paginar?
+    public int getDoctorVacationsPastCount(long doctorId);
+
+    public List<DoctorVacation> getDoctorVacationsFuturePage(long doctorId, int page, int pageSize);
+
+    public int getDoctorVacationsFutureCount(long doctorId);
 
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate);
 }

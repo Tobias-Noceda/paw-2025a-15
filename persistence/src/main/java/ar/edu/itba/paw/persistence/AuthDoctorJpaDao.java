@@ -67,7 +67,6 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                 patient = em.find(Patient.class, patientId);
             }
         }
-        return;
     }
 
     @Override
@@ -103,7 +102,6 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                 }
             }
         }
-        return;
     }
 
     @Override
