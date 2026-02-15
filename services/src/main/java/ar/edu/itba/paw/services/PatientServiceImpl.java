@@ -101,7 +101,7 @@ public class PatientServiceImpl implements PatientService{
         
 
         patientDao.updatePatient(
-            patient,
+            patient.getId(),
             phoneNumber,
             picture,
             mailLanguage,

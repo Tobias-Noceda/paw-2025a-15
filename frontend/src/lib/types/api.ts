@@ -11,10 +11,10 @@ export type Languages = 'es' | 'en';
 
 export type Paginated<T> = {
 	_links: {
-        first?: string;
+		first?: string;
 		prev?: string;
 		next?: string;
-        last?: string;
+		last?: string;
 	};
 	_pageInfo?: {
 		currentPage?: number;
@@ -47,6 +47,13 @@ export type Doctor = {
 	telephone: string;
 	license: string;
 	specialty: Specialty;
+	mailLanguage?: string;
+	insuranceIds?: number[];
+	address?: string;
+	startTime?: string;
+	endTime?: string;
+	duration?: number;
+	weekdays?: Weekdays[];
 	schedule?: Map<Weekdays, [Date, Date]>;
 	direction?: string;
 	insurances?: string[];
@@ -72,17 +79,15 @@ export type Patient = {
 	bloodType: string;
 	height: number;
 	weight: number;
+	mailLanguage?: string;
 	insurance?: string;
 	insuranceNumber: string;
-	gaveHabits?: boolean;
 	smokes?: boolean;
 	drinks?: boolean;
 	diet?: string;
-	gaveMedical?: boolean;
 	meds?: string;
 	conditions?: string;
 	allergies?: string;
-	gaveSocial?: boolean;
 	hobbies?: string;
 	job?: string;
 	studiesPage?: Paginated<Study>;
@@ -91,9 +96,6 @@ export type Patient = {
 		image: string;
 		insurance?: string;
 		self: string;
-		medicalInfo: string;
-		habitsInfo: string;
-		socialInfo: string;
 		pastAppointments: string;
 		futureAppointments: string;
 		studies: UriTemplate;
@@ -144,7 +146,6 @@ export type File = {
 		self: string;
 	}
 };
-
 export type Study = {
 	comment: string;
 	studyDate: string;

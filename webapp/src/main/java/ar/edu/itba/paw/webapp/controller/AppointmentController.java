@@ -59,7 +59,7 @@ public class AppointmentController {
         @QueryParam("page") @DefaultValue("1") int page,
         @QueryParam("pageSize") @DefaultValue("10") int pageSize
     ) {
-        AppointmentStatusEnum appointmentStatus = AppointmentStatusEnum.fromString(status);
+        AppointmentStatusEnum appointmentStatus = AppointmentStatusEnum.fromString(status.toLowerCase());//TODO catch illegalArgument with bad request?
         List<AppointmentDTO> appointmentDTOs;
         Integer totalItems;
         LocalDate today = LocalDate.now(ARGENTINA_ZONE);
@@ -145,7 +145,7 @@ public class AppointmentController {
         ) {}).build();
     }
 
-    @PATCH
+    @PATCH//TODO capaz faltaria un post?
     @Path("/{appointmentId}")
     @Consumes(value = VndType.APPLICATION_APPOINTMENT)
     @Produces(value = VndType.APPLICATION_APPOINTMENT)

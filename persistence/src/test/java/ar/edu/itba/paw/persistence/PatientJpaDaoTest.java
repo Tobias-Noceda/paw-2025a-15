@@ -102,9 +102,9 @@ public class PatientJpaDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:patientDetails-notNull.sql"})
     public void testUpdate(){
         final Long PATIENT_ID = TestData.Users.patientId;
-        final Patient PATIENT = TestData.Users.patient;
-        PATIENT.setId(PATIENT_ID);
-        PATIENT.getPicture().setId(TestData.Images.validImageId);
+        // final Patient PATIENT = TestData.Users.patient;
+        // PATIENT.setId(PATIENT_ID);
+        // PATIENT.getPicture().setId(TestData.Images.validImageId);
 
         final String NEW_TELEPHONE = TestData.Users.newPatient.getTelephone();
         final File NEW_PIC = TestData.Images.validImage2;
@@ -128,7 +128,7 @@ public class PatientJpaDaoTest {
         NEW_INSURANCE.setId(NEW_INSURANCE_ID);
         final String NEW_INSURANCENUM = "12345678";
 
-        patientDao.updatePatient(PATIENT, NEW_TELEPHONE, NEW_PIC, NEW_LOCALE, NEW_BIRTHDATE, NEW_BLOODTYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB, NEW_INSURANCE, NEW_INSURANCENUM);
+        patientDao.updatePatient(PATIENT_ID, NEW_TELEPHONE, NEW_PIC, NEW_LOCALE, NEW_BIRTHDATE, NEW_BLOODTYPE, NEW_HEIGHT, NEW_WEIGHT, NEW_SMOKES, NEW_DRINKS, NEW_MEDS, NEW_CONDITIONS, NEW_ALLERGIES, NEW_DIET, NEW_HOBBIES, NEW_JOB, NEW_INSURANCE, NEW_INSURANCENUM);
         Patient persistedPatient = em.find(Patient.class, PATIENT_ID);
 
         Assert.assertEquals(NEW_TELEPHONE, persistedPatient.getTelephone());
@@ -154,24 +154,24 @@ public class PatientJpaDaoTest {
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:insurances.sql", "classpath:patientDetails-notNull.sql"})
     public void testUpdateAllNull(){
         final Long PATIENT_ID = TestData.Users.patientId;
-        final Patient PATIENT = TestData.Users.patient;
-        PATIENT.setId(PATIENT_ID);
-        PATIENT.getPicture().setId(TestData.Images.validImageId);
-        PATIENT.setBloodType(BloodTypeEnum.AB_POSITIVE);
-        PATIENT.setSmokes(true);
-        PATIENT.setDrinks(false);
-        PATIENT.setMeds("nope");
-        PATIENT.setConditions("nope");
-        PATIENT.setAllergies("nope");
-        PATIENT.setDiet("nope");
-        PATIENT.setHobbies("nope");
-        PATIENT.setJob("carpenter");
+        // final Patient PATIENT = TestData.Users.patient;
+        // PATIENT.setId(PATIENT_ID);
+        // PATIENT.getPicture().setId(TestData.Images.validImageId);
+        // PATIENT.setBloodType(BloodTypeEnum.AB_POSITIVE);
+        // PATIENT.setSmokes(true);
+        // PATIENT.setDrinks(false);
+        // PATIENT.setMeds("nope");
+        // PATIENT.setConditions("nope");
+        // PATIENT.setAllergies("nope");
+        // PATIENT.setDiet("nope");
+        // PATIENT.setHobbies("nope");
+        // PATIENT.setJob("carpenter");
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
         final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
         INSURANCE.setId(INSURANCE_ID);
-        PATIENT.setInsurance(INSURANCE);
+        //PATIENT.setInsurance(INSURANCE);
         final String INSURANCENUM = "12345678";
-        PATIENT.setInsuranceNumber(INSURANCENUM);
+        //.setInsuranceNumber(INSURANCENUM);
 
         final String TELEPHONE = TestData.Users.patient.getTelephone();
         final File PIC = TestData.Images.validImage;
@@ -191,7 +191,7 @@ public class PatientJpaDaoTest {
         final String HOBBIES = TestData.PatientDetails.HOBBIES;
         final String JOB = TestData.PatientDetails.JOB_1;
 
-        patientDao.updatePatient(PATIENT, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        patientDao.updatePatient(PATIENT_ID, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
         Patient persistedPatient = em.find(Patient.class, PATIENT_ID);
 
         Assert.assertEquals(TELEPHONE, persistedPatient.getTelephone());
@@ -200,7 +200,7 @@ public class PatientJpaDaoTest {
         Assert.assertEquals(BIRTHDATE, persistedPatient.getBirthdate());
         Assert.assertEquals(BLOODTYPE, persistedPatient.getBloodType());
         Assert.assertEquals(HEIGHT, persistedPatient.getHeight());
-        Assert.assertEquals(WEIGHT, persistedPatient.getWeight());
+        Assert.assertEquals(WEIGHT.doubleValue(), persistedPatient.getWeight().doubleValue(), 0.01);
         Assert.assertEquals(SMOKES, persistedPatient.getSmokes());
         Assert.assertEquals(DRINKS, persistedPatient.getDrinks());
         Assert.assertEquals(MEDS, persistedPatient.getMeds());

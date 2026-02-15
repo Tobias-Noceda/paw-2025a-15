@@ -24,7 +24,7 @@ public class StudyCreateDTO {
     private String comment;
 
     @NotNull
-    //@ValidStudyFile TODO
+    //TODO @ValidStudyFile 
     @Size(min = 1)
     private List<@URL(protocol = "http")String> files;
 
