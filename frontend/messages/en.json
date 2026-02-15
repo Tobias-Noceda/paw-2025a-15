@@ -221,15 +221,33 @@
 		"text": {
 			"no_schedule": "No available schedule.",
 			"schedule": "{day}s from {startTime} to {endTime}",
-			"empty_schedule": "No available appointments on this date",
-			"pop_up": {
+			"empty_schedule": "No available appointments on this date"
+		},
+		"pop_up": {
+			"appointment": {
 				"title": "Are you sure you want to take an appointment on {month} {day} at {startTime} with {doctorName}?",
 				"subtitle": "By doing this you will also be authorizing them to see your medical profile and studies. You can revoke this permission at any time.",
 				"reason": "Appointment reason:",
 				"reason_placeholder": "Enter a brief reason for the appointment",
-				"confirm": "Take appointment",
-				"cancel": "Cancel"
-			}
+				"confirm": "Take appointment"
+			},
+			"authorize": {
+				"title": "By doing this, you are authorizing the doctor to view your profile and medical studies. You can revoke this permission at any time.",
+				"confirm": "Authorize"
+			},
+			"update": {
+				"title": "Current accesses will be updated.",
+				"view_habits": "With access to habits you grant access to your drinking/smoking habits and diet.",
+				"view_medical": "With medical access you grant access to your medications, conditions and allergies.",
+				"view_social": "With social access you grant access to your hobbies and job.",
+				"updateable": "You can update these permissions at any time.",
+				"confirm": "Update accesses"
+			},
+			"de_authorize": {
+				"title": "By doing this, you are unauthorizing the doctor from viewing your profile and medical studies. You can authorize them again at any time.",
+				"confirm": "Unauthorize"
+			},
+			"cancel": "Cancel"
 		}
 	},
 	"appointments": {

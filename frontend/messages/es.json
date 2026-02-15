@@ -224,11 +224,29 @@
 			"empty_schedule": "No hay turnos disponibles para la fecha seleccionada"
 		},
 		"pop_up": {
-			"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
-			"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
-			"reason": "Motivo de la cita:",
-			"reason_placeholder": "Ingrese el motivo de la cita",
-			"confirm": "Tomar turno",
+			"appointment": {
+				"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
+				"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+				"reason": "Motivo de la cita:",
+				"reason_placeholder": "Ingrese el motivo de la cita",
+				"confirm": "Tomar turno"
+			},
+			"authorize": {
+				"title": "Al realizar esta acción, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+				"confirm": "Autorizar"
+			},
+			"update": {
+				"title": "Los accesos actuales serán actualizados.",
+				"view_habits": "Con el acceso a hábitos brindas acceso a tus hábitos de bebida/fumar, en adicion a tu dieta.",
+				"view_medical": "Con el acceso médico brindas acceso a tus medicaciones, condiciones y alergias.",
+				"view_social": "Con el acceso social brindas acceso a tus hobbies y trabajo.",
+				"updateable": "Puedes actualizar estos permisos en cualquier momento.",
+				"confirm": "Actualizar accesos"
+			},
+			"de_authorize": {
+				"title": "Al realizar esta acción, estarás desautorizando al doctor de ver tu perfil y tus estudios médicos. Podrás autorizarlos nuevamente en cualquier momento.",
+				"confirm": "Desautorizar"
+			},
 			"cancel": "Cancelar"
 		}
 	},
