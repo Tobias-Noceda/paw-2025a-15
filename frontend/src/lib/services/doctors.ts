@@ -2,7 +2,7 @@ import type { Doctor, DoctorAuthorizations, Insurance, Paginated, Shift } from "
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
-import { get, getAuth, postAuth, deleteAuth, putAuth } from "$modules/api.svelte";
+import { get, getAuth, postAuth, deleteAuth, putAuth, post } from "$modules/api.svelte";
 import UriTemplate from "uri-templates";
 import type { User } from "$stores/user";
 import type { AccessLevels } from "$types/enums/accessLevels";
@@ -195,75 +195,6 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
     }
 
     return doctor;
-};
-
-// ============ VACATION TYPES & FUNCTIONS ============
-
-export type Vacation = {
-    doctorId: number;
-    startDate: string; // ISO format: YYYY-MM-DD
-    endDate: string;
-};
-
-export type VacationsResponse = {
-    past: Vacation[];
-    future: Vacation[];
-};
-
-export const fetchVacations = async (
-    doctorId: string,
-    fetchFn: typeof fetch = fetch
-): Promise<VacationsResponse> => {
-    const vacations: VacationsResponse = { past: [], future: [] };
-    
-    try {
-        const url = `${baseApiUrl}/doctors/${doctorId}/vacations`;
-        const response = await getAuth(url, undefined, fetchFn);
-        
-        if (response.ok) {
-            const data = await response.json();
-            vacations.past = data.past || [];
-            vacations.future = data.future || [];
-        }
-    } catch (error) {
-        console.error('Failed to fetch vacations:', error);
-    }
-    
-    return vacations;
-};
-
-export const createVacation = async (
-    doctorId: string,
-    startDate: string,
-    endDate: string,
-    fetchFn: typeof fetch = fetch
-): Promise<boolean> => {
-    try {
-        const url = `${baseApiUrl}/doctors/${doctorId}/vacations`;
-        const response = await postAuth(url, { startDate, endDate }, undefined, fetchFn);
-        
-        return response.ok || response.status === 201;
-    } catch (error) {
-        console.error('Failed to create vacation:', error);
-        return false;
-    }
-};
-
-export const deleteVacation = async (
-    doctorId: string,
-    startDate: string,
-    endDate: string,
-    fetchFn: typeof fetch = fetch
-): Promise<boolean> => {
-    try {
-        const url = `${baseApiUrl}/doctors/${doctorId}/vacations?startDate=${startDate}&endDate=${endDate}`;
-        const response = await deleteAuth(url, undefined, fetchFn);
-        
-        return response.ok || response.status === 204;
-    } catch (error) {
-        console.error('Failed to delete vacation:', error);
-        return false;
-    }
 };
 
 const populateAuthorizationData = (doctor: Doctor, loggedUser: User): Doctor => {

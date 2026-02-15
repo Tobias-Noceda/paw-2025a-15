@@ -22,6 +22,8 @@ public class LinkDTO {
     private URI futureAppointments;
     private URI files;
     private URI patients;
+    private URI pastVacations;
+    private URI futureVacations;
 
     private TemplatedLinkDTO authorization;
     private TemplatedLinkDTO studies;
@@ -203,6 +205,24 @@ public class LinkDTO {
 
     public LinkDTO setStudies(TemplatedLinkDTO studies) {
         this.studies = studies;
+        return this;
+    }
+
+    public URI getPastVacations() {
+        return pastVacations;
+    }
+
+    public LinkDTO setPastVacations(URI pastVacations) {
+        this.pastVacations = pastVacations;
+        return this;
+    }
+
+    public URI getFutureVacations() {
+        return futureVacations;
+    }
+
+    public LinkDTO setFutureVacations(URI futureVacations) {
+        this.futureVacations = futureVacations;
         return this;
     }
 }

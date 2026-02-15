@@ -104,7 +104,7 @@ public class AppointmentServiceImplTest {
     
     @Test
     public void testAddAppointmentNonexistentPatient(){
-        SHIFT.getDoctor().setId(DOC_ID);;
+        SHIFT.getDoctor().setId(DOC_ID);
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.of(DOC));
         Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
@@ -125,7 +125,7 @@ public class AppointmentServiceImplTest {
 
     @Test
     public void testAddAppointmentNonexistentDoc(){
-        SHIFT.getDoctor().setId(DOC_ID);;
+        SHIFT.getDoctor().setId(DOC_ID);
         Mockito.when(dss.getShiftById(Mockito.eq(SHIFT_ID))).thenReturn(Optional.of(SHIFT));
         Mockito.when(ds.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
@@ -306,15 +306,6 @@ public class AppointmentServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             as.getAppointmentByShiftIdDateAndTime(SHIFT_ID, APP_DATE, START_TIME, END_TIME)
-        );
-    }
-
-    @Test
-    public void testGetOldAppointmentDataByPatientIdNonexistentPatient(){
-        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            as.getOldAppointmentDataByPatientId(PATIENT_ID)
         );
     }
 

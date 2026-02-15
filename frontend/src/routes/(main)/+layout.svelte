@@ -82,10 +82,9 @@
 					>{m['topbar.studies']()}</a
 				>
 			{:else if $user.role === 'DOCTOR'}
-				{@const doctorId = $user.self.split('/').pop()}
 				<a
-					href="{base}/doctors/{doctorId}/vacations"
-					class="nav-item {$page.url.pathname.includes('/vacations') ? 'active' : ''}"
+					href="{base}/vacations"
+					class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}"
 					>{m['topbar.vacations']()}</a
 				>
 			{/if}

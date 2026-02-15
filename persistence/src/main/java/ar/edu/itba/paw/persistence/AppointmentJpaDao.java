@@ -114,19 +114,6 @@ public class AppointmentJpaDao implements AppointmentDao {
         return count.intValue();
     }
 
-    @Override //TODO deprecate probably
-    public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient) {
-        String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("patient", patient)
-                        .setParameter("today", now.toLocalDate())
-                        .setParameter("todaysTime", now.toLocalTime())
-                        .getResultList();
-    }
-
     @Override
     public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
         if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();

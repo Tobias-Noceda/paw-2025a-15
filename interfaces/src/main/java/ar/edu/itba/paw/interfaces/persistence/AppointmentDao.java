@@ -20,8 +20,6 @@ public interface AppointmentDao {
 
     public Integer getFutureAppointmentTotalByPatient(Patient patient);
 
-    public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient);
-
     public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize);
 
     public Integer getOldAppointmentTotalByPatient(Patient patient);
