@@ -9,7 +9,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -23,6 +22,7 @@ import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.input.NewPassWordRequestDto;
 import ar.edu.itba.paw.webapp.dto.input.NewPasswordSetDto;
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/password-resets")
 @Component
@@ -42,8 +42,8 @@ public class PasswordResetsController {
     @Context
     private UriInfo uriInfo;
     
-    @POST//TODO mediatype tp vndtype
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @POST
+    @Consumes(value = VndType.APPLICATION_PASSWORD_CREATE)
     public Response createToken(
         @Valid @NonEmptyBody NewPassWordRequestDto newPassRequestDto
     ) {
@@ -57,9 +57,9 @@ public class PasswordResetsController {
         return Response.created(uriInfo.getBaseUriBuilder().path("password-resets").path(token).build()).build();
     }
 
-    @PUT//TODO mediatype to vndtype
+    @PUT
     @Path("/{token}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Consumes(value = VndType.APPLICATION_PASSWORD_RESET)
     public Response resetPassword(
         @PathParam("token") String token,
         @Valid @NonEmptyBody NewPasswordSetDto newPassSetDto
