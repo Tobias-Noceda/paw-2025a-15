@@ -1,4 +1,4 @@
-import { deleteAuth, get, patchAuth } from "$modules/api.svelte";
+import { deleteAuth, get, patchAuth, postAuth } from "$modules/api.svelte";
 import { baseApiUrl, type Insurance, type Paginated } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
@@ -50,6 +50,37 @@ export const fetchInsuranceById = async (id: string, fetchFn: typeof fetch = win
     }
 
     return await response.json();
+};
+
+export const createInsurance = async (name: string, file?: File, fetchFn: typeof fetch = window.fetch): Promise<string> => {
+    let imageLocation = null;
+    if (file) {
+        imageLocation = await createFile(file, fetchFn);
+    }
+
+    const body: any = { name };
+    if (imageLocation) {
+        body.pictureId = imageLocation;
+    }
+
+    const response = await postAuth(`${baseApiUrl}/insurances`, body, {
+        headers: {
+            'Content-Type': 'application/vnd.insurances.v1+json'
+        }
+    }, fetchFn);
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw error(response.status || 500, 'Failed to create insurance: ' + text);
+    }
+
+    const location = response.headers.get('Location');
+    if (!location) {
+        console.error('Insurance created but no Location header found');
+        throw error(500, 'Insurance created but no Location header found');
+    }
+    
+    return location;
 };
 
 export const editInsurance = async (path: string, name: string, newFile?: File, fetchFn: typeof fetch = window.fetch): Promise<Insurance> => {

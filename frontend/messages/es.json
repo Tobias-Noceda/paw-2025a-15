@@ -567,6 +567,26 @@
 				"message": "Ocurrió un error al intentar actualizar la obra social. Por favor, inténtelo de nuevo más tarde."
 			}
 		},
+		"create": {
+			"title": "Crear nueva obra social",
+			"buttons": {
+				"file": "Elegir logo de la obra social",
+				"submit": "Crear obra social"
+			},
+			"labels": {
+				"logo": "Logo de la obra social"
+			},
+			"toast": {
+				"success": {
+					"title": "¡Obra social creada con éxito!",
+					"message": "La obra social ha sido creada exitosamente."
+				},
+				"error": {
+					"title": "Error al crear la obra social",
+					"message": "Ocurrió un error al intentar crear la obra social. Por favor, inténtelo de nuevo más tarde."
+				}
+			}
+		},
 		"delete": {
 			"toast": {
 				"success": {

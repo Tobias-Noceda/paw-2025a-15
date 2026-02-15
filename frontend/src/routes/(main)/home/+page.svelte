@@ -90,27 +90,42 @@
 		let insuranceSearch: string | undefined = undefined;
 
 		if (userRole === 'DOCTOR' && data.patientsLink) {
-			fetchPatients($searchQuery, data.patientsLink, fetch).then(result => {
-				patients = result;
-				filterKey++;
-			});
+			fetchPatients($searchQuery, data.patientsLink, fetch)
+				.then(result => {
+					patients = result;
+					filterKey++;
+				})
+				.catch(error => {
+					console.error('Error fetching patients:', error);
+					throw error;
+				});
+
 		} else if (userRole === 'ADMIN') {
 			insuranceSearch = $searchQuery;
 		} else {
 			// Fetch doctors with current URL params
-			fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder).then(result => {
-				doctors = result;
-				filterKey++;
-			});
+			fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder)
+				.then(result => {
+					doctors = result;
+					filterKey++;
+				})
+				.catch(error => {
+					console.error('Error fetching doctors:', error);
+					throw error;
+				});
 		}
 
 		if (firstLoad || insuranceSearch) {
-			fetchInsurances(insuranceSearch, fetch).then(result => {
-				insurances = result;
-				
-				firstLoad = false;
-				filterKey++;
-			});
+			fetchInsurances(insuranceSearch, fetch)
+				.then(result => {
+					insurances = result;
+					
+					firstLoad = false;
+					filterKey++;
+				}).catch(error => {
+					console.error('Error fetching insurances:', error);
+					throw error;
+				});
 		}
 	});
 
