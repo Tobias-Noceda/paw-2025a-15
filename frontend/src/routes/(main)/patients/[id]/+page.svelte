@@ -210,7 +210,7 @@
 				</p>
 			{/if}
 
-			{#if patient.gaveHabits}
+			{#if patient.smokes != null || patient.drinks != null || patient.diet}
 				<h2 class="patient-section-title">{m['patient.titles.habits']()}</h2>
 				<Divider class="my-4 bg-skeleton h-0.5" size="auto" />
 
@@ -234,7 +234,7 @@
 				</p>
 			{/if}
 
-			{#if patient.gaveMedical}
+			{#if patient.meds || patient.conditions || patient.allergies}
 				<h2 class="patient-section-title">{m['patient.titles.medical']()}</h2>
 				<Divider class="my-4 bg-skeleton h-0.5" size="auto" />
 
@@ -258,7 +258,7 @@
 				</p>
 			{/if}
 
-			{#if patient.gaveSocial}
+			{#if patient.hobbies || patient.job}
 				<h2 class="patient-section-title">{m['patient.titles.social']()}</h2>
 				<Divider class="my-4 bg-skeleton h-0.5" size="auto" />
 
