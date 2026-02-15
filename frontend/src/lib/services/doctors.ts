@@ -2,7 +2,7 @@ import type { Doctor, DoctorAuthorizations, Insurance, Paginated, Shift } from "
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
-import { get, getAuth, patchAuth, post, putAuth } from "$modules/api.svelte";
+import { get, post, getAuth, postAuth, putAuth, patchAuth, deleteAuth } from "$modules/api.svelte";
 import UriTemplate from "uri-templates";
 import type { User } from "$stores/user";
 import type { AccessLevels } from "$types/enums/accessLevels";
@@ -155,7 +155,7 @@ export type DoctorProfileUpdateData = {
 export const createDoctor = async (
     doctorData: Partial<Doctor>,
     password: string,
-    shifts: ShiftCreationData
+    shifts?: ShiftCreationData
 ): Promise<void> => {
     const response = await post(`${baseApiUrl}/doctors`, {
             name: doctorData.name,
@@ -176,7 +176,8 @@ export const createDoctor = async (
     );
 
     if (!response.ok) {
-        throw new Error("Failed to create doctor");
+        const text = await response.text();
+        throw error(response.status || 500, text && text !== '' ? text : "Failed to create doctor");
     }
 };
 

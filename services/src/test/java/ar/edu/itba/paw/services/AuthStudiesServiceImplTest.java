@@ -147,6 +147,15 @@ public class AuthStudiesServiceImplTest {
     }
 
     @Test
+    public void testUnauthStudyForDoctorIdListNonexistentStudy() {
+        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ass.unauthStudyForDoctorIdList(List.of(DOC_ID), STUDY_ID)
+        );
+    }
+
+    @Test
     public void testHasAuthStudyNonexistentStudy() {
         Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
 

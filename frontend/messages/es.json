@@ -54,6 +54,7 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"insurances": "Obras sociales",
+			"add_schedule": "¿Desea agregar horario de atención?",
 			"work_days": "Días laborales",
 			"start_time": "Horario de inicio",
 			"end_time": "Horario de fin",
@@ -72,6 +73,12 @@
 			"error": {
 				"title": "Error",
 				"message": "Ocurrió un error al intentar crear tu cuenta. Por favor, inténtelo de nuevo más tarde."
+			},
+			"form": {
+				"error": {
+					"email": "El mail ya está tomado",
+					"med_license": "La matrícula ya fue usada"
+				}
 			}
 		},
 		"change": {
@@ -553,10 +560,71 @@
 		"no_files": "Ningún archivo seleccionado",
 		"more_files": "+ {count} archivos más"
 	},
+	"vacations": {
+		"title": "Gestión de Vacaciones",
+		"create": {
+			"title": "Registrar nuevas vacaciones",
+			"submit": "Registrar vacaciones"
+		},
+		"table": {
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de fin"
+		},
+		"past": {
+			"title": "Vacaciones pasadas",
+			"empty": "No hay vacaciones pasadas registradas"
+		},
+		"future": {
+			"title": "Vacaciones futuras",
+			"empty": "No hay vacaciones programadas"
+		},
+		"created": {
+			"title": "¡Vacaciones registradas!",
+			"message": "Las vacaciones han sido registradas exitosamente."
+		},
+		"deleted": {
+			"title": "¡Vacaciones canceladas!",
+			"message": "Las vacaciones han sido canceladas exitosamente."
+		},
+		"delete": {
+			"confirm": {
+				"title": "Cancelar vacaciones",
+				"message": "¿Está seguro que desea cancelar las vacaciones desde {startDate} hasta {endDate}?",
+				"button": "Cancelar vacaciones",
+				"back": "Volver"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Registrar vacaciones",
+				"message": "Estás por registrar vacaciones desde {startDate} hasta {endDate}, ¿deseas cancelar los turnos que tengas programados durante ese período?",
+				"yes": "Cancelar turnos",
+				"no": "Continuar sin cancelar turnos"
+			}
+		},
+		"error": {
+			"startRequired": "La fecha de inicio es requerida",
+			"endRequired": "La fecha de fin es requerida",
+			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
+			"pastDate": "La fecha de inicio no puede ser anterior a la fecha actual",
+			"load": {
+				"title": "Error al cargar vacaciones",
+				"message": "No se pudieron cargar las vacaciones. Por favor, inténtelo de nuevo."
+			},
+			"create": {
+				"title": "Error al registrar vacaciones",
+				"message": "No se pudieron registrar las vacaciones. Por favor, inténtelo de nuevo."
+			},
+			"delete": {
+				"title": "Error al cancelar vacaciones",
+				"message": "No se pudieron cancelar las vacaciones. Por favor, inténtelo de nuevo."
+			}
+		}
+	},
 	"unknown": "Desconocido",
 	"date_format": "dd/MM/yyyy",
-	"next": "Siguiente",
 	"previous": "Anterior",
+	"next": "Siguiente",
 	"action": "Acción",
 	"actions": "Acciones"
 }

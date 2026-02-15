@@ -6,7 +6,6 @@ public interface AuthStudiesService {//TODO check deprecated
 
     public boolean authStudyForDoctorId(long studyId, long doctorId);
 
-    @Deprecated
     public void authStudyForDoctorIdList(List<Long> doctorsId, long studyId);
     
     public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId);
@@ -19,7 +18,6 @@ public interface AuthStudiesService {//TODO check deprecated
     @Deprecated
     public void toggleStudyForDoctorId(long studyId, long doctorId);
 
-    @Deprecated
     public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId);
     
     @Deprecated
@@ -28,6 +26,5 @@ public interface AuthStudiesService {//TODO check deprecated
     @Deprecated
     public void deauthorizeAllDoctorsForStudy(long studyId);
 
-    @Deprecated
     public void unauthAllStudiesForAllDocsForPatientId(long patientId);
 }

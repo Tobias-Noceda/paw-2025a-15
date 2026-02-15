@@ -629,37 +629,6 @@ public class AppointmentsJpaDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
-    public void testGetOldAppointmentDataByPatient(){
-        final Patient PATIENT = TestData.Users.patient;
-        PATIENT.setId(TestData.Users.patientId);
-        final long SHIFT_ID = TestData.DoctorSingleShifts.doctorSingleShiftId;
-        final DoctorSingleShift Shift = TestData.DoctorSingleShifts.doctorSingleShift;
-        Shift.setId(SHIFT_ID);
-        final LocalDate APP_DATE = TestData.NewAppointments.appointment.getDate();
-        final LocalDate APP_DATE_OLD = TestData.NewAppointments.oldAppointment.getDate();
-        final LocalTime TIME1 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime();
-        final LocalTime TIME2 = TestData.DoctorSingleShifts.doctorSingleShift.getStartTime().plusMinutes(TestData.DoctorSingleShifts.doctorSingleShift.getDuration());
-        final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
-
-        List<AppointmentNew> apps = appointmentDao.getOldAppointmentDataByPatient(PATIENT);
-        AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME1, TIME2));
-        AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE, TIME2, TIME3));
-        AppointmentNew appFound3 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME1, TIME2));
-        AppointmentNew appFound4 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, APP_DATE_OLD, TIME2, TIME3));
-
-        Assert.assertNotNull(apps);
-        Assert.assertFalse(apps.isEmpty());
-        Assert.assertEquals(2, apps.size());
-        Assert.assertTrue(apps.contains(appFound3));
-        Assert.assertTrue(apps.contains(appFound4));
-        Assert.assertNotNull(appFound1);
-        Assert.assertNotNull(appFound2);
-        Assert.assertNotNull(appFound3);
-        Assert.assertNotNull(appFound4);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorSingleShifts.sql", "classpath:newAppointments.sql", "classpath:oldNewAppointments.sql"})
     public void testGetOldAppointmentTotalByPatient(){
         final Patient PATIENT = TestData.Users.patient;
         PATIENT.setId(TestData.Users.patientId);
@@ -931,7 +900,6 @@ public class AppointmentsJpaDaoTest {
         final LocalTime TIME3 = TestData.DoctorSingleShifts.doctorSingleShift.getEndTime();
 
         List<AppointmentNew> avTurns = appointmentDao.getAvailableTurnsByDoctorByDate(DOC, DATE);
-        Doctor persistedDOctor = em.find(Doctor.class, DOC_ID);
         AppointmentNew appFound1 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME1, TIME2));
         AppointmentNew appFound2 = em.find(AppointmentNew.class, new AppointmentNewId(SHIFT_ID, DATE, TIME2, TIME3));
 

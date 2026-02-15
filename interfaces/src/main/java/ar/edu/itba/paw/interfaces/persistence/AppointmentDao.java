@@ -10,19 +10,15 @@ import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.Patient;
 
-public interface AppointmentDao { //TODO check deprecated
+public interface AppointmentDao {
+
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail);
 
     public Optional<AppointmentNew> getAppointmentByShiftDateAndTime(DoctorSingleShift shift, LocalDate date, LocalTime startTime, LocalTime endTime);
 
-    @Deprecated
-    public List<AppointmentNew> getFutureAppointmentDataByPatient(Patient patient);
-
     public List<AppointmentNew> getFutureAppointmentDataPageByPatient(Patient patient, int page, int pageSize);
 
     public Integer getFutureAppointmentTotalByPatient(Patient patient);
-
-    public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient);
 
     public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize);
 

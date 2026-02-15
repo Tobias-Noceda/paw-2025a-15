@@ -76,18 +76,18 @@
 					>{m['topbar.appointments']()}</a
 				>
 				{#if $user.role === 'PATIENT'}
-					<a
-						href="{base}/studies"
-						class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}"
-						>{m['topbar.studies']()}</a
-					>
-				{:else if $user.role === 'DOCTOR'}
-					<a
-						href="{base}/vacations"
-						class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}"
-						>{m['topbar.vacations']()}</a
-					>
-				{/if}
+				<a
+					href="{base}/studies"
+					class="nav-item {$page.url.pathname === `${base}/studies` ? 'active' : ''}"
+					>{m['topbar.studies']()}</a
+				>
+			{:else if $user.role === 'DOCTOR'}
+				<a
+					href="{base}/vacations"
+					class="nav-item {$page.url.pathname === `${base}/vacations` ? 'active' : ''}"
+					>{m['topbar.vacations']()}</a
+				>
+			{/if}
 			</nav>
 		{/if}
 		<div class="search-bar-container">

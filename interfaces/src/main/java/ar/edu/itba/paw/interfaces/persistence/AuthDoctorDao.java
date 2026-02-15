@@ -4,7 +4,7 @@ import java.util.List;
 
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
-public interface AuthDoctorDao {
+public interface AuthDoctorDao { //TODO check deprecated
     public boolean hasAuthDoctor(long patientId, long doctorId);
 
     @Deprecated

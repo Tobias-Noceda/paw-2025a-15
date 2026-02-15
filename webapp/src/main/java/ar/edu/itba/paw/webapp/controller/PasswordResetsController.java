@@ -42,7 +42,7 @@ public class PasswordResetsController {
     @Context
     private UriInfo uriInfo;
     
-    @POST
+    @POST//TODO mediatype tp vndtype
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response createToken(
         @Valid @NonEmptyBody NewPassWordRequestDto newPassRequestDto
@@ -57,7 +57,7 @@ public class PasswordResetsController {
         return Response.created(uriInfo.getBaseUriBuilder().path("password-resets").path(token).build()).build();
     }
 
-    @PUT
+    @PUT//TODO mediatype to vndtype
     @Path("/{token}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     public Response resetPassword(

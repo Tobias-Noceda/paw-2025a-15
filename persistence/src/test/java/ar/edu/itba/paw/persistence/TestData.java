@@ -61,7 +61,7 @@ public class TestData {
     public class Users{
         public static final Patient patient = new Patient("donna@example.com", "supersecret123", "donna", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
         public static final Long patientId = 1L;
-        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret123", "sophie", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
+        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret456", "sophie", "1112345678", Images.validImage2, LocalDate.now() , LocaleEnum.EN_AR, LocalDate.parse("1999-01-01"), BigDecimal.valueOf(1.55), BigDecimal.valueOf(79.00));
         public static final Long newPatientId = 3L;
         
 
@@ -73,21 +73,29 @@ public class TestData {
 
     public class PatientDetails{
         public static final LocalDate BIRTHDATE = LocalDate.parse("2000-01-01");
-        public static final BloodTypeEnum BLOOD_TYPE_1 = null;
-        public static final BloodTypeEnum BLOOD_TYPE_2 = BloodTypeEnum.AB_POSITIVE;
+        public static final LocalDate BIRTHDATE_2 = LocalDate.parse("1999-01-01");
+        public static final BloodTypeEnum BLOOD_TYPE_1 = BloodTypeEnum.AB_POSITIVE;
+        public static final BloodTypeEnum BLOOD_TYPE_2 = BloodTypeEnum.O_NEGATIVE;
         public static final BigDecimal HEIGHT = BigDecimal.valueOf(1.75);
+        public static final BigDecimal HEIGHT_2 = BigDecimal.valueOf(1.55);
         public static final BigDecimal WEIGHT = BigDecimal.valueOf(89.00);
-        public static final Boolean SMOKES_1 = null;
+        public static final BigDecimal WEIGHT_2 = BigDecimal.valueOf(79.00);
+        public static final Boolean SMOKES_1 = true;
         public static final Boolean SMOKES_2 = false;
-        public static final Boolean DRINKS_1 = null;
+        public static final Boolean DRINKS_1 = false;
         public static final Boolean DRINKS_2 = true;
-        public static final String MEDS = null;
-        public static final String CONDITIONS = null;
-        public static final String ALLERGIES = null;
-        public static final String DIET = null;
-        public static final String HOBBIES = null;
+        public static final String MEDS = "nope";
+        public static final String MEDS_2 = "lemon pie";
+        public static final String CONDITIONS = "nope";
+        public static final String CONDITIONS_2 = "short and sweet";
+        public static final String ALLERGIES = "nope";
+        public static final String ALLERGIES_2 = "fruitcake";
+        public static final String DIET = "nope";
+        public static final String DIET_2 = "espresso";
+        public static final String HOBBIES = "nope";
+        public static final String HOBBIES_2 = "touring";
         public static final String JOB_1 = "carpenter";
-        public static final String JOB_2 = null;
+        public static final String JOB_2 = "singer";
     }
 
     public class DoctorSingleShifts{

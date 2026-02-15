@@ -9,13 +9,15 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
-public interface StudyService {
+public interface StudyService {//TODO check deprecated
+
     public Study create(StudyTypeEnum type, String comment, List<Long> fileIds, long userId, long uploaderId, LocalDate studyDate);
 
     public Optional<Study> getStudyById(long id);
 
     public boolean deleteStudy(long id);
 
+    @Deprecated
     public boolean isFileInStudy(long studyId, long fileId);
 
     public int getStudyFilesCount(Long studyId);

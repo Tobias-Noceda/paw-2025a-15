@@ -66,6 +66,8 @@ export type Doctor = {
 		futureAppointments: string;
 		patients: string;
 		authorization: UriTemplate;
+		pastVacations: string;
+		futureVacations: string;
 	}
 }
 
@@ -157,5 +159,14 @@ export type Study = {
 		patient: string;
 		self: string;
 		uploader: string;
+	}
+};
+
+export type Vacations = {
+	startDate: string;
+	endDate: string;
+	links: {
+		self: string;
+		doctor: string;
 	}
 };
