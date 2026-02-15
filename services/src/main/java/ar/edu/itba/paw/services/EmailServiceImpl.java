@@ -156,7 +156,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
-        templateModel.put("studyLink", baseURL + "view-study/" + study.getId());
+        templateModel.put("studyLink", baseURL + "study-info/" + study.getId() + "-" + patient.getId());
         
         List<String> studyNames = new ArrayList<>();
         for (int i = 0; i < files.size(); i++) {

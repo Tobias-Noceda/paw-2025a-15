@@ -36,7 +36,7 @@ public interface AppointmentDao {
 
     public void clearRemovedAppointmentBeforeDate(LocalDate date);
 
-    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate);
+    public List<AppointmentNew> cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate);
 
-    public List <AppointmentNew> getAvailableTurnsByDoctorByDate(Doctor doctor, LocalDate date);
+    public List<AppointmentNew> getAvailableTurnsByDoctorByDate(Doctor doctor, LocalDate date);
 }
