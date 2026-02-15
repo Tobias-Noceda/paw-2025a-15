@@ -201,6 +201,17 @@
 			"schedule": "Availability",
 			"accesses": "Current Accesses"
 		},
+		"details": {
+			"specialty": {
+				"label": "Specialty:"
+			}
+		},
+		"profile": {
+			"insurance": {
+				"label": "Insurances:"
+			},
+			"updateSchedule": "Do you want to update your schedule?"
+		},
 		"table": {
 			"day": "Weekday",
 			"time": "Time"
@@ -229,6 +240,78 @@
 				"reason_placeholder": "Enter a brief reason for the appointment",
 				"confirm": "Take appointment",
 				"cancel": "Cancel"
+			}
+		}
+	},
+	"profile": {
+		"title": "My Profile",
+		"role": {
+			"label": "Role"
+		},
+		"save": {
+			"button": "Save changes",
+			"success_title": "Changes saved!",
+			"success_message": "Your profile was updated successfully."
+		},
+		"phone": {
+			"label": "Phone number"
+		},
+		"email": {
+			"lang": {
+				"label": "Email language"
+			}
+		},
+		"insurance": {
+			"label": "Insurance:",
+			"placeholder": "Select your insurance"
+		},
+		"insuranceNumber": {
+			"label": "Insurance number:",
+			"placeholder": "Enter your insurance number"
+		},
+		"keep": "I wish to keep my taken turns"
+	},
+	"profileInfo": {
+		"age": "Age:",
+		"bloodType": "Blood Type:",
+		"height": "Height (m):",
+		"weight": "Weight (kg):",
+		"smokes": "Smoking habit:",
+		"drinks": "Drinking habit:",
+		"meds": "Medications:",
+		"conditions": "Conditions:",
+		"allergies": "Allergies:",
+		"diet": "Diet:",
+		"hobbies": "Hobbies:",
+		"job": "Job:",
+		"basic": "Basic Details",
+		"habits": "Habits Details",
+		"social": "Social Details",
+		"medical": "Medical Details",
+		"select": "Select",
+		"yes": "Yes",
+		"no": "No",
+		"notProvided": "Not Provided"
+	},
+	"form": {
+		"birthDate": "Birth date:"
+	},
+	"role": {
+		"PATIENT": "Patient",
+		"DOCTOR": "Doctor",
+		"LABORATORY": "Laboratory",
+		"ADMIN": "Admin"
+	},
+	"locale": {
+		"ES_AR": "Español-(AR)",
+		"ES_US": "Español-(US)",
+		"EN_AR": "English",
+		"EN_US": "English-(US)"
+	},
+	"admin": {
+		"insurances": {
+			"button": {
+				"edit": "Edit"
 			}
 		}
 	},
