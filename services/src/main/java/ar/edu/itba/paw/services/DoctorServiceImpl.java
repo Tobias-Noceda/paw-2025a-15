@@ -53,6 +53,13 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
+    public void deleteDoctor(long doctorId) {
+        doctorDao.deleteDoctor(doctorId);
+        LOGGER.info("Deleted doctor with id: {}", doctorId);
+    }
+
+    @Transactional
+    @Override
     public Optional<Doctor> getDoctorById(long id) {
         Optional<Doctor> doctor = doctorDao.getDoctorById(id);
         doctor.ifPresent(this::initializeDoctorRelations);
@@ -174,23 +181,30 @@ public class DoctorServiceImpl implements DoctorService {
         LOGGER.info("Deleted vacation for doctor with id: {}", doctorId);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
-        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDao.getDoctorVacationsPast(doctorId);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
-        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDao.getDoctorVacationsFuture(doctorId);
-    }
-
     @Override
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
         return doctorDao.vacationExists(doctorId, startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorVacation> getDoctorVacationsPastPage(long doctorId, int page, int pageSize) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsPastPage(doctorId, page, pageSize);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getDoctorVacationsPastCount(long doctorId) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsPastCount(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorVacation> getDoctorVacationsFuturePage(long doctorId, int page, int pageSize) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsFuturePage(doctorId, page, pageSize);
     }
 
     private void initializeDoctorRelations(Doctor doctor) {
@@ -206,5 +220,12 @@ public class DoctorServiceImpl implements DoctorService {
         if (doctor.getSingleShifts() != null) {
             doctor.getSingleShifts().size();
         }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getDoctorVacationsFutureCount(long doctorId) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsFutureCount(doctorId);
     }
 }

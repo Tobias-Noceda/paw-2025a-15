@@ -12,6 +12,7 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 public interface StudyDao {
+    
     public Study create(StudyTypeEnum type, String comment, List<File> file, Patient patient, User uploader, LocalDate studyDate);
 
     public Study create(StudyTypeEnum type, String comment, List<File> file, Patient patient, User uploader);

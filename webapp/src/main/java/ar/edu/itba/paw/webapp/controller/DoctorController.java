@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import java.net.URI;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PATCH;
@@ -20,11 +23,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
@@ -32,20 +37,24 @@ import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.VacationsStatusEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
+import ar.edu.itba.paw.webapp.dto.input.VacationCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorAuthorizationUpdateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorEditDTO;
 import ar.edu.itba.paw.webapp.dto.input.ShiftsModificationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorAuthorizationDTO;
 import ar.edu.itba.paw.webapp.dto.output.DoctorDTO;
+import ar.edu.itba.paw.webapp.dto.output.DoctorVacationDTO;
 import ar.edu.itba.paw.webapp.dto.output.ShiftDTO;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
@@ -56,6 +65,9 @@ public class DoctorController {
 
     @Autowired
     private AuthDoctorService ads;
+
+    @Autowired
+    private AppointmentService as;
 
     @Autowired
     private DoctorService ds;
@@ -150,8 +162,12 @@ public class DoctorController {
     public Response createDoctor(
         @Valid DoctorCreateDTO doctorCreateDTO
     ) {
+        ShiftsModificationDTO shiftsModificationDTO = doctorCreateDTO.getShifts();
+        if (shiftsModificationDTO != null && shiftsModificationDTO.getEndTime().isBefore(shiftsModificationDTO.getStartTime())) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Shift end time cannot be before start time").build();
+        }
         List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
-            .map(name -> {
+            .map(name -> {//TODO pasar logica al service
                 return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
             }).collect(Collectors.toList());
 
@@ -166,16 +182,22 @@ public class DoctorController {
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
         );
 
-        if (doctorCreateDTO.getShifts() != null) {
-            ShiftsModificationDTO shiftsModificationDTO = doctorCreateDTO.getShifts();
-            dss.createShifts(
-                doctor.getId(),
-                shiftsModificationDTO.getWeekdays(),
-                shiftsModificationDTO.getAddress(),
-                shiftsModificationDTO.getStartTime(),
-                shiftsModificationDTO.getEndTime(),
-                shiftsModificationDTO.getDuration()
-            );
+        if (shiftsModificationDTO != null) {
+            try {
+                List<WeekdayEnum> weekdays = shiftsModificationDTO.getWeekdays() != null ? shiftsModificationDTO.getWeekdays() : List.of();
+                dss.createShifts(
+                    doctor.getId(),
+                    weekdays,
+                    shiftsModificationDTO.getAddress(),
+                    shiftsModificationDTO.getStartTime(),
+                    shiftsModificationDTO.getEndTime(),
+                    shiftsModificationDTO.getDuration()
+                );
+            } catch (Exception e) {
+                // If shift creation fails, we can choose to either delete the created doctor or just return an error response.
+                // For now, we'll just return an error response.
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Doctor created but failed to create shifts").build();
+            }
         }
 
         return Response.created(
@@ -293,11 +315,11 @@ public class DoctorController {
         try {
             User user = AuthenticatedUser.get();
             
-            if (!user.getId().equals(patientId)) {
+            if (!user.getId().equals(patientId)) {//TODO etsa logica no deberia estar en auth?
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             
-            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {//TODO mismo en auth?
                 return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
             }
             
@@ -320,7 +342,7 @@ public class DoctorController {
     ) {
         User loggedUser = AuthenticatedUser.get();
 
-        if (loggedUser == null) {
+        if (loggedUser == null) {//TODO logica en auth??
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -336,5 +358,139 @@ public class DoctorController {
         }
 
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/{id:\\d+}/vacations")
+    @Produces(value = VndType.APPLICATION_DOCTOR_VACATIONS)
+    public Response listVacations(
+        @PathParam("id") Long doctorId,
+        @QueryParam("status") final String status,
+        @QueryParam("page") @DefaultValue("1") final int page,
+        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+    ) {
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){ //TODO capaz en service ekl check?
+            throw new NotFoundException();
+        }
+        VacationsStatusEnum statusEnum;
+        try {
+            statusEnum = VacationsStatusEnum.fromValue(status.toLowerCase());
+        }
+        catch(IllegalArgumentException e){
+            return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
+        }
+
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("status", status);
+
+        List<DoctorVacationDTO> vacations;
+        int vacationsCount;
+
+        switch (statusEnum) {
+            case PROGRAMMED -> {
+                vacations = ds.getDoctorVacationsFuturePage(doctorId, page, pageSize)
+                .stream()
+                .map(DoctorVacationDTO.mapper(uriInfo))
+                .collect(Collectors.toList());
+
+                vacationsCount = ds.getDoctorVacationsFutureCount(doctorId);
+            }
+            case COMPLETED -> {
+                vacations = ds.getDoctorVacationsPastPage(doctorId, page, pageSize)
+                .stream()
+                .map(DoctorVacationDTO.mapper(uriInfo))
+                .collect(Collectors.toList());
+
+                vacationsCount = ds.getDoctorVacationsPastCount(doctorId);
+            }
+            default -> {
+                return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
+            }
+        }
+    
+        return PaginationBuilder.buildResponse(
+            Response.ok(new GenericEntity<List<DoctorVacationDTO>>(vacations) {}), 
+            page, 
+            pageSize, 
+            vacationsCount, 
+            queryParams, 
+            uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctorId)).path("vacations")
+        );
+    }
+
+    @POST
+    @Path("/{id:\\d+}/vacations")
+    @Consumes(value = VndType.APPLICATION_DOCTOR_VACATIONS)
+    public Response createVacation(
+        @PathParam("id") Long doctorId,
+        @Valid VacationCreateDTO vacationDTO
+    ) {
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {
+            throw new NotFoundException();
+        }
+
+        LocalDate startDate = vacationDTO.getStartDate();
+        LocalDate endDate = vacationDTO.getEndDate();
+
+        //TODO toda esta logica en el service o en otra forma
+        if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("{\"error\": \"End date must be after start date\"}")
+                .build();
+        }
+
+        if (startDate.isBefore(LocalDate.now())) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("{\"error\": \"Start date cannot be in the past\"}")
+                .build();
+        }
+
+
+        if (ds.vacationExists(doctorId, startDate, endDate)) {
+            return Response.status(Response.Status.CONFLICT)
+                .entity("{\"error\": \"Vacation already exists for these dates\"}")
+                .build();
+        }
+
+        DoctorVacation vacation = ds.createDoctorVacation(doctorId, startDate, endDate);
+
+        if (vacationDTO.getCancelAppointments()) {
+            as.cancelAppointmentRange(doctorId, startDate, endDate);
+        }
+
+        DoctorVacationDTO responseDTO = DoctorVacationDTO.fromVacation(uriInfo, vacation);
+
+        URI location = uriInfo.getAbsolutePathBuilder()
+            .queryParam("startDate", startDate.toString())
+            .queryParam("endDate", endDate.toString())
+            .build();
+
+        return Response.created(location).entity(responseDTO).build();
+    }
+
+
+    @DELETE
+    @Path("/{id:\\d+}/vacations/{startDate:\\d{4}-\\d{2}-\\d{2}}/{endDate:\\d{4}-\\d{2}-\\d{2}}")
+    public Response deleteVacation(
+        @PathParam("id") Long doctorId,
+        @PathParam("startDate") String startDateStr,
+        @PathParam("endDate") String endDateStr
+    ) {
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {//TODO en auth?
+            throw new NotFoundException();
+        }
+
+        if (startDateStr == null || endDateStr == null) {
+            return Response.status(Response.Status.BAD_REQUEST)//TODO aca??????
+                .entity("{\"error\": \"startDate and endDate query parameters are required\"}")
+                .build();
+        }
+
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        ds.deleteDoctorVacation(doctorId, startDate, endDate);
+
+        return Response.noContent().build();
     }
 }

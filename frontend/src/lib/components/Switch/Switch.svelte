@@ -2,19 +2,23 @@
   import { cn } from "$lib/utils";
 
   interface Props {
+    label?: string;
     checked?: boolean;
     disabled?: boolean;
     skeleton?: boolean;
     onchange?: (checked: boolean) => void;
     class?: string;
+    innerClass?: string;
   }
 
   let {
+    label,
     checked = $bindable(false),
     disabled = false,
     skeleton = false,
     onchange = () => {},
-    class: switchClass
+    class: switchClass,
+    innerClass
   }: Props = $props();
 
   function toggle() {
@@ -28,6 +32,7 @@
     "items-center rounded-full transition-colors cursor-pointer p-1",
     disabled ? "opacity-50 cursor-not-allowed" : "",
     skeleton ? "bg-skeleton animate-pulse cursor-default" : "",
+    innerClass
   );
 
   const knobClasses = $derived(
@@ -39,6 +44,11 @@
 </script>
 
 <div class={switchClass}>
+  {#if label}
+    <label class="text-sm font-medium text-text" for="select">
+      {label}
+    </label>
+  {/if}
   <div
     class={rootClasses}
     style={"justify-content: " + (checked ? "flex-end" : "flex-start") + "; background-color: " + (checked ? "var(--color-primary)" : "var(--color-primaryBorder)") + " !important;"}

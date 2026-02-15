@@ -9,7 +9,7 @@
 	import { goto, pushState } from '$app/navigation';
 	import { base } from '$app/paths';
 	import Button from '$components/Button/Button.svelte';
-	import { cancelAppointment, fetchFreeAppointments, fetchNonFreeAppointments, takeAppointment } from '$lib/services/appointments';
+	import { cancelAppointment, fetchFreeAppointments, fetchNonFreeAppointments, parseDateInLocalTimezone, takeAppointment } from '$lib/services/appointments';
 	import { page } from '$app/stores';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
 	import Toast from '$components/Toast/Toast.svelte';
@@ -49,7 +49,7 @@
             id: 'date',
             label: m['appointments.label.date'](),
             render: (appointment: Appointment) => {
-                return new Date(appointment.date).toLocaleDateString(getLocale(), {
+                return parseDateInLocalTimezone(appointment.date).toLocaleDateString(getLocale(), {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit'
@@ -60,13 +60,13 @@
         {
             id: 'time-span',
             label: m['appointments.label.time'](),
-            render: (appointment: Appointment) => appointment.startTime + ' - ' + appointment.endTime,
+            render: (appointment: Appointment) => (appointment.startTime ?? '') + ' - ' + (appointment.endTime ?? ''),
             class: 'text-start'
         },
         {
             id: 'address',
             label: m['appointments.label.address'](),
-            render: (appointment: Appointment) => appointment.address,
+            render: (appointment: Appointment) => appointment.address ?? '',
             class: 'text-start'
         }
     ];
@@ -148,7 +148,7 @@
         {
             id: 'time-span',
             label: m['doctor.table.time'](),
-            render: (appointment: Appointment) => appointment.startTime + ' - ' + appointment.endTime,
+            render: (appointment: Appointment) => (appointment.startTime ?? '') + ' - ' + (appointment.endTime ?? ''),
             class: 'text-start'
         },
         {
@@ -204,11 +204,7 @@
                 .then(() => {
                     showSuccessToast = true;
 
-                    futureAppointments = {
-                        results: futureAppointments.results.splice(index, 1),
-                        _links: futureAppointments._links,
-                        _pageInfo: futureAppointments._pageInfo
-                    };
+                    futureAppointments.results.splice(index, 1)
                 })
                 .catch((error) => {
                     showErrorToast = true;
@@ -270,7 +266,7 @@
                 <Button
                     variant="secondary"
                     class="w-fit"
-                    onclick={() => fetchAppointments(freeAppointments!._links.prev!, new Date(selectedDate.setDate(selectedDate.getDate() - 1)))}
+                    onclick={() => fetchAppointments(freeAppointments!._links.prev!)}
                     disabled={!freeAppointments!._links.prev || isFetching}
                 >
                     {m['previous']()}
@@ -288,7 +284,7 @@
                 <Button
                     variant="secondary"
                     class="w-fit"
-                    onclick={() => fetchAppointments(freeAppointments!._links.next!, new Date(selectedDate.setDate(selectedDate.getDate() + 1)))}
+                    onclick={() => fetchAppointments(freeAppointments!._links.next!)}
                     disabled={!freeAppointments!._links.next || isFetching}
                 >
                     {m['next']()}
@@ -324,7 +320,11 @@
     />
 
     {#if canceledAppointment}
-        <PopUp>
+        <PopUp onClose={() => {
+            canceledAppointment = null;
+            canceledAppointmentId = null;
+            cancelReason = null;
+        }}>
             <div class="flex flex-col gap-2">
                 <h1 class="text-primaryText text-[1.17rem] font-bold">
                     {cancelReason ? m['appointments.pop_up.delete.title']() : m['appointments.pop_up.cancel.title']()}
@@ -356,7 +356,7 @@
     {/if}
 
     {#if selectedAppointment}
-        <PopUp>
+        <PopUp onClose={() => selectedAppointment = null}>
             <div class="flex flex-col gap-2">
                 <h1 class="text-primaryText text-[1.17rem] font-bold">
                     {selectedAppointment.patientName ?? m['appointments.pop_up.unknown_patient']()}

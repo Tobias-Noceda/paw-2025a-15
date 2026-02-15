@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,6 +28,7 @@ import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")
@@ -90,7 +90,7 @@ public class DoctorJpaDaoTest {
         final String LICENCE = DOC.getLicence();
         final SpecialtyEnum SPECIALTY = DOC.getSpecialty();
 
-        Assert.assertThrows(PersistenceException.class,()->{
+        Assert.assertThrows(AlreadyExistsException.class,()->{
             doctorDao.createDoctor(
             DOC.getEmail(),
             DOC.getPassword(),
@@ -104,6 +104,17 @@ public class DoctorJpaDaoTest {
             );
             em.flush();
         });
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql"})
+    public void testDelete(){
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        doctorDao.deleteDoctor(DOC_ID);
+        Doctor doctorPersisted = em.find(Doctor.class, DOC_ID);
+
+        Assert.assertNull(doctorPersisted);
     }
 
     @Test
@@ -724,12 +735,14 @@ public class DoctorJpaDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
-    public void testGetDoctorVacationsPast(){
+    public void testGetDoctorVacationsPastPage(){
         final Long DOC_ID = TestData.Users.doctorId;
         final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
         final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+        DVP.getId().setDoctorId(DOC_ID);
 
-        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPast(DOC_ID);
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPastPage(DOC_ID, 1, 100);
         DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
         DoctorVacation dvpFound = em.find(DoctorVacation.class, DVP.getId());
 
@@ -742,20 +755,144 @@ public class DoctorJpaDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
-    public void testGetDoctorVacationsFuture(){
+    public void testGetDoctorVacationsPastPageNonexistentDoc(){
+        final Long DOC_ID = 0L;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPastPage(DOC_ID, 1, 100);
+
+        Assert.assertNotNull(vacas);
+        Assert.assertTrue(vacas.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsPastPageInvalidPage(){
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPastPage(DOC_ID, 0, 100);
+
+        Assert.assertNotNull(vacas);
+        Assert.assertTrue(vacas.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsPastPageInvalidPageSize(){
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsPastPage(DOC_ID, 1, 0);
+
+        Assert.assertNotNull(vacas);
+        Assert.assertTrue(vacas.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsPastCount(){
         final Long DOC_ID = TestData.Users.doctorId;
         final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
         final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+        DVP.getId().setDoctorId(DOC_ID);
 
-        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuture(DOC_ID);
+        int vacas = doctorDao.getDoctorVacationsPastCount(DOC_ID);
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+        DoctorVacation dvpFound = em.find(DoctorVacation.class, DVP.getId());
+
+        Assert.assertEquals(1, vacas);
+        Assert.assertNotNull(dvFound);        
+        Assert.assertNotNull(dvpFound);        
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsPastCountNonexistentDoc(){
+        final Long DOC_ID = 0L;
+
+        int vacas = doctorDao.getDoctorVacationsPastCount(DOC_ID);
+
+        Assert.assertEquals(0, vacas);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFuturePage(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
+        final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+        DVP.getId().setDoctorId(DOC_ID);
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuturePage(DOC_ID, 1, 100);
         DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
         DoctorVacation dvpFound = em.find(DoctorVacation.class, DVP.getId());
 
         Assert.assertNotNull(vacas);
         Assert.assertEquals(1, vacas.size());
         Assert.assertNotNull(dvFound);        
-        Assert.assertNotNull(dvpFound); 
-        Assert.assertEquals(dvFound.getId(), vacas.get(0).getId());       
+        Assert.assertNotNull(dvpFound);        
+        Assert.assertEquals(dvFound.getId(), vacas.get(0).getId());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFuturePageNonexistentDoc(){
+        final Long DOC_ID = 0L;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuturePage(DOC_ID, 1, 100);
+
+        Assert.assertNotNull(vacas);
+        Assert.assertTrue(vacas.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFuturePageInvalidPage(){
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuturePage(DOC_ID, 0, 100);
+
+        Assert.assertNotNull(vacas);
+        Assert.assertTrue(vacas.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFuturePageInvalidPageSize(){
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        List<DoctorVacation> vacas = doctorDao.getDoctorVacationsFuturePage(DOC_ID, 1, 0);
+
+        Assert.assertNotNull(vacas);
+        Assert.assertTrue(vacas.isEmpty());
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFutureCount(){
+        final Long DOC_ID = TestData.Users.doctorId;
+        final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
+        final DoctorVacation DVP = TestData.DocVacations.docVacationPast;
+        DVP.getId().setDoctorId(DOC_ID);
+
+        int vacas = doctorDao.getDoctorVacationsFutureCount(DOC_ID);
+        DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());
+        DoctorVacation dvpFound = em.find(DoctorVacation.class, DVP.getId());
+
+        Assert.assertEquals(1, vacas);
+        Assert.assertNotNull(dvFound);        
+        Assert.assertNotNull(dvpFound);        
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:doctorVacation.sql", "classpath:doctorVacationPast.sql"})
+    public void testGetDoctorVacationsFutureCountNonexistentDoc(){
+        final Long DOC_ID = 0L;
+
+        int vacas = doctorDao.getDoctorVacationsFutureCount(DOC_ID);
+
+        Assert.assertEquals(0, vacas);
     }
 
     @Test
@@ -763,6 +900,7 @@ public class DoctorJpaDaoTest {
     public void testVacationsExists(){
         final Long DOC_ID = TestData.Users.doctorId;
         final DoctorVacation DV = TestData.DocVacations.docVacation;
+        DV.getId().setDoctorId(DOC_ID);
 
         boolean result = doctorDao.vacationExists(DOC_ID, DV.getId().getStartDate(), DV.getId().getEndDate());
         DoctorVacation dvFound = em.find(DoctorVacation.class, DV.getId());

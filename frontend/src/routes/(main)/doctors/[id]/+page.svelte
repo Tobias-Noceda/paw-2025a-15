@@ -274,7 +274,10 @@
 		/>
 	</div>
 	{#if selectedAppointment !== null}
-		<PopUp>
+		<PopUp onClose={() => {
+			selectedAppointment = null;
+			reason = '';
+		}}>
 			<div class="flex flex-col gap-2">
 				<h1 class="text-primaryText text-[1.17rem] font-bold">
 					{m['doctor.pop_up.title']({

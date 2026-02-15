@@ -54,6 +54,7 @@
 			"specialty": "Specialty",
 			"address": "Address",
 			"insurances": "Health insurances",
+			"add_schedule": "Do you want to add a schedule of availability?",
 			"work_days": "Work days",
 			"start_time": "Start time",
 			"end_time": "End time",
@@ -72,6 +73,12 @@
 			"error": {
 				"title": "Error",
 				"message": "An error occurred while trying to create your account. Please try again later."
+			},
+			"form": {
+				"error": {
+					"email": "Email already taken",
+					"med_license": "License already taken"
+				}
 			}
 		},
 		"change": {
@@ -533,10 +540,71 @@
 		"no_files": "No files selected",
 		"more_files": "+ {count} more files"
 	},
+	"vacations": {
+		"title": "Vacations Management",
+		"create": {
+			"title": "Register New Vacations",
+			"submit": "Register Vacations"
+		},
+		"table": {
+			"startDate": "Start Date",
+			"endDate": "End Date"
+		},
+		"past": {
+			"title": "Past Vacations",
+			"empty": "No past vacations on record"
+		},
+		"future": {
+			"title": "Future Vacations",
+			"empty": "No future vacations scheduled"
+		},
+		"created": {
+			"title": "Vacations registered!",
+			"message": "The vacations have been successfully registered."
+		},
+		"deleted": {
+			"title": "Vacations canceled!",
+			"message": "The vacations have been successfully canceled."
+		},
+		"delete": {
+			"confirm": {
+				"title": "Cancel vacations",
+				"message": "Are you sure you want to cancel the vacations from {startDate} to {endDate}?",
+				"button": "Cancel vacations",
+				"back": "Go back"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Register Vacations",
+				"message": "You are about to register vacations from {startDate} to {endDate}, do you want to cancel the appointments you have scheduled during that period?",
+				"yes": "Cancel appointments",
+				"no": "Continue without canceling appointments"
+			}
+		},
+		"error": {
+			"startRequired": "Start date is required",
+			"endRequired": "End date is required",
+			"endBeforeStart": "End date must be after start date",
+			"pastDate": "Start date cannot be in the past",
+			"load": {
+				"title": "Loading error",
+				"message": "Could not load vacations. Please try again."
+			},
+			"create": {
+				"title": "Registration error",
+				"message": "Could not register the vacations. Please try again."
+			},
+			"delete": {
+				"title": "Cancellation error",
+				"message": "Could not cancel the vacations. Please try again."
+			}
+		}
+	},
 	"unknown": "Unknown",
 	"date_format": "MM/dd/yyyy",
-	"next": "Next",
 	"previous": "Previous",
+	"next": "Next",
 	"action": "Action",
 	"actions": "Actions"
 }

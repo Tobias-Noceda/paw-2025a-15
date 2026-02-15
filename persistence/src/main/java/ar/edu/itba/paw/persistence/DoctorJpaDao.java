@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,7 @@ import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 
 @Repository
 public class DoctorJpaDao implements DoctorDao{
@@ -31,11 +33,26 @@ public class DoctorJpaDao implements DoctorDao{
     private EntityManager em;
 
     @Override
+    public void deleteDoctor(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if (doctor != null) {
+            em.remove(doctor);
+        }
+    }
+
+    @Override
     public Doctor createDoctor(String email, String password, String name, String telephone, long pictureId, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances) {
         File picture = em.find(File.class, pictureId);
         if(picture == null) return null;
-        Doctor doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
-        em.persist(doctor);
+        Doctor doctor;
+
+        try {
+            doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
+            em.persist(doctor);
+            em.flush();
+        } catch (PersistenceException e) {
+            throw new AlreadyExistsException("Medical license already taken!");
+        }
         return doctor;
     }
 
@@ -271,26 +288,62 @@ public class DoctorJpaDao implements DoctorDao{
     }
 
     @Override
-    public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
-    LocalDate today = LocalDate.now();
-        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today", DoctorVacation.class)
-             .setParameter("doctorId", doctorId)
-             .setParameter("today", today)
-             .getResultList();
-    }
-
-    @Override
-    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
-    LocalDate today = LocalDate.now();
-        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today", DoctorVacation.class)
-             .setParameter("doctorId", doctorId)
-             .setParameter("today", today)
-             .getResultList();
-    }
-
-    @Override
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
         return em.find(DoctorVacation.class, new DoctorVacationId(doctorId, startDate, endDate)) != null;
+    }
+
+    @Override
+    public List<DoctorVacation> getDoctorVacationsPastPage(long doctorId, int page, int pageSize) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        TypedQuery<DoctorVacation> query = em.createQuery(
+                "SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today ", DoctorVacation.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public int getDoctorVacationsPastCount(long doctorId) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
+        String baseQuery = " SELECT count(dv) FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today ";
+        TypedQuery<Long> query = em.createQuery(baseQuery, Long.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<DoctorVacation> getDoctorVacationsFuturePage(long doctorId, int page, int pageSize) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        TypedQuery<DoctorVacation> query = em.createQuery(
+                "SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today ", DoctorVacation.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public int getDoctorVacationsFutureCount(long doctorId) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
+        String baseQuery = " SELECT count(dv) FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today ";
+        TypedQuery<Long> query = em.createQuery(baseQuery, Long.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        return query.getSingleResult().intValue();
     }
 
 }

@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.FileService;
@@ -64,9 +63,6 @@ public class DoctorServiceImplTest {
 
     @Mock
     private InsuranceService is;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Test
     public void testCreateDoctorExistentEmail(){
@@ -230,19 +226,38 @@ public class DoctorServiceImplTest {
     }
 
     @Test
-    public void testGetDoctorVacationsFutureNonexistentDoc(){
+    public void testGetDoctorVacationsFuturePageNonexistentDoc(){
         Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ds.getDoctorVacationsFuture(DOC_ID)
+            ds.getDoctorVacationsFuturePage(DOC_ID, 1, 100)
         );
     }
+
     @Test
-    public void testGetDoctorVacationsPastNonexistentDoc(){
+    public void testGetDoctorVacationsFutureCountNonexistentDoc(){
         Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ds.getDoctorVacationsPast(DOC_ID)
+            ds.getDoctorVacationsFutureCount(DOC_ID)
+        );
+    }
+
+    @Test
+    public void testGetDoctorVacationsPastPageNonexistentDoc(){
+        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ds.getDoctorVacationsPastPage(DOC_ID, 1, 100)
+        );
+    }
+
+    @Test
+    public void testGetDoctorVacationsPastCountNonexistentDoc(){
+        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ds.getDoctorVacationsPastCount(DOC_ID)
         );
     }
 

@@ -20,13 +20,12 @@
 	import Icon from '$components/Icon/Icon.svelte';
 
 	let { data }: { data: PageData } = $props();
+	let firstLoad = true;
 
 	let userRole = $state(data.userRole);
-    let insurances: Paginated<Insurance> = $state(data.insurances || { results: [], _links: {} });
-	let doctors: Paginated<Doctor> = $state(data.doctors || { results: [], _links: {} });
-	let patients: Paginated<Patient> = $state(data.patients || { results: [], _links: {} });
-
-	let firstFetch = true;
+    let insurances: Paginated<Insurance> = $state({ results: [], _links: {} });
+	let doctors: Paginated<Doctor> = $state({ results: [], _links: {} });
+	let patients: Paginated<Patient> = $state({ results: [], _links: {} });
 
 	const workDays = [
 		{ value: 'all', label: m['all']() },
@@ -54,11 +53,25 @@
 
 	let filterKey = $state(0);
 
-	async function applyFilters() {
-		doctors = await fetchDoctors($searchQuery, $insurance, $day, $specialty, $order, fetch);
-		filterKey++; // Force Pagination to remount
+	let selectedInsurance = $state($insurance);
+	let selectedDay = $state($day);
+	let selectedSpecialty = $state($specialty);
+	let selectedOrder = $state($order);
 
-		pushState(`${base}/home?${getFiltersURL($searchQuery, $insurance, $day, $specialty, $order)}`, { replaceState: true, noScroll: true });
+	async function applyFilters() {
+		pushState(`${base}/home?${getFiltersURL($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder)}`, { replaceState: true, noScroll: true });
+		
+		insurance.set(selectedInsurance);
+		day.set(selectedDay);
+		specialty.set(selectedSpecialty);
+		order.set(selectedOrder);
+
+		fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder).then(result => {
+			doctors = result;
+			filterKey++;
+		});
+
+		filterKey++; // Force Pagination to remount
 	}
 
 	// Watch URL params and refetch when they change
@@ -66,48 +79,29 @@
 		if ($loggedOut) {
 			return;
 		}
+		let insuranceSearch: string | undefined = undefined;
 
-		if (!userRole || userRole === 'PATIENT') {
-			const insuranceParam = $page.url.searchParams.get('insurance') || 'all';
-			const dayParam = $page.url.searchParams.get('day') || 'all';
-			const specialtyParam = $page.url.searchParams.get('specialty') || 'all';
-			const orderParam = $page.url.searchParams.get('order') || '';
-
-			// Sync URL params to stores
-			insurance.set(insuranceParam);
-			day.set(dayParam);
-			specialty.set(specialtyParam);
-			order.set(orderParam);
-		}
-	});
-
-	$effect(() => {
-		if (firstFetch) {
-			firstFetch = false;
-			return;
-		}
-
-		let functionToRun;
 		if (userRole === 'DOCTOR' && data.patientsLink) {
-			functionToRun = () => fetchPatients($searchQuery, data.patientsLink!, fetch).then(result => {
+			fetchPatients($searchQuery, data.patientsLink, fetch).then(result => {
 				patients = result;
+				filterKey++;
 			});
 		} else if (userRole === 'ADMIN') {
-			functionToRun = () => fetchInsurances($searchQuery, fetch).then(result => {
-				insurances = result;
-			});
+			insuranceSearch = $searchQuery;
 		} else {
-			functionToRun = () => fetchDoctors($searchQuery, $insurance, $day, $specialty, $order, fetch).then(result => {
+			// Fetch doctors with current URL params
+			fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder).then(result => {
 				doctors = result;
+				filterKey++;
 			});
 		}
 
-		if (functionToRun) {
-			functionToRun().then(() => {
-				// Increment filterKey to force Pagination remount and show results
+		if (firstLoad || insuranceSearch) {
+			fetchInsurances(insuranceSearch, fetch).then(result => {
+				insurances = result;
+				
+				firstLoad = false;
 				filterKey++;
-			}).catch((error) => {
-				console.error('Error fetching data:', error);
 			});
 		}
 	});
@@ -133,7 +127,7 @@
 				>
 					{#snippet loading()}
 						{#each Array(10) as _, i}
-							<Card
+							<Card 
 								variant="patient"
 								avatarSrc=""
 								userName=""
@@ -255,27 +249,27 @@
 						}
 						return Promise.resolve({ results: [], _links: {} });
 					}}
-					bind:value={$insurance}
+					bind:value={selectedInsurance}
 					class="w-full"
 				/>
 
 				<Select
 					label={m['filters.label.workday']()}
 					options={workDays}
-					bind:value={$day}
+					bind:value={selectedDay}
 					class="w-full"
 				/>
 
 				<Select
 					label={m['filters.label.specialty']()}
 					options={specialties}
-					bind:value={$specialty}
+					bind:value={selectedSpecialty}
 					class="w-full"
 				/>
 
 				<div></div>
 
-				<Select label={m['filters.label.order']()} options={orders} bind:value={$order} class="w-full" />
+				<Select label={m['filters.label.order']()} options={orders} bind:value={selectedOrder} class="w-full" />
 			</div>
 			<Button variant="primary" class="w-full mt-5" onclick={applyFilters}>
 				{m['filters.apply']()}
