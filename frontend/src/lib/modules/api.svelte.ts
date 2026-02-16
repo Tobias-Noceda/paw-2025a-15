@@ -36,6 +36,12 @@ export function parseJWT(token: string) {
 	}
 }
 
+export function getJWTEmail(token: string): string | null {
+	const payload = parseJWT(token);
+	console.log('Parsed JWT payload:', payload);
+	return payload ? payload.sub : null;
+}
+
 export function setSession(data: Session) {
 	tokens = data;
 	localStorage.access = tokens.access;
@@ -80,6 +86,39 @@ export async function login(e?: string, pass?: string): Promise<void> {
 		setSession(sessionData);
 	} catch (error) {
 		throw error;
+	}
+}
+
+export async function refreshToken(): Promise<void> {
+	if (!tokens.refresh) {
+		logout();
+		return;
+	}
+
+	try {
+		const res = await get(
+			'/api/doctors',
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${tokens.refresh}`,
+				}
+			}
+		);
+
+		if (!res.ok) {
+			throw new Error(`Refresh failed: ${res.status} ${res.statusText}`);
+		}
+
+		let sessionData: Session = {
+			access: res.headers.get('X-Access-Token') as string,
+			refresh: tokens.refresh
+		}
+
+		setSession(sessionData);
+	} catch (error) {
+		console.error('Token refresh failed:', error);
+		logout();
 	}
 }
 

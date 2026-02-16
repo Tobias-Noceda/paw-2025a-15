@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.PatientDao;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
@@ -44,7 +45,18 @@ public class PatientServiceImpl implements PatientService{
     private InsuranceService is;
 
     @Autowired
+    private EmailService es;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Transactional(readOnly=true)
+    @Override
+    public void deletePatientById(long patientId) {
+        getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        patientDao.deletePatientById(patientId);
+        LOGGER.info("Deleted patient with id: {}", patientId);
+    }
 
     @Transactional(readOnly=true)
     @Override
@@ -54,10 +66,12 @@ public class PatientServiceImpl implements PatientService{
 
     @Transactional
     @Override
-    public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight) {
+    public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight, String token) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));
-        return patientDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
+        Patient newPatient = patientDao.createPatient(email, passwordEncoder.encode(password), name, telephone, picture, locale, birthDate, height, weight);
+        es.sendWelcomeAndVerifyEmail(newPatient, token);
+        return newPatient;
     }
 
     @Transactional

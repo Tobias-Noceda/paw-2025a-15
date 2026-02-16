@@ -53,7 +53,7 @@ public class BasicAuthorizationFilter extends OncePerRequestFilter {
             final PawAuthUserDetails user = (PawAuthUserDetails) uds.loadUserByUsername(credentials[0]);
 
             if (user == null || !user.isAccountNonLocked() || SecurityContextHolder.getContext().getAuthentication() != null) {
-                chain.doFilter(request, response);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
