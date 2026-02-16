@@ -25,8 +25,10 @@ public class DoctorVacationDTO {
         dto.startDate = vacation.getId().getStartDate().toString();
         dto.endDate = vacation.getId().getEndDate().toString();
 
-        URI self = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(vacation.getDoctor().getId())).path("vacations").path(dto.getStartDate()).path(dto.getEndDate()).build();
-        URI doctor = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(vacation.getDoctor().getId())).build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(vacation.getDoctor().getId())).path("vacations").path(dto.getStartDate()).path(dto.getEndDate()).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
+        URI baseDoctor = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(vacation.getDoctor().getId())).build();
+        TemplatedLinkDTO doctor = TemplatedLinkDTO.of(baseDoctor);
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

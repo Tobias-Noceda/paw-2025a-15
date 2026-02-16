@@ -33,13 +33,18 @@ public class StudyDTO {
         dto.setUploadDate(study.getUploadDate().toLocalDate());
         dto.setStudyDate(study.getStudyDate());
 
-        URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).path("studies").path(String.valueOf(study.getId())).build();
-        URI patient =  uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).build();
-        URI uploader = null;
-        if(study.getUploader().getRole().equals(UserRoleEnum.DOCTOR))uploader = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(study.getUploader().getId())).build();
-        else if(study.getUploader().getRole().equals(UserRoleEnum.PATIENT)) uploader = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getUploader().getId())).build();
-        URI files = uriInfo.getBaseUriBuilder().path(FileController.class).queryParam("studyId", study.getId()).build();
-        URI authDoctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("studyId", study.getId()).build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).path("studies").path(String.valueOf(study.getId())).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
+        URI basePatient =  uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getPatient().getId())).build();
+        TemplatedLinkDTO patient = TemplatedLinkDTO.of(basePatient);
+        URI baseUploader = null;
+        if(study.getUploader().getRole().equals(UserRoleEnum.DOCTOR)) baseUploader = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(study.getUploader().getId())).build();
+        else if(study.getUploader().getRole().equals(UserRoleEnum.PATIENT)) baseUploader = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(study.getUploader().getId())).build();
+        TemplatedLinkDTO uploader = TemplatedLinkDTO.of(baseUploader);
+        URI baseFiles = uriInfo.getBaseUriBuilder().path(FileController.class).queryParam("studyId", study.getId()).build();
+        TemplatedLinkDTO files = TemplatedLinkDTO.of(baseFiles);
+        URI baseAuthDoctors = uriInfo.getBaseUriBuilder().path(DoctorController.class).queryParam("studyId", study.getId()).build();
+        TemplatedLinkDTO authDoctors = TemplatedLinkDTO.of(baseAuthDoctors);
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

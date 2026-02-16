@@ -1,191 +1,188 @@
 package ar.edu.itba.paw.webapp.dto.output;
 
-import java.net.URI;
-
 public class LinkDTO {
 
-    private URI self;
-    private URI image;
-    private URI insurance;
-    private URI insurances;
-    private URI doctor;
-    private URI doctors;
-    private URI patient;
-    private URI medicalInfo;
-    private URI socialInfo;
-    private URI habitsInfo;
-    private URI uploader;
-    private URI authDoctors;
-    private URI schedule;
-    private URI freeAppointments;
-    private URI pastAppointments;
-    private URI futureAppointments;
-    private URI files;
-    private URI patients;
-    private URI pastVacations;
-    private URI futureVacations;
-
+    private TemplatedLinkDTO self;
+    private TemplatedLinkDTO image;
+    private TemplatedLinkDTO insurance;
+    private TemplatedLinkDTO insurances;
+    private TemplatedLinkDTO doctor;
+    private TemplatedLinkDTO doctors;
+    private TemplatedLinkDTO patient;
+    private TemplatedLinkDTO medicalInfo;
+    private TemplatedLinkDTO socialInfo;
+    private TemplatedLinkDTO habitsInfo;
+    private TemplatedLinkDTO uploader;
+    private TemplatedLinkDTO authDoctors;
+    private TemplatedLinkDTO schedule;
+    private TemplatedLinkDTO freeAppointments;
+    private TemplatedLinkDTO pastAppointments;
+    private TemplatedLinkDTO futureAppointments;
+    private TemplatedLinkDTO files;
+    private TemplatedLinkDTO patients;
+    private TemplatedLinkDTO pastVacations;
+    private TemplatedLinkDTO futureVacations;
     private TemplatedLinkDTO authorization;
     private TemplatedLinkDTO studies;
 
-    public URI getSelf() {
+    public TemplatedLinkDTO getSelf() {
         return self;
     }
 
-    public LinkDTO setSelf(URI self) {
+    public LinkDTO setSelf(TemplatedLinkDTO self) {
         this.self = self;
         return this;
     }
 
-    public URI getInsurance(){
+    public TemplatedLinkDTO getInsurance(){
         return insurance;
     }
 
-    public LinkDTO setInsurance(URI insurance){
+    public LinkDTO setInsurance(TemplatedLinkDTO insurance){
         this.insurance = insurance;
         return this;
     }
 
-    public URI getDoctor(){
+    public TemplatedLinkDTO getDoctor(){
         return doctor;
     }
 
-    public LinkDTO setDoctor(URI doctor){
+    public LinkDTO setDoctor(TemplatedLinkDTO doctor){
         this.doctor = doctor;
         return this;
     }
 
-    public URI getDoctors(){
+    public TemplatedLinkDTO getDoctors(){
         return doctors;
     }
 
-    public LinkDTO setDoctors(URI doctors){
+    public LinkDTO setDoctors(TemplatedLinkDTO doctors){
         this.doctors = doctors;
         return this;
     }
 
-    public URI getFiles(){
+    public TemplatedLinkDTO getFiles(){
         return files;
     }
 
-    public LinkDTO setFiles(URI files){
+    public LinkDTO setFiles(TemplatedLinkDTO files){
         this.files = files;
         return this;
     }
 
-    public URI getPatient(){
+    public TemplatedLinkDTO getPatient(){
         return patient;
     }
 
-    public LinkDTO setPatient(URI patient){
+    public LinkDTO setPatient(TemplatedLinkDTO patient){
         this.patient = patient;
         return this;
     }
 
-    public URI getUploader(){
+    public TemplatedLinkDTO getUploader(){
         return uploader;
     }
 
-    public LinkDTO setUploader(URI uploader){
+    public LinkDTO setUploader(TemplatedLinkDTO uploader){
         this.uploader = uploader;
         return this;
     }
 
-    public URI getAuthDoctors() {
+    public TemplatedLinkDTO getAuthDoctors() {
         return authDoctors;
     }
 
-    public LinkDTO setAuthDoctors(URI authDoctors) {
+    public LinkDTO setAuthDoctors(TemplatedLinkDTO authDoctors) {
         this.authDoctors = authDoctors;
         return this;
     }
 
-    public URI getImage() {
+    public TemplatedLinkDTO getImage() {
         return image;
     }
 
-    public LinkDTO setImage(URI image) {
+    public LinkDTO setImage(TemplatedLinkDTO image) {
         this.image = image;
         return this;
     }
 
-    public URI getSchedule() {
+    public TemplatedLinkDTO getSchedule() {
         return schedule;
     }
 
-    public LinkDTO setSchedule(URI schedule) {
+    public LinkDTO setSchedule(TemplatedLinkDTO schedule) {
         this.schedule = schedule;
         return this;
     }
 
-    public URI getInsurances() {
+    public TemplatedLinkDTO getInsurances() {
         return insurances;
     }
 
-    public LinkDTO setInsurances(URI insurances) {
+    public LinkDTO setInsurances(TemplatedLinkDTO insurances) {
         this.insurances = insurances;
         return this;
     }
 
-    public URI getFreeAppointments() {
+    public TemplatedLinkDTO getFreeAppointments() {
         return freeAppointments;
     }
 
-    public LinkDTO setFreeAppointments(URI freeAppointments) {
+    public LinkDTO setFreeAppointments(TemplatedLinkDTO freeAppointments) {
         this.freeAppointments = freeAppointments;
         return this;
     }
 
-    public URI getPastAppointments() {
+    public TemplatedLinkDTO getPastAppointments() {
         return pastAppointments;
     }
 
-    public LinkDTO setPastAppointments(URI pastAppointments) {
+    public LinkDTO setPastAppointments(TemplatedLinkDTO pastAppointments) {
         this.pastAppointments = pastAppointments;
         return this;
     }
 
-    public URI getFutureAppointments() {
+    public TemplatedLinkDTO getFutureAppointments() {
         return futureAppointments;
     }
 
-    public LinkDTO setFutureAppointments(URI futureAppointments) {
+    public LinkDTO setFutureAppointments(TemplatedLinkDTO futureAppointments) {
         this.futureAppointments = futureAppointments;
         return this;
     }
 
-    public URI getMedicalInfo() {
+    public TemplatedLinkDTO getMedicalInfo() {
         return medicalInfo;
     }
 
-    public LinkDTO setMedicalInfo(URI medicalInfo) {
+    public LinkDTO setMedicalInfo(TemplatedLinkDTO medicalInfo) {
         this.medicalInfo = medicalInfo;
         return this;
     }
 
-    public URI getSocialInfo() {
+    public TemplatedLinkDTO getSocialInfo() {
         return socialInfo;
     }
 
-    public LinkDTO setSocialInfo(URI socialInfo) {
+    public LinkDTO setSocialInfo(TemplatedLinkDTO socialInfo) {
         this.socialInfo = socialInfo;
         return this;
     }
 
-    public URI getHabitsInfo() {
+    public TemplatedLinkDTO getHabitsInfo() {
         return habitsInfo;
     }
 
-    public LinkDTO setHabitsInfo(URI habitsInfo) {
+    public LinkDTO setHabitsInfo(TemplatedLinkDTO habitsInfo) {
         this.habitsInfo = habitsInfo;
         return this;
     }
 
-    public URI getPatients() {
+    public TemplatedLinkDTO getPatients() {
         return patients;
     }
 
-    public LinkDTO setPatients(URI patients) {
+    public LinkDTO setPatients(TemplatedLinkDTO patients) {
         this.patients = patients;
         return this;
     }
@@ -208,20 +205,20 @@ public class LinkDTO {
         return this;
     }
 
-    public URI getPastVacations() {
+    public TemplatedLinkDTO getPastVacations() {
         return pastVacations;
     }
 
-    public LinkDTO setPastVacations(URI pastVacations) {
+    public LinkDTO setPastVacations(TemplatedLinkDTO pastVacations) {
         this.pastVacations = pastVacations;
         return this;
     }
 
-    public URI getFutureVacations() {
+    public TemplatedLinkDTO getFutureVacations() {
         return futureVacations;
     }
 
-    public LinkDTO setFutureVacations(URI futureVacations) {
+    public LinkDTO setFutureVacations(TemplatedLinkDTO futureVacations) {
         this.futureVacations = futureVacations;
         return this;
     }

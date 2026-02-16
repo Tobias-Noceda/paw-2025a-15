@@ -23,7 +23,8 @@ public class FileDTO {
 
         dto.setType(file.getType().getName());
 
-        URI self = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(file.getId())).build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(file.getId())).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
        
         dto.setLinks(new LinkDTO()
             .setSelf(self)
