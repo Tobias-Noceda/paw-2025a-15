@@ -320,6 +320,27 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Async
+    public void sendWelcomeAndVerifyEmail(User user, String token) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "resources/icono.jpg");
+        templateModel.put("userName", user.getName());
+
+        String verifyLink = baseURL + "verify/" + token;
+        templateModel.put("verifyLink", verifyLink);
+
+        Locale locale = user.getLocale().toLocale();
+        String subject = messageSource.getMessage("welcomeVerify.subject", null, locale);
+
+        try {
+            sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "welcomeAndVerifyTemplate", locale);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending user welcome and verify email to {}: {}", user.getEmail(), e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Async
     public void sendPatientAppointmentReminderEmail(AppointmentNew appointment) {
         User patient = appointment.getPatient();
         Doctor doctor = appointment.getShift().getDoctor();

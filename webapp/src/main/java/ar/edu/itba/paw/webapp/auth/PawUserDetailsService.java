@@ -43,6 +43,10 @@ public class PawUserDetailsService implements UserDetailsService {
             }
         }
 
-        return new PawAuthUserDetails(user, authorities);
+        if (user.isActive()) {
+            return new PawAuthUserDetails(user, authorities);
+        } else {
+            return new PawAuthUserDetails(user, false, false, false, false, authorities);
+        }
     }
 }

@@ -17,13 +17,12 @@ public interface DoctorService {//TODO check deprecated
     
     public void deleteDoctor(long doctorId);
 
-    public Doctor createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale);
+    public Doctor createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale, String token);
 
     public Optional<Doctor> getDoctorById(long id);
 
     public boolean licenceExists(String licence);
 
-    @Deprecated
     public void updateDoctor(Doctor doctor, String phoneNumber, File picture, LocaleEnum mailLanguage, List<Long> insurances);
     
     public List<Doctor> getDoctorsPageByParams(String name, SpecialtyEnum specialty, Long insuranceId, WeekdayEnum weekday, DoctorOrderEnum orderBy, int page, int pageSize);

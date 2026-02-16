@@ -69,7 +69,7 @@ public class DoctorServiceImplTest {
         Mockito.when(us.getUserByEmail(Mockito.eq(DOC_EMAIL))).thenReturn(Optional.of(DOC));
 
         Assert.assertThrows(AlreadyExistsException.class, () -> 
-            ds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, INSURANCES, DOC_LOCALE)
+            ds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, INSURANCES, DOC_LOCALE, "token")
         );
     }
 
@@ -79,7 +79,7 @@ public class DoctorServiceImplTest {
         Mockito.when(fs.findById(1)).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, INSURANCES, DOC_LOCALE)
+            ds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, INSURANCES, DOC_LOCALE, "token")
         );
     }
 
@@ -90,7 +90,7 @@ public class DoctorServiceImplTest {
         Mockito.when(is.getInsuranceById(INSURANCE_ID)).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, INSURANCES, DOC_LOCALE)
+            ds.createDoctor(DOC_EMAIL, DOC_PASSWORD, DOC_NAME, DOC_TELEPHONE, DOC_LICENCE, DOC_SPECIALTY, INSURANCES, DOC_LOCALE, "token")
         );
     }
 

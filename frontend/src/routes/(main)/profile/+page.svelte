@@ -324,7 +324,10 @@
 				<DatePicker
 					label={m['form.birthDate']()}
 					bind:selectedDate={birthDate}
-					class="col-span-1 w-full"
+					maxDate={new Date()}
+					yearRange={Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)}
+					required
+					class="w-full"
 				/>
 				<Select
 					label={m['profileInfo.bloodType']()}

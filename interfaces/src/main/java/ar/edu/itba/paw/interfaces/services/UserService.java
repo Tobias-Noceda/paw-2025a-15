@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.entities.User;
 
 public interface UserService {//TODO check deprecated
 
-    @Deprecated
     public Optional<User> getUserById(long id);
 
     public Optional<User> getUserByEmail(String email);
@@ -15,5 +14,5 @@ public interface UserService {//TODO check deprecated
 
     public void changePasswordByID(long id, String password);
 
-    public void askPasswordRecover(String email);
+    public void askPasswordRecover(String email, String token);
 }

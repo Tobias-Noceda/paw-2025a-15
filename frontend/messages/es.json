@@ -92,6 +92,17 @@
 			"success_message": "Tu contraseña ha sido cambiada exitosamente.",
 			"error_title": "Error",
 			"error_message": "Ocurrió un error al intentar cambiar su contraseña. Por favor, inténtelo de nuevo más tarde."
+		},
+		"verify": {
+			"success": {
+				"title": "¡Cuenta verificada exitosamente!",
+				"message": "Tu cuenta con correo {email} ha sido verificada exitosamente. Ahora puedes iniciar sesión."
+			},
+			"error": {
+				"title": "Error verificando cuenta",
+				"message": "Ocurrió un error al intentar verificar la cuenta. El enlace de verificación puede haber expirado. Por favor, inténtelo de nuevo o contacte al soporte para obtener ayuda."
+			},
+			"back_to_login": "Volver a iniciar sesión"
 		}
 	},
 	"months": {
