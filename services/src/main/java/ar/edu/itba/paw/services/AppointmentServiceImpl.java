@@ -204,8 +204,13 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional
     @Override
-    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
-        appointmentDao.cancelAppointmentRange(doctorId,startDate, endDate);
+    public void  cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AppointmentNew> cancelled = appointmentDao.cancelAppointmentRange(doctorId,startDate, endDate);
+        LOGGER.info("Cancelled {} appointments for doctor with id: {}", cancelled.size(), doctorId);
+
+        for (AppointmentNew appointment : cancelled) {
+            es.sendPatientCancelledAppointmentEmail((Patient) appointment.getPatient(), appointment.getShift().getDoctor(), appointment, appointment.getShift());
+        }
     }
 
     @Transactional

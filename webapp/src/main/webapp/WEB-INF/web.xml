@@ -100,19 +100,6 @@
 
     <load-on-startup>1</load-on-startup>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>jersey-servlet</servlet-name>
-    <url-pattern>/api/*</url-pattern>
-  </servlet-mapping>
-
-  <filter>
-    <filter-name>StaticCacheFilter</filter-name>
-    <filter-class>ar.edu.itba.paw.webapp.config.filters.StaticCacheFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>StaticCacheFilter</filter-name>
-    <url-pattern>/cached/*</url-pattern>
-  </filter-mapping>
 
   <servlet>
     <servlet-name>default</servlet-name>
@@ -127,6 +114,21 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+
+  <servlet>
+    <servlet-name>spa</servlet-name>
+    <servlet-class>ar.edu.itba.paw.webapp.config.servlets.SpaServlet</servlet-class>
+  </servlet>
+
+  <!-- Servlet Mappings -->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/resources/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>jersey-servlet</servlet-name>
+    <url-pattern>/api/*</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/_app/*</url-pattern>
@@ -135,13 +137,18 @@
     <servlet-name>default</servlet-name>
     <url-pattern>/cached/*</url-pattern>
   </servlet-mapping>
-
-  <servlet>
-    <servlet-name>spa</servlet-name>
-    <servlet-class>ar.edu.itba.paw.webapp.config.servlets.SpaServlet</servlet-class>
-  </servlet>
   <servlet-mapping>
     <servlet-name>spa</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
+
+  <filter>
+    <filter-name>StaticCacheFilter</filter-name>
+    <filter-class>ar.edu.itba.paw.webapp.config.filters.StaticCacheFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>StaticCacheFilter</filter-name>
+    <url-pattern>/cached/*</url-pattern>
+  </filter-mapping>
+
 </web-app>

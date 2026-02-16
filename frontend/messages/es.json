@@ -235,11 +235,29 @@
 			"empty_schedule": "No hay turnos disponibles para la fecha seleccionada"
 		},
 		"pop_up": {
-			"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
-			"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
-			"reason": "Motivo de la cita:",
-			"reason_placeholder": "Ingrese el motivo de la cita",
-			"confirm": "Tomar turno",
+			"appointment": {
+				"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
+				"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+				"reason": "Motivo de la cita:",
+				"reason_placeholder": "Ingrese el motivo de la cita",
+				"confirm": "Tomar turno"
+			},
+			"authorize": {
+				"title": "Al realizar esta acción, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+				"confirm": "Autorizar"
+			},
+			"update": {
+				"title": "Los accesos actuales serán actualizados.",
+				"view_habits": "Con el acceso a hábitos brindas acceso a tus hábitos de bebida/fumar, en adicion a tu dieta.",
+				"view_medical": "Con el acceso médico brindas acceso a tus medicaciones, condiciones y alergias.",
+				"view_social": "Con el acceso social brindas acceso a tus hobbies y trabajo.",
+				"updateable": "Puedes actualizar estos permisos en cualquier momento.",
+				"confirm": "Actualizar accesos"
+			},
+			"de_authorize": {
+				"title": "Al realizar esta acción, estarás desautorizando al doctor de ver tu perfil y tus estudios médicos. Podrás autorizarlos nuevamente en cualquier momento.",
+				"confirm": "Desautorizar"
+			},
 			"cancel": "Cancelar"
 		}
 	},
@@ -618,6 +636,74 @@
 			"delete": {
 				"title": "Error al cancelar vacaciones",
 				"message": "No se pudieron cancelar las vacaciones. Por favor, inténtelo de nuevo."
+			}
+		}
+	},
+	"insurance": {
+		"title": "Editar obra social",
+		"labels": {
+			"name": "Nombre de la obra social",
+			"logo": "Nuevo logo de la obra social",
+			"current_logo": "Logo actual"
+		},
+		"placeholder": {
+			"name": "Ingrese el nombre de la obra social"
+		},
+		"no_logo": "Ningún archivo seleccionado",
+		"accepted_files": "Los tipos de archivo permitidos son: JPEG, PNG. El tamaño máximo del archivo es de 5 MB.",
+		"can_update": "Puede actualizar el logo de la obra social si lo desea.",
+		"buttons": {
+			"choose_file": "Elegir nuevo logo",
+			"submit": "Guardar cambios",
+			"delete": "Eliminar obra social",
+			"cancel": "Cancelar"
+		},
+		"toast": {
+			"success": {
+				"title": "¡Obra social actualizada con éxito!",
+				"message": "La obra social ha sido actualizada exitosamente."
+			},
+			"error": {
+				"title": "Error al actualizar la obra social",
+				"message": "Ocurrió un error al intentar actualizar la obra social. Por favor, inténtelo de nuevo más tarde."
+			}
+		},
+		"create": {
+			"title": "Crear nueva obra social",
+			"buttons": {
+				"file": "Elegir logo de la obra social",
+				"submit": "Crear obra social"
+			},
+			"labels": {
+				"logo": "Logo de la obra social"
+			},
+			"toast": {
+				"success": {
+					"title": "¡Obra social creada con éxito!",
+					"message": "La obra social ha sido creada exitosamente."
+				},
+				"error": {
+					"title": "Error al crear la obra social",
+					"message": "Ocurrió un error al intentar crear la obra social. Por favor, inténtelo de nuevo más tarde."
+				}
+			}
+		},
+		"delete": {
+			"toast": {
+				"success": {
+					"title": "¡Obra social eliminada con éxito!",
+					"message": "La obra social ha sido eliminada exitosamente."
+				},
+				"error": {
+					"title": "Error al eliminar la obra social",
+					"message": "Ocurrió un error al intentar eliminar la obra social. Por favor, inténtelo de nuevo más tarde."
+				}
+			},
+			"pop_up": {
+				"title": "¿Estás seguro de que quieres eliminar esta obra social?",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar obra social",
+				"cancel": "Cancelar"
 			}
 		}
 	},

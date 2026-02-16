@@ -3,13 +3,11 @@ package ar.edu.itba.paw.webapp.dto.output;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
-import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.enums.VacationsStatusEnum;
 import ar.edu.itba.paw.webapp.controller.AppointmentController;
@@ -24,14 +22,9 @@ public class DoctorDTO {
     private String telephone;
     private String license;
     private String specialty;
-    private String mailLanguage;
-    private List<String> insurances;
-    private List<Long> insuranceIds;
     private String address;
     private String startTime;
     private String endTime;
-    private Integer duration;
-    private List<String> weekdays;
 
     private LinkDTO links;
 
@@ -47,27 +40,6 @@ public class DoctorDTO {
         dto.telephone = doctor.getTelephone();
         dto.license = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
-        dto.mailLanguage = doctor.getLocale() != null ? doctor.getLocale().name() : null;
-        dto.insurances = doctor.getInsuranceNames();
-        dto.insuranceIds = doctor.getInsurances().stream()
-            .map(insurance -> insurance.getId())
-            .collect(Collectors.toList());
-        dto.weekdays = List.of();
-
-        if (doctor.getSingleShifts() != null) {
-            List<DoctorSingleShift> activeShifts = doctor.getActiveSingleShifts();
-            if (!activeShifts.isEmpty()) {
-                DoctorSingleShift firstShift = activeShifts.get(0);
-                dto.address = firstShift.getAddress();
-                dto.startTime = firstShift.getStartTime().toString();
-                dto.endTime = firstShift.getEndTime().toString();
-                dto.duration = firstShift.getDuration();
-                dto.weekdays = activeShifts.stream()
-                    .map(shift -> shift.getWeekday().name())
-                    .distinct()
-                    .collect(Collectors.toList());
-            }
-        }
 
         URI self = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).build();
         URI image = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
@@ -119,18 +91,6 @@ public class DoctorDTO {
         return specialty;
     }
 
-    public String getMailLanguage() {
-        return mailLanguage;
-    }
-
-    public List<String> getInsurances() {
-        return insurances;
-    }
-
-    public List<Long> getInsuranceIds() {
-        return insuranceIds;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -141,14 +101,6 @@ public class DoctorDTO {
 
     public String getEndTime() {
         return endTime;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public List<String> getWeekdays() {
-        return weekdays;
     }
 
     public LinkDTO getLinks() {
@@ -176,18 +128,6 @@ public class DoctorDTO {
         this.specialty = specialty;
     }
 
-    public void setMailLanguage(String mailLanguage) {
-        this.mailLanguage = mailLanguage;
-    }
-
-    public void setInsurances(List<String> insurances) {
-        this.insurances = insurances;
-    }
-
-    public void setInsuranceIds(List<Long> insuranceIds) {
-        this.insuranceIds = insuranceIds;
-    }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -200,24 +140,7 @@ public class DoctorDTO {
         this.endTime = endTime;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public void setWeekdays(List<String> weekdays) {
-        this.weekdays = weekdays;
-    }
-
     public void setLinks(LinkDTO links){
         this.links = links;
-    }
-
-    @Override
-    public String toString() {
-        return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + license
-                + ", specialty=" + specialty + ", mailLanguage=" + mailLanguage + ", insurances=" + insurances
-                + ", insuranceIds=" + insuranceIds + ", address=" + address + ", startTime=" + startTime
-                + ", endTime=" + endTime + ", duration=" + duration + ", weekdays=" + weekdays + ", links=" + links
-                + "]";
     }
 }

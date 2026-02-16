@@ -12,9 +12,9 @@
 	import {
 		authorizeDoctorsForStudy,
 		deleteStudy,
-		fetchFilesPage,
 		unauthorizeDoctorsForStudy
 	} from '$lib/services/studies';
+	import { fetchFilesPage } from '$lib/services/files';
 	import Icon from '$components/Icon/Icon.svelte';
 	import Toast from '$components/Toast/Toast.svelte';
 	import JSZip from 'jszip';
