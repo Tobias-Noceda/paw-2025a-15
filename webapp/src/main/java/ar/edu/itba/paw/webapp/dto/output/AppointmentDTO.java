@@ -51,19 +51,18 @@ public class AppointmentDTO {
 
         LinkDTO links = new LinkDTO();
 
-        URI doctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
-        URI self = uriInfo.getBaseUriBuilder().path("appointments").path(appointment.getId().toIdString()).build();
-        
-        links.setDoctor(doctor);
-        links.setSelf(self);
+        URI baseDoctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
+        TemplatedLinkDTO doctor = TemplatedLinkDTO.of(baseDoctor);
+        URI baseSelf = uriInfo.getBaseUriBuilder().path("appointments").path(appointment.getId().toIdString()).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
+        URI basePatient = appointment.getPatient() != null ? uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build() : null;
+        TemplatedLinkDTO patient = TemplatedLinkDTO.of(basePatient);
 
-        if (appointment.getPatient() != null) {
-            URI patient = uriInfo.getBaseUriBuilder().path("patients").path(String.valueOf(appointment.getPatient().getId())).build();
-
-            links.setPatient(patient);
-        }
-
-        dto.links = links;
+        dto.setLinks(new LinkDTO()
+            .setSelf(self)
+            .setDoctor(doctor)
+            .setPatient(patient)
+        );
 
         return dto;
     }

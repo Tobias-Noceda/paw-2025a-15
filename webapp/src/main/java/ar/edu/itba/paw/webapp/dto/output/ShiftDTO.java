@@ -31,8 +31,10 @@ public class ShiftDTO {
         dto.endTime = shift.getEndTime().toString();
         dto.duration = shift.getDuration();
 
-        URI self = uriInfo.getBaseUriBuilder().path("shifts").path(String.valueOf(shift.getId())).build();
-        URI doctor = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(shift.getDoctor().getId())).build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path("shifts").path(String.valueOf(shift.getId())).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
+        URI baseDoctor = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(shift.getDoctor().getId())).build();
+        TemplatedLinkDTO doctor = TemplatedLinkDTO.of(baseDoctor);
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

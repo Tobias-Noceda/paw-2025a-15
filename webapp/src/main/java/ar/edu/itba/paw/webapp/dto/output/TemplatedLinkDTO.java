@@ -42,6 +42,11 @@ public class TemplatedLinkDTO {
         return new TemplatedLinkDTO(href.toString(), true);
     }
 
+    public static TemplatedLinkDTO of(URI uri) {
+        if(uri == null) return null;
+        return new TemplatedLinkDTO(uri.toString(), false);
+    }
+
     public String getHref() {
         return href;
     }

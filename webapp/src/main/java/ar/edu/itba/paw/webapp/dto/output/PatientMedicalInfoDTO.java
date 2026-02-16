@@ -22,7 +22,8 @@ public class PatientMedicalInfoDTO {
         dto.setConditions(patient.getConditions());
         dto.setAllergies(patient.getAllergies());
 
-        URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("medicalInfo").build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("medicalInfo").build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

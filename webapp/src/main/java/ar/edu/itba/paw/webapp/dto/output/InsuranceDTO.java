@@ -24,8 +24,10 @@ public class InsuranceDTO {
 
         dto.setName(insurance.getName());
         
-        URI self = uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(insurance.getId())).build();
-        URI picture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(insurance.getPicture().getId())).build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(InsuranceController.class).path(String.valueOf(insurance.getId())).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
+        URI basePicture = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(insurance.getPicture().getId())).build();
+        TemplatedLinkDTO picture = TemplatedLinkDTO.of(basePicture);
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
