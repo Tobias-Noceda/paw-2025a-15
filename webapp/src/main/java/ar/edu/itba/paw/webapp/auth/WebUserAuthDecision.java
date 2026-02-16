@@ -158,7 +158,7 @@ public class WebUserAuthDecision {
         }
 
         if (isSelf(auth, patientId)) {
-            return new AuthorizationDecision(false);
+            return new AuthorizationDecision(true);
         }
 
         List<AccessLevelEnum> doctorAccessLevel = ads.getAuthAccessLevelEnums(patientId, user.getId());

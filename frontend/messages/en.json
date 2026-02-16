@@ -287,7 +287,14 @@
 			"label": "Insurance number:",
 			"placeholder": "Enter your insurance number"
 		},
-		"keep": "I wish to keep my taken turns"
+		"keep": "I wish to keep my taken turns",
+		"pop_up": {
+			"keep": {
+				"title": "Do you wish to keep your taken turns?",
+				"confirm": "Yes, keep turns",
+				"cancel": "No, cancel turns"
+			}
+		}
 	},
 	"profileInfo": {
 		"age": "Age:",

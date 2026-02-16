@@ -287,7 +287,14 @@
 			"label": "Número de afiliado:",
 			"placeholder": "Ingrese su número de afiliado"
 		},
-		"keep": "Deseo conservar mis turnos tomados con anterioridad"
+		"keep": "Deseo conservar mis turnos tomados con anterioridad",
+		"pop_up": {
+			"keep": {
+				"title": "¿Desea conservar sus turnos tomados con anterioridad?",
+				"confirm": "Sí, conservar turnos",
+				"cancel": "No, cancelar turnos"
+			}
+		}
 	},
 	"profileInfo": {
 		"age": "Edad",

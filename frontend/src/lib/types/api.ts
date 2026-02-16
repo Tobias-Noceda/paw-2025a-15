@@ -47,15 +47,11 @@ export type Doctor = {
 	telephone: string;
 	license: string;
 	specialty: Specialty;
-	mailLanguage?: string;
-	insuranceIds?: number[];
 	address?: string;
 	startTime?: string;
 	endTime?: string;
 	duration?: number;
-	weekdays?: Weekdays[];
 	schedule?: Map<Weekdays, [Date, Date]>;
-	direction?: string;
 	insurances?: string[];
 	links: {
 		image: string;
@@ -79,7 +75,6 @@ export type Patient = {
 	bloodType: string;
 	height: number;
 	weight: number;
-	mailLanguage?: string;
 	insurance?: string;
 	insuranceNumber: string;
 	gaveHabits?: boolean;
@@ -112,7 +107,7 @@ export type Shift = {
 	address: string;
 	startTime: string;
 	endTime: string;
-	durationMinutes: number;
+	duration: number;
 	weekday: string;
 	self: string;
 	doctor: string;

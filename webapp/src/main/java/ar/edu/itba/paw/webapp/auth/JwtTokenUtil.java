@@ -109,6 +109,7 @@ public class JwtTokenUtil {
         final String access = Jwts.builder()
                 .subject(user.getEmail())
                 .claim("id", user.getId())
+                .claim("language", user.getLocale())
                 .claim("name", user.getName())
                 .claim("role", user.getRole())
                 .claim("self", self)

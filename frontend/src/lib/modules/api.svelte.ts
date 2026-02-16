@@ -83,6 +83,39 @@ export async function login(e?: string, pass?: string): Promise<void> {
 	}
 }
 
+export async function refreshToken(): Promise<void> {
+	if (!tokens.refresh) {
+		logout();
+		return;
+	}
+
+	try {
+		const res = await get(
+			'/api/doctors',
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${tokens.refresh}`,
+				}
+			}
+		);
+
+		if (!res.ok) {
+			throw new Error(`Refresh failed: ${res.status} ${res.statusText}`);
+		}
+
+		let sessionData: Session = {
+			access: res.headers.get('X-Access-Token') as string,
+			refresh: tokens.refresh
+		}
+
+		setSession(sessionData);
+	} catch (error) {
+		console.error('Token refresh failed:', error);
+		logout();
+	}
+}
+
 function getToken(): string | null {
 	if (tokens.access && expiration && new Date() <= expiration) {
 		return tokens.access;
