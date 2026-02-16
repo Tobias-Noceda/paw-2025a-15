@@ -150,7 +150,7 @@
 			<h1 class="text-[24px] font-bold mb-1">{patient.name}</h1>
 			<div class="flex w-full h-60 justify-center items-center">
 				<div class="flex w-[200px] h-[200px]">
-					<Avatar size="auto" src={patient.links.image} class="bg-primary" />
+					<Avatar size="auto" src={patient.links.image.resolved!} class="bg-primary" />
 				</div>
 			</div>
 

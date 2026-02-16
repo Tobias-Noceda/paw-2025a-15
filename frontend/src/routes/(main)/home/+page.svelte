@@ -141,7 +141,7 @@
 		if (!deletingInsurance) return;
 
 		isDeleting = true;
-		deleteInsurance(deletingInsurance.links.self, fetch)
+		deleteInsurance(deletingInsurance.links.self.resolved!, fetch)
 			.then(() => {
 				showSuccessToast = true;
 
@@ -191,11 +191,11 @@
 					{#snippet children(entry: Patient, i: number)}
 						<Card
 							variant="patient"
-							avatarSrc={entry.links.image}
+							avatarSrc={entry.links.image.resolved!}
 							userName={entry.name}
 							email={entry.email}
 							phone={entry.telephone}
-							onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
+							onclick={() => goto(`${base}/${parseSelf(entry.links.self.resolved!)}`)}
 						/>
 					{/snippet}
 				</Pagination>
@@ -236,7 +236,7 @@
 					{#snippet children(entry: Insurance, _)}
 						<Card
 							variant="insurance"
-							avatarSrc={entry.links.image}
+							avatarSrc={entry.links.image.resolved!}
 							userName={entry.name}
 						>
 							{#snippet buttons()}
@@ -244,7 +244,7 @@
 									<Button
 										variant="primary"
 										class="flex w-full"
-										onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
+										onclick={() => goto(`${base}/${parseSelf(entry.links.self.resolved!)}`)}
 									>
 										{m['insurances.buttons.edit']()}
 									</Button>
@@ -275,7 +275,7 @@
 							...insurances.results.map((ins) => ({
 								value: ins.name,
 								label: ins.name,
-								avatarSrc: ins.links.image
+								avatarSrc: ins.links.image.resolved!
 							}))
 						],
 					}}
@@ -288,7 +288,7 @@
 									results: [...data.results.map((ins) => ({ 
 										value: ins.name, 
 										label: ins.name,
-										avatarSrc: ins.links.image
+										avatarSrc: ins.links.image.resolved!
 									}))],
 									_links: data._links
 								};
@@ -349,14 +349,14 @@
 					{#snippet children(entry: Doctor, i: number)}
 						<Card
 							variant="doctor"
-							avatarSrc={entry.links.image}
+							avatarSrc={entry.links.image.resolved!}
 							userName={entry.name}
 							specialization={getSpecialtyLabel(entry.specialty)}
 							schedule={entry.schedule ? new Set(entry.schedule.keys()) : new Set<Weekdays>()}
 							insurances={entry.insurances}
 							email={entry.email}
 							phone={entry.telephone}
-							onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
+							onclick={() => goto(`${base}/${parseSelf(entry.links.self.resolved!)}`)}
 						/>
 					{/snippet}
 				</Pagination>

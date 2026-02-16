@@ -188,7 +188,7 @@
         if (!appointment) return;
 
         if (reason) {
-            takeAppointment(appointment.links.self, reason)
+            takeAppointment(appointment.links.self.resolved!, reason)
                 .then(() => {
                     showSuccessToast = true;
 
@@ -200,7 +200,7 @@
                     console.error('Failed to take appointment:', error);
                 });
         } else {
-            cancelAppointment(appointment.links.self)
+            cancelAppointment(appointment.links.self.resolved!)
                 .then(() => {
                     showSuccessToast = true;
 
@@ -240,7 +240,7 @@
                     selectedAppointment = appointment;
                     return;
                 }
-                goto(`${base}/${parseSelf((appointment as Appointment).doctor!.links.self)}`);
+                goto(`${base}/${parseSelf((appointment as Appointment).doctor!.links.self.resolved!)}`);
             }}
             emptyMessage={m['appointments.empty.future']()}
             class="shadow-sm rounded-lg"
@@ -256,7 +256,7 @@
                 columns={tableColumns}
                 striped
                 hover
-                onRowClick={(row) => goto(`${base}/${parseSelf((row as Appointment).doctor!.links.self)}`)}
+                onRowClick={(row) => goto(`${base}/${parseSelf((row as Appointment).doctor!.links.self.resolved!)}`)}
                 emptyMessage={m['appointments.empty.past']()}
                 class="shadow-sm rounded-lg"
             />
@@ -372,7 +372,7 @@
                             variant="primary"
                             onclick={() => {
                                 if (selectedAppointment?.patient) {
-                                    goto(`${base}/${parseSelf(selectedAppointment.patient.links.self)}`);
+                                    goto(`${base}/${parseSelf(selectedAppointment.patient.links.self.resolved!)}`);
                                 }
                             }}
                         >

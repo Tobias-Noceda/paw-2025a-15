@@ -128,7 +128,7 @@
 	const handleTakeAppointment = async () => {
 		if (!selectedAppointment || !reason || reason.trim() === '') return;
 
-		takeAppointment(selectedAppointment.links.self, reason)
+		takeAppointment(selectedAppointment.links.self.resolved!, reason)
 			.then(() => {
 				showSuccessToast = true;
 				taken = true;
@@ -170,7 +170,7 @@
 			<h1 class="text-[24px] font-bold mb-2.5">{doctor.name}</h1>
 			<div class="flex w-full h-60 justify-center items-center">
 				<div class="flex w-[200px] h-[200px]">
-					<Avatar size="auto" src={doctor.links.image} class="bg-primary" />
+					<Avatar size="auto" src={doctor.links.image.resolved!} class="bg-primary" />
 				</div>
 			</div>
 			<p class="text-line font-bold">{doctor.email}</p>
@@ -188,7 +188,7 @@
 			</p>
 			<p class="text-line text-secondaryText">
 				<span class="font-bold text-primaryText">{m['doctor.labels.address']()}:</span>
-				{doctor.direction}
+				{doctor.address}
 			</p>
 			<p class="text-line text-secondaryText">
 				<span class="font-bold text-primaryText">{m['doctor.labels.license']()}:</span>
@@ -276,7 +276,7 @@
 				{selectedDate}
 				onSelectDate={(date) => {
 					selectedDate = date ?? new Date();
-					fetchAppointments(doctor.links.freeAppointments, selectedDate);
+					fetchAppointments(doctor.links.freeAppointments.resolved!, selectedDate);
 				}}
 				minDate={new Date()}
 				maxDate={appointments._pageInfo?.maxDate ??

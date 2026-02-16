@@ -2,11 +2,9 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { setUserFromSession, user, userData } from '$stores/user';
 import { get } from 'svelte/store';
-import { baseApiUrl, type Doctor, type Paginated, type Patient, type Study } from '$types/api';
+import { type Doctor, type Patient, type Study } from '$types/api';
 import { fetchSingleStudy, fetchStudies } from '$lib/services/studies';
-import type { StudyType } from '$types/enums/studyTypes';
 import { fetchDoctorsPage } from '$lib/services/doctors';
-import { getAuth } from '$modules/api.svelte';
 
 // Disable SSR since we need localStorage for authentication tokens
 export const ssr = false;
@@ -39,7 +37,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         study = await fetchSingleStudy(Number(ids[1]), Number(ids[0]), fetch);
 
         if (currentUser.role === 'PATIENT') {
-            const doctorsLink = (currentUserData as Patient).links.doctors;
+            const doctorsLink = (currentUserData as Patient).links.doctors.resolved!;
             if (doctorsLink) {
                 let doctorsResponse = await fetchDoctorsPage(doctorsLink, currentUser, fetch);
                 doctors = [...doctorsResponse.results];
@@ -50,7 +48,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
                 }
             }
 
-            let authDoctorsResponse = await fetchDoctorsPage(study.links.authDoctors, currentUser, fetch);
+            let authDoctorsResponse = await fetchDoctorsPage(study.links.authDoctors.resolved!, currentUser, fetch);
             authorizedDoctorsEmails = [...authDoctorsResponse.results.map(doctor => doctor.email)];
 
             while (authDoctorsResponse._links.next) {
