@@ -54,16 +54,16 @@ export type Doctor = {
 	schedule?: Map<Weekdays, [Date, Date]>;
 	insurances?: string[];
 	links: {
-		image: string;
-		insurances: string;
-		self: string;
-		schedule: string;
-		freeAppointments: string;
-		futureAppointments: string;
-		patients: string;
+		image: UriTemplate;
+		insurances: UriTemplate;
+		self: UriTemplate;
+		schedule: UriTemplate;
+		freeAppointments: UriTemplate;
+		futureAppointments: UriTemplate;
+		patients: UriTemplate;
 		authorization: UriTemplate;
-		pastVacations: string;
-		futureVacations: string;
+		pastVacations: UriTemplate;
+		futureVacations: UriTemplate;
 	}
 }
 
@@ -90,15 +90,15 @@ export type Patient = {
 	job?: string;
 	studiesPage?: Paginated<Study>;
 	links: {
-		doctors: string;
-		image: string;
-		insurance?: string;
-		self: string;
-		habitsInfo: string;
-		medicalInfo: string;
-		socialInfo: string;
-		pastAppointments: string;
-		futureAppointments: string;
+		doctors: UriTemplate;
+		image: UriTemplate;
+		insurance?: UriTemplate;
+		self: UriTemplate;
+		habitsInfo: UriTemplate;
+		medicalInfo: UriTemplate;
+		socialInfo: UriTemplate;
+		pastAppointments: UriTemplate;
+		futureAppointments: UriTemplate;
 		studies: UriTemplate;
 	}
 }
@@ -116,8 +116,8 @@ export type Shift = {
 export type Insurance = {
 	name: string;
 	links: {
-		image: string;
-		self: string;
+		image: UriTemplate;
+		self: UriTemplate;
 	}
 }
 
@@ -135,16 +135,16 @@ export type Appointment = {
 	patientEmail?: string;
 	detail?: string;
 	links: {
-		self: string;
-		doctor: string;
-		patient: string;
+		self: UriTemplate;
+		doctor: UriTemplate;
+		patient: UriTemplate;
 	}
 };
 
 export type File = {
 	type: FileTypes;
 	links: {
-		self: string;
+		self: UriTemplate;
 	}
 };
 export type Study = {
@@ -155,11 +155,11 @@ export type Study = {
 	uploaderName?: string;
 	files?: Paginated<File>;
 	links: {
-		authDoctors: string;
-		files: string;
-		patient: string;
-		self: string;
-		uploader: string;
+		authDoctors: UriTemplate;
+		files: UriTemplate;
+		patient: UriTemplate;
+		self: UriTemplate;
+		uploader: UriTemplate;
 	}
 };
 
@@ -167,7 +167,7 @@ export type Vacations = {
 	startDate: string;
 	endDate: string;
 	links: {
-		self: string;
-		doctor: string;
+		self: UriTemplate;
+		doctor: UriTemplate;
 	}
 };

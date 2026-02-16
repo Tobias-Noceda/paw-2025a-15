@@ -25,8 +25,8 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     try {
         const doctor = currentUserData as Doctor;
-        const pastVacations = await fetchVacations(doctor.links.pastVacations, fetch);
-        const futureVacations = await fetchVacations(doctor.links.futureVacations, fetch);
+        const pastVacations = await fetchVacations(doctor.links.pastVacations.resolved!, fetch);
+        const futureVacations = await fetchVacations(doctor.links.futureVacations.resolved!, fetch);
 
         return {
             doctor,

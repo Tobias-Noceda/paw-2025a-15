@@ -1,4 +1,4 @@
-import { get, getAuth, patchAuth } from "$modules/api.svelte";
+import { get, getAuth, patchAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import { type Appointment, type Paginated } from "$types/api";
 import { AppointmentStatus } from "$types/enums/appointmentStatus";
 import { error } from "@sveltejs/kit";
@@ -70,7 +70,7 @@ export const fetchNonFreeAppointments = async (
         await populateAppointmentData(appointment, fetchFn);
         if (fetchForPatient) {
             try {
-                const patientResponse = await getAuth(appointment.links.patient, undefined, fetchFn);
+                const patientResponse = await getAuth(appointment.links.patient.resolved!, undefined, fetchFn);
                 if (patientResponse.ok) {
                     const patient = await patientResponse.json();
                     appointment.patient = patient;
@@ -85,8 +85,10 @@ export const fetchNonFreeAppointments = async (
 };
 
 export const populateAppointmentData = async (appointment: Appointment, fetchFn: typeof fetch = fetch): Promise<void> => {
+    resolveNonTemplatedLinks(appointment);
+
     try {
-        const response = await get(appointment.links.doctor, undefined, fetchFn);
+        const response = await get(appointment.links.doctor.resolved!, undefined, fetchFn);
         if (response.ok) {
             const doctor = await response.json();
             appointment.doctor = doctor;
