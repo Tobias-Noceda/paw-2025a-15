@@ -3,7 +3,6 @@ package ar.edu.itba.paw.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +63,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public void askPasswordRecover(String email) {
+    public void askPasswordRecover(String email, String token) {
         User user = getUserByEmail(email).orElseThrow(() -> new NotFoundException("User with email: " + email + " does not exist!"));
-        es.sendPasswordResetEmail(user, UUID.randomUUID().toString());
+
+        es.sendPasswordResetEmail(user, token);
         LOGGER.info("Password recovery requested for user with email: {}", email);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public void verifyUser(String email) {
         getUserByEmail(email).orElseThrow(() -> new NotFoundException("User with email: " + email + " does not exist!"));

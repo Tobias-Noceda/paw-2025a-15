@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -45,6 +46,7 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.VacationsStatusEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.input.VacationCreateDTO;
@@ -62,6 +64,8 @@ import ar.edu.itba.paw.webapp.mediaType.VndType;
 @Path("/doctors")
 @Component
 public class DoctorController {
+
+    private static final long MAIL_TOKEN_EXPIRY_TIME = TimeUnit.HOURS.toMillis(2);
 
     @Autowired
     private AuthDoctorService ads;
@@ -83,6 +87,9 @@ public class DoctorController {
 
     @Autowired
     private DoctorShiftService dss;
+
+    @Autowired
+    private JwtTokenUtil jtu;
 
     @Context
     private UriInfo uriInfo;
@@ -171,6 +178,7 @@ public class DoctorController {
                 return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
             }).collect(Collectors.toList());
 
+        String verifyToken = jtu.createVerifyToken(doctorCreateDTO.getEmail(), MAIL_TOKEN_EXPIRY_TIME);
         Doctor doctor = ds.createDoctor(
             doctorCreateDTO.getEmail(),
             doctorCreateDTO.getPassword(),
@@ -179,7 +187,8 @@ public class DoctorController {
             doctorCreateDTO.getLicense(),
             doctorCreateDTO.getSpecialty(),
             insurances.stream().map((insurance) -> insurance.getId()).collect(Collectors.toList()),
-            LocaleEnum.fromLocale(LocaleContextHolder.getLocale())
+            LocaleEnum.fromLocale(LocaleContextHolder.getLocale()),
+            verifyToken
         );
 
         if (shiftsModificationDTO != null) {

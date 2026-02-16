@@ -28,6 +28,8 @@ public interface EmailService {
 
     public void sendPasswordResetEmail(User user, String token);
 
+    public void sendWelcomeAndVerifyEmail(User user, String token);
+
     public void sendPatientAppointmentReminderEmail(AppointmentNew appointment);
     
     public void sendDoctorAppointmentReminderEmail(AppointmentNew appointment);

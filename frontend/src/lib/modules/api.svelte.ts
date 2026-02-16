@@ -36,6 +36,12 @@ export function parseJWT(token: string) {
 	}
 }
 
+export function getJWTEmail(token: string): string | null {
+	const payload = parseJWT(token);
+	console.log('Parsed JWT payload:', payload);
+	return payload ? payload.sub : null;
+}
+
 export function setSession(data: Session) {
 	tokens = data;
 	localStorage.access = tokens.access;
