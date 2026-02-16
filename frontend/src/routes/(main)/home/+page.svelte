@@ -15,12 +15,20 @@
 	import { page } from '$app/stores';
 	import { fetchPatients } from '$lib/services/patients';
 	import { loggedOut } from '$stores/user';
-	import { fetchInsurances, fetchInsurancesPage } from '$lib/services/insurances';
+	import { deleteInsurance, fetchInsurances, fetchInsurancesPage } from '$lib/services/insurances';
 	import Divider from '$components/Divider/Divider.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
+	import PopUp from '$components/PopUp/PopUp.svelte';
+	import Toast from '$components/Toast/Toast.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let firstLoad = true;
+
+	let deletingInsurance: Insurance | null = $state(null);
+	let isDeleting = $state(false);
+
+	let showErrorToast = $state(false);
+	let showSuccessToast = $state(false);
 
 	let userRole = $state(data.userRole);
     let insurances: Paginated<Insurance> = $state({ results: [], _links: {} });
@@ -82,27 +90,42 @@
 		let insuranceSearch: string | undefined = undefined;
 
 		if (userRole === 'DOCTOR' && data.patientsLink) {
-			fetchPatients($searchQuery, data.patientsLink, fetch).then(result => {
-				patients = result;
-				filterKey++;
-			});
+			fetchPatients($searchQuery, data.patientsLink, fetch)
+				.then(result => {
+					patients = result;
+					filterKey++;
+				})
+				.catch(error => {
+					console.error('Error fetching patients:', error);
+					throw error;
+				});
+
 		} else if (userRole === 'ADMIN') {
 			insuranceSearch = $searchQuery;
 		} else {
 			// Fetch doctors with current URL params
-			fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder).then(result => {
-				doctors = result;
-				filterKey++;
-			});
+			fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder)
+				.then(result => {
+					doctors = result;
+					filterKey++;
+				})
+				.catch(error => {
+					console.error('Error fetching doctors:', error);
+					throw error;
+				});
 		}
 
 		if (firstLoad || insuranceSearch) {
-			fetchInsurances(insuranceSearch, fetch).then(result => {
-				insurances = result;
-				
-				firstLoad = false;
-				filterKey++;
-			});
+			fetchInsurances(insuranceSearch, fetch)
+				.then(result => {
+					insurances = result;
+					
+					firstLoad = false;
+					filterKey++;
+				}).catch(error => {
+					console.error('Error fetching insurances:', error);
+					throw error;
+				});
 		}
 	});
 
@@ -112,6 +135,30 @@
 		const apiIndex = self.indexOf(limitString);
 		const toRet = apiIndex !== -1 ? self.substring(apiIndex + limitString.length) : self;
 		return toRet;
+	};
+
+	const handleDelete = () => {
+		if (!deletingInsurance) return;
+
+		isDeleting = true;
+		deleteInsurance(deletingInsurance.links.self, fetch)
+			.then(() => {
+				showSuccessToast = true;
+
+				// Refetch insurances after deletion
+				fetchInsurances($searchQuery, fetch).then(result => {
+					insurances = result;
+					filterKey++;
+				});
+			})
+			.catch((error) => {
+				console.error('Error deleting insurance:', error);
+				showErrorToast = true;
+			})
+			.finally(() => {
+				isDeleting = false;
+				deletingInsurance = null;
+			});
 	};
 </script>
 
@@ -159,7 +206,7 @@
 			<h2 class="section-title m-0 text-start after:w-[80%]!">{m['insurances.title']()}</h2>
 			<Button
 				variant="primary"
-				onclick={() => goto(`${base}/admin/insurances/new`)}
+				onclick={() => goto(`${base}/insurances/new`)}
 			>
 				<Icon name="plus" class="w-4 h-4 mr-2" />
 				{m['insurances.new']()}
@@ -197,14 +244,14 @@
 									<Button
 										variant="primary"
 										class="flex w-full"
-										onclick={() => goto(`${base}/admin/${parseSelf(entry.links.self)}`)}
+										onclick={() => goto(`${base}/${parseSelf(entry.links.self)}`)}
 									>
 										{m['insurances.buttons.edit']()}
 									</Button>
 									<Button
 										variant="destructive"
 										class="flex w-full"
-										onclick={() => goto(`${base}/admin/${parseSelf(entry.links.self)}`)}
+										onclick={() => deletingInsurance = entry}
 									>
 										{m['insurances.buttons.delete']()}
 									</Button>
@@ -316,4 +363,48 @@
 			{/key}
 		</div>
 	{/if}
+
+	{#if deletingInsurance}
+        <PopUp onClose={() => deletingInsurance = null}>
+            <div class="flex flex-col gap-2">
+                <h1 class="text-primaryText text-[1.17rem] font-bold">
+                    {m['insurance.delete.pop_up.title']()}
+                </h1>
+                <p class="text-primaryText">
+					{m['insurance.delete.pop_up.subtitle']()}
+				</p>
+
+                <div class="flex justify-end gap-4 mt-2">
+					<Button
+						variant="primary"
+						onclick={() => handleDelete()}
+						disabled={isDeleting}
+					>
+						{m['insurance.delete.pop_up.confirm']()}
+					</Button>
+                    <Button
+                        variant="destructive"
+                        onclick={() => deletingInsurance = null}
+						disabled={isDeleting}
+                    >
+                        {m['insurance.delete.pop_up.cancel']()}
+                    </Button>
+                </div>
+            </div>
+        </PopUp>
+	{/if}
+
+	<Toast
+		variant="success"
+		title={m['insurance.delete.toast.success.title']()}
+		description={m['insurance.delete.toast.success.message']()}
+		bind:show={showSuccessToast}
+	/>
+
+	<Toast
+		variant="destructive"
+		title={m['insurance.delete.toast.error.title']()}
+		description={m['insurance.delete.toast.error.message']()}
+		bind:show={showErrorToast}
+	/>
 </div>

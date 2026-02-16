@@ -82,12 +82,15 @@ export type Patient = {
 	mailLanguage?: string;
 	insurance?: string;
 	insuranceNumber: string;
+	gaveHabits?: boolean;
 	smokes?: boolean;
 	drinks?: boolean;
 	diet?: string;
+	gaveMedical?: boolean;
 	meds?: string;
 	conditions?: string;
 	allergies?: string;
+	gaveSocial?: boolean;
 	hobbies?: string;
 	job?: string;
 	studiesPage?: Paginated<Study>;
@@ -96,6 +99,9 @@ export type Patient = {
 		image: string;
 		insurance?: string;
 		self: string;
+		habitsInfo: string;
+		medicalInfo: string;
+		socialInfo: string;
 		pastAppointments: string;
 		futureAppointments: string;
 		studies: UriTemplate;

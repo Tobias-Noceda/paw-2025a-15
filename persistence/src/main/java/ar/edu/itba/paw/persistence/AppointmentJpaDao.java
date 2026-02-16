@@ -230,8 +230,16 @@ public class AppointmentJpaDao implements AppointmentDao {
     }
 
     @Override
-    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
-        List<AppointmentNew> toRemove =  em.createQuery("from AppointmentNew a where a.id.date >= :startDate and a.id.date <= :endDate and a.shift.doctor.id = :doctorId", AppointmentNew.class)
+    public List<AppointmentNew> cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AppointmentNew> toRemove =  em.createQuery("""
+            FROM AppointmentNew a 
+            JOIN FETCH a.shift s 
+            JOIN FETCH a.patient p 
+            JOIN FETCH s.doctor d
+            WHERE a.id.date >= :startDate 
+                AND a.id.date <= :endDate 
+                AND a.shift.doctor.id = :doctorId
+        """, AppointmentNew.class)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("doctorId", doctorId)
@@ -241,6 +249,8 @@ public class AppointmentJpaDao implements AppointmentDao {
         }
         em.flush();
         em.clear();
+
+        return toRemove;
     }
 
     private List<AppointmentNew> getAvailableTurnsByShift(DoctorSingleShift dss, List<AppointmentNew> takenAppointments, LocalDate date) {

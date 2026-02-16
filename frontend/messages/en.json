@@ -232,15 +232,33 @@
 		"text": {
 			"no_schedule": "No available schedule.",
 			"schedule": "{day}s from {startTime} to {endTime}",
-			"empty_schedule": "No available appointments on this date",
-			"pop_up": {
+			"empty_schedule": "No available appointments on this date"
+		},
+		"pop_up": {
+			"appointment": {
 				"title": "Are you sure you want to take an appointment on {month} {day} at {startTime} with {doctorName}?",
 				"subtitle": "By doing this you will also be authorizing them to see your medical profile and studies. You can revoke this permission at any time.",
 				"reason": "Appointment reason:",
 				"reason_placeholder": "Enter a brief reason for the appointment",
-				"confirm": "Take appointment",
-				"cancel": "Cancel"
-			}
+				"confirm": "Take appointment"
+			},
+			"authorize": {
+				"title": "By doing this, you are authorizing the doctor to view your profile and medical studies. You can revoke this permission at any time.",
+				"confirm": "Authorize"
+			},
+			"update": {
+				"title": "Current accesses will be updated.",
+				"view_habits": "With access to habits you grant access to your drinking/smoking habits and diet.",
+				"view_medical": "With medical access you grant access to your medications, conditions and allergies.",
+				"view_social": "With social access you grant access to your hobbies and job.",
+				"updateable": "You can update these permissions at any time.",
+				"confirm": "Update accesses"
+			},
+			"de_authorize": {
+				"title": "By doing this, you are unauthorizing the doctor from viewing your profile and medical studies. You can authorize them again at any time.",
+				"confirm": "Unauthorize"
+			},
+			"cancel": "Cancel"
 		}
 	},
 	"profile": {
@@ -598,6 +616,74 @@
 			"delete": {
 				"title": "Cancellation error",
 				"message": "Could not cancel the vacations. Please try again."
+			}
+		}
+	},
+	"insurance": {
+		"title": "Edit Insurance",
+		"labels": {
+			"name": "Insurance Name",
+			"logo": "New Insurance Logo",
+			"current_logo": "Current Logo"
+		},
+		"placeholder": {
+			"name": "Enter the insurance name"
+		},
+		"no_logo": "No logo selected",
+		"accepted_files": "The accepted file types are: JPEG, PNG. The maximum file size is 5 MB.",
+		"can_update": "You can update the logo if you want.",
+		"buttons": {
+			"choose_file": "Choose new logo",
+			"submit": "Save changes",
+			"delete": "Delete insurance",
+			"cancel": "Cancel"
+		},
+		"toast": {
+			"success": {
+				"title": "Insurance updated successfully!",
+				"message": "The insurance has been updated successfully."
+			},
+			"error": {
+				"title": "Error updating insurance",
+				"message": "An error occurred while trying to update the insurance. Please try again later."
+			}
+		},
+		"create": {
+			"title": "Create new insurance",
+			"buttons": {
+				"file": "Choose insurance logo",
+				"submit": "Create insurance"
+			},
+			"labels": {
+				"logo": "Insurance Logo"
+			},
+			"toast": {
+				"success": {
+					"title": "Insurance created successfully!",
+					"message": "The insurance has been created successfully."
+				},
+				"error": {
+					"title": "Error creating insurance",
+					"message": "An error occurred while trying to create the insurance. Please try again later."
+				}
+			}
+		},
+		"delete": {
+			"toast": {
+				"success": {
+					"title": "Insurance deleted successfully!",
+					"message": "The insurance has been deleted successfully."
+				},
+				"error": {
+					"title": "Error deleting insurance",
+					"message": "An error occurred while trying to delete the insurance. Please try again later."
+				}
+			},
+			"pop_up": {
+				"title": "Are you sure you want to delete this insurance?",
+				"subtitle": "This action cannot be undone.",
+				"confirm": "Delete insurance",
+				"cancel": "Cancel"
 			}
 		}
 	},
