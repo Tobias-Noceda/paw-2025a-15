@@ -70,6 +70,9 @@ public abstract class User implements Serializable {
     @Column(name = "locale", nullable = false)
     private LocaleEnum locale;
 
+    @Column(name = "active", nullable = false)
+    private boolean active;
+
     public User(){
         //just for hibernate;
     }
@@ -83,6 +86,7 @@ public abstract class User implements Serializable {
         this.picture = picture;
         this.createDate = createDate;
         this.locale = locale;
+        this.active = false;
     }
 
     public Long getId(){
@@ -163,6 +167,14 @@ public abstract class User implements Serializable {
 
     public void setLocale(LocaleEnum locale){
         this.locale = locale;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override

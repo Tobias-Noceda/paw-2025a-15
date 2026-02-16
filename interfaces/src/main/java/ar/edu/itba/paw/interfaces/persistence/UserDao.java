@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.User;
@@ -12,4 +13,8 @@ public interface UserDao {
 
     @Deprecated //TODO check???????
     void changePasswordByID(long id, String password);
+
+    void verifyUser(String email);
+
+    List<User> getUnverifiedUsersOlderThanDays(int days);
 }

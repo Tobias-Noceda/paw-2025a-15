@@ -48,6 +48,14 @@ public class PatientServiceImpl implements PatientService{
 
     @Transactional(readOnly=true)
     @Override
+    public void deletePatientById(long patientId) {
+        getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
+        patientDao.deletePatientById(patientId);
+        LOGGER.info("Deleted patient with id: {}", patientId);
+    }
+
+    @Transactional(readOnly=true)
+    @Override
     public Optional<Patient> getPatientById(long id) {
         return patientDao.getPatientById(id);
     }

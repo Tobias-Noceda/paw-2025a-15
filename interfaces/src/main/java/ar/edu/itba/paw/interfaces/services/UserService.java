@@ -11,8 +11,9 @@ public interface UserService {//TODO check deprecated
 
     public Optional<User> getUserByEmail(String email);
 
+    public void verifyUser(String email);
+
     public void changePasswordByID(long id, String password);
 
-    @Deprecated
     public void askPasswordRecover(String email);
 }
