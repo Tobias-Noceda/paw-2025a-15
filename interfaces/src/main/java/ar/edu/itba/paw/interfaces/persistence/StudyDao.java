@@ -21,8 +21,6 @@ public interface StudyDao {
 
     public boolean deleteStudy(long id);
 
-    public boolean isFileInStudy(long studyId, long fileId);
-
     public int getStudyFilesCount(long studyId);
 
     public List<File> getStudyFilesPage(long studyId, int page, int pageSize);

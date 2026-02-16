@@ -684,34 +684,6 @@ public class StudyJpaDaoTest {
     }
 
     @Test
-    public void testIsFileInStudy(){
-        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
-        final Long FILE_ID = TestData.Images.validImageId;
-
-        boolean result = studyDao.isFileInStudy(STUDY_ID, FILE_ID);
-        Study studyPersisted = em.find(Study.class, STUDY_ID);
-
-        Assert.assertTrue(result);
-        Assert.assertNotNull(studyPersisted);
-        Assert.assertEquals(1, studyPersisted.getFiles().size());
-        Assert.assertEquals(FILE_ID, studyPersisted.getFiles().get(0).getId());
-    }
-
-    @Test
-    public void testIsFileInStudyNegative(){
-        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
-        final Long FILE_ID = TestData.Images.validImage2Id;
-
-        boolean result = studyDao.isFileInStudy(STUDY_ID, FILE_ID);
-        Study studyPersisted = em.find(Study.class, STUDY_ID);
-
-        Assert.assertFalse(result);
-        Assert.assertNotNull(studyPersisted);
-        Assert.assertEquals(1, studyPersisted.getFiles().size());
-        Assert.assertNotEquals(FILE_ID, studyPersisted.getFiles().get(0).getId());
-    }
-
-    @Test
     public void testGetStudyFilesCount() {
         final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
 

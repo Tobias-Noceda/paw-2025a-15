@@ -12,7 +12,6 @@ public interface DoctorShiftService {//TODO check deprecated
 
     public Optional<DoctorSingleShift> getShiftById(long id);
 
-    @Deprecated
     public void updateShifts(long doctorId, List<WeekdayEnum> weekdays, String address, LocalTime startTime, LocalTime endTime, int amount, boolean keepTurns);
 
     public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);//TODO deprecar por los de abajo

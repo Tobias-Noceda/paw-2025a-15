@@ -10,6 +10,5 @@ public interface UserDao {
 
     public Optional<User> getUserByEmail(String email);
 
-    @Deprecated //TODO check???????
     void changePasswordByID(long id, String password);
 }

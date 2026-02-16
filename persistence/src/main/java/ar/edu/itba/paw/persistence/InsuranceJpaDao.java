@@ -54,11 +54,6 @@ public class InsuranceJpaDao implements InsuranceDao{
     }
 
     @Override
-    public List<Insurance> getAllInsurances() {
-        return em.createQuery("from Insurance as i",Insurance.class).getResultList();
-    }
-
-    @Override
     public int getInsurancesByDoctorIdCount(long doctorId) {
         Doctor doctor = em.find(Doctor.class, doctorId);
         if(doctor==null) return 0;
@@ -82,21 +77,6 @@ public class InsuranceJpaDao implements InsuranceDao{
         query.setParameter("doctorId", doctorId);
 
         query.setFirstResult(offset);
-        query.setMaxResults(pageSize);
-        return query.getResultList();
-    }
-    
-    @Override
-    public int getInsurancesCount() {
-        final TypedQuery<Long> query = em.createQuery("select count(i) from Insurance as i", Long.class);
-        return query.getSingleResult().intValue();
-    }
-
-    @Override
-    public List<Insurance> getInsurancesPage(int page, int pageSize) {
-        if (page < 1 || pageSize <= 0) return Collections.emptyList();
-        final TypedQuery<Insurance> query = em.createQuery("from Insurance as i", Insurance.class);
-        query.setFirstResult(page == 0 ? 0 : (page - 1) * pageSize);
         query.setMaxResults(pageSize);
         return query.getResultList();
     }

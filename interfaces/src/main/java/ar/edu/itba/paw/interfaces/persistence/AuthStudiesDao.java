@@ -12,8 +12,6 @@ public interface AuthStudiesDao {
     
     public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId);
 
-    public void unauthStudyForDoctor(long studyId, long doctorId);
-
     public void unauthAllStudiesForDoctorAndPatient(long patientId, long doctorId);
 
     public void unauthAllStudiesForAllDocsForPatientId(long patientId);
