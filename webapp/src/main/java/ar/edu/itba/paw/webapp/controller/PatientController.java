@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -54,6 +55,7 @@ import ar.edu.itba.paw.webapp.dto.output.PatientMedicalInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.PatientSocialInfoDTO;
 import ar.edu.itba.paw.webapp.dto.output.StudyDTO;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.input.StudyAuthPatchDTO;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
@@ -62,6 +64,8 @@ import ar.edu.itba.paw.webapp.mediaType.VndType;
 public class PatientController {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(PatientController.class);
+
+    private static final long MAIL_TOKEN_EXPIRY_TIME = TimeUnit.HOURS.toMillis(2);
 
     @Autowired
     private PatientService ps;
@@ -74,6 +78,9 @@ public class PatientController {
 
     @Autowired
     private AuthStudiesService ass;
+
+    @Autowired
+    private JwtTokenUtil jtu;
 
     @Context
     private UriInfo uriInfo;
@@ -108,12 +115,14 @@ public class PatientController {
     @POST
     @Consumes(value = VndType.APPLICATION_PATIENT_CREATION)
     public Response createPatient(@Valid PatientCreateDTO dto) {
+        String verifyToken = jtu.createVerifyToken(dto.getEmail(), MAIL_TOKEN_EXPIRY_TIME);
+        
         final Patient patient = ps.createPatient(
             dto.getEmail(), dto.getPassword(), 
             dto.getName(), dto.getTelephone(), 
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale()), 
             dto.getBirthdate(), BigDecimal.valueOf(dto.getHeight()), 
-            BigDecimal.valueOf(dto.getWeight())
+            BigDecimal.valueOf(dto.getWeight()), verifyToken
         );
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(patient.getId())).build();
         return Response.created(uri).build();

@@ -23,6 +23,7 @@ public class PatientEditDTO {
     @URL(protocol = "http")
     private String pictureId;
 
+    @Pattern(regexp = "ES_AR|ES_US|EN_AR|EN_US")
     private String mailLanguage;
 
     @PastDate
