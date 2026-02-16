@@ -69,12 +69,6 @@ public class InsuranceServiceImpl implements InsuranceService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<Insurance> getAllInsurances() {
-        return insuranceDao.getAllInsurances();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public int getInsurancesByDoctorIdCount(long doctorId) {
         return insuranceDao.getInsurancesByDoctorIdCount(doctorId);
     }
@@ -83,18 +77,6 @@ public class InsuranceServiceImpl implements InsuranceService{
     @Override
     public List<Insurance> getInsurancesByDoctorIdPage(long doctorId, int page, int pageSize) {
         return insuranceDao.getInsurancesByDoctorIdPage(doctorId, page, pageSize);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public int getInsurancesCount() {
-        return insuranceDao.getInsurancesCount();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Insurance> getInsurancesPage(int page, int pageSize) {
-        return insuranceDao.getInsurancesPage(page, pageSize);
     }
 
     @Transactional(readOnly = true)

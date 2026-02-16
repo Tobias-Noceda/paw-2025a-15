@@ -64,15 +64,6 @@ public class StudyJpaDao implements StudyDao {
     }
 
     @Override
-    public boolean isFileInStudy(long studyId, long fileId) {
-        String q = "SELECT COUNT(f) > 0 FROM Study s JOIN s.files f WHERE s.id = :studyId AND f.id = :fileId";
-        TypedQuery<Boolean> query = em.createQuery(q, Boolean.class);
-        query.setParameter("studyId", studyId);
-        query.setParameter("fileId", fileId);
-        return query.getSingleResult();
-    }
-
-    @Override
     public int getStudyFilesCount(long studyId) {
         Study study = em.find(Study.class, studyId);
         if(study==null) return 0;

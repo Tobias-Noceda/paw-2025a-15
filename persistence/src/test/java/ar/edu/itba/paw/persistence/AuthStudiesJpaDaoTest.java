@@ -99,29 +99,6 @@ public class AuthStudiesJpaDaoTest {
 
     @Test
     @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
-    public void testUnauthStudyForDoctorId(){
-        final Long DOC_ID = TestData.Users.doctorId;
-        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
-
-        authStudiesDao.unauthStudyForDoctor(STUDY_ID, DOC_ID);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
-
-        Assert.assertNull(asPersisted);
-    }
-
-    @Test
-    public void testUnauthStudyForDoctorIdUnauth(){
-        final Long DOC_ID = TestData.Users.doctorId;
-        final Long STUDY_ID = TestData.Studies.validStudyWithDateId;
-
-        authStudiesDao.unauthStudyForDoctor(STUDY_ID, DOC_ID);
-        AuthStudy asPersisted = em.find(AuthStudy.class, new AuthStudyId(DOC_ID, STUDY_ID));
-
-        Assert.assertNull(asPersisted);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:users.sql", "classpath:studies.sql", "classpath:authDoctors.sql", "classpath:authStudies.sql"})
     public void testUnauthAllStudyForDoctorIdAndPatientId(){
         final Long DOC_ID = TestData.Users.doctorId;
         final Long PATIENT_ID = TestData.Users.patientId;

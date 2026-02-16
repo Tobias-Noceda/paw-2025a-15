@@ -12,12 +12,6 @@ public interface AuthStudiesService {//TODO check deprecated
 
     public boolean hasAuthStudy(long studyId, long doctorId);
 
-    @Deprecated
-    public void unauthStudyForDoctorId(long studyId, long doctorId);
-
-    @Deprecated
-    public void toggleStudyForDoctorId(long studyId, long doctorId);
-
     public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId);
     
     @Deprecated

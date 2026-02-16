@@ -99,69 +99,6 @@ public class AuthDoctorJpaDaoTest {
     }
 
     @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql"})
-    public void testHasAuthDoctorWithAccessLevel(){
-        final Patient PATIENT = TestData.Users.patient;
-        final Long PATIENT_ID = TestData.Users.patientId;
-        PATIENT.setId(PATIENT_ID);
-        final Doctor DOC = TestData.Users.doctor;
-        final Long DOC_ID = TestData.Users.doctorId;
-        DOC.setId(DOC_ID);
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
-
-        boolean result = authDoctorDao.hasAuthDoctorWithAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
-        AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
-
-        Assert.assertTrue(result);
-        Assert.assertNotNull(adFound);
-        Assert.assertEquals(PATIENT_ID, adFound.getPatient().getId());
-        Assert.assertEquals(DOC_ID, adFound.getDoctor().getId());
-        Assert.assertEquals(ACCES_LEVEL, adFound.getAccessLevel());
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql"})
-    public void testHasAuthDoctorWithAccessLevelNoAuth(){
-        final Long PATIENT_ID = TestData.Users.patientId;
-        final Long DOC_ID = TestData.Users.doctorId;
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
-
-        boolean result = authDoctorDao.hasAuthDoctorWithAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
-        AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
-
-        Assert.assertFalse(result);
-        Assert.assertNull(adFound);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql"})
-    public void testHasAuthDoctorWithAccessLevelNonexistentPatient(){
-        final Long PATIENT_ID = TestData.Users.newPatientId;
-        final Long DOC_ID = TestData.Users.doctorId;
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
-
-        boolean result = authDoctorDao.hasAuthDoctorWithAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
-        AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
-
-        Assert.assertFalse(result);
-        Assert.assertNull(adFound);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql"})
-    public void testHasAuthDoctorWithAccessLevelNonexistentDoctor(){
-        final Long PATIENT_ID = TestData.Users.patientId;
-        final Long DOC_ID = TestData.Users.newDoctorId;
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
-
-        boolean result = authDoctorDao.hasAuthDoctorWithAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
-        AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
-
-        Assert.assertFalse(result);
-        Assert.assertNull(adFound);
-    }
-
-    @Test
     @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql"})
     public void testAuthDoctor(){
         final Long PATIENT_ID = TestData.Users.patientId;
@@ -308,55 +245,6 @@ public class AuthDoctorJpaDaoTest {
         final Long DOC_ID = TestData.Users.doctorId;
 
         authDoctorDao.unauthDoctorAllAccessLevels(PATIENT_ID, DOC_ID);
-        AuthDoctor adBasicFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, AccessLevelEnum.VIEW_BASIC));
-        AuthDoctor adSocialFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, AccessLevelEnum.VIEW_SOCIAL));
-
-        Assert.assertNull(adBasicFound);
-        Assert.assertNull(adSocialFound);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql"})
-    public void testUnauthDoctorByAccessLevelBasicOnly(){
-        final Long PATIENT_ID = TestData.Users.patientId;
-        final Long DOC_ID = TestData.Users.doctorId;
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
-
-        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
-        AuthDoctor adFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, ACCES_LEVEL));
-
-        Assert.assertNull(adFound);}
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
-    public void testUnauthDoctorByAccessLevelMultipleSocialErase(){
-        final Long PATIENT_ID = TestData.Users.patientId;
-        final Patient PATIENT = TestData.Users.patient;
-        PATIENT.setId(PATIENT_ID);
-        final Long DOC_ID = TestData.Users.doctorId;
-        final Doctor DOC = TestData.Users.doctor;
-        DOC.setId(DOC_ID);
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctorSocialLevel.getAccessLevel();
-
-        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
-        AuthDoctor adBasicFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, AccessLevelEnum.VIEW_BASIC));
-        AuthDoctor adSocialFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, AccessLevelEnum.VIEW_SOCIAL));
-
-        Assert.assertNotNull(adBasicFound);
-        Assert.assertEquals(PATIENT_ID, adBasicFound.getAuthDoctorId().getPatientId());
-        Assert.assertEquals(DOC_ID, adBasicFound.getAuthDoctorId().getDoctorId());
-        Assert.assertEquals(AccessLevelEnum.VIEW_BASIC, adBasicFound.getAccessLevel());
-        Assert.assertNull(adSocialFound);
-    }
-
-    @Test
-    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql", "classpath:doctorSingleShifts.sql", "classpath:authDoctors.sql", "classpath:authDoctors-SocialLevel.sql"})
-    public void testUnauthDoctorByAccessLevelMultipleBasicErase(){
-        final Long PATIENT_ID = TestData.Users.patientId;
-        final Long DOC_ID = TestData.Users.doctorId;
-        final AccessLevelEnum ACCES_LEVEL = TestData.AuthDoctors.authDoctor.getAccessLevel();
-
-        authDoctorDao.unauthDoctorByAccessLevel(PATIENT_ID, DOC_ID, ACCES_LEVEL);
         AuthDoctor adBasicFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, AccessLevelEnum.VIEW_BASIC));
         AuthDoctor adSocialFound = em.find(AuthDoctor.class, new AuthDoctorId(DOC_ID, PATIENT_ID, AccessLevelEnum.VIEW_SOCIAL));
 

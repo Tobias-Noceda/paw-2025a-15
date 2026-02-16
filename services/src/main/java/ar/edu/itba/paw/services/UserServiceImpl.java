@@ -45,8 +45,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void changePasswordByID(long id, String password) {
-        User user = getUserById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist!"));
-        user.setPassword(passwordEncoder.encode(password));
+        getUserById(id).orElseThrow(() -> new NotFoundException("User with id: " + id + " does not exist!"));
+        userDao.changePasswordByID(id, passwordEncoder.encode(password));
         LOGGER.info("Changed password for user with id: {}", id);
     }
 

@@ -98,12 +98,6 @@ public class StudyServiceImpl implements StudyService{
 
     @Transactional(readOnly = true)
     @Override
-    public boolean isFileInStudy(long studyId, long fileId) {
-        return studyDao.isFileInStudy(studyId, fileId);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public int getStudyFilesCount(Long studyId) {
         if (studyId == null) return 0;
         return studyDao.getStudyFilesCount(studyId);

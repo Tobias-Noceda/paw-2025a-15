@@ -70,24 +70,6 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
 
     @Transactional
     @Override
-    public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(!hasAuthStudy(studyId, doctorId)) return;
-        authStudiesDao.unauthStudyForDoctor(studyId, doctorId);
-        LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
-    }
-
-    @Transactional
-    @Override
-    public void toggleStudyForDoctorId(long studyId, long doctorId) {
-        if(hasAuthStudy(studyId, doctorId)) {
-            unauthStudyForDoctorId(studyId, doctorId);
-        }else{
-            authStudyForDoctorId(studyId, doctorId);
-        }
-    }
-
-    @Transactional
-    @Override
     public void unauthAllStudiesForDoctorIdAndPatientId(long patientId, long doctorId) {
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));

@@ -4,20 +4,14 @@ import java.util.List;
 
 import ar.edu.itba.paw.models.enums.AccessLevelEnum;
 
-public interface AuthDoctorDao { //TODO check deprecated
+public interface AuthDoctorDao {
     public boolean hasAuthDoctor(long patientId, long doctorId);
-
-    @Deprecated
-    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
     public void authDoctor(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
     public void authDoctorWithLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
     public void unauthDoctorAllAccessLevels(long patientId, long doctorId);
-
-    @Deprecated
-    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel);
 
     public void unauthDoctorForLevels(long patientId, long doctorId, List<AccessLevelEnum> accessLevels);
 
