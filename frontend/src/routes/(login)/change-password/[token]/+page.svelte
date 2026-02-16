@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { base } from "$app/paths";
 	import { page } from "$app/stores";
 	import Button from "$components/Button/Button.svelte";
@@ -24,6 +25,9 @@
         resetPassword(token ?? '', newPassword)
             .then(() => {
                 success = true;
+                setTimeout(() => {
+                    goto(`${base}/login`);
+                }, 1500);
             })
             .catch(() => {
                 error = true;

@@ -4,6 +4,7 @@ import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 import UriTemplate from "uri-templates";
 import type { User } from "$stores/user";
+import { createFile } from "./files";
 
 export const fetchPatients = async (search: string, url: string, fetchFn: typeof fetch = fetch): Promise<Paginated<Patient>> => {
     if (!url || url.trim() === '') throw error(400, 'URL is required to fetch patients');
@@ -50,6 +51,28 @@ export const fetchPatientById = async (id: number, loggedUser?: User | null, fet
     return setPatientsStudyLink(patient, loggedUser);
 };
 
+export const fetchPatientBySelf = async (selfUrl: string, loggedUser?: User | null, fetchFn: typeof fetch = fetch): Promise<Patient> => {
+    const response = await getAuth(
+        selfUrl,
+        {
+            headers: {
+                'Accept': 'application/vnd.patients.v1+json'
+            }
+        },
+        fetchFn
+    );
+    if (!response.ok) {
+        const text = await response.text();
+        throw error(response.status || 500, 'Failed to fetch patients: ' + text);
+    }
+
+    const patient: Patient = await response.json();
+    
+    await populatePatientData(patient, fetchFn);
+
+    return setPatientsStudyLink(patient, loggedUser);
+}
+
 export const createPatient = async (patient: Partial<Patient>, password: string): Promise<void> => {
     const response = await post(`${baseApiUrl}/patients`,
         {
@@ -78,17 +101,78 @@ export const createPatient = async (patient: Partial<Patient>, password: string)
     }
 };
 
-export const updatePatientProfile = async (id: number, payload: Record<string, unknown>): Promise<Patient> => {
+export type PatientProfileUpdateData = {
+    telephone: string;
+    mailLanguage: string;
+    birthdate: Date | null;
+    bloodType?: string;
+    height?: number;
+    weight?: number;
+    smokes?: boolean;
+    drinks?: boolean;
+    diet?: string;
+    meds?: string;
+    conditions?: string;
+    allergies?: string;
+    hobbies?: string;
+    job?: string;
+    insuranceSelf?: string;
+    insuranceNumber?: string;
+};
+
+const parseInsuranceId = (insuranceSelf: string | undefined): number | undefined => {
+    if (!insuranceSelf) return undefined;
+    const toFind = '/insurances/';
+    const parts = insuranceSelf.split(toFind);
+    if (parts.length === 2) {
+        const idPart = parts[1].split('/')[0]; // In case there are trailing slashes
+        const id = parseInt(idPart, 10);
+        return isNaN(id) ? undefined : id;
+    }
+    return undefined;
+};
+
+export const updatePatientProfile = async (user: User, payload: PatientProfileUpdateData, patient: Patient, image?: File | null, fetchFn: typeof fetch = fetch): Promise<Patient> => {
+    if (!user || user.role !== 'PATIENT') {
+        throw error(403, 'Unauthorized: Only patients can update their profile');
+    }
+    let imageLocation: string | undefined;
+
+    if (image) {
+        imageLocation = await createFile(image, fetchFn);
+    }
+
+    const finalPayload = {
+        pictureId: imageLocation,
+        telephone: payload.telephone.trim() !== '' && payload.telephone !== patient.telephone ? payload.telephone : undefined,
+        mailLanguage: payload.mailLanguage !== user.language ? payload.mailLanguage : undefined,
+        birthdate: payload.birthdate ? payload.birthdate.toISOString().split('T')[0] : undefined,
+        bloodType: patient.bloodType !== payload.bloodType ? payload.bloodType : undefined,
+        height: payload.height !== patient.height ? payload.height : undefined,
+        weight: payload.weight !== patient.weight ? payload.weight : undefined,
+        smokes: payload.smokes !== patient.smokes ? payload.smokes : undefined,
+        drinks: payload.drinks !== patient.drinks ? payload.drinks : undefined,
+        diet: payload.diet !== patient.diet ? payload.diet : undefined,
+        meds: payload.meds !== patient.meds ? payload.meds : undefined,
+        conditions: payload.conditions !== patient.conditions ? payload.conditions : undefined,
+        allergies: payload.allergies !== patient.allergies ? payload.allergies : undefined,
+        hobbies: payload.hobbies !== patient.hobbies ? payload.hobbies : undefined,
+        job: payload.job !== patient.job ? payload.job : undefined,
+        insuranceId: payload.insuranceSelf && payload.insuranceSelf !== patient.links.insurance ? parseInsuranceId(payload.insuranceSelf) : undefined,
+        insuranceNumber: payload.insuranceNumber && payload.insuranceNumber.trim() !== '' && payload.insuranceNumber !== patient.insuranceNumber ? payload.insuranceNumber : undefined
+    };
+
+
     const response = await patchAuth(
-        `${baseApiUrl}/patients/${id}`,
-        payload,
+        user.self,
+        finalPayload,
         {
             headers: {
                 'Content-Type': 'application/vnd.patients.v1+json',
                 'Accept': 'application/vnd.patients.v1+json'
             }
         },
-        fetch
+        fetchFn
     );
 
     if (!response.ok) {

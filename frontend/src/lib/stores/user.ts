@@ -5,6 +5,7 @@ import { writable } from "svelte/store";
 
 export type User = {
 	id: number;
+	language: string;
 	name: string;
 	role: 'DOCTOR' | 'PATIENT' | 'ADMIN';
     image: string;
@@ -22,6 +23,7 @@ export async function setUserFromSession(sessionToken: string, fetchFn: typeof f
 	if (payload) {
 		user.set({
 			id: payload.id,
+			language: payload.language,
 			name: payload.name,
 			role: payload.role,
             image: payload.image,
