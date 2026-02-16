@@ -5,11 +5,16 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.validator.constraints.URL;
+
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 
 @NonEmptyBody
 public class DoctorEditDTO {
+
+    @URL(protocol = "http")
+    private String pictureId;
 
     @ValidArgPhone
     private String telephone;
@@ -25,6 +30,14 @@ public class DoctorEditDTO {
 
     @Valid
     private ShiftsModificationDTO shifts;
+
+    public String getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(String pictureId) {
+        this.pictureId = pictureId;
+    }
 
     public String getTelephone() {
         return telephone;

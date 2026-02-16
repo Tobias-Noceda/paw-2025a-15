@@ -79,7 +79,7 @@ public class PatientServiceImplTest {
         Mockito.when(us.getUserByEmail(Mockito.eq(PAT_EMAIL))).thenReturn(Optional.of(PATIENT));
 
         Assert.assertThrows(AlreadyExistsException.class, () -> 
-            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT)
+            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT, "token")
         );
     }
 
@@ -89,7 +89,7 @@ public class PatientServiceImplTest {
         Mockito.when(fs.findById(1)).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT)
+            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT, "token")
         );
     }
 

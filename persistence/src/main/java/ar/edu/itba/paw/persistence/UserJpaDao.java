@@ -1,15 +1,17 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistence.UserDao;
-import ar.edu.itba.paw.models.entities.User;
-
-import org.springframework.stereotype.Repository;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
+
+import ar.edu.itba.paw.interfaces.persistence.UserDao;
+import ar.edu.itba.paw.models.entities.User;
 
 @Repository
 public class UserJpaDao implements UserDao {
@@ -36,5 +38,19 @@ public class UserJpaDao implements UserDao {
         if(user == null || password == null || password.isEmpty()) return;
         user.setPassword(password);
         em.merge(user);
+    }
+
+    @Override
+    public void verifyUser(String email) {
+        User user = getUserByEmail(email).orElseThrow(() -> new IllegalArgumentException("User with email: " + email + " does not exist!"));
+        user.setActive(true);
+        em.merge(user);
+    }
+
+    @Override
+    public List<User> getUnverifiedUsersOlderThanDays(int days) {
+        final TypedQuery<User> query = em.createQuery("from User as u where u.active = false and u.createDate < :date", User.class);
+        query.setParameter("date", LocalDate.now().minusDays(days));
+        return query.getResultList();
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -49,6 +50,9 @@ public class DoctorServiceImpl implements DoctorService {
     private InsuranceService is;
 
     @Autowired
+    private EmailService es;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -73,7 +77,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale) {
+    public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale, String token) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));
         List<Insurance> insuranceEntities;
@@ -87,7 +91,12 @@ public class DoctorServiceImpl implements DoctorService {
                 insuranceEntities.add(insurance);
             }
         }
-        return doctorDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
+        
+        Doctor newDoctor = doctorDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
+        
+        es.sendWelcomeAndVerifyEmail(newDoctor, token);
+        
+        return newDoctor;
     }
 
     @Transactional

@@ -12,7 +12,9 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 
 public interface PatientService {
     
-    public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
+    public void deletePatientById(long patientId);
+
+    public Patient createPatient(String email, String password, String name, String telephone, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight, String token);
 
     public Optional<Patient> getPatientById(long id);
 

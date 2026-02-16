@@ -74,7 +74,7 @@ public class JwtTokenUtil {
         }
 
         try {
-            return new SessionInfo((PawAuthUserDetails) userDetailsService.loadUserByUsername(content.getSubject()), content.get("role") != null, expired);
+            return new SessionInfo((PawAuthUserDetails) userDetailsService.loadUserByUsername(content.getSubject()), content.get("role") != null, content.get("verify") != null, expired);
         } catch (UsernameNotFoundException e) {
             return null;
         }
@@ -109,6 +109,7 @@ public class JwtTokenUtil {
         final String access = Jwts.builder()
                 .subject(user.getEmail())
                 .claim("id", user.getId())
+                .claim("language", user.getLocale())
                 .claim("name", user.getName())
                 .claim("role", user.getRole())
                 .claim("self", self)
@@ -133,7 +134,16 @@ public class JwtTokenUtil {
                 .signWith(key, alg).compact();
     }
 
-    public record SessionInfo(PawAuthUserDetails user, boolean isAccess, boolean expired) {
+    public String createVerifyToken(final String email, final long expiryTime) {
+        return Jwts.builder()
+                .subject(email)
+                .claim("verify", true)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiryTime))
+                .signWith(key, alg).compact();
+    }
+
+    public record SessionInfo(PawAuthUserDetails user, boolean isAccess, boolean isVerify, boolean expired) {
     };
 
     public record Session(String access, String refresh) {

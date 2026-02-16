@@ -27,6 +27,14 @@ public class PatientJpaDao implements PatientDao {
     private EntityManager em;
 
     @Override
+    public void deletePatientById(long patientId) {
+        Patient patient = em.find(Patient.class, patientId);
+        if (patient != null) {
+            em.remove(patient);
+        }
+    }
+
+    @Override
     public Patient createPatient(
         String email,
         String password,
