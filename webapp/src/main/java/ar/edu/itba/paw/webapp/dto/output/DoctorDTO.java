@@ -22,12 +22,9 @@ public class DoctorDTO {
     private String telephone;
     private String license;
     private String specialty;
-    private String mailLanguage;
     private String address;
     private String startTime;
     private String endTime;
-    private Integer duration;
-    private List<String> weekdays;
 
     private LinkDTO links;
 
@@ -43,8 +40,6 @@ public class DoctorDTO {
         dto.telephone = doctor.getTelephone();
         dto.license = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
-        dto.mailLanguage = doctor.getLocale() != null ? doctor.getLocale().name() : null;
-        dto.weekdays = List.of();
 
         URI self = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).build();
         URI image = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
@@ -96,10 +91,6 @@ public class DoctorDTO {
         return specialty;
     }
 
-    public String getMailLanguage() {
-        return mailLanguage;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -110,14 +101,6 @@ public class DoctorDTO {
 
     public String getEndTime() {
         return endTime;
-    }
-
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public List<String> getWeekdays() {
-        return weekdays;
     }
 
     public LinkDTO getLinks() {
@@ -145,10 +128,6 @@ public class DoctorDTO {
         this.specialty = specialty;
     }
 
-    public void setMailLanguage(String mailLanguage) {
-        this.mailLanguage = mailLanguage;
-    }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -159,14 +138,6 @@ public class DoctorDTO {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
-    }
-
-    public void setWeekdays(List<String> weekdays) {
-        this.weekdays = weekdays;
     }
 
     public void setLinks(LinkDTO links){
