@@ -144,13 +144,4 @@ public class AuthDoctorServiceImplTest {
         );
     }
 
-    @Test
-    public void testDeauthorizeAllDoctorsNonexistent(){
-        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            ads.deauthorizeAllDoctors(PATIENT_ID)
-        );
-    }
-
 }

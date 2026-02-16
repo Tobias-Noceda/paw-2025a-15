@@ -109,14 +109,5 @@ public class AuthDoctorServiceImpl implements AuthDoctorService{
         ds.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return authDoctorDao.getAuthAccessLevelEnums(patientId, doctorId);
-    }   
-    
-    @Transactional
-    @Override
-    public void deauthorizeAllDoctors(long patientId) {
-        ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        authDoctorDao.deauthorizeAllDoctors(patientId);
-        ass.unauthAllStudiesForAllDocsForPatientId(patientId);
-        LOGGER.info("Deauthorized all doctors for patient with id: {}", patientId);
     }
 }
