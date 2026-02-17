@@ -374,9 +374,9 @@ public class DoctorController {
         }
         VacationsStatusEnum statusEnum;
         try {
-            statusEnum = VacationsStatusEnum.fromValue(status.toLowerCase());
+            statusEnum = VacationsStatusEnum.fromValue(status);
         }
-        catch(IllegalArgumentException e){
+        catch(IllegalArgumentException e){//TODO cambiar a que esto lo ataje el exceptionMapper
             return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
         }
 

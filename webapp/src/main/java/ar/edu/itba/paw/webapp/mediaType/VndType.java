@@ -23,6 +23,8 @@ public class VndType {
     // Insurance Media Types
     public static final String APPLICATION_INSURANCE = "application/vnd.insurances.v1+json";
 
+    public static final String APPLICATION_INSURANCE_CREATION = "application/vnd.insurances.creation.v1+json";
+
     // Patient Media Types
     public static final String APPLICATION_PATIENT = "application/vnd.patients.v1+json";
 
