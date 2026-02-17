@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -53,10 +55,10 @@ public class InsuranceController {
     @GET
     @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response listInsurances(
-        @QueryParam("supportedBy") final Long doctorId,
+        @QueryParam("supportedBy") @Min(1) final Long doctorId,
         @QueryParam("name") @DefaultValue("") final String name,
-        @QueryParam("page") @DefaultValue("1") final int page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @Min(1) @DefaultValue("1") final int page,
+        @QueryParam("pageSize") @Min(1) @Max(100) @DefaultValue("10") Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
@@ -92,10 +94,10 @@ public class InsuranceController {
     }
 
     @POST
-    @Consumes(value = VndType.APPLICATION_INSURANCE)
+    @Consumes(value = VndType.APPLICATION_INSURANCE_CREATION)
     public Response createInsurance(@Valid InsuranceCreateDTO dto) {
         Long pictureId = URIHelper.getId(
-            dto.getPictureId(), 
+            dto.getPicture(), 
             uriInfo.getBaseUriBuilder().path(FileController.class).build()
         );
         File picture = fs.findById(pictureId).orElseThrow(NotFoundException::new);
@@ -107,7 +109,7 @@ public class InsuranceController {
     @GET
     @Path("/{id:\\d+}")
     @Produces(value = VndType.APPLICATION_INSURANCE)
-    public Response getInsuranceById(@PathParam("id") final long id) {
+    public Response getInsuranceById(@PathParam("id") @Min(1) final long id) {
         Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
     }
@@ -117,21 +119,20 @@ public class InsuranceController {
     @Consumes(value = VndType.APPLICATION_INSURANCE)
     @Produces(value = VndType.APPLICATION_INSURANCE)
     public Response editInsurance(
-        @PathParam("id") long id,
+        @PathParam("id") @Min(1) long id,
         @Valid InsuranceEditDTO dto
     ) {
         Long pictureId = URIHelper.getId(
-            dto.getPictureId(), 
+            dto.getPicture(), 
             uriInfo.getBaseUriBuilder().path(FileController.class).build()
         );
-        Insurance insurance = is.getInsuranceById(id).orElseThrow(NotFoundException::new);
         is.edit(id, dto.getName(), pictureId);
-        return Response.ok(InsuranceDTO.fromInsurance(uriInfo, insurance)).build();
+        return Response.ok(InsuranceDTO.fromInsurance(uriInfo, is.getInsuranceById(id).orElseThrow(NotFoundException::new))).build();
     }
 
     @DELETE
     @Path("/{id:\\d+}")
-    public Response deleteInsuranceById(@PathParam("id") final long id) {
+    public Response deleteInsuranceById(@PathParam("id") @Min(1) final long id) {
         is.delete(id);
         return Response.noContent().build();
     }
