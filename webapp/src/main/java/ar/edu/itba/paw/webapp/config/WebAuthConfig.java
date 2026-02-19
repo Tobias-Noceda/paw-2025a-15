@@ -118,7 +118,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.GET, "/api/files")
                     .access((a, c) -> ad.hasStudyAuth(a.get(), c.getRequest().getParameter("studyId") != null ? Long.valueOf(c.getRequest().getParameter("studyId")) : null))
                 .requestMatchers(HttpMethod.POST, "/api/files").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()//TODO check??
 
                 // insurances
                 .requestMatchers(HttpMethod.GET, "/api/insurances").permitAll()
