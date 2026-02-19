@@ -7,6 +7,8 @@ import UriTemplate from "uri-templates";
 import type { User } from "$stores/user";
 import type { AccessLevels } from "$types/enums/accessLevels";
 import { error } from "@sveltejs/kit";
+import { fetchInsurancesPage } from "./insurances";
+import { createFile } from "./files";
 
 /**
  * Parse time string in HH:mm format and return a Date object
@@ -104,6 +106,23 @@ export const fetchDoctorById = async (id: string, loggedUser: User, fetchFn: typ
     return doctor;
 };
 
+export const fetchDoctorBySelf = async (selfUrl: string, loggedUser: User, fetchFn: typeof fetch = fetch): Promise<Doctor | null> => {
+    const response = await get(selfUrl, undefined, fetchFn);
+    
+    if (!response.ok) {
+        console.error('Failed to fetch doctor by self URL:', response.statusText);
+        return null;
+    }
+
+    const doctor = await response.json();
+    if (doctor) {
+        await populateDoctorData(doctor, fetchFn);
+        populateAuthorizationData(doctor, loggedUser);
+    }
+    
+    return doctor;
+};
+
 export const fetchDoctorAuthorizations = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<DoctorAuthorizations | null> => {
     if (doctor.links.authorization.resolved) {
         const response = await getAuth(doctor.links.authorization.resolved, undefined, fetchFn);
@@ -146,7 +165,7 @@ type ShiftCreationData = {
 export type DoctorProfileUpdateData = {
     telephone: string;
     mailLanguage: string;
-    insuranceIds: number[];
+    insuranceSelfs: string[];
     updateSchedule: boolean;
     keepTurns?: boolean;
     shifts?: ShiftCreationData | null;
@@ -181,9 +200,43 @@ export const createDoctor = async (
     }
 };
 
-export const updateDoctorProfile = async (id: number, payload: DoctorProfileUpdateData): Promise<Doctor> => {
+const parseInsuranceId = (insuranceUrl: string): string => {
+    const divider = '/insurances/';
+    const parts = insuranceUrl.split(divider);
+    if (parts.length === 2) {
+        return parts[1].split('/')[0]; // Return the part after /insurances/ and before any further slashes
+    }
+    throw new Error(`Invalid insurance URL: ${insuranceUrl}`);
+};
+
+export const updateDoctorProfile = async (
+    user: User,
+    payload: DoctorProfileUpdateData,
+    doctor: Doctor,
+    image?: File | null,
+    fetchFn: typeof fetch = fetch
+): Promise<Doctor> => {
+    if (!user || user.role !== 'DOCTOR') {
+        throw error(403, 'Unauthorized: Only doctors can update their profile');
+    }
+
+    let imageLocation: string | undefined = undefined;
+    if (image) {
+        imageLocation = await createFile(image, fetchFn);
+    }
+
+    const finalPayload = {
+        pictureId: imageLocation,
+        telephone: payload.telephone.trim() !== '' && payload.telephone !== doctor.telephone ? payload.telephone : undefined,
+        mailLanguage: payload.mailLanguage !== user.language ? payload.mailLanguage : undefined,
+        insuranceIds: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs.map(parseInsuranceId) : undefined,
+        updateSchedule: payload.updateSchedule,
+        shifts: payload.shifts && payload.updateSchedule ? payload.shifts : undefined,
+        keepTurns: payload.keepTurns !== undefined ? payload.keepTurns : undefined
+    };
+
     const response = await patchAuth(
-        `${baseApiUrl}/doctors/${id}`,
+        user.self,
         payload,
         {
             headers: {
@@ -191,7 +244,7 @@ export const updateDoctorProfile = async (id: number, payload: DoctorProfileUpda
                 "Accept": "application/vnd.doctors.v1+json"
             }
         },
-        fetch
+        fetchFn
     );
 
     if (!response.ok) {
@@ -203,52 +256,45 @@ export const updateDoctorProfile = async (id: number, payload: DoctorProfileUpda
 };
 
 const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<Doctor> => {
-    const hasEmbeddedScheduleField = Object.prototype.hasOwnProperty.call(doctor, "weekdays");
+    const response = await get(doctor.links.schedule, undefined, fetchFn);
 
-    if (hasEmbeddedScheduleField) {
-        if (doctor.weekdays && doctor.weekdays.length > 0 && doctor.startTime && doctor.endTime) {
-            const days = new Map<Weekdays, [Date, Date]>();
-            const start = parseTime(normalizeTime(doctor.startTime));
-            const end = parseTime(normalizeTime(doctor.endTime));
+    if (response && response.ok) {
+        const schedule: Shift[] = await response.json();
 
-            doctor.weekdays.forEach((weekday) => {
-                days.set(weekday as Weekdays, [start, end]);
-            });
+        const days = new Map<Weekdays, [Date, Date]>();
+        let direction: string | undefined = undefined;
+        schedule.forEach(shift => {
+            // Parse time strings in HH:mm format
+            const start = parseTime(shift.startTime);
+            const end = parseTime(shift.endTime);
+            days.set(shift.weekday as Weekdays, [start, end]);
+            if (!direction) {
+                direction = shift.address;
+            }
+            if (!doctor.startTime) {
+                doctor.startTime = normalizeTime(shift.startTime);
+            }
+            if (!doctor.endTime) {
+                doctor.endTime = normalizeTime(shift.endTime);
+            }
+            if (!doctor.duration) {
+                doctor.duration = shift.duration;
+            }
+        });
+        doctor.schedule = days;
+        doctor.address = direction;
 
-            doctor.schedule = days;
-        } else {
-            doctor.schedule = new Map<Weekdays, [Date, Date]>();
-        }
-        doctor.direction = doctor.address;
-    } else {
-        const response = await get(doctor.links.schedule, undefined, fetchFn);
-
-        if (response && response.ok) {
-            const schedule: Shift[] = await response.json();
-
-            const days = new Map<Weekdays, [Date, Date]>();
-            let direction: string | undefined = undefined;
-            schedule.forEach(shift => {
-                // Parse time strings in HH:mm format
-                const start = parseTime(shift.startTime);
-                const end = parseTime(shift.endTime);
-                days.set(shift.weekday as Weekdays, [start, end]);
-                if (!direction) {
-                    direction = shift.address;
-                }
-            });
-            doctor.schedule = days;
-            doctor.direction = direction;
-        }
     }
 
-    if (!doctor.insurances || doctor.insurances.length === 0) {
-        const responseInsurances = await get(doctor.links.insurances, undefined, fetchFn);
-        if (responseInsurances.ok) {
-            const insurancesData: Insurance[] = await responseInsurances.json();
-            doctor.insurances = insurancesData.map(ins => ins.name);
-        }
+    let insurancesPage = await fetchInsurancesPage(doctor.links.insurances, fetchFn);
+    let insurances: string[] = [...insurancesPage.results.map(i => i.name)];
+
+    while (insurancesPage._links.next) {
+        insurancesPage = await fetchInsurancesPage(insurancesPage._links.next, fetchFn);
+        insurances = [...insurances, ...insurancesPage.results.map(i => i.name)];
     }
+
+    doctor.insurances = insurances;
 
     return doctor;
 };

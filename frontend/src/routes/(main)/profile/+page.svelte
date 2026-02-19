@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Avatar from '$components/Avatar/Avatar.svelte';
 	import Button from '$components/Button/Button.svelte';
 	import DatePicker from '$components/DatePicker/DatePicker.svelte';
@@ -10,97 +9,150 @@
 	import Toast from '$components/Toast/Toast.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { user } from '$lib/stores/user';
-	import { fetchDoctorById, updateDoctorProfile, type DoctorProfileUpdateData } from '$lib/services/doctors';
-	import { fetchInsurances, fetchInsurancesPage } from '$lib/services/insurances';
-	import { fetchPatientById, updatePatientProfile } from '$lib/services/patients';
-	import { Durations, getWeekdayShortLabel, Weekdays } from '$types/enums/weekdays';
+	import { updateDoctorProfile, type DoctorProfileUpdateData } from '$lib/services/doctors';
+	import { updatePatientProfile, type PatientProfileUpdateData } from '$lib/services/patients';
+	import { Durations, getWeekdayShortLabel, TimeSlots, Weekdays } from '$types/enums/weekdays';
 	import { getSpecialtyLabel, Specialty } from '$types/enums/specialties';
+	import { Locales } from '$types/enums/locales';
+	import { BloodType } from '$types/enums/bloodTypes';
+	import RadioCheck from '$components/RadioCheck/RadioCheck.svelte';
+	import type { PageData } from './$types';
+	import { parseDateInLocalTimezone } from '$lib/services/appointments';
+	import PopUp from '$components/PopUp/PopUp.svelte';
+	import { refreshToken } from '$modules/api.svelte';
 
-	const languageOptions = [
-		{ value: 'ES_AR', label: m['locale.ES_AR']() },
-		{ value: 'ES_US', label: m['locale.ES_US']() },
-		{ value: 'EN_AR', label: m['locale.EN_AR']() },
-		{ value: 'EN_US', label: m['locale.EN_US']() }
-	];
+	let { data }: { data: PageData } = $props();
+
+	const languageOptions = Object.entries(Locales).map(([key]) => ({
+		value: key,
+		label: `${m[`locale.${key}`]()}`
+	}));
 
 	const bloodTypeOptions = [
-		{ value: 'A_POSITIVE', label: 'A+' },
-		{ value: 'A_NEGATIVE', label: 'A-' },
-		{ value: 'B_POSITIVE', label: 'B+' },
-		{ value: 'B_NEGATIVE', label: 'B-' },
-		{ value: 'AB_POSITIVE', label: 'AB+' },
-		{ value: 'AB_NEGATIVE', label: 'AB-' },
-		{ value: 'O_POSITIVE', label: 'O+' },
-		{ value: 'O_NEGATIVE', label: 'O-' }
+		{ value: 'N/A', label: '-' },
+		...Object.entries(BloodType).map(([_, value]) => ({
+			value: value,
+			label: value
+		}))
 	];
 
 	const yesNoOptions = [
-		{ value: 'yes', label: m['profileInfo.yes']() },
-		{ value: 'no', label: m['profileInfo.no']() }
+		{ value: 'N/A', label: '-' },
+		{ value: 'true', label: m['profileInfo.yes']() },
+		{ value: 'false', label: m['profileInfo.no']() }
 	];
 
-	const timeOptions = Array.from({ length: 33 }, (_, index) => {
-		const totalMinutes = 6 * 60 + index * 30;
-		const hours = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
-		const minutes = String(totalMinutes % 60).padStart(2, '0');
-		const time = `${hours}:${minutes}`;
-		return { value: time, label: time };
-	});
+	const weekDays = [
+		...Object.values(Weekdays).map((day) => ({
+			id: day,
+			label: getWeekdayShortLabel(day),
+			checked: data.doctor && data.doctor.schedule ? data.doctor.schedule.has(day) : false
+		}))
+	];
 
-	const durationOptions = Object.values(Durations).map((duration) => ({
-		value: duration,
-		label: duration
-	}));
+	const timeSpans = [
+		{
+			value: 'N/A',
+			label: '-'
+		},
+		...Object.values(TimeSlots).map((time) => ({
+			value: time,
+			label: time
+		}))
+	];
 
-	const weekdayOptions = Object.values(Weekdays).map((weekday) => ({
-		value: weekday,
-		label: getWeekdayShortLabel(weekday)
-	}));
+	const durations = [
+		{
+			value: 'N/A',
+			label: '-'
+		},
+		...Object.values(Durations).map((duration) => ({
+			value: duration,
+			label: duration
+		}))
+	];
 
-	let fullName = $state('');
-	let email = $state('');
-	let role = $state('');
-	let avatarSrc = $state('');
-	let telephone = $state('');
-	let mailLanguage = $state('EN_US');
+	let fullName = $state(data.currentUser.name || '');
+	let email = $state(
+		data.doctor ? data.doctor.email || '' : data.patient ? data.patient.email || '' : ''
+	);
+	let role = $state(data.currentUser.role || '');
+	let avatarSrc = $state(data.currentUser.image || '');
+	let telephone = $state(
+		data.doctor ? data.doctor.telephone || '' : data.patient ? data.patient.telephone || '' : ''
+	);
+	let mailLanguage = $state(data.currentUser.language || 'EN_US');
+	let newImage: File | null = $state(null);
 
-	let loading = $state(false);
-	let loaded = $state(false);
-	let loadedUserId = $state<number | null>(null);
 	let saveError = $state('');
 	let showSaveSuccessToast = $state(false);
-	let insuranceOptions = $state<{ value: string; label: string }[]>([]);
 
-	let birthDate: Date | null = $state(null);
-	let bloodType = $state('');
-	let height = $state<string | number>('');
-	let weight = $state<string | number>('');
-	let insuranceId = $state('');
-	let insuranceNumber = $state('');
-	let smokes = $state('');
-	let drinks = $state('');
-	let diet = $state('');
-	let meds = $state('');
-	let conditions = $state('');
-	let allergies = $state('');
-	let hobbies = $state('');
-	let job = $state('');
+	let birthDate: Date | null = $state(
+		data.patient && data.patient.birthdate ? parseDateInLocalTimezone(data.patient.birthdate) : null
+	);
+	let bloodType = $state(data.patient && data.patient.bloodType ? data.patient.bloodType : '');
+	let height = $state<number | undefined>(
+		data.patient && data.patient.height != null ? data.patient.height : undefined
+	);
+	let weight = $state<number | undefined>(
+		data.patient && data.patient.weight != null ? data.patient.weight : undefined
+	);
+	let insuranceName: string = $state(
+		data.patient && data.patient.insurance ? data.patient.insurance : ''
+	);
+	let insuranceNumber = $state(
+		data.patient && data.patient.insuranceNumber ? data.patient.insuranceNumber : ''
+	);
+	let smokes: string = $state(
+		data.patient
+			? data.patient.smokes === undefined
+				? 'N/A'
+				: data.patient.smokes
+					? 'true'
+					: 'false'
+			: 'N/A'
+	);
+	let drinks: string = $state(
+		data.patient
+			? data.patient.drinks === undefined
+				? 'N/A'
+				: data.patient.drinks
+					? 'true'
+					: 'false'
+			: 'N/A'
+	);
+	let diet = $state(data.patient && data.patient.diet ? data.patient.diet : '');
+	let meds = $state(data.patient && data.patient.meds ? data.patient.meds : '');
+	let conditions = $state(data.patient && data.patient.conditions ? data.patient.conditions : '');
+	let allergies = $state(data.patient && data.patient.allergies ? data.patient.allergies : '');
+	let hobbies = $state(data.patient && data.patient.hobbies ? data.patient.hobbies : '');
+	let job = $state(data.patient && data.patient.job ? data.patient.job : '');
 
-	let license = $state('');
-	let specialty = $state('');
-	let doctorAddress = $state('');
-	let selectedDoctorInsuranceIds = $state<string[]>([]);
+	let license = $state(data.doctor && data.doctor.license ? data.doctor.license : '');
+	let specialty = $state(data.doctor && data.doctor.specialty ? data.doctor.specialty : '');
+	let doctorAddress = $state(data.doctor && data.doctor.address ? data.doctor.address : '');
+	let selectedInsurances = $state<string[]>(
+		data.doctor && data.doctor.insurances ? data.doctor.insurances : []
+	);
 	let updateSchedule = $state(false);
-	let selectedWeekdays = $state<string[]>([]);
-	let startTime = $state('06:00');
-	let endTime = $state('07:30');
-	let duration = $state('15');
+	let keepTurnDeciding = $state(false);
+	let selectedWeekdays = $state<Weekdays[]>(
+		data.doctor && data.doctor.schedule ? Array.from(data.doctor.schedule.keys()) : []
+	);
+	let startTime = $state(data.doctor && data.doctor.startTime ? data.doctor.startTime : 'N/A');
+	let endTime = $state(data.doctor && data.doctor.endTime ? data.doctor.endTime : 'N/A');
+	let duration = $state(data.doctor && data.doctor.duration ? String(data.doctor.duration) : 'N/A');
+
+	const parseBoolean = (value: string) => {
+		if (value === 'true') return true;
+		if (value === 'false') return false;
+		return undefined;
+	};
 
 	const roleLabel = $derived.by(() => {
 		if (!role) return '';
 		if (role === 'PATIENT') return m['role.PATIENT']();
 		if (role === 'DOCTOR') return m['role.DOCTOR']();
-		if (role === 'LABORATORY') return m['role.LABORATORY']();
 		if (role === 'ADMIN') return m['role.ADMIN']();
 		return role;
 	});
@@ -113,210 +165,50 @@
 		return specialty;
 	});
 
-	const toYesNo = (value?: boolean | null) => {
-		if (value === true) return 'yes';
-		if (value === false) return 'no';
-		return '';
-	};
-
-	const bloodTypeFromLabel = (label?: string | null) => {
-		const match = bloodTypeOptions.find((option) => option.label === label);
-		return match ? match.value : '';
-	};
-
-	const parseIdFromUrl = (url?: string | null) => {
-		if (!url) return '';
-		const parts = url.split('/');
-		return parts[parts.length - 1] ?? '';
-	};
-
-	const normalizeTimeValue = (value?: string | null) => {
-		if (!value) return '';
-		const [hours = '00', minutes = '00'] = value.split(':');
-		return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
-	};
-
-	const parseNumber = (value: string | number) => {
-		if (value === null || value === undefined) return null;
-		if (typeof value === 'number') {
-			return Number.isNaN(value) ? null : value;
-		}
-		if (value.trim() === '') return null;
-		const parsed = Number(value);
-		return Number.isNaN(parsed) ? null : parsed;
-	};
-
-	const parseBoolean = (value: string) => {
-		if (value === 'yes') return true;
-		if (value === 'no') return false;
-		return null;
-	};
-
-	const getInsuranceOptions = async () => {
-		let page = await fetchInsurances(undefined, fetch);
-		let allInsurances = [...page.results];
-
-		while (page._links.next) {
-			page = await fetchInsurancesPage(page._links.next, fetch);
-			allInsurances = [...allInsurances, ...page.results];
-		}
-
-		return allInsurances.map((insurance) => ({
-			value: parseIdFromUrl(insurance.links.self),
-			label: insurance.name
-		}));
-	};
-
-	const loadPatientProfile = async () => {
-		if (!$user) {
-			return;
-		}
-
-		const [patient, allInsuranceOptions] = await Promise.all([
-			fetchPatientById($user.id, $user),
-			getInsuranceOptions()
-		]);
-
-		insuranceOptions = allInsuranceOptions;
-		fullName = patient.name ?? '';
-		email = patient.email ?? '';
-		role = $user.role;
-		avatarSrc = patient.links?.image ?? '';
-		telephone = patient.telephone ?? '';
-		mailLanguage = patient.mailLanguage ?? 'EN_US';
-		birthDate = patient.birthdate ? new Date(patient.birthdate) : null;
-		bloodType = bloodTypeFromLabel(patient.bloodType);
-		height = patient.height != null ? String(patient.height) : '';
-		weight = patient.weight != null ? String(patient.weight) : '';
-		smokes = toYesNo(patient.smokes);
-		drinks = toYesNo(patient.drinks);
-		meds = patient.meds ?? '';
-		conditions = patient.conditions ?? '';
-		allergies = patient.allergies ?? '';
-		diet = patient.diet ?? '';
-		hobbies = patient.hobbies ?? '';
-		job = patient.job ?? '';
-		insuranceId = parseIdFromUrl(patient.links?.insurance);
-		insuranceNumber = patient.insuranceNumber ?? '';
-	};
-
-	const loadDoctorProfile = async () => {
-		if (!$user) {
-			return;
-		}
-
-		const [doctor, allInsuranceOptions] = await Promise.all([
-			fetchDoctorById(String($user.id), $user, fetch),
-			getInsuranceOptions()
-		]);
-
-		if (!doctor) {
-			throw new Error('Doctor profile not found');
-		}
-
-		insuranceOptions = allInsuranceOptions;
-		fullName = doctor.name ?? '';
-		email = doctor.email ?? '';
-		role = $user.role;
-		avatarSrc = doctor.links?.image ?? '';
-		telephone = doctor.telephone ?? '';
-		mailLanguage = doctor.mailLanguage ?? 'EN_US';
-		license = doctor.license ?? '';
-		specialty = doctor.specialty ?? '';
-		doctorAddress = doctor.address ?? doctor.direction ?? '';
-		selectedDoctorInsuranceIds = (doctor.insuranceIds ?? []).map((id) => String(id));
-		selectedWeekdays = (doctor.weekdays ?? []).map((weekday) => String(weekday));
-		startTime = normalizeTimeValue(doctor.startTime) || '06:00';
-		endTime = normalizeTimeValue(doctor.endTime) || '07:30';
-		duration = doctor.duration != null ? String(doctor.duration) : '15';
-		updateSchedule = false;
-	};
-
-	const loadProfile = async () => {
-		if (!$user || loading || (loaded && loadedUserId === $user.id)) {
-			return;
-		}
-
-		loading = true;
-		saveError = '';
-
-		try {
-			if ($user.role === 'PATIENT') {
-				await loadPatientProfile();
-			} else if ($user.role === 'DOCTOR') {
-				await loadDoctorProfile();
-			}
-
-			loaded = true;
-			loadedUserId = $user.id;
-		} catch (error) {
-			console.error('Failed to fetch profile:', error);
-		} finally {
-			loading = false;
-		}
-	};
-
 	const savePatientProfile = async () => {
-		if (!$user || $user.role !== 'PATIENT') {
+		if (!$user || $user.role !== 'PATIENT' || !data.patient) {
 			return;
 		}
 
-		const payload = {
+		const payload: PatientProfileUpdateData = {
 			telephone,
 			mailLanguage,
-			birthdate: birthDate ? birthDate.toISOString().split('T')[0] : null,
-			bloodType: bloodType || null,
-			height: parseNumber(height),
-			weight: parseNumber(weight),
+			birthdate: birthDate,
+			bloodType: bloodType || undefined,
+			height: height,
+			weight: weight,
 			smokes: parseBoolean(smokes),
 			drinks: parseBoolean(drinks),
-			diet: diet || null,
-			meds: meds || null,
-			conditions: conditions || null,
-			allergies: allergies || null,
-			hobbies: hobbies || null,
-			job: job || null,
-			insuranceId: insuranceId ? Number(insuranceId) : null,
-			insuranceNumber: insuranceNumber || null
+			diet: diet || undefined,
+			meds: meds || undefined,
+			conditions: conditions || undefined,
+			allergies: allergies || undefined,
+			hobbies: hobbies || undefined,
+			job: job || undefined,
+			insuranceSelf:
+				data.insurances.find((ins) => ins.name === insuranceName)?.links.self || undefined,
+			insuranceNumber: insuranceNumber || undefined
 		};
 
-		const updated = await updatePatientProfile($user.id, payload);
-		fullName = updated.name ?? fullName;
-		email = updated.email ?? email;
-		telephone = updated.telephone ?? telephone;
-		mailLanguage = updated.mailLanguage ?? mailLanguage;
-		birthDate = updated.birthdate ? new Date(updated.birthdate) : birthDate;
-		bloodType = bloodTypeFromLabel(updated.bloodType);
-		height = updated.height != null ? String(updated.height) : height;
-		weight = updated.weight != null ? String(updated.weight) : weight;
-		insuranceId = parseIdFromUrl(updated.links?.insurance);
-		insuranceNumber = updated.insuranceNumber ?? insuranceNumber;
-		smokes = toYesNo(updated.smokes);
-		drinks = toYesNo(updated.drinks);
-		diet = updated.diet ?? diet;
-		meds = updated.meds ?? meds;
-		conditions = updated.conditions ?? conditions;
-		allergies = updated.allergies ?? allergies;
-		hobbies = updated.hobbies ?? hobbies;
-		job = updated.job ?? job;
+		await updatePatientProfile(data.currentUser, payload, data.patient!, newImage || undefined, fetch);
 	};
 
-	const saveDoctorProfile = async () => {
+	const saveDoctorProfile = async (keepTurns: boolean) => {
 		if (!$user || $user.role !== 'DOCTOR') {
 			return;
 		}
 
-		const insuranceIds = selectedDoctorInsuranceIds
-			.map((value) => Number(value))
-			.filter((value) => !Number.isNaN(value));
+		const insuranceSelfs = data.insurances
+			.filter((ins) => selectedInsurances.includes(ins.name))
+			.map((ins) => ins.links.self);
 
 		if (updateSchedule) {
 			if (
 				selectedWeekdays.length === 0 ||
-				doctorAddress.trim() === '' ||
-				startTime.trim() === '' ||
-				endTime.trim() === '' ||
-				duration.trim() === ''
+				doctorAddress.trim() === 'N/A' ||
+				startTime.trim() === 'N/A' ||
+				endTime.trim() === 'N/A' ||
+				duration.trim() === 'N/A'
 			) {
 				saveError = m['error.400_message']();
 				return;
@@ -331,36 +223,24 @@
 		const payload: DoctorProfileUpdateData = {
 			telephone,
 			mailLanguage,
-			insuranceIds,
+			insuranceSelfs,
 			updateSchedule,
-			keepTurns: true,
+			keepTurns: keepTurns,
 			shifts: updateSchedule
 				? {
-					startTime,
-					endTime,
-					duration: Number(duration),
-					address: doctorAddress,
-					weekdays: selectedWeekdays as Weekdays[]
-				}
+						startTime,
+						endTime,
+						duration: Number(duration),
+						address: doctorAddress,
+						weekdays: selectedWeekdays as Weekdays[]
+					}
 				: null
 		};
 
-		const updated = await updateDoctorProfile($user.id, payload);
-		fullName = updated.name ?? fullName;
-		email = updated.email ?? email;
-		telephone = updated.telephone ?? telephone;
-		mailLanguage = updated.mailLanguage ?? mailLanguage;
-		license = updated.license ?? license;
-		specialty = updated.specialty ?? specialty;
-		doctorAddress = updated.address ?? doctorAddress;
-		selectedDoctorInsuranceIds = (updated.insuranceIds ?? insuranceIds).map((id) => String(id));
-		selectedWeekdays = (updated.weekdays ?? selectedWeekdays) as string[];
-		startTime = normalizeTimeValue(updated.startTime) || startTime;
-		endTime = normalizeTimeValue(updated.endTime) || endTime;
-		duration = updated.duration != null ? String(updated.duration) : duration;
+		await updateDoctorProfile(data.currentUser, payload, data.doctor!, newImage || undefined, fetch);
 	};
 
-	const saveProfile = async () => {
+	const saveProfile = async (keep?: boolean) => {
 		if (!$user) {
 			return;
 		}
@@ -372,7 +252,7 @@
 			if ($user.role === 'PATIENT') {
 				await savePatientProfile();
 			} else if ($user.role === 'DOCTOR') {
-				await saveDoctorProfile();
+				await saveDoctorProfile(keep === undefined ? false : keep);
 			}
 			if (saveError) {
 				return;
@@ -381,36 +261,11 @@
 		} catch (error) {
 			console.error('Failed to update profile:', error);
 			saveError = m['error.500_message']();
+		} finally {
+			refreshToken();
+			newImage = null;
 		}
 	};
-
-	const toggleDoctorInsurance = (id: string) => {
-		if (selectedDoctorInsuranceIds.includes(id)) {
-			selectedDoctorInsuranceIds = selectedDoctorInsuranceIds.filter((selectedId) => selectedId !== id);
-		} else {
-			selectedDoctorInsuranceIds = [...selectedDoctorInsuranceIds, id];
-		}
-	};
-
-	const toggleWeekday = (weekday: string) => {
-		if (selectedWeekdays.includes(weekday)) {
-			selectedWeekdays = selectedWeekdays.filter((selectedDay) => selectedDay !== weekday);
-		} else {
-			selectedWeekdays = [...selectedWeekdays, weekday];
-		}
-	};
-
-	onMount(loadProfile);
-
-	$effect(() => {
-		if (!$user) {
-			loaded = false;
-			loadedUserId = null;
-			return;
-		}
-
-		loadProfile();
-	});
 </script>
 
 {#if $user && $user.role === 'PATIENT'}
@@ -418,7 +273,26 @@
 		<div class="card bg-white profile-summary">
 			<div class="profile-avatar">
 				<Avatar size="xl" src={avatarSrc} class="bg-primary" />
-				<button class="edit-avatar-btn" type="button" aria-label={m['admin.insurances.button.edit']()}>
+				<button
+					class="edit-avatar-btn"
+					type="button"
+					aria-label={m['admin.insurances.button.edit']()}
+					onclick={() => {
+						const input = document.createElement('input');
+						input.type = 'file';
+						input.accept = '.jpeg,.png';
+						input.multiple = false;
+						input.onchange = (event) => {
+							const target = event.target as HTMLInputElement;
+							if (target.files && target.files.length > 0) {
+								if (target.files[0].type === 'image/jpeg' || target.files[0].type === 'image/png') {
+									newImage = target.files[0];
+								}
+							}
+						};
+						input.click();
+					}}
+				>
 					<Icon name="edit" class="w-3.5 h-3.5 text-white" />
 				</button>
 			</div>
@@ -426,7 +300,8 @@
 				<h1 class="text-[1.4rem] font-semibold text-primaryText">{fullName}</h1>
 				<p class="text-secondaryText">{email}</p>
 				<p class="text-secondaryText">
-					<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span> {roleLabel}
+					<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span>
+					{roleLabel}
 				</p>
 			</div>
 		</div>
@@ -434,36 +309,60 @@
 		<div class="card bg-white profile-section">
 			<h2 class="section-title">{m['profileInfo.basic']()}</h2>
 			<div class="grid grid-cols-3 gap-5 mt-6">
-				<Input label={m['profile.phone.label']()} bind:value={telephone} class="col-span-3" />
+				<Input
+					label={m['profile.phone.label']()}
+					bind:value={telephone}
+					class="col-span-3 w-full"
+				/>
 				<Select
 					label={m['profile.email.lang.label']()}
 					options={languageOptions}
 					bind:value={mailLanguage}
 					placeholder={m['profileInfo.select']()}
-					class="col-span-3"
+					class="col-span-3 w-full"
 				/>
-				<DatePicker label={m['form.birthDate']()} bind:selectedDate={birthDate} class="col-span-1" />
+				<DatePicker
+					label={m['form.birthDate']()}
+					bind:selectedDate={birthDate}
+					maxDate={new Date()}
+					yearRange={Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)}
+					required
+					class="w-full"
+				/>
 				<Select
 					label={m['profileInfo.bloodType']()}
 					options={bloodTypeOptions}
 					bind:value={bloodType}
 					placeholder={m['profileInfo.select']()}
-					class="col-span-1"
+					class="col-span-1 w-full"
 				/>
-				<Input label={m['profileInfo.height']()} type="number" bind:value={height} class="col-span-1" />
-				<Input label={m['profileInfo.weight']()} type="number" bind:value={weight} class="col-span-1" />
+				<Input
+					label={m['profileInfo.height']()}
+					type="number"
+					bind:value={height}
+					class="col-span-1 w-full"
+				/>
+				<Input
+					label={m['profileInfo.weight']()}
+					type="number"
+					bind:value={weight}
+					class="col-span-1 w-full"
+				/>
 				<Select
 					label={m['profile.insurance.label']()}
-					options={insuranceOptions}
-					bind:value={insuranceId}
+					options={data.insurances.map((insurance) => ({
+						value: insurance.name,
+						label: insurance.name
+					}))}
+					bind:value={insuranceName}
 					placeholder={m['profile.insurance.placeholder']()}
-					class="col-span-1"
+					class="col-span-1 w-full"
 				/>
 				<Input
 					label={m['profile.insuranceNumber.label']()}
 					placeholder={m['profile.insuranceNumber.placeholder']()}
 					bind:value={insuranceNumber}
-					class="col-span-2"
+					class="col-span-2 w-full"
 				/>
 			</div>
 		</div>
@@ -471,9 +370,19 @@
 		<div class="card bg-white profile-section">
 			<h2 class="section-title">{m['profileInfo.habits']()}</h2>
 			<div class="grid grid-cols-2 gap-5 mt-6">
-				<Select label={m['profileInfo.smokes']()} options={yesNoOptions} bind:value={smokes} class="col-span-1" />
-				<Select label={m['profileInfo.drinks']()} options={yesNoOptions} bind:value={drinks} class="col-span-1" />
-				<Input label={m['profileInfo.diet']()} bind:value={diet} class="col-span-2" />
+				<Select
+					label={m['profileInfo.smokes']()}
+					options={yesNoOptions}
+					bind:value={smokes}
+					class="col-span-1 w-full"
+				/>
+				<Select
+					label={m['profileInfo.drinks']()}
+					options={yesNoOptions}
+					bind:value={drinks}
+					class="col-span-1 w-full"
+				/>
+				<Input label={m['profileInfo.diet']()} bind:value={diet} class="col-span-2 w-full" />
 			</div>
 		</div>
 
@@ -493,7 +402,7 @@
 				<Input label={m['profileInfo.job']()} bind:value={job} />
 			</div>
 			<div class="flex justify-center mt-6">
-				<Button variant="primary" class="w-fit" onclick={saveProfile}>
+				<Button variant="primary" class="w-fit" onclick={() => saveProfile()}>
 					{m['profile.save.button']()}
 				</Button>
 			</div>
@@ -507,7 +416,26 @@
 		<div class="card bg-white profile-summary">
 			<div class="profile-avatar">
 				<Avatar size="xl" src={avatarSrc} class="bg-primary" />
-				<button class="edit-avatar-btn" type="button" aria-label={m['admin.insurances.button.edit']()}>
+				<button
+					class="edit-avatar-btn"
+					type="button"
+					aria-label={m['admin.insurances.button.edit']()}
+					onclick={() => {
+						const input = document.createElement('input');
+						input.type = 'file';
+						input.accept = '.jpeg,.png';
+						input.multiple = false;
+						input.onchange = (event) => {
+							const target = event.target as HTMLInputElement;
+							if (target.files && target.files.length > 0) {
+								if (target.files[0].type === 'image/jpeg' || target.files[0].type === 'image/png') {
+									newImage = target.files[0];
+								}
+							}
+						};
+						input.click();
+					}}
+				>
 					<Icon name="edit" class="w-3.5 h-3.5 text-white" />
 				</button>
 			</div>
@@ -515,13 +443,16 @@
 				<h1 class="text-[1.8rem] font-semibold text-primaryText">{fullName}</h1>
 				<p class="text-secondaryText">{email}</p>
 				<p class="text-secondaryText">
-					<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span> {roleLabel}
+					<span class="font-semibold text-primaryText">{m['profile.role.label']()}:</span>
+					{roleLabel}
 				</p>
 				<p class="text-secondaryText">
-					<span class="font-semibold text-primaryText">{m['doctor.labels.license']()}:</span> {license}
+					<span class="font-semibold text-primaryText">{m['doctor.labels.license']()}:</span>
+					{license}
 				</p>
 				<p class="text-secondaryText">
-					<span class="font-semibold text-primaryText">{m['doctor.labels.specialty']()}:</span> {specialtyLabel}
+					<span class="font-semibold text-primaryText">{m['doctor.labels.specialty']()}:</span>
+					{specialtyLabel}
 				</p>
 			</div>
 		</div>
@@ -543,67 +474,82 @@
 				<div class="col-span-3">
 					<p class="text-sm font-medium text-text">{m['doctor.profile.insurance.label']()}</p>
 					<div class="flex flex-wrap gap-2 mt-2">
-						{#each insuranceOptions as option}
-							<button
-								type="button"
-								onclick={() => toggleDoctorInsurance(option.value)}
-								class={`insurance-pill ${selectedDoctorInsuranceIds.includes(option.value) ? 'selected' : ''}`}
-							>
-								{option.label}
-							</button>
-						{/each}
+						<RadioCheck
+							options={data.insurances.map((insurance) => ({
+								id: insurance.name,
+								label: insurance.name,
+								checked: selectedInsurances.includes(insurance.name)
+							}))}
+							onchange={(event) => {
+								if (event.checked) {
+									selectedInsurances = [...selectedInsurances, event.id];
+								} else {
+									selectedInsurances = selectedInsurances.filter((name) => name !== event.id);
+								}
+							}}
+							class="flex flex-wrap w-full text-sm font-normal"
+						/>
 					</div>
 				</div>
 
-				<Input
-					label={`${m['login.register.address']()}:`}
-					bind:value={doctorAddress}
-					class="col-span-3"
-				/>
-
 				<div class="col-span-3 flex items-center justify-between gap-4 mt-1">
-					<p class="text-[2rem] font-semibold text-primaryText">{m['doctor.profile.updateSchedule']()}</p>
-					<div class="w-16 min-w-[64px]">
-						<Switch bind:checked={updateSchedule} />
+					<p class="text-[2rem] font-semibold text-primaryText">
+						{m['doctor.profile.updateSchedule']()}
+					</p>
+					<div class="w-16 min-w-16">
+						<Switch
+							bind:checked={updateSchedule}
+							class="flex flex-row w-full justify-start items-center gap-2"
+							innerClass="w-12"
+						/>
 					</div>
 				</div>
 
 				{#if updateSchedule}
 					<div class="col-span-3 flex flex-col gap-5">
-						<h3 class="text-[2rem] font-semibold text-primaryText">{m['doctor.labels.schedule']()}</h3>
+						<h3 class="text-[2rem] font-semibold text-primaryText">
+							{m['doctor.labels.schedule']()}
+						</h3>
+
+						<Input
+							label={`${m['login.register.address']()}:`}
+							bind:value={doctorAddress}
+							class="col-span-3"
+						/>
 
 						<div>
 							<p class="text-sm font-medium text-text mb-2">{m['login.register.work_days']()}:</p>
-							<div class="flex flex-wrap gap-3">
-								{#each weekdayOptions as weekday}
-									<button
-										type="button"
-										onclick={() => toggleWeekday(weekday.value)}
-										class={`weekday-pill ${selectedWeekdays.includes(weekday.value) ? 'selected' : ''}`}
-									>
-										{weekday.label}
-									</button>
-								{/each}
-							</div>
+							<RadioCheck
+								options={weekDays}
+								onchange={(event) => {
+									if (event.checked) {
+										selectedWeekdays = [...selectedWeekdays, event.id as Weekdays];
+									} else {
+										selectedWeekdays = selectedWeekdays.filter((day) => day !== event.id);
+									}
+								}}
+								class="flex flex-wrap w-full text-sm font-normal"
+								optionsClass="w-10"
+							/>
 						</div>
 
 						<Select
 							label={`${m['login.register.start_time']()}:`}
-							options={timeOptions}
+							options={timeSpans}
 							bind:value={startTime}
 							class="w-full"
 						/>
 
 						<Select
 							label={`${m['login.register.end_time']()}:`}
-							options={timeOptions}
+							options={timeSpans}
 							bind:value={endTime}
 							class="w-full"
 						/>
 
 						<Select
 							label={`${m['login.register.duration']()}:`}
-							options={durationOptions}
+							options={durations}
 							bind:value={duration}
 							class="w-full"
 						/>
@@ -612,7 +558,13 @@
 			</div>
 
 			<div class="flex justify-center mt-6">
-				<Button variant="primary" class="w-fit" onclick={saveProfile}>
+				<Button variant="primary" class="w-fit" onclick={() => {
+					if (updateSchedule) {
+						keepTurnDeciding = true;
+					} else {
+						saveProfile();
+					}
+				}}>
 					{m['profile.save.button']()}
 				</Button>
 			</div>
@@ -627,6 +579,37 @@
 		<p class="text-secondaryText mt-4">{m['no_data_available']()}</p>
 	</div>
 {/if}
+
+{#if keepTurnDeciding}
+        <PopUp onClose={() => keepTurnDeciding = false}>
+            <div class="flex flex-col gap-2">
+                <h1 class="text-primaryText text-[1.17rem] font-bold">
+                    {m['profile.pop_up.keep.title']()}
+                </h1>
+
+                <div class="flex justify-end gap-4 mt-2">
+                    <Button
+                        variant="primary"
+                        onclick={() => {
+							keepTurnDeciding = false;
+							saveProfile(true);
+						}}
+                    >
+                        {m['profile.pop_up.keep.confirm']()}
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onclick={() => {
+							keepTurnDeciding = false;
+							saveProfile(false);
+						}}
+                    >
+                        {m['profile.pop_up.keep.cancel']()}
+                    </Button>
+                </div>
+            </div>
+        </PopUp>
+    {/if}
 
 <Toast
 	bind:show={showSaveSuccessToast}
@@ -678,48 +661,22 @@
 		justify-content: center;
 		border: 2px solid #fff;
 		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+		cursor: pointer;
+		transition: transform 0.2s;
+	}
+
+	.edit-avatar-btn:hover {
+		transform: scale(1.1);
+	}
+
+	:global(.hidden) {
+		display: none;
 	}
 
 	.profile-info {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-	}
-
-	.insurance-pill {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 999px;
-		border: 1px solid var(--color-primaryBorder);
-		padding: 6px 14px;
-		font-weight: 500;
-		background-color: var(--color-bgColor);
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.insurance-pill.selected {
-		background-color: var(--color-primary);
-		border-color: var(--color-primary);
-		color: #fff;
-	}
-
-	.weekday-pill {
-		width: 44px;
-		height: 44px;
-		border-radius: 999px;
-		border: 1px solid var(--color-primaryBorder);
-		background-color: var(--color-bgColor);
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.weekday-pill.selected {
-		background-color: var(--color-primary);
-		border-color: var(--color-primary);
-		color: #fff;
 	}
 
 	@media (max-width: 960px) {

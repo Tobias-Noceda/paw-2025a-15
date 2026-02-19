@@ -233,7 +233,6 @@ public class AppointmentServiceImpl implements AppointmentService{
         }
         LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
     }
-          
     
     @Transactional(readOnly = true)
     @Override

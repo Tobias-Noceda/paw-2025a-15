@@ -55,7 +55,6 @@
 
   const containerClass = cn(
     'relative w-60',
-    label ? 'mt-1' : '',
     selectClass
   );
 
@@ -91,7 +90,7 @@
   );
 </script>
 
-<div class="w-full">
+<div class="flex flex-col w-full gap-1">
   {#if label}
     <label class="text-sm font-medium text-text" for="select">
       {label}

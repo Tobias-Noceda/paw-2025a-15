@@ -40,7 +40,7 @@ public class UserServiceImplTest {
         Mockito.when(userDaoMock.getUserByEmail(Mockito.eq(USER_EMAIL))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            us.askPasswordRecover(USER_EMAIL)
+            us.askPasswordRecover(USER_EMAIL, "token")
         );
     }
 
