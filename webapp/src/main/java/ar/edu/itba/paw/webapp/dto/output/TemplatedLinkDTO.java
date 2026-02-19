@@ -33,8 +33,8 @@ public class TemplatedLinkDTO {
         for (String param : queryParams) {
             if (!first) {
                 href.append(",");
-                first = false;
             }
+            first = false;
             href.append(param);
         }
         href.append("}");

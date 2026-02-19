@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.dto.input;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.URL;
 
