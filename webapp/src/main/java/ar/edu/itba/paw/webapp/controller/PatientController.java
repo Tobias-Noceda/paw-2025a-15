@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -90,8 +92,8 @@ public class PatientController {
     public Response listPatients(
         @QueryParam("doctorId") @NotNull final Long doctorId,
         @QueryParam("name") final String name,
-        @QueryParam("page") @DefaultValue("1") final int page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
@@ -266,8 +268,8 @@ public class PatientController {
         @QueryParam("doctorId") final Long doctorId,
         @QueryParam("studyType") final String studyType,
         @QueryParam("recent") @DefaultValue("true") final Boolean recent,
-        @QueryParam("page") @DefaultValue("1") final int page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
         

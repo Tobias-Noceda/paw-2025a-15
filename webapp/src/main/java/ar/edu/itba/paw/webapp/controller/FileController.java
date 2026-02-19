@@ -62,7 +62,7 @@ public class FileController {
     public Response listFiles(
         @QueryParam("studyId") @NotNull @Min(1) final Long studyId,
         @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
-        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize//TODO every page and pagesize should have this validations
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 

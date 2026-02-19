@@ -13,9 +13,8 @@ import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
-public interface DoctorService {//TODO check deprecated
+public interface DoctorService {
     
-    @Deprecated
     public void deleteDoctor(long doctorId);
 
     public Doctor createDoctor(String email, String password, String name, String telephone, String licence, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale, String token);

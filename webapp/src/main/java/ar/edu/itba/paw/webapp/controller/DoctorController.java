@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -104,8 +106,8 @@ public class DoctorController {
         @QueryParam("insurance") String insuranceName,
         @QueryParam("weekday") String weekday,
         @QueryParam("orderBy") String orderBy,
-        @QueryParam("page") @DefaultValue("1") Integer page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
@@ -375,8 +377,8 @@ public class DoctorController {
     public Response listVacations(
         @PathParam("id") Long doctorId,
         @QueryParam("status") final String status,
-        @QueryParam("page") @DefaultValue("1") final int page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){ //TODO capaz en service ekl check?
             throw new NotFoundException();

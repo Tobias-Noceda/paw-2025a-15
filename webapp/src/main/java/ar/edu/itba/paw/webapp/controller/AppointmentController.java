@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -56,8 +58,8 @@ public class AppointmentController {
         @QueryParam("userId") Long userId,
         @QueryParam("status") @NotBlank String status,
         @QueryParam("date") String date,
-        @QueryParam("page") @DefaultValue("1") int page,
-        @QueryParam("pageSize") @DefaultValue("10") int pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         AppointmentStatusEnum appointmentStatus = AppointmentStatusEnum.fromString(status);//TODO catch illegalArgument with bad request?
         List<AppointmentDTO> appointmentDTOs;

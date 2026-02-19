@@ -27,21 +27,22 @@ public class UserDTO {
     public static UserDTO fromUser(User user, UriInfo uriInfo) {
         final UserDTO dto = new UserDTO();
 
-        URI self;
+        URI baseSelf;
         switch (user.getRole()) {
             case DOCTOR -> {
-                self = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(user.getId())).build();
+                baseSelf = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(user.getId())).build();
                 break;
             }
             case PATIENT -> {
-                self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(user.getId())).build();
+                baseSelf = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(user.getId())).build();
                 break;
             }
             default -> {
-                self = null;
+                baseSelf = null;
                 break;
             }
         }
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
         LinkDTO links = new LinkDTO();
         if (self != null) {
             links.setSelf(self);
