@@ -49,8 +49,6 @@ public class AppointmentDTO {
         dto.patientName = appointment.getPatient() != null ? appointment.getPatient().getName() : null;
         dto.patientEmail = appointment.getPatient() != null ? appointment.getPatient().getEmail() : null;
 
-        LinkDTO links = new LinkDTO();
-
         URI baseDoctor = uriInfo.getBaseUriBuilder().path("doctors").path(String.valueOf(shift.getDoctor().getId())).build();
         TemplatedLinkDTO doctor = TemplatedLinkDTO.of(baseDoctor);
         URI baseSelf = uriInfo.getBaseUriBuilder().path("appointments").path(appointment.getId().toIdString()).build();

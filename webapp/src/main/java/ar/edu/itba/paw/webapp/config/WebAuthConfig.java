@@ -163,15 +163,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
-
-                // studies
-                .requestMatchers(HttpMethod.GET, "/api/studies")
-                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), c.getVariables().get("patientId") != null ? Long.valueOf(c.getVariables().get("patientId")) : null))
-                .requestMatchers(HttpMethod.POST, "/api/studies").hasAnyRole("PATIENT", "DOCTOR")
-                .requestMatchers(HttpMethod.GET, "/api/studies/{studyId}")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.valueOf(c.getVariables().get("studyId"))))
-                .requestMatchers(HttpMethod.DELETE, "/api/studies/{studyId}")
-                    .access((a, c) -> ad.canDeleteStudy(a.get(), Long.valueOf(c.getVariables().get("studyId"))))
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())

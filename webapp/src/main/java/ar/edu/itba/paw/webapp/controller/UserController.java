@@ -29,7 +29,7 @@ import ar.edu.itba.paw.webapp.dto.output.UserDTO;
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
-@Path("/users")
+@Path("/users")//TODO what??
 @Component
 public class UserController {
 
