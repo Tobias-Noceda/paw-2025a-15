@@ -22,6 +22,7 @@ CREATE TABLE users (
     user_telephone VARCHAR(20) NOT NULL DEFAULT '1112345678',
     locale INT NOT NULL DEFAULT 0,
     create_date DATE NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (picture_id) REFERENCES files(file_id)
 );
