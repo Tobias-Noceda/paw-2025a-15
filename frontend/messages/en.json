@@ -92,6 +92,17 @@
 			"success_message": "Your password has been changed successfully.",
 			"error_title": "Error",
 			"error_message": "An error occurred while trying to change your password. Please try again later."
+		},
+		"verify": {
+			"success": {
+				"title": "Account verified successfully!",
+				"message": "Your account with email {email} has been verified successfully. You can now log in."
+			},
+			"error": {
+				"title": "Error verifying account",
+				"message": "An error occurred while trying to verify the account. The verification link may have expired. Please try again or contact support for help."
+			},
+			"back_to_login": "Back to login"
 		}
 	},
 	"months": {
@@ -287,7 +298,14 @@
 			"label": "Insurance number:",
 			"placeholder": "Enter your insurance number"
 		},
-		"keep": "I wish to keep my taken turns"
+		"keep": "I wish to keep my taken turns",
+		"pop_up": {
+			"keep": {
+				"title": "Do you wish to keep your taken turns?",
+				"confirm": "Yes, keep turns",
+				"cancel": "No, cancel turns"
+			}
+		}
 	},
 	"profileInfo": {
 		"age": "Age:",
