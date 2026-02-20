@@ -20,7 +20,7 @@
   <div class="study-list-container">
     <div class="title-container">
       <h3 class="table-title"><spring:message code="studies.title"></spring:message></h3>
-      <a href="<c:url value='/upload-study/${user_data.id}'/>" class="upload-button">
+      <a href="<c:url value='/studies/${user_data.id}'/>" class="upload-button">
         <spring:message code="patient.details.upload.label"/>
       </a>
     </div>

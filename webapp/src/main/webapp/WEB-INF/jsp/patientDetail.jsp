@@ -25,7 +25,7 @@
             </div>
           </div>
           <div class="upload-button-div">
-            <a href="<c:url value='/upload-study/${patient.id}'/>" class="upload-button">
+            <a href="<c:url value='/studies/${patient.id}'/>" class="upload-button">
               <spring:message code="patient.details.upload.label"/>
             </a>
           </div>

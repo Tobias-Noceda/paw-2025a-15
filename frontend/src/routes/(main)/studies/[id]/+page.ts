@@ -19,13 +19,17 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     currentUser = get(user);
     const currentUserData = get(userData);
+    const patientId = Number(params.id);
 
-    if (!currentUser || !currentUserData || (currentUser.role !== 'PATIENT' && currentUser.role !== 'DOCTOR') || currentUser.id !== Number(params.id)) {
+    if (!currentUser || !currentUserData || (currentUser.role !== 'PATIENT' && currentUser.role !== 'DOCTOR') || Number.isNaN(patientId)) {
+        throw error(404, 'Not found');
+    }
+
+    if (currentUser.role === 'PATIENT' && currentUser.id !== patientId) {
         throw error(404, 'Not found');
     }
 
     try {
-        const patientId = Number(params.id);
         const patient = await fetchPatientById(patientId, undefined, fetch);
 
         if (!patient) {
