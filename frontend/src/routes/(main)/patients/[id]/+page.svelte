@@ -159,7 +159,7 @@
 					variant="secondary"
 					class="w-fit py-1! px-4! text-md!"
 					onclick={() => {
-						goto($page.url.pathname.replace('patients', 'upload-study'));
+						goto($page.url.pathname.replace('patients', 'studies'));
 					}}
 				>
 					{m['patient.actions.upload']()}
