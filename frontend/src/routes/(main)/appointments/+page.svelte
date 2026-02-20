@@ -26,6 +26,7 @@
     let showErrorToast = $state(false);
 
     let canceledAppointment: Appointment | null = $state(null);
+    let canceledAppointmentToast: Appointment | null = $state(null);
     let canceledAppointmentId: number | null = $state(null);
     let cancelReason: string | null = $state(null);
 
@@ -190,6 +191,7 @@
         if (reason) {
             takeAppointment(appointment.links.self, reason)
                 .then(() => {
+                    canceledAppointmentToast = appointment;
                     showSuccessToast = true;
 
                     // Remove the appointment from futureAppointments
@@ -202,6 +204,7 @@
         } else {
             cancelAppointment(appointment.links.self)
                 .then(() => {
+                    canceledAppointmentToast = appointment;
                     showSuccessToast = true;
 
                     futureAppointments.results.splice(index, 1)
@@ -307,9 +310,9 @@
         variant="success"
         title={m['appointments.canceled.success_title']()}
         description={m['appointments.canceled.success_message']({
-            day: canceledAppointment?.date ? new Date(canceledAppointment.date).getDate() : '',
-            month: canceledAppointment?.date ? new Date(canceledAppointment.date).toLocaleString(getLocale(), { month: 'long' }) : '',
-            startTime: canceledAppointment?.startTime ?? ''}
+            day: canceledAppointmentToast?.date ? new Date(canceledAppointmentToast.date).getDate() : '',
+            month: canceledAppointmentToast?.date ? new Date(canceledAppointmentToast.date).toLocaleString(getLocale(), { month: 'long' }) : '',
+            startTime: canceledAppointmentToast?.startTime ?? ''}
         )}
     />
     <Toast
