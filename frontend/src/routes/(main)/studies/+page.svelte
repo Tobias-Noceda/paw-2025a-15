@@ -246,7 +246,7 @@
 			<Button
 				variant="secondary"
 				class="w-fit"
-				onclick={() => goto(`${base}/upload-study/${data.currentUser.id}`)}
+				onclick={() => goto(`${base}/studies/${data.currentUser.id}`)}
 			>
 				{m['studies.actions.upload']()}
 			</Button>
