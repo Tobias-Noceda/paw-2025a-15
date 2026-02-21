@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import ar.edu.itba.paw.models.entities.User;
 
-public interface UserService {//TODO check deprecated
+public interface UserService {
 
     public Optional<User> getUserById(long id);
 

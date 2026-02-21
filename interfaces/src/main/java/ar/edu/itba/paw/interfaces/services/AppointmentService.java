@@ -8,7 +8,7 @@ import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.models.utils.Pair;
 
-public interface AppointmentService {//TODO check deprecated
+public interface AppointmentService {
 
     public AppointmentNew addAppointment(long shiftId, long patientId, LocalDate date, LocalTime startTime, LocalTime endTime, String detail);
 

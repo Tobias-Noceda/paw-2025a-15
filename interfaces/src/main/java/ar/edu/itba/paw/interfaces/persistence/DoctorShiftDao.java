@@ -8,7 +8,7 @@ import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
-public interface DoctorShiftDao {//TODO check deprecated
+public interface DoctorShiftDao {
     public Optional<DoctorSingleShift> getShiftById(long id);
 
     @Deprecated
@@ -18,7 +18,7 @@ public interface DoctorShiftDao {//TODO check deprecated
 
     public void updateShifts(long doctorId, List<DoctorSingleShift> newShifts);
 
-    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);//TODO deprecar por los paginados
+    public List<DoctorSingleShift> getActiveShiftsByDoctorId(long doctorId);
 
     public List<DoctorSingleShift> getActiveShiftsByDoctorIdPage(long doctorId, int page, int pageSize);
     
