@@ -176,7 +176,7 @@ public class DoctorController {
             return Response.status(Response.Status.BAD_REQUEST).entity("Shift end time cannot be before start time").build();
         }
         List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
-            .map(name -> {//TODO pasar logica al service
+            .map(name -> {
                 return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
             }).collect(Collectors.toList());
 
@@ -326,11 +326,11 @@ public class DoctorController {
         try {
             User user = AuthenticatedUser.get();
             
-            if (!user.getId().equals(patientId)) {//TODO etsa logica no deberia estar en auth?
+            if (!user.getId().equals(patientId)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             
-            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {//TODO mismo en auth?
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
                 return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
             }
             
@@ -353,7 +353,7 @@ public class DoctorController {
     ) {
         User loggedUser = AuthenticatedUser.get();
 
-        if (loggedUser == null) {//TODO logica en auth??
+        if (loggedUser == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -380,16 +380,11 @@ public class DoctorController {
         @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
         @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
-        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){ //TODO capaz en service ekl check?
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){
             throw new NotFoundException();
         }
         VacationsStatusEnum statusEnum;
-        try {
-            statusEnum = VacationsStatusEnum.fromValue(status);
-        }
-        catch(IllegalArgumentException e){//TODO cambiar a que esto lo ataje el exceptionMapper
-            return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
-        }
+        statusEnum = VacationsStatusEnum.fromValue(status);
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("status", status);
@@ -443,7 +438,6 @@ public class DoctorController {
         LocalDate startDate = vacationDTO.getStartDate();
         LocalDate endDate = vacationDTO.getEndDate();
 
-        //TODO toda esta logica en el service o en otra forma
         if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity("{\"error\": \"End date must be after start date\"}")
@@ -487,12 +481,12 @@ public class DoctorController {
         @PathParam("startDate") String startDateStr,
         @PathParam("endDate") String endDateStr
     ) {
-        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {//TODO en auth?
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {
             throw new NotFoundException();
         }
 
         if (startDateStr == null || endDateStr == null) {
-            return Response.status(Response.Status.BAD_REQUEST)//TODO aca??????
+            return Response.status(Response.Status.BAD_REQUEST)
                 .entity("{\"error\": \"startDate and endDate query parameters are required\"}")
                 .build();
         }
