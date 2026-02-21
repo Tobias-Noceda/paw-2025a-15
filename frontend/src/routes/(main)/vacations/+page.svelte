@@ -81,7 +81,7 @@
         isSubmitting = true;
         try {
             const success = await createVacation(
-                data.doctor.links.self,
+                data.doctor.links.self.resolved!,
                 startDate,
                 endDate,
                 cancel
@@ -99,7 +99,7 @@
                 startDate = null;
                 endDate = null;
 
-                futureVacations = await fetchVacations(data.doctor.links.futureVacations, fetch);
+                futureVacations = await fetchVacations(data.doctor.links.futureVacations.resolved!, fetch);
             } else {
                 showError(
                     m['vacations.error.create.title'](),
@@ -124,7 +124,7 @@
 
         isDeleting = true;
         try {
-            const success = await deleteVacation(vacationToDelete.links.self);
+            const success = await deleteVacation(vacationToDelete.links.self.resolved!);
 
             if (success) {
                 showSuccess(

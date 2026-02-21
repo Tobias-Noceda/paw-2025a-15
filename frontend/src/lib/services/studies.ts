@@ -1,4 +1,4 @@
-import { apiOrigin, del, deleteAuth, getAuth, patchAuth, postAuth } from "$modules/api.svelte";
+import { apiOrigin, del, deleteAuth, getAuth, patchAuth, postAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import type { Paginated, Study } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
@@ -56,8 +56,10 @@ export const fetchSingleStudy = async (patientId: number, studyId: number, fetch
     if (response.ok) {
         const study: Study = await response.json();
 
+        resolveNonTemplatedLinks(study);
+
         if (study) {
-            const filesResponse = await getAuth(study.links.files, undefined, fetchFn)
+            const filesResponse = await getAuth(study.links.files.resolved!, undefined, fetchFn)
                 .catch(() => null);
             
             if (filesResponse && filesResponse.ok) {
@@ -69,7 +71,7 @@ export const fetchSingleStudy = async (patientId: number, studyId: number, fetch
                 };
             }
 
-            const uploader = await getAuth(study.links.uploader, undefined, fetchFn).then(res => {
+            const uploader = await getAuth(study.links.uploader.resolved!, undefined, fetchFn).then(res => {
                 if (res.ok) {
                     return res.json();
                 }
