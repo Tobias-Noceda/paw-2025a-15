@@ -384,9 +384,9 @@
 				<RadioCheck
 					label={`${m['login.register.insurances']()}:`}
 					options={insurances.map((insurance) => ({
-						id: insurance.name,
+						id: insurance.links.self.href,
 						label: insurance.name,
-						checked: selectedInsurances.includes(insurance.name)
+						checked: selectedInsurances.includes(insurance.links.self.href)
 					}))}
 					onchange={(event) => {
 						if (event.checked) {

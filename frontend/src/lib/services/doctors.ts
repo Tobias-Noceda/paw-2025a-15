@@ -229,7 +229,7 @@ export const updateDoctorProfile = async (
         pictureId: imageLocation,
         telephone: payload.telephone.trim() !== '' && payload.telephone !== doctor.telephone ? payload.telephone : undefined,
         mailLanguage: payload.mailLanguage !== user.language ? payload.mailLanguage : undefined,
-        insuranceIds: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs.map(parseInsuranceId) : undefined,
+        insurances: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs : undefined,
         updateSchedule: payload.updateSchedule,
         shifts: payload.shifts && payload.updateSchedule ? payload.shifts : undefined,
         keepTurns: payload.keepTurns !== undefined ? payload.keepTurns : undefined
@@ -289,11 +289,11 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
     }
 
     let insurancesPage = await fetchInsurancesPage(doctor.links.insurances.resolved!, fetchFn);
-    let insurances: string[] = [...insurancesPage.results.map(i => i.name)];
+    let insurances: string[] = [...insurancesPage.results.map(i => i.links.self.href)];
 
     while (insurancesPage._links.next) {
         insurancesPage = await fetchInsurancesPage(insurancesPage._links.next, fetchFn);
-        insurances = [...insurances, ...insurancesPage.results.map(i => i.name)];
+        insurances = [...insurances, ...insurancesPage.results.map(i => i.links.self.href)];
     }
 
     doctor.insurances = insurances;
