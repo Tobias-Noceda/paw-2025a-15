@@ -10,8 +10,10 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 
+@NonEmptyBody
 public class StudyCreateDTO {
 
     @NotNull
@@ -24,7 +26,6 @@ public class StudyCreateDTO {
     private String comment;
 
     @NotNull
-    //TODO @ValidStudyFile 
     @Size(min = 1)
     private List<@URL(protocol = "http")String> files;
 
@@ -32,7 +33,6 @@ public class StudyCreateDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate studyDate;
 
-    // TODO: Validate that these are valid doctor URNs
     private List<@URL(protocol = "http") String> authorizedDoctors;
 
     public String getType(){

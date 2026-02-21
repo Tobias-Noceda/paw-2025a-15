@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.AppointmentNewId;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
@@ -25,6 +26,9 @@ public class WebUserAuthDecision {
 
     @Autowired
     private DoctorShiftService dss;
+
+    @Autowired
+    private PatientService ps;
 
     @Autowired
     private StudyService ss;
@@ -61,7 +65,28 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(false);
     }
 
-    public AuthorizationDecision hasStudyAuth(Authentication auth, Long studyId) {
+    public AuthorizationDecision isAuthDoctorByParamOrSelf(Authentication auth, Long patientId, Long doctorId) {
+        User user = getAuthenticatedUser(auth);
+        if (user == null || patientId == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        if(isSelf(auth, patientId)) {
+            return new AuthorizationDecision(true);
+        }
+
+        if (doctorId==null) return new AuthorizationDecision(true);
+
+        if (isAuthDoctor(user, patientId) && user.getId().equals(doctorId)) {
+            return new AuthorizationDecision(true);
+        }
+
+        return new AuthorizationDecision(false);
+    }
+
+    public AuthorizationDecision hasStudyAuth(Authentication auth, Long patientId, Long studyId) {
+        if(patientId!=null && ps.getPatientById(patientId).isEmpty()) return new AuthorizationDecision(true);
+
         User user = getAuthenticatedUser(auth);
         System.out.println("User in hasStudyAuth: " + (user != null ? user.getId() : "null"));
         if (user == null || studyId == null) {
@@ -70,7 +95,7 @@ public class WebUserAuthDecision {
 
         Study study = ss.getStudyById(studyId).orElse(null);
 
-        if (study == null) return new AuthorizationDecision(false);
+        if (study == null) return new AuthorizationDecision(true);
 
         if(isStudyAuth(user, study)) return new AuthorizationDecision(true);
 
@@ -159,6 +184,10 @@ public class WebUserAuthDecision {
 
         if (isSelf(auth, patientId)) {
             return new AuthorizationDecision(true);
+        }
+
+        if (!isAuthDoctor(user, patientId)){
+            return new AuthorizationDecision(false);
         }
 
         List<AccessLevelEnum> doctorAccessLevel = ads.getAuthAccessLevelEnums(patientId, user.getId());

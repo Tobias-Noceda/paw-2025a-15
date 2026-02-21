@@ -40,6 +40,7 @@ import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
@@ -90,7 +91,7 @@ public class PatientController {
     @GET
     @Produces(value = VndType.APPLICATION_PATIENT)
     public Response listPatients(
-        @QueryParam("doctorId") @NotNull final Long doctorId,
+        @QueryParam("doctorId") @NotNull @Min(1) final Long doctorId,
         @QueryParam("name") final String name,
         @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
         @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
@@ -134,7 +135,7 @@ public class PatientController {
     @Path("/{id:\\d+}")
     @Produces(value = VndType.APPLICATION_PATIENT)
     public Response getPatientById(
-        @PathParam("id") final long id
+        @PathParam("id") @Min(1) final long id
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
@@ -145,34 +146,32 @@ public class PatientController {
     @Consumes(value = VndType.APPLICATION_PATIENT)
     @Produces(value = VndType.APPLICATION_PATIENT)
     public Response editPatient(
-        @PathParam("id") long id,
+        @PathParam("id") @Min(1) long id,
         @Valid PatientEditDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
-        Long pictureId = URIHelper.getId(
-            dto.getPictureId(), 
+        Long picture = URIHelper.getId(
+            dto.getPicture(), 
             uriInfo.getBaseUriBuilder().path(FileController.class).build()
+        );
+        Long insurance = URIHelper.getId(
+            dto.getInsurance(), 
+            uriInfo.getBaseUriBuilder().path(InsuranceController.class).build()
         );
         ps.updatePatient(
             patient, 
             dto.getTelephone(), 
-            pictureId, 
+            picture, 
             dto.getMailLanguage()!=null?LocaleEnum.valueOf(dto.getMailLanguage()):null, 
-            dto.getBirthdate(), dto.getBloodType(), 
+            dto.getBirthdate(), 
+            dto.getBloodType()!=null?BloodTypeEnum.fromString(dto.getBloodType()):null, 
             dto.getHeight() != null ? BigDecimal.valueOf(dto.getHeight()) : null, 
             dto.getWeight() != null ? BigDecimal.valueOf(dto.getWeight()) : null, 
-            dto.getSmokes(), 
-            dto.getDrinks(), 
-            dto.getMeds(), 
-            dto.getConditions(), 
-            dto.getAllergies(), 
-            dto.getDiet(), 
-            dto.getHobbies(), 
-            dto.getJob(), 
-            dto.getInsuranceId(), 
+            null, null, null, null, null, null, null, null, 
+            insurance, 
             dto.getInsuranceNumber()
         );
-        return Response.ok(PatientDTO.fromPatient(uriInfo, patient)).build();
+        return Response.ok(PatientDTO.fromPatient(uriInfo, ps.getPatientById(id).orElseThrow(NotFoundException::new))).build();
     }
 
     /*========================= INFO =========================*/
@@ -180,7 +179,7 @@ public class PatientController {
     @GET
     @Path("/{id:\\d+}/medicalInfo")
     @Produces(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
-    public Response getPatientMedicalInfoById(@PathParam("id") final long id) {
+    public Response getPatientMedicalInfoById(@PathParam("id") @Min(1) final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, patient)).build();
     }
@@ -190,7 +189,7 @@ public class PatientController {
     @Consumes(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
     @Produces(value = VndType.APPLICATION_PATIENT_MEDICALINFO)
     public Response editPatientMedicalInfo(
-        @PathParam("id") long id,
+        @PathParam("id") @Min(1) long id,
         @Valid PatientEditMedicalInfoDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
@@ -201,13 +200,13 @@ public class PatientController {
             dto.getAllergies(), 
             null, null, null, null, null
         );
-        return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, patient)).build();
+        return Response.ok(PatientMedicalInfoDTO.fromPatient(uriInfo, ps.getPatientById(id).orElseThrow(NotFoundException::new))).build();
     }
 
     @GET
     @Path("/{id:\\d+}/socialInfo")
     @Produces(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
-    public Response getPatientSocialInfoById(@PathParam("id") final long id) {
+    public Response getPatientSocialInfoById(@PathParam("id") @Min(1) final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, patient)).build();
     }
@@ -217,7 +216,7 @@ public class PatientController {
     @Consumes(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
     @Produces(value = VndType.APPLICATION_PATIENT_SOCIALINFO)
     public Response editPatientSocialInfo(
-        @PathParam("id") long id,
+        @PathParam("id") @Min(1) long id,
         @Valid PatientEditSocialInfoDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
@@ -227,13 +226,13 @@ public class PatientController {
             dto.getHobbies(),
             dto.getJob(), null, null
         );
-        return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, patient)).build();
+        return Response.ok(PatientSocialInfoDTO.fromPatient(uriInfo, ps.getPatientById(id).orElseThrow(NotFoundException::new))).build();
     }
 
     @GET
     @Path("/{id:\\d+}/habitsInfo")
     @Produces(value = VndType.APPLICATION_PATIENT_HABITSINFO)
-    public Response getPatientHabitsInfoById(@PathParam("id") final long id) {
+    public Response getPatientHabitsInfoById(@PathParam("id") @Min(1) final long id) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, patient)).build();
     }
@@ -243,7 +242,7 @@ public class PatientController {
     @Consumes(value = VndType.APPLICATION_PATIENT_HABITSINFO)
     @Produces(value = VndType.APPLICATION_PATIENT_HABITSINFO)
     public Response editPatientHabitsInfo(
-        @PathParam("id") long id,
+        @PathParam("id") @Min(1) long id,
         @Valid PatientEditHabitsInfoDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
@@ -255,7 +254,7 @@ public class PatientController {
             dto.getDiet(), 
             null, null, null, null
         );
-        return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, patient)).build();
+        return Response.ok(PatientHabitsInfoDTO.fromPatient(uriInfo, ps.getPatientById(id).orElseThrow(NotFoundException::new))).build();
     }
 
     /*========================= STUDIES =========================*/
@@ -264,21 +263,19 @@ public class PatientController {
     @Path("/{id:\\d+}/studies")
     @Produces(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response listStudies(
-        @PathParam("id") final long id,
-        @QueryParam("doctorId") final Long doctorId,
+        @PathParam("id") @Min(1) final long id,
+        @QueryParam("doctorId") @Min(1) final Long doctorId,
         @QueryParam("studyType") final String studyType,
         @QueryParam("recent") @DefaultValue("true") final Boolean recent,
         @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
         @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
+        User user = AuthenticatedUser.get();
+        if(!user.getId().equals(id) && doctorId==null) throw new IllegalArgumentException();
+
         Map<String, String> queryParams = new HashMap<>();
         
-        StudyTypeEnum type = null;
-        try {
-            type = StudyTypeEnum.fromDisplayName(studyType);
-        } catch (Exception e) {
-            LOGGER.info("Invalid study type filter: {}", studyType);
-        }
+        StudyTypeEnum type = StudyTypeEnum.fromDisplayName(studyType);
         if(studyType != null) {
             queryParams.put("studyType", studyType);
         }
@@ -304,14 +301,10 @@ public class PatientController {
     @Path("/{id:\\d+}/studies")
     @Consumes(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response createStudy(
-        @PathParam("id") final long id,
+        @PathParam("id") @Min(1) final long id,
         @Valid StudyCreateDTO dto
     ) {
         User user = AuthenticatedUser.get();
-        
-        if (user == null) { //jjust in case, authConfig should have make sure of this already
-            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
-        }
 
         final Study study = ss.create(
             StudyTypeEnum.fromDisplayName(dto.getType()), 
@@ -351,19 +344,22 @@ public class PatientController {
     @Path("/{id:\\d+}/studies/{studyId:\\d+}")
     @Produces(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response getStudyById(
-        @PathParam("id") final long id,
-        @PathParam("studyId") final long studyId
+        @PathParam("id") @Min(1) final long id,
+        @PathParam("studyId") @Min(1) final long studyId
     ) {
+        Patient patient = ps.getPatientById(id).orElseThrow(NotFoundException::new);
         Study study = ss.getStudyById(studyId).orElseThrow(NotFoundException::new);
+        if (!study.getPatient().getId().equals(patient.getId())) throw new NotFoundException();
         return Response.ok(StudyDTO.fromStudy(uriInfo, study)).build();
     }
 
     @PATCH
     @Path("/{id:\\d+}/studies/{studyId:\\d+}")
-    @Consumes(value = VndType.APPLICATION_PATIENT_STUDY)
+    @Consumes(value = VndType.APPLICATION_PATIENT_STUDY_EDIT)
+    @Produces(value = VndType.APPLICATION_PATIENT_STUDY)
     public Response editStudyById(
-        @PathParam("id") final long id,
-        @PathParam("studyId") final long studyId,
+        @PathParam("id") @Min(1) final long id,
+        @PathParam("studyId") @Min(1) final long studyId,
         @Valid StudyAuthPatchDTO dto
     ) {
         Patient patient = ps.getPatientById(id).orElseThrow(() -> new NotFoundException("Patient not found"));
@@ -394,15 +390,14 @@ public class PatientController {
                 study.getId()
             );
         }
-
-        return Response.accepted().build();
+        return Response.ok(StudyDTO.fromStudy(uriInfo, ss.getStudyById(studyId).orElseThrow(NotFoundException::new))).build();
     }
 
     @DELETE
     @Path("/{id:\\d+}/studies/{studyId:\\d+}")
     public Response deleteStudyById(
-        @PathParam("id") final long id,
-        @PathParam("studyId") final long studyId
+        @PathParam("id") @Min(1) final long id,
+        @PathParam("studyId") @Min(1) final long studyId
     ) {
         ss.deleteStudy(studyId);
         return Response.noContent().build();

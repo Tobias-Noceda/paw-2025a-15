@@ -3,13 +3,11 @@ package ar.edu.itba.paw.webapp.dto.input;
 import java.time.LocalDate;
 
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 import ar.edu.itba.paw.webapp.form.constraints.PastDate;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
@@ -21,7 +19,7 @@ public class PatientEditDTO {
     private String telephone;
 
     @URL(protocol = "http")
-    private String pictureId;
+    private String picture;
 
     @Pattern(regexp = "ES_AR|ES_US|EN_AR|EN_US")
     private String mailLanguage;
@@ -30,37 +28,17 @@ public class PatientEditDTO {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthdate;
 
-    private BloodTypeEnum bloodType;
+    @Pattern(regexp = "^(O\\+|O-|A\\+|A-|B\\+|B-|AB\\+|AB-)$")
+    private String bloodType;
 
     @Range(min = 0, max = 3)
     private Double height;
 
     @Range(min = 0, max = 300)
     private Double weight;
-
-    private Boolean smokes;
-
-    private Boolean drinks;
-
-    @Size(max = 250)
-    private String meds;
-
-    @Size(max = 250)
-    private String conditions;
-
-    @Size(max = 250)
-    private String allergies;
-
-    @Size(max = 100)
-    private String diet;
-
-    @Size(max = 100)
-    private String hobbies;
-
-    @Size(max = 50)
-    private String job;
-
-    private Long insuranceId;
+    
+    @URL(protocol = "http")
+    private String insurance;
 
     @Pattern(regexp = "[0-9]*")
     private String insuranceNumber;
@@ -73,12 +51,12 @@ public class PatientEditDTO {
         this.telephone = telephone;
     }
 
-    public String getPictureId() {
-        return pictureId;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setPictureId(String pictureId) {
-        this.pictureId = pictureId;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public String getMailLanguage() {
@@ -97,11 +75,11 @@ public class PatientEditDTO {
         this.birthdate = birthdate; 
     }
 
-    public BloodTypeEnum getBloodType() {
+    public String getBloodType() {
         return bloodType;
     }
 
-    public void setBloodType(BloodTypeEnum bloodType) {
+    public void setBloodType(String bloodType) {
         this.bloodType = bloodType;
     }
 
@@ -121,76 +99,12 @@ public class PatientEditDTO {
         this.weight = weight; 
     }
 
-    public Boolean getSmokes() {
-        return smokes;
+    public String getInsurance() {
+        return insurance;
     }
 
-    public void setSmokes(Boolean smokes) {
-        this.smokes = smokes;
-    }
-
-    public Boolean getDrinks() {
-        return drinks;
-    }
-
-    public void setDrinks(Boolean drinks) {
-        this.drinks = drinks;
-    }
-
-    public String getMeds() {
-        return meds;
-    }
-
-    public void setMeds(String meds) {
-        this.meds = meds;
-    }
-
-    public String getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(String conditions) {
-        this.conditions = conditions;
-    }
-
-    public String getAllergies() {
-        return allergies;
-    }
-
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
-    }
-
-    public String getDiet() {
-        return diet;
-    }
-
-    public void setDiet(String diet) {
-        this.diet = diet;
-    }
-
-    public String getHobbies() {
-        return hobbies;
-    }
-
-    public void setHobbies(String hobbies) {
-        this.hobbies = hobbies;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
-    }
-
-    public Long getInsuranceId() {
-        return insuranceId;
-    }
-
-    public void setInsuranceId(Long insuranceId) {
-        this.insuranceId = insuranceId;
+    public void setInsurance(String insurance) {
+        this.insurance = insurance;
     }
 
     public String getInsuranceNumber() {

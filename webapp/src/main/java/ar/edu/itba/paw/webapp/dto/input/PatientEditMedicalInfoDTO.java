@@ -2,6 +2,9 @@ package ar.edu.itba.paw.webapp.dto.input;
 
 import javax.validation.constraints.Size;
 
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
+
+@NonEmptyBody
 public class PatientEditMedicalInfoDTO {
 
     @Size(max = 250)

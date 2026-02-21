@@ -18,7 +18,7 @@ public class AppointmentEditDTO {
 
     public void setStatus(AppointmentStatusEnum status){
         this.status = status;
-    }//TODO no falta get?
+    }
 
     public String getDescription(){
         return description;
