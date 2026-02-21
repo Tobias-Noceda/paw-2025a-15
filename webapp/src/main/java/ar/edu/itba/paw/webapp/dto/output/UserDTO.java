@@ -45,7 +45,7 @@ public class UserDTO {
         TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
         LinkDTO links = new LinkDTO();
         if (self != null) {
-            links.setSelf(self);
+            links.setSelf(new TemplatedLinkDTO(self.toString(), false));
         }
         
         dto.links = links;

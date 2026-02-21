@@ -24,7 +24,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     if (currentUser?.role === 'DOCTOR') {
         if (currentUserData && (currentUserData as Doctor).links.patients) {
-            patientsLink = (currentUserData as Doctor).links.patients;
+            patientsLink = (currentUserData as Doctor).links.patients.resolved!;
         }
     }
 

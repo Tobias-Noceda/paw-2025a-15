@@ -186,7 +186,7 @@
 			hobbies: hobbies || undefined,
 			job: job || undefined,
 			insuranceSelf:
-				data.insurances.find((ins) => ins.name === insuranceName)?.links.self || undefined,
+				data.insurances.find((ins) => ins.name === insuranceName)?.links.self.resolved! || undefined,
 			insuranceNumber: insuranceNumber || undefined
 		};
 
@@ -200,7 +200,7 @@
 
 		const insuranceSelfs = data.insurances
 			.filter((ins) => selectedInsurances.includes(ins.name))
-			.map((ins) => ins.links.self);
+			.map((ins) => ins.links.self.resolved!);
 
 		if (updateSchedule) {
 			if (

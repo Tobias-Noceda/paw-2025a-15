@@ -50,7 +50,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
             studies = await fetchStudies(studiesLink, studyType, order, fetch);
 
             // Fetch doctors for the doctor list
-            const doctorsLink = loggedPatient.links.doctors;
+            const doctorsLink = loggedPatient.links.doctors.resolved!;
             if (doctorsLink) {
                 doctors = await fetchDoctorsPage(doctorsLink, currentUser, fetch);
             }
