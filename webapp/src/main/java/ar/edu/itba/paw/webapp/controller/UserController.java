@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -19,17 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.entities.User;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.dto.input.NewPassWordRequestDto;
 import ar.edu.itba.paw.webapp.dto.input.NewPasswordSetDto;
-import ar.edu.itba.paw.webapp.dto.output.UserDTO;
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 import ar.edu.itba.paw.webapp.mediaType.VndType;
 
-@Path("/users")//TODO what??
+@Path("/users")
 @Component
 public class UserController {
 
@@ -46,19 +42,19 @@ public class UserController {
     @Context
     private UriInfo uriInfo;
     
-    @GET
-    @Path("/{id:\\d+}")//TODO mediatype
-    public Response getSelf(@PathParam("id") Long id) {
-        User user = us.getUserById(id).orElse(null);
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
+    // @GET //TODO sacar si no se usa
+    // @Path("/{id:\\d+}")//TODO mediatype
+    // public Response getSelf(@PathParam("id") Long id) {
+    //     User user = us.getUserById(id).orElse(null);
+    //     if (user == null) {
+    //         return Response.status(Response.Status.NOT_FOUND).build();
+    //     }
+    //     if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+    //         return Response.status(Response.Status.FORBIDDEN).build();
+    //     }
 
-        return Response.ok(UserDTO.fromUser(user, uriInfo)).build();
-    }
+    //     return Response.ok(UserDTO.fromUser(user, uriInfo)).build();
+    // }
 
     @POST
     @Consumes(value = VndType.APPLICATION_PASSWORD_CREATE)

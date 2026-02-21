@@ -270,6 +270,8 @@ public class PatientController {
         @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
         @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
+        ps.getPatientById(id).orElseThrow(NotFoundException::new);
+        
         User user = AuthenticatedUser.get();
         if(!user.getId().equals(id) && doctorId==null) throw new IllegalArgumentException();
 
@@ -304,6 +306,8 @@ public class PatientController {
         @PathParam("id") @Min(1) final long id,
         @Valid StudyCreateDTO dto
     ) {
+        ps.getPatientById(id).orElseThrow(NotFoundException::new);
+
         User user = AuthenticatedUser.get();
 
         final Study study = ss.create(

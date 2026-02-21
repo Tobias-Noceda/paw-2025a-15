@@ -53,6 +53,8 @@ public class WebUserAuthDecision {
     }
 
     public AuthorizationDecision isAuthDoctorOrSelf(Authentication auth, Long patientId) {
+        if (patientId!=null && ps.getPatientById(patientId).isEmpty()) return new AuthorizationDecision(true);
+
         User user = getAuthenticatedUser(auth);
         if (user == null || patientId == null) {
             return new AuthorizationDecision(false);

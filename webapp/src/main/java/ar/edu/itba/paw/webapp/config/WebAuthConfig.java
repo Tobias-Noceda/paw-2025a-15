@@ -97,10 +97,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // appointments
                 .requestMatchers(HttpMethod.GET, "/api/appointments")
                     .access((a, c) -> ad.canAccessAppointments(a.get(), c))
+                .requestMatchers(HttpMethod.GET, "/api/appointments/{id}").permitAll()//TODO no tenia auth no se si es el apropiado
                 .requestMatchers(HttpMethod.PATCH, "/api/appointments/{id}")
                     .access((a, c) -> ad.canModifyAppointment(a.get(), c.getVariables().get("id")))
+
                 // doctors
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/authorizations").hasRole("PATIENT")
+                .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/authorizations").hasRole("PATIENT")//TODO auth?
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/shifts").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/doctors/{id}/shifts")
                     .access((a, c) -> ad.canModifyDoctorShifts(a.get(), c.getVariables().get("id")))
@@ -109,10 +112,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.GET, "/api/doctors/{id}").permitAll()
                 .requestMatchers(HttpMethod.PATCH, "/api/doctors/{id}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
-                .requestMatchers(HttpMethod.GET, "/api/doctors/**/shifts").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/doctors/**/vacations").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/doctors/**/vacations").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/doctors/**/vacations").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/doctors/{id}/vacations").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/doctors/{id}/vacations").authenticated()//TODO solo doctors deberia ser
+                .requestMatchers(HttpMethod.DELETE, "/api/doctors/{id}/vacations").authenticated()//TODO solo el doctor owner deberia ser
                 
                 // files
                 .requestMatchers(HttpMethod.GET, "/api/files")
@@ -160,11 +162,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()//TODO check
-                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()//TODO check!
-                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")//TODO 403 to 404 and 400!!
+                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")//TODO ver que no se haya roto en front porque tenia todos, usar los separados
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+
+                // useres TODO auth???
             )
             .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(new UnauthorizedRequestHandler())
