@@ -28,7 +28,7 @@
       <spring:message code="uploadStudies.title" arguments="${patient.name}" />
     </h2>
 
-    <c:url value="/upload-study/${patient.id}" var="uploadUrl" />
+    <c:url value="/studies/${patient.id}" var="uploadUrl" />
     <form:form
             modelAttribute="createStudyForm"
             method="post"
