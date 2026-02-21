@@ -10,10 +10,12 @@ import org.springframework.stereotype.Controller;
 
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.AuthStudiesService;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.AppointmentNewId;
+import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorSingleShift;
 import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.entities.User;
@@ -29,6 +31,9 @@ public class WebUserAuthDecision {
 
     @Autowired
     private PatientService ps;
+
+    @Autowired
+    private DoctorService ds;
 
     @Autowired
     private StudyService ss;
@@ -80,6 +85,24 @@ public class WebUserAuthDecision {
         if (doctorId==null) return new AuthorizationDecision(true);
 
         if (isAuthDoctor(user, patientId) && user.getId().equals(doctorId)) {
+            return new AuthorizationDecision(true);
+        }
+
+        return new AuthorizationDecision(false);
+    }
+
+    public AuthorizationDecision isDoctorByParam(Authentication auth, Long doctorId) {
+        if (doctorId==null) return new AuthorizationDecision(true);
+
+        User user = getAuthenticatedUser(auth);
+        if (user == null) {
+            return new AuthorizationDecision(false);
+        }
+
+        Doctor doctor = ds.getDoctorById(user.getId()).orElse(null);
+        if(doctor == null) return new AuthorizationDecision(false);
+
+        if(user.getId().equals(doctorId)) {
             return new AuthorizationDecision(true);
         }
 
