@@ -40,7 +40,7 @@ public class DoctorCreateDTO {
     @NotBlank
     private SpecialtyEnum specialty;
 
-    @NotNull
+    @NotNull//TODO check URL
     private List<String> insurances;
 
     @Valid

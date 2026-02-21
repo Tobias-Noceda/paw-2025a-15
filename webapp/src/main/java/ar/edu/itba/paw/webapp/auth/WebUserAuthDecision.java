@@ -210,7 +210,6 @@ public class WebUserAuthDecision {
         return new AuthorizationDecision(isSelf(auth, userId));
     }
 
-    //TODO sacar si no se usa
     private boolean isPatient(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {
@@ -220,7 +219,6 @@ public class WebUserAuthDecision {
         return user.getRole().equals(UserRoleEnum.PATIENT);
     }
 
-    //TODO sacar si no se usa
     private boolean isAdmin(Authentication auth) {
         User user = getAuthenticatedUser(auth);
         if (user == null) {

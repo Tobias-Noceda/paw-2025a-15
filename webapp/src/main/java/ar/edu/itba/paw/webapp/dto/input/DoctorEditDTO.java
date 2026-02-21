@@ -13,7 +13,7 @@ import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 @NonEmptyBody
 public class DoctorEditDTO {
 
-    @URL(protocol = "http")
+    @URL(protocol = "http")//TODO change name to picture, check URL
     private String pictureId;
 
     @ValidArgPhone
@@ -22,6 +22,7 @@ public class DoctorEditDTO {
     @Pattern(regexp = "ES_AR|ES_US|EN_AR|EN_US")
     private String mailLanguage;
 
+    //TODO change to URL not IDs
     private List<Long> insuranceIds;
 
     private Boolean updateSchedule;

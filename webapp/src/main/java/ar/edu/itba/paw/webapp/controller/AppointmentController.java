@@ -135,7 +135,7 @@ public class AppointmentController {
         ) {}).build();
     }
 
-    @PATCH//TODO capaz faltaria un post?
+    @PATCH
     @Path("/{appointmentId}")
     @Consumes(value = VndType.APPLICATION_APPOINTMENT)
     @Produces(value = VndType.APPLICATION_APPOINTMENT)
