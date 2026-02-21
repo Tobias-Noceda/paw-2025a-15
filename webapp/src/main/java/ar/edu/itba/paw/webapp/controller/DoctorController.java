@@ -51,6 +51,7 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
+import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.VacationCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorAuthorizationUpdateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorCreateDTO;
@@ -175,10 +176,21 @@ public class DoctorController {
         if (shiftsModificationDTO != null && shiftsModificationDTO.getEndTime().isBefore(shiftsModificationDTO.getStartTime())) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Shift end time cannot be before start time").build();
         }
-        List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
-            .map(name -> {
-                return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
+        List<Long> insuranceIds = null;
+        if (doctorCreateDTO.getInsurances()!=null){
+            insuranceIds = URIHelper.getIds(
+                doctorCreateDTO.getInsurances(), 
+                uriInfo.getBaseUriBuilder()
+                    .path(InsuranceController.class)
+                    .build()
+            );
+        }
+        if (insuranceIds!=null){
+            insuranceIds.stream()
+            .map(id -> {
+                return is.getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
             }).collect(Collectors.toList());
+        }
 
         String verifyToken = jtu.createVerifyToken(doctorCreateDTO.getEmail(), MAIL_TOKEN_EXPIRY_TIME);
         Doctor doctor = ds.createDoctor(
@@ -188,7 +200,7 @@ public class DoctorController {
             doctorCreateDTO.getTelephone(),
             doctorCreateDTO.getLicense(),
             doctorCreateDTO.getSpecialty(),
-            insurances.stream().map((insurance) -> insurance.getId()).collect(Collectors.toList()),
+            insuranceIds,
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale()),
             verifyToken
         );
@@ -237,7 +249,15 @@ public class DoctorController {
     ) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
 
-        List<Long> insuranceIds = doctorEditDTO.getInsuranceIds();
+        List<Long> insuranceIds = null;
+        if (doctorEditDTO.getInsurances()!=null){
+            insuranceIds = URIHelper.getIds(
+                doctorEditDTO.getInsurances(), 
+                uriInfo.getBaseUriBuilder()
+                    .path(InsuranceController.class)
+                    .build()
+            );
+        }
         if (insuranceIds == null) {
             insuranceIds = doctor.getInsurances().stream()
                 .map(Insurance::getId)
