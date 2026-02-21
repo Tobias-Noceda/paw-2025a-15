@@ -116,7 +116,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 
                 // files
                 .requestMatchers(HttpMethod.GET, "/api/files")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), c.getRequest().getParameter("studyId") != null ? Long.valueOf(c.getRequest().getParameter("studyId")) : null))
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), null, c.getRequest().getParameter("studyId") != null ? Long.valueOf(c.getRequest().getParameter("studyId")) : null))
                 .requestMatchers(HttpMethod.POST, "/api/files").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/files/{id}").permitAll()//TODO check??
 
@@ -144,12 +144,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 //// patient studies
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies")
-                    .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
+                    .access((a, c) -> ad.isAuthDoctorByParamOrSelf(a.get(), Long.valueOf(c.getVariables().get("id")), c.getRequest().getParameter("doctorId") != null ? Long.valueOf(c.getRequest().getParameter("doctorId")) : null))
                 .requestMatchers(HttpMethod.POST, "/api/patients/{id}/studies")
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.GET, "/api/patients/{id}/studies/{studyId}")
-                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.valueOf(c.getVariables().get("studyId"))))
+                    .access((a, c) -> ad.hasStudyAuth(a.get(), Long.valueOf(c.getVariables().get("id")), Long.valueOf(c.getVariables().get("studyId"))))
                 .requestMatchers(HttpMethod.DELETE, "/api/patients/{id}/studies/{studyId}")
+                    .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}/studies/{studyId}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
                 
                 //// patient general
@@ -157,11 +159,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
                 .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
-                .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")
+                .requestMatchers(HttpMethod.GET, "/api/patients").authenticated()//TODO check
+                .requestMatchers(HttpMethod.POST, "/api/patients").permitAll()//TODO check!
+                .requestMatchers(HttpMethod.GET, "/api/patients/{id}")//TODO 403 to 404 and 400!!
                     .access((a, c) -> ad.isAuthDoctorOrSelf(a.get(), Long.valueOf(c.getVariables().get("id"))))
-                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")
+                .requestMatchers(HttpMethod.PATCH, "/api/patients/{id}")//TODO ver que no se haya roto en front porque tenia todos, usar los separados
                     .access((a, c) -> ad.isSelfDecision(a.get(), Long.parseLong(c.getVariables().get("id"))))
             )
             .exceptionHandling(handling -> handling

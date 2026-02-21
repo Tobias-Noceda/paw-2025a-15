@@ -47,7 +47,7 @@ public class UserController {
     private UriInfo uriInfo;
     
     @GET
-    @Path("/{id:\\d+}")
+    @Path("/{id:\\d+}")//TODO mediatype
     public Response getSelf(@PathParam("id") Long id) {
         User user = us.getUserById(id).orElse(null);
         if (user == null) {

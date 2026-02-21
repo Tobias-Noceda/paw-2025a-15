@@ -38,6 +38,8 @@ public class VndType {
 
     public static final String APPLICATION_PATIENT_STUDY = "application/vnd.patients.studies.v1+json";
 
+    public static final String APPLICATION_PATIENT_STUDY_EDIT = "application/vnd.patients.studies.edit.v1+json";
+
     // Files Media Types
     public static final String APPLICATION_FILE = "application/vn.files.v1+json";
 

@@ -147,16 +147,12 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional(readOnly = true)
     @Override
     public List<Patient> getAuthPatientsPageByDoctorIdAndName(long doctorId, String name, int page, int pageSize) {
-        doctorDao.getDoctorById(doctorId)
-                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorDao.searchAuthPatientsPageByDoctorAndName(doctorId, name, page, pageSize);
     }
 
     @Transactional(readOnly = true)
     @Override
     public int getAuthPatientsCountByDoctorIdAndName(long doctorId, String name) {
-        doctorDao.getDoctorById(doctorId)
-                .orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
         return doctorDao.searchAuthPatientsCountByDoctorAndName(doctorId, name);
     }
 

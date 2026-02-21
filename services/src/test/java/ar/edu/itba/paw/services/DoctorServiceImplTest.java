@@ -141,24 +141,6 @@ public class DoctorServiceImplTest {
     }
 
     @Test
-    public void testGetAuthPatientsPageByDoctorIdAndNameNonexistentDoc(){
-        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            ds.getAuthPatientsPageByDoctorIdAndName(DOC_ID, DOC_NAME, 0, 0)
-        );
-    }
-
-    @Test
-    public void testGetAuthPatientsCountByDoctorIdAndNameNonexistentDoc(){
-        Mockito.when(doctorDaoMock.getDoctorById(Mockito.eq(DOC_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            ds.getAuthPatientsCountByDoctorIdAndName(DOC_ID, DOC_NAME)
-        );
-    }
-
-    @Test
     public void testCreateDoctorVacationNullStartDate(){
         Assert.assertThrows(IllegalArgumentException.class, () -> 
             ds.createDoctorVacation(DOC_ID, null, LocalDate.now().plusDays(1))
