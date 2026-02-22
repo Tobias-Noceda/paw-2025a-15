@@ -21,8 +21,8 @@ function parseTime(timeStr: string): Date {
 }
 
 function normalizeTime(timeStr: string): string {
-    const [hours = "00", minutes = "00"] = timeStr.split(":");
-    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+    const [hours = "0", minutes = "00"] = timeStr.split(":");
+    return `${parseInt(hours, 10)}:${minutes.padStart(2, "0")}`;
 }
 
 export const fetchDoctors = async (
