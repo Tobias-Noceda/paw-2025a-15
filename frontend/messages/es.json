@@ -504,7 +504,7 @@
 		},
 		"messages": {
 			"error": {
-				"fething": {
+				"fetching": {
 					"title": "Error al obtener los estudios",
 					"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
 				},
@@ -596,67 +596,6 @@
 		"no_files": "Ningún archivo seleccionado",
 		"more_files": "+ {count} archivos más"
 	},
-	"vacations": {
-		"title": "Gestión de Vacaciones",
-		"create": {
-			"title": "Registrar nuevas vacaciones",
-			"submit": "Registrar vacaciones"
-		},
-		"table": {
-			"startDate": "Fecha de inicio",
-			"endDate": "Fecha de fin"
-		},
-		"past": {
-			"title": "Vacaciones pasadas",
-			"empty": "No hay vacaciones pasadas registradas"
-		},
-		"future": {
-			"title": "Vacaciones futuras",
-			"empty": "No hay vacaciones programadas"
-		},
-		"created": {
-			"title": "¡Vacaciones registradas!",
-			"message": "Las vacaciones han sido registradas exitosamente."
-		},
-		"deleted": {
-			"title": "¡Vacaciones canceladas!",
-			"message": "Las vacaciones han sido canceladas exitosamente."
-		},
-		"delete": {
-			"confirm": {
-				"title": "Cancelar vacaciones",
-				"message": "¿Está seguro que desea cancelar las vacaciones desde {startDate} hasta {endDate}?",
-				"button": "Cancelar vacaciones",
-				"back": "Volver"
-			}
-		},
-		"creating": {
-			"confirm": {
-				"title": "Registrar vacaciones",
-				"message": "Estás por registrar vacaciones desde {startDate} hasta {endDate}, ¿deseas cancelar los turnos que tengas programados durante ese período?",
-				"yes": "Cancelar turnos",
-				"no": "Continuar sin cancelar turnos"
-			}
-		},
-		"error": {
-			"startRequired": "La fecha de inicio es requerida",
-			"endRequired": "La fecha de fin es requerida",
-			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
-			"pastDate": "La fecha de inicio no puede ser anterior a la fecha actual",
-			"load": {
-				"title": "Error al cargar vacaciones",
-				"message": "No se pudieron cargar las vacaciones. Por favor, inténtelo de nuevo."
-			},
-			"create": {
-				"title": "Error al registrar vacaciones",
-				"message": "No se pudieron registrar las vacaciones. Por favor, inténtelo de nuevo."
-			},
-			"delete": {
-				"title": "Error al cancelar vacaciones",
-				"message": "No se pudieron cancelar las vacaciones. Por favor, inténtelo de nuevo."
-			}
-		}
-	},
 	"insurance": {
 		"title": "Editar obra social",
 		"labels": {
@@ -734,53 +673,62 @@
 	"vacations": {
 		"title": "Gestión de Vacaciones",
 		"create": {
-			"title": "Agregar Nueva Vacación",
-			"submit": "Crear Vacación"
+			"title": "Registrar nuevas vacaciones",
+			"submit": "Registrar vacaciones"
 		},
 		"table": {
-			"startDate": "Fecha de Inicio",
-			"endDate": "Fecha de Fin",
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de fin",
 			"actions": "Acciones"
 		},
 		"past": {
-			"title": "Vacaciones Pasadas",
+			"title": "Vacaciones pasadas",
 			"empty": "No hay vacaciones pasadas registradas"
 		},
 		"future": {
-			"title": "Vacaciones Futuras",
-			"empty": "No hay vacaciones futuras programadas"
+			"title": "Vacaciones futuras",
+			"empty": "No hay vacaciones programadas"
 		},
 		"created": {
-			"title": "¡Vacación creada!",
-			"message": "La vacación ha sido registrada exitosamente."
+			"title": "¡Vacaciones registradas!",
+			"message": "Las vacaciones han sido registradas exitosamente."
 		},
 		"deleted": {
-			"title": "¡Vacación eliminada!",
-			"message": "La vacación ha sido eliminada exitosamente."
+			"title": "¡Vacaciones canceladas!",
+			"message": "Las vacaciones han sido canceladas exitosamente."
 		},
 		"delete": {
 			"confirm": {
-				"title": "¿Eliminar vacación?",
-				"message": "¿Está seguro de que desea eliminar la vacación del {startDate} al {endDate}?",
-				"button": "Eliminar"
+				"title": "Cancelar vacaciones",
+				"message": "¿Está seguro que desea cancelar las vacaciones desde {startDate} hasta {endDate}?",
+				"button": "Cancelar vacaciones",
+				"back": "Volver"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Registrar vacaciones",
+				"message": "Estás por registrar vacaciones desde {startDate} hasta {endDate}, ¿deseas cancelar los turnos que tengas programados durante ese período?",
+				"yes": "Cancelar turnos",
+				"no": "Continuar sin cancelar turnos"
 			}
 		},
 		"error": {
 			"startRequired": "La fecha de inicio es requerida",
 			"endRequired": "La fecha de fin es requerida",
 			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
-			"pastDate": "La fecha de inicio no puede ser en el pasado",
+			"pastDate": "La fecha de inicio no puede ser anterior a la fecha actual",
 			"load": {
-				"title": "Error al cargar",
-				"message": "No se pudieron cargar las vacaciones. Por favor, intente de nuevo."
+				"title": "Error al cargar vacaciones",
+				"message": "No se pudieron cargar las vacaciones. Por favor, inténtelo de nuevo."
 			},
 			"create": {
-				"title": "Error al crear",
-				"message": "No se pudo crear la vacación. Por favor, intente de nuevo."
+				"title": "Error al registrar vacaciones",
+				"message": "No se pudieron registrar las vacaciones. Por favor, inténtelo de nuevo."
 			},
 			"delete": {
-				"title": "Error al eliminar",
-				"message": "No se pudo eliminar la vacación. Por favor, intente de nuevo."
+				"title": "Error al cancelar vacaciones",
+				"message": "No se pudieron cancelar las vacaciones. Por favor, inténtelo de nuevo."
 			}
 		}
 	}

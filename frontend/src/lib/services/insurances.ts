@@ -60,12 +60,12 @@ export const createInsurance = async (name: string, file?: File, fetchFn: typeof
 
     const body: any = { name };
     if (imageLocation) {
-        body.pictureId = imageLocation;
+        body.picture = imageLocation;
     }
 
     const response = await postAuth(`${baseApiUrl}/insurances`, body, {
         headers: {
-            'Content-Type': 'application/vnd.insurances.v1+json'
+            'Content-Type': 'application/vnd.insurances.creation.v1+json'
         }
     }, fetchFn);
 
@@ -91,7 +91,7 @@ export const editInsurance = async (path: string, name: string, newFile?: File, 
 
     const body: any = { name };
     if (imageLocation) {
-        body.pictureId = imageLocation;
+        body.picture = imageLocation;
     }
 
     const response = await patchAuth(path, body, {

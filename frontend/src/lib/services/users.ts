@@ -1,7 +1,8 @@
-import { apiOrigin, get, getJWTEmail, post, put } from "$modules/api.svelte";
+import { get, getJWTEmail, post, put } from "$modules/api.svelte";
+import { baseApiUrl } from "$types/api";
 
 export function requestPasswordReset(email: string, fetchFn: typeof fetch = fetch) {
-    return post(`${apiOrigin}/users`, { email }, {
+    return post(`${baseApiUrl}/users`, { email }, {
         headers: {
             'Content-Type': 'application/vnd.user-password.creation.v1+json'
         }
@@ -9,7 +10,7 @@ export function requestPasswordReset(email: string, fetchFn: typeof fetch = fetc
 };
 
 export function resetPassword(token: string, newPassword: string, fetchFn: typeof fetch = fetch) {
-    return put(`${apiOrigin}/users/${token}`, { newPassword }, {
+    return put(`${baseApiUrl}/users/${token}`, { newPassword }, {
         headers: {
             'Content-Type': 'application/vnd.user-password.reset.v1+json'
         }
@@ -17,7 +18,7 @@ export function resetPassword(token: string, newPassword: string, fetchFn: typeo
 };
 
 export async function verifyEmail(token: string, fetchFn: typeof fetch = fetch): Promise<string> {
-    const doctorsResponse = await get(`${apiOrigin}/doctors`, {
+    const doctorsResponse = await get(`${baseApiUrl}/doctors`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

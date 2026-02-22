@@ -226,7 +226,7 @@ export const updateDoctorProfile = async (
     }
 
     const finalPayload = {
-        pictureId: imageLocation,
+        picture: imageLocation,
         telephone: payload.telephone.trim() !== '' && payload.telephone !== doctor.telephone ? payload.telephone : undefined,
         mailLanguage: payload.mailLanguage !== user.language ? payload.mailLanguage : undefined,
         insurances: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs : undefined,
@@ -237,7 +237,7 @@ export const updateDoctorProfile = async (
 
     const response = await patchAuth(
         user.self,
-        payload,
+        finalPayload,
         {
             headers: {
                 "Content-Type": "application/vnd.doctors.v1+json",
