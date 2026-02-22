@@ -1,5 +1,5 @@
-import { apiOrigin, del, deleteAuth, getAuth, patchAuth, postAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
-import type { Paginated, Study } from "$types/api";
+import { del, deleteAuth, getAuth, patchAuth, postAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
+import { baseApiUrl, type Paginated, type Study } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
 import type { StudyType } from "$types/enums/studyTypes";
@@ -50,7 +50,7 @@ export const fetchSingleStudy = async (patientId: number, studyId: number, fetch
     if (!patientId || !studyId) {
         throw error(404, 'Patient ID and Study ID are required');
     }
-    const url = `${apiOrigin}/patients/${patientId}/studies/${studyId}`;
+    const url = `${baseApiUrl}/patients/${patientId}/studies/${studyId}`;
     const response = await getAuth(url, undefined, fetchFn);
 
     if (response.ok) {

@@ -10,7 +10,7 @@
 	import { m } from '$lib/paraglide/messages';
 	import { user } from '$lib/stores/user';
 	import { updateDoctorProfile, type DoctorProfileUpdateData } from '$lib/services/doctors';
-	import { updatePatientProfile, type PatientProfileUpdateData } from '$lib/services/patients';
+	import { updatePatientProfile, updatePatientHabitsInfo, updatePatientMedicalInfo, updatePatientSocialInfo, type PatientProfileUpdateData } from '$lib/services/patients';
 	import { Durations, getWeekdayShortLabel, TimeSlots, Weekdays } from '$types/enums/weekdays';
 	import { getSpecialtyLabel, Specialty } from '$types/enums/specialties';
 	import { Locales } from '$types/enums/locales';
@@ -177,20 +177,44 @@
 			bloodType: bloodType || undefined,
 			height: height,
 			weight: weight,
-			smokes: parseBoolean(smokes),
-			drinks: parseBoolean(drinks),
-			diet: diet || undefined,
-			meds: meds || undefined,
-			conditions: conditions || undefined,
-			allergies: allergies || undefined,
-			hobbies: hobbies || undefined,
-			job: job || undefined,
 			insuranceSelf:
 				data.insurances.find((ins) => ins.name === insuranceName)?.links.self.resolved! || undefined,
 			insuranceNumber: insuranceNumber || undefined
 		};
 
-		await updatePatientProfile(data.currentUser, payload, data.patient!, newImage || undefined, fetch);
+		const promises: Promise<any>[] = [
+			updatePatientProfile(data.currentUser, payload, data.patient!, newImage || undefined, fetch)
+		];
+
+		// Only send habits PATCH if something changed
+		const habitsPayload: { smokes?: boolean; drinks?: boolean; diet?: string } = {};
+		const parsedSmokes = parseBoolean(smokes);
+		const parsedDrinks = parseBoolean(drinks);
+		if (parsedSmokes !== data.patient!.smokes) habitsPayload.smokes = parsedSmokes;
+		if (parsedDrinks !== data.patient!.drinks) habitsPayload.drinks = parsedDrinks;
+		if ((diet || undefined) !== (data.patient!.diet || undefined)) habitsPayload.diet = diet || undefined;
+		if (Object.keys(habitsPayload).length > 0) {
+			promises.push(updatePatientHabitsInfo(data.patient!, habitsPayload, fetch));
+		}
+
+		// Only send medical PATCH if something changed
+		const medicalPayload: { meds?: string; conditions?: string; allergies?: string } = {};
+		if ((meds || undefined) !== (data.patient!.meds || undefined)) medicalPayload.meds = meds || undefined;
+		if ((conditions || undefined) !== (data.patient!.conditions || undefined)) medicalPayload.conditions = conditions || undefined;
+		if ((allergies || undefined) !== (data.patient!.allergies || undefined)) medicalPayload.allergies = allergies || undefined;
+		if (Object.keys(medicalPayload).length > 0) {
+			promises.push(updatePatientMedicalInfo(data.patient!, medicalPayload, fetch));
+		}
+
+		// Only send social PATCH if something changed
+		const socialPayload: { hobbies?: string; job?: string } = {};
+		if ((hobbies || undefined) !== (data.patient!.hobbies || undefined)) socialPayload.hobbies = hobbies || undefined;
+		if ((job || undefined) !== (data.patient!.job || undefined)) socialPayload.job = job || undefined;
+		if (Object.keys(socialPayload).length > 0) {
+			promises.push(updatePatientSocialInfo(data.patient!, socialPayload, fetch));
+		}
+
+		await Promise.all(promises);
 	};
 
 	const saveDoctorProfile = async (keepTurns: boolean) => {
