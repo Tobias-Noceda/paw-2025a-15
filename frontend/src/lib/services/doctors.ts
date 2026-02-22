@@ -289,11 +289,11 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
     }
 
     let insurancesPage = await fetchInsurancesPage(doctor.links.insurances.resolved!, fetchFn);
-    let insurances: string[] = [...insurancesPage.results.map(i => i.links.self.href)];
+    let insurances: string[] = [...insurancesPage.results.map(i => i.name)];
 
     while (insurancesPage._links.next) {
         insurancesPage = await fetchInsurancesPage(insurancesPage._links.next, fetchFn);
-        insurances = [...insurances, ...insurancesPage.results.map(i => i.links.self.href)];
+        insurances = [...insurances, ...insurancesPage.results.map(i => i.name)];
     }
 
     doctor.insurances = insurances;
