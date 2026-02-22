@@ -1,4 +1,4 @@
-import { getAuth, postAuth } from "$modules/api.svelte";
+import { getAuth, postAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import { baseApiUrl } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
@@ -8,8 +8,12 @@ export const fetchFilesPage = async (url: string, fetchFn: typeof fetch = fetch)
     const response = await getAuth(url, undefined, fetchFn);
 
     if (response.ok) {
-        const filesData = await response.json();
-        
+        const filesData: ApiFile[] = await response.json();
+
+        for (const file of filesData) {
+            resolveNonTemplatedLinks(file);
+        }
+
         return {
             results: filesData,
             _links: getPaginationLinks(response),

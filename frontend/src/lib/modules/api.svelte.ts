@@ -297,6 +297,18 @@ export async function deleteAuth(path: string, options?: RequestInit, fetchFn: t
 	);
 };
 
+/** Fetch with auth but without SvelteKit error() handling - safe for use in click handlers */
+export async function fetchWithAuth(url: string, options?: RequestInit): Promise<Response> {
+	const requestToken = getToken();
+	return fetch(url, {
+		...options,
+		headers: {
+			...options?.headers,
+			...(requestToken ? { Authorization: `Bearer ${requestToken}` } : {})
+		}
+	});
+};
+
 export function resolveNonTemplatedLinks<T extends { links: Record<string, UriTemplate> }>(data: T): T {
 	for (const key in data.links) {
 		const link = data.links[key];

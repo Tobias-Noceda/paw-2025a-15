@@ -36,9 +36,11 @@ import ar.edu.itba.paw.interfaces.services.AppointmentService;
 import ar.edu.itba.paw.interfaces.services.AuthDoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.DoctorShiftService;
+import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
+import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.DoctorVacation;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -90,6 +92,9 @@ public class DoctorController {
 
     @Autowired
     private DoctorShiftService dss;
+
+    @Autowired
+    private FileService fs;
 
     @Autowired
     private JwtTokenUtil jtu;
@@ -264,10 +269,20 @@ public class DoctorController {
                 .collect(Collectors.toList());
         }
 
+        File picture = doctor.getPicture();
+        Long pictureId = URIHelper.getId(
+            doctorEditDTO.getPicture(),
+            uriInfo.getBaseUriBuilder().path(FileController.class).build()
+        );
+        if (pictureId != null) {
+            picture = fs.findById(pictureId)
+                .orElseThrow(() -> new NotFoundException("File with id: " + pictureId + " does not exist!"));
+        }
+
         ds.updateDoctor(
             doctor,
             doctorEditDTO.getTelephone() != null ? doctorEditDTO.getTelephone() : doctor.getTelephone(),
-            doctor.getPicture(),
+            picture,
             doctorEditDTO.getMailLanguage() != null ? LocaleEnum.valueOf(doctorEditDTO.getMailLanguage()) : doctor.getLocale(),
             insuranceIds
         );

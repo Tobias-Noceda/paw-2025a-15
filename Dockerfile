@@ -14,4 +14,7 @@ socat TCP-LISTEN:5432,fork,reuseaddr TCP:postgres:5432 &\n\
 exec catalina.sh run' > /entrypoint.sh && \
     chmod +x /entrypoint.sh
 
+# Deploy WAR
+COPY webapp/target/webapp.war /usr/local/tomcat/webapps/paw-2025a-15.war
+
 ENTRYPOINT ["/entrypoint.sh"]

@@ -310,8 +310,11 @@
         variant="success"
         title={m['appointments.canceled.success_title']()}
         description={m['appointments.canceled.success_message']({
-            day: canceledAppointmentToast?.date ? new Date(canceledAppointmentToast.date).getDate() : '',
-            month: canceledAppointmentToast?.date ? new Date(canceledAppointmentToast.date).toLocaleString(getLocale(), { month: 'long' }) : '',
+            day: canceledAppointmentToast?.date ? Number(canceledAppointmentToast.date.split('-')[2]) : '',
+            month: canceledAppointmentToast?.date ? new Date(
+                Number(canceledAppointmentToast.date.split('-')[0]),
+                Number(canceledAppointmentToast.date.split('-')[1]) - 1
+            ).toLocaleString(getLocale(), { month: 'long' }) : '',
             startTime: canceledAppointmentToast?.startTime ?? ''}
         )}
     />

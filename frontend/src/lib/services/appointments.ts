@@ -73,6 +73,7 @@ export const fetchNonFreeAppointments = async (
                 const patientResponse = await getAuth(appointment.links.patient.resolved!, undefined, fetchFn);
                 if (patientResponse.ok) {
                     const patient = await patientResponse.json();
+                    resolveNonTemplatedLinks(patient);
                     appointment.patient = patient;
                 }
             } catch (error) {
@@ -91,6 +92,7 @@ export const populateAppointmentData = async (appointment: Appointment, fetchFn:
         const response = await get(appointment.links.doctor.resolved!, undefined, fetchFn);
         if (response.ok) {
             const doctor = await response.json();
+            resolveNonTemplatedLinks(doctor);
             appointment.doctor = doctor;
         }
     } catch (error) {

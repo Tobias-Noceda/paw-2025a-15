@@ -22,6 +22,9 @@ export const fetchPatients = async (search: string, url: string, fetchFn: typeof
 
     const patients: Paginated<Patient> = { _links: {}, results: [] };
     patients.results = await response.json();
+    for (const patient of patients.results) {
+        resolveNonTemplatedLinks(patient);
+    }
     patients._links = getPaginationLinks(response);
     patients._pageInfo = getPageInfoFromHeaders(response);
 
@@ -90,11 +93,8 @@ export const createPatient = async (patient: Partial<Patient>, password: string)
             }
         },
         fetch
-    ).catch(async (e) => {
-        const text = await response.text();
-        throw error(response.status || 500, text && text !== '' ? text : 'Failed to create patient');
-    });
-    
+    );
+
     if (!response.ok) {
         const text = await response.text();
         throw error(response.status || 500, text && text !== '' ? text : 'Failed to create patient');
