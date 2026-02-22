@@ -229,7 +229,7 @@ export const updateDoctorProfile = async (
         picture: imageLocation,
         telephone: payload.telephone.trim() !== '' && payload.telephone !== doctor.telephone ? payload.telephone : undefined,
         mailLanguage: payload.mailLanguage !== user.language ? payload.mailLanguage : undefined,
-        insurances: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs : undefined,
+        insurances: payload.insuranceSelfs,
         updateSchedule: payload.updateSchedule,
         shifts: payload.shifts && payload.updateSchedule ? payload.shifts : undefined,
         keepTurns: payload.keepTurns !== undefined ? payload.keepTurns : undefined

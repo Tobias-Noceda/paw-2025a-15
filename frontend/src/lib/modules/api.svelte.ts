@@ -116,6 +116,19 @@ export async function refreshToken(): Promise<void> {
 		}
 
 		setSession(sessionData);
+
+		const payload = parseJWT(sessionData.access);
+		if (payload) {
+			user.set({
+				id: payload.id,
+				language: payload.language,
+				name: payload.name,
+				role: payload.role,
+				image: payload.image,
+				self: payload.self,
+				...payload
+			});
+		}
 	} catch (error) {
 		console.error('Token refresh failed:', error);
 		logout();
