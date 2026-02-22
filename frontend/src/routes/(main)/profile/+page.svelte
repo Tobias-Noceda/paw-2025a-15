@@ -174,7 +174,7 @@
 			telephone,
 			mailLanguage,
 			birthdate: birthDate,
-			bloodType: bloodType || undefined,
+			bloodType: bloodType && bloodType !== 'N/A' ? bloodType : undefined,
 			height: height,
 			weight: weight,
 			insuranceSelf:
