@@ -1,4 +1,4 @@
-import { deleteAuth, get, patchAuth, postAuth } from "$modules/api.svelte";
+import { deleteAuth, get, patchAuth, postAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import { baseApiUrl, type Insurance, type Paginated } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
@@ -19,6 +19,9 @@ export const fetchInsurances = async (search?: string, fetchFn: typeof fetch = w
     }
 
     insurances.results = await response.json();
+    for (const insurance of insurances.results) {
+        resolveNonTemplatedLinks(insurance);
+    }
     insurances._links = getPaginationLinks(response);
     insurances._pageInfo = getPageInfoFromHeaders(response);
 
@@ -35,6 +38,9 @@ export const fetchInsurancesPage = async (url: string, fetchFn: typeof fetch = w
     }
 
     insurances.results = await response.json();
+    for (const insurance of insurances.results) {
+        resolveNonTemplatedLinks(insurance);
+    }
     insurances._links = getPaginationLinks(response);
     insurances._pageInfo = getPageInfoFromHeaders(response);
 

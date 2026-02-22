@@ -193,7 +193,9 @@
 		if (parsedSmokes !== data.patient!.smokes) habitsPayload.smokes = parsedSmokes;
 		if (parsedDrinks !== data.patient!.drinks) habitsPayload.drinks = parsedDrinks;
 		if ((diet || undefined) !== (data.patient!.diet || undefined)) habitsPayload.diet = diet || undefined;
+		console.log('[SAVE] habits comparison:', { parsedSmokes, parsedDrinks, diet, patientSmokes: data.patient!.smokes, patientDrinks: data.patient!.drinks, patientDiet: data.patient!.diet, habitsPayload });
 		if (Object.keys(habitsPayload).length > 0) {
+			console.log('[SAVE] Sending habits PATCH to:', data.patient!.links.habitsInfo.resolved, 'with:', habitsPayload);
 			promises.push(updatePatientHabitsInfo(data.patient!, habitsPayload, fetch));
 		}
 
@@ -202,7 +204,9 @@
 		if ((meds || undefined) !== (data.patient!.meds || undefined)) medicalPayload.meds = meds || undefined;
 		if ((conditions || undefined) !== (data.patient!.conditions || undefined)) medicalPayload.conditions = conditions || undefined;
 		if ((allergies || undefined) !== (data.patient!.allergies || undefined)) medicalPayload.allergies = allergies || undefined;
+		console.log('[SAVE] medical comparison:', { meds, conditions, allergies, patientMeds: data.patient!.meds, patientConditions: data.patient!.conditions, patientAllergies: data.patient!.allergies, medicalPayload });
 		if (Object.keys(medicalPayload).length > 0) {
+			console.log('[SAVE] Sending medical PATCH to:', data.patient!.links.medicalInfo.resolved, 'with:', medicalPayload);
 			promises.push(updatePatientMedicalInfo(data.patient!, medicalPayload, fetch));
 		}
 
@@ -238,7 +242,8 @@
 				return;
 			}
 
-			if (startTime >= endTime) {
+			const toMinutes = (t: string) => { const [h, mm] = t.split(':').map(Number); return h * 60 + mm; };
+		if (toMinutes(startTime) >= toMinutes(endTime)) {
 				saveError = m['error.400_message']();
 				return;
 			}

@@ -94,7 +94,7 @@
 			id: 'upload-date',
 			label: m['studies.table.upload_date'](),
 			render: (study: Study) => {
-				const date = new Date(study.uploadDate);
+				const date = parseDateInLocalTimezone(study.uploadDate);
 				return date.toLocaleDateString(getLocale(), {
 					year: 'numeric',
 					month: '2-digit',
@@ -313,7 +313,7 @@
 			skeleton={isFetching}
 			emptyMessage={m['studies.table.empty']()}
 			onRowClick={(study) => {
-				const studyId = parseStudyId(study.links.self);
+				const studyId = parseStudyId(study.links.self.resolved!);
 				if (studyId) {
 					goto(`${base}/study-info/${studyId}-${$page.params.id}`);
 				} else {

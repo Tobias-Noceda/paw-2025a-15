@@ -1,13 +1,13 @@
 package ar.edu.itba.paw.webapp.dto.input;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
 import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
 
 @NonEmptyBody
 public class AppointmentEditDTO {
-    @NotBlank
+    @NotNull
     private AppointmentStatusEnum status;
 
     private String description;

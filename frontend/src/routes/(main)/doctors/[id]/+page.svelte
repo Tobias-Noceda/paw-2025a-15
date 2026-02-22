@@ -318,10 +318,13 @@
 			<div class="flex flex-col gap-2">
 				<h1 class="text-primaryText text-[1.17rem] font-bold">
 					{m['doctor.pop_up.appointment.title']({
-						month: new Date(selectedAppointment.date).toLocaleString(getLocale(), {
+						month: new Date(
+							Number(selectedAppointment.date.split('-')[0]),
+							Number(selectedAppointment.date.split('-')[1]) - 1
+						).toLocaleString(getLocale(), {
 							month: 'long'
 						}),
-						day: new Date(selectedAppointment.date).getDate(),
+						day: Number(selectedAppointment.date.split('-')[2]),
 						startTime: selectedAppointment.startTime,
 						doctorName: doctor.name
 					})}

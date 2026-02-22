@@ -18,8 +18,11 @@ export const fetchStudies = async (url: string, studyType?: string, order?: stri
     const response = await getAuth(baseUrl.toString(), undefined, fetchFn);
 
     if (response.ok) {
-        const studiesData = await response.json();
-        
+        const studiesData: Study[] = await response.json();
+        for (const study of studiesData) {
+            resolveNonTemplatedLinks(study);
+        }
+
         return {
             results: studiesData,
             _links: getPaginationLinks(response),
@@ -34,8 +37,11 @@ export const fetchStudiesPage = async (url: string, fetchFn: typeof fetch = fetc
     const response = await getAuth(url, undefined, fetchFn);
 
     if (response.ok) {
-        const studiesData = await response.json();
-        
+        const studiesData: Study[] = await response.json();
+        for (const study of studiesData) {
+            resolveNonTemplatedLinks(study);
+        }
+
         return {
             results: studiesData,
             _links: getPaginationLinks(response),
@@ -64,6 +70,9 @@ export const fetchSingleStudy = async (patientId: number, studyId: number, fetch
             
             if (filesResponse && filesResponse.ok) {
                 const filesData = await filesResponse.json();
+                for (const file of filesData) {
+                    resolveNonTemplatedLinks(file);
+                }
                 study.files = {
                     results: filesData,
                     _links: getPaginationLinks(filesResponse),

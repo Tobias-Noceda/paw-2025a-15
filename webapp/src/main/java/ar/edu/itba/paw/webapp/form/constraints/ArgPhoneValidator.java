@@ -7,7 +7,8 @@ public class ArgPhoneValidator implements ConstraintValidator<ValidArgPhone, Str
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isBlank()) return false;
+        if (value == null) return true;
+        if (value.isBlank()) return false;
 
         String number = value.replaceAll("[\\s\\-()]", "");
         if (number.startsWith("+")) {

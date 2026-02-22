@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -29,9 +28,10 @@ public class DoctorCreateDTO {
 
     @NotNull
     @NotBlank
-    @Min(8)
+    @Size(min = 8)
     private String password;
 
+    @NotNull
     @ValidArgPhone
     private String telephone;
 
@@ -40,7 +40,6 @@ public class DoctorCreateDTO {
     private String license;
 
     @NotNull
-    @NotBlank
     private SpecialtyEnum specialty;
 
     @NotNull

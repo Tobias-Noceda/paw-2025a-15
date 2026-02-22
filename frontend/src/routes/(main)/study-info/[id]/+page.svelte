@@ -15,6 +15,7 @@
 		unauthorizeDoctorsForStudy
 	} from '$lib/services/studies';
 	import { fetchFilesPage } from '$lib/services/files';
+	import { fetchWithAuth } from '$modules/api.svelte';
 	import Icon from '$components/Icon/Icon.svelte';
 	import Toast from '$components/Toast/Toast.svelte';
 	import JSZip from 'jszip';
@@ -27,6 +28,25 @@
 	let authorizedDoctorsEmails: string[] = $state(data.authorizedDoctorsEmails ?? []);
 
 	let viewingFile: File | null = $state(null);
+	let viewingFileBlobUrl: string | null = $state(null);
+
+	$effect(() => {
+		if (viewingFile) {
+			viewingFileBlobUrl = null;
+			fetchWithAuth(viewingFile.links.self.resolved!, { headers: { Accept: viewingFile.type } })
+				.then(async (response) => {
+					if (response.ok) {
+						const blob = await response.blob();
+						viewingFileBlobUrl = window.URL.createObjectURL(blob);
+					}
+				}).catch((err) => console.error('Failed to load file for viewing:', err));
+		} else {
+			if (viewingFileBlobUrl) {
+				window.URL.revokeObjectURL(viewingFileBlobUrl);
+				viewingFileBlobUrl = null;
+			}
+		}
+	});
 
 	// Extract file ID from API URL
 	const getFileId = (fileUrl: string): string => {
@@ -105,21 +125,16 @@
 						variant: ['success', 'primary'],
 						onclick: async (event: MouseEvent, index?: number) => {
 							event.stopPropagation();
-							if (index) {
-								// download file
-								try {
-									const response = await fetch(file.links.self.resolved!, {
-										credentials: 'include',
-										headers: {
-											Accept: file.type
-										}
-									});
+							try {
+								const response = await fetchWithAuth(file.links.self.resolved!, { headers: { Accept: file.type } });
 
-									if (!response.ok) throw new Error('Download failed');
+								if (!response.ok) throw new Error('Download failed');
 
-									const blob = await response.blob();
+								const blob = await response.blob();
+								const blobUrl = window.URL.createObjectURL(blob);
 
-									// Get filename from Content-Disposition header or use file type
+								if (index) {
+									// download file
 									const contentDisposition = response.headers.get('Content-Disposition');
 									let filename = study.comment.replace(/\s+/g, '-') + '_' + file.type.split('/')[1];
 									if (contentDisposition) {
@@ -129,27 +144,23 @@
 										if (filenameMatch) filename = filenameMatch[2];
 									}
 
-									const url = window.URL.createObjectURL(blob);
 									const link = document.createElement('a');
-									link.href = url;
+									link.href = blobUrl;
 									link.download = filename;
 									link.style.display = 'none';
 									document.body.appendChild(link);
 									link.click();
 
-									// Cleanup after a short delay
 									setTimeout(() => {
 										document.body.removeChild(link);
-										window.URL.revokeObjectURL(url);
+										window.URL.revokeObjectURL(blobUrl);
 									}, 100);
-								} catch (error) {
-									console.error('Download error:', error);
-									// Fallback: open in new window through frontend wrapper
-									window.open(file.links.self.resolved!.replace('/api', ''), '_blank');
+								} else {
+									// view file in new tab
+									window.open(blobUrl, '_blank');
 								}
-							} else {
-								// view file in new tab through frontend wrapper
-								window.open(file.links.self.resolved!.replace('/api', ''), '_blank');
+							} catch (error) {
+								console.error('Download error:', error);
 							}
 						},
 						class: 'px-2 py-1 text-sm font-semibold'
@@ -186,7 +197,7 @@
 		let i = 0;
 		for (const file of allFiles) {
 			try {
-				const response = await fetch(file.links.self.resolved!);
+				const response = await fetchWithAuth(file.links.self.resolved!);
 				if (!response.ok) throw new Error('Download failed');
 
 				const blob = await response.blob();
@@ -400,7 +411,11 @@
 			>
 				&times;
 			</button>
-			{#if viewingFile.type.startsWith('image/')}
+			{#if !viewingFileBlobUrl}
+				<div class="flex w-full h-full items-center justify-center">
+					<p class="text-white text-lg">Cargando...</p>
+				</div>
+			{:else if viewingFile.type.startsWith('image/')}
 				<!-- svelte-ignore a11y_role_supports_aria_props -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<div
@@ -414,8 +429,8 @@
                     tabindex="-2"
 				>
 					<img
-						src={viewingFile.links.self.resolved!}
-						alt="File {viewingFile.links.self.resolved!}"
+						src={viewingFileBlobUrl}
+						alt="File preview"
 						class="max-w-full max-h-full object-contain rounded-lg shadow-lg"
 					/>
 				</div>
@@ -426,7 +441,7 @@
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<!-- svelte-ignore element_invalid_self_closing_tag -->
 				<iframe
-					src={viewingFile.links.self.resolved!}
+					src={viewingFileBlobUrl}
 					title="PDF Viewer"
 					class="w-full h-full rounded-lg shadow-lg"
 					onclick={(e) => e.stopPropagation()}

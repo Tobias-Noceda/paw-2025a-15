@@ -285,11 +285,11 @@
 			skeleton={isFetching}
 			emptyMessage={m['studies.table.empty']()}
 			onRowClick={(study) => {
-				const studyId = parseStudyId(study.links.self);
+				const studyId = parseStudyId(study.links.self.resolved!);
 				if (studyId) {
 					goto(`${base}/study-info/${studyId}-${data.currentUser.id}`);
 				} else {
-					console.error('Could not parse study ID from URL:', study.links.self);
+					console.error('Could not parse study ID from URL:', study.links.self.resolved);
 				}
 			}}
 		/>
@@ -316,7 +316,7 @@
 			bordered
 			emptyMessage={m['studies.doctors.table.empty']()}
 			onRowClick={(doctor) => {
-				const doctorPath = parseDoctor(doctor.links.self);
+				const doctorPath = parseDoctor(doctor.links.self.resolved!);
 				if (doctorPath) {
 					goto(`${base}/${doctorPath}`);
 				}
@@ -331,7 +331,7 @@
 				<div class="flex flex-col gap-1.5">
 					<p>
 						{m['studies.pop_up.delete.date_info']({
-							uploadDate: new Date(deleteStudyData.study.uploadDate).toLocaleDateString(
+							uploadDate: parseDateInLocalTimezone(deleteStudyData.study.uploadDate).toLocaleDateString(
 								getLocale(),
 								{
 									year: 'numeric',
@@ -382,7 +382,7 @@
 			bind:show={showErrorToast}
 			title={toastTitle}
 			description={toastMessage}
-			variant={'error'}
+			variant={'destructive'}
 		/>
 		<Toast
 			bind:show={showSuccessToast}

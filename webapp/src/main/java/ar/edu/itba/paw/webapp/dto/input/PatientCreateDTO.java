@@ -29,6 +29,7 @@ public class PatientCreateDTO {
     @Size(min = 8)
     private String password;
 
+    @NotNull
     @ValidArgPhone
     private String telephone;
 
