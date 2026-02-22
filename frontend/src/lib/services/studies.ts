@@ -106,7 +106,7 @@ export const authorizeDoctorsForStudy = async (studyPath: string, doctorSelfs: s
         body,
         {
             headers: {
-                'Content-Type': 'application/vnd.patients.studies.v1+json'
+                'Content-Type': 'application/vnd.patients.studies.edit.v1+json'
             }
         },
         fetchFn
@@ -128,7 +128,7 @@ export const unauthorizeDoctorsForStudy = async (studyPath: string, doctorSelfs:
         body,
         {
             headers: {
-                'Content-Type': 'application/vnd.patients.studies.v1+json'
+                'Content-Type': 'application/vnd.patients.studies.edit.v1+json'
             }
         },
         fetchFn
