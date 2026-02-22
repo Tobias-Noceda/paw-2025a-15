@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.URL;
 
@@ -14,7 +15,7 @@ import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
 public class DoctorEditDTO {
 
     @URL(protocol = "http")
-    private String pictureId;
+    private String picture;
 
     @ValidArgPhone
     private String telephone;
@@ -22,7 +23,8 @@ public class DoctorEditDTO {
     @Pattern(regexp = "ES_AR|ES_US|EN_AR|EN_US")
     private String mailLanguage;
 
-    private List<Long> insuranceIds;
+    @Size(min = 1)
+    private List<@URL(protocol = "http")String> insurances;
 
     private Boolean updateSchedule;
 
@@ -31,12 +33,12 @@ public class DoctorEditDTO {
     @Valid
     private ShiftsModificationDTO shifts;
 
-    public String getPictureId() {
-        return pictureId;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setPictureId(String pictureId) {
-        this.pictureId = pictureId;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public String getTelephone() {
@@ -55,12 +57,12 @@ public class DoctorEditDTO {
         this.mailLanguage = mailLanguage;
     }
 
-    public List<Long> getInsuranceIds() {
-        return insuranceIds;
+    public List<String> getInsurances() {
+        return insurances;
     }
 
-    public void setInsuranceIds(List<Long> insuranceIds) {
-        this.insuranceIds = insuranceIds;
+    public void setInsurances(List<String> insurances) {
+        this.insurances = insurances;
     }
 
     public Boolean getUpdateSchedule() {

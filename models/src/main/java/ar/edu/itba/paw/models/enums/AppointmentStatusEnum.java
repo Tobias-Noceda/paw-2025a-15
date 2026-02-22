@@ -15,7 +15,7 @@ public enum AppointmentStatusEnum {
         return displayName;
     }
 
-    public static AppointmentStatusEnum fromString(String status) {//TODO sacar tolower de los otros casos y otros enum
+    public static AppointmentStatusEnum fromString(String status) {
         for (AppointmentStatusEnum s : AppointmentStatusEnum.values()) {
             if (s.displayName.equalsIgnoreCase(status)) {
                 return s;

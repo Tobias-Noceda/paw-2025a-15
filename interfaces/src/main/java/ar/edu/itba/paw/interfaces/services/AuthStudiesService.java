@@ -2,7 +2,7 @@ package ar.edu.itba.paw.interfaces.services;
 
 import java.util.List;
 
-public interface AuthStudiesService {//TODO check deprecated
+public interface AuthStudiesService {
 
     public boolean authStudyForDoctorId(long studyId, long doctorId);
 

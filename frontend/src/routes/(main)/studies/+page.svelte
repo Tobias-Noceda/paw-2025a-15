@@ -352,7 +352,7 @@
 						variant="primary"
 						onclick={async () => {
 							try {
-								await deleteStudy(deleteStudyData!.study.links.self, fetch);
+								await deleteStudy(deleteStudyData!.study.links.self.resolved!, fetch);
 								studies.results.splice(deleteStudyData!.idx, 1);
 								toastTitle = m['studies.messages.success.deleting.title']();
 								toastMessage = m['studies.messages.success.deleting.message']();

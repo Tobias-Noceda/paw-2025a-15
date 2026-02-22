@@ -43,7 +43,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         }
         
         const appointments = await fetchFreeAppointments(
-            doctor.links.freeAppointments, 
+            doctor.links.freeAppointments.resolved!, 
             formatDateLocal(selectedDate)
         );
 

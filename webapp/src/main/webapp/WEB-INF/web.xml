@@ -150,5 +150,9 @@
     <filter-name>StaticCacheFilter</filter-name>
     <url-pattern>/cached/*</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>StaticCacheFilter</filter-name>
+    <url-pattern>/_app/*</url-pattern>
+  </filter-mapping>
 
 </web-app>

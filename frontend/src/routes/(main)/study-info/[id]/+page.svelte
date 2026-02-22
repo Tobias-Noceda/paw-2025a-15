@@ -47,7 +47,7 @@
 	});
 
 	const unauthorizeDoctor = async (doctor: Doctor) => {
-		unauthorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+		unauthorizeDoctorsForStudy(study.links.self.resolved!, [doctor.links.self.resolved!], fetch)
 			.then(() => {
 				if (authorizedDoctorsEmails.includes(doctor.email)) {
 					authorizedDoctorsEmails = authorizedDoctorsEmails.filter(
@@ -66,7 +66,7 @@
 	};
 
 	const authorizeDoctor = async (doctor: Doctor) => {
-		authorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+		authorizeDoctorsForStudy(study.links.self.resolved!, [doctor.links.self.resolved!], fetch)
 			.then(() => {
 				if (authorizedDoctorsEmails.includes(doctor.email)) {
 					authorizedDoctorsEmails = authorizedDoctorsEmails.filter(
@@ -108,7 +108,7 @@
 							if (index) {
 								// download file
 								try {
-									const response = await fetch(file.links.self, {
+									const response = await fetch(file.links.self.resolved!, {
 										credentials: 'include',
 										headers: {
 											Accept: file.type
@@ -145,11 +145,11 @@
 								} catch (error) {
 									console.error('Download error:', error);
 									// Fallback: open in new window through frontend wrapper
-									window.open(file.links.self.replace('/api', ''), '_blank');
+									window.open(file.links.self.resolved!.replace('/api', ''), '_blank');
 								}
 							} else {
 								// view file in new tab through frontend wrapper
-								window.open(file.links.self.replace('/api', ''), '_blank');
+								window.open(file.links.self.resolved!.replace('/api', ''), '_blank');
 							}
 						},
 						class: 'px-2 py-1 text-sm font-semibold'
@@ -186,7 +186,7 @@
 		let i = 0;
 		for (const file of allFiles) {
 			try {
-				const response = await fetch(file.links.self);
+				const response = await fetch(file.links.self.resolved!);
 				if (!response.ok) throw new Error('Download failed');
 
 				const blob = await response.blob();
@@ -262,7 +262,7 @@
 	const handleDeauthorizeAll = async () => {
 		for (const doctor of doctors) {
 			if (authorizedDoctorsEmails.includes(doctor.email)) {
-				await unauthorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+				await unauthorizeDoctorsForStudy(study.links.self.resolved!, [doctor.links.self.resolved!], fetch)
 					.then(() => {
 						authorizedDoctorsEmails = authorizedDoctorsEmails.filter(
 							(email) => email !== doctor.email
@@ -281,7 +281,7 @@
 	const handleAuthorizeAll = async () => {
 		for (const doctor of doctors) {
 			if (!authorizedDoctorsEmails.includes(doctor.email)) {
-				await authorizeDoctorsForStudy(study.links.self, [doctor.links.self], fetch)
+				await authorizeDoctorsForStudy(study.links.self.resolved!, [doctor.links.self.resolved!], fetch)
 					.then(() => {
 						authorizedDoctorsEmails = [...authorizedDoctorsEmails, doctor.email];
 					})
@@ -414,8 +414,8 @@
                     tabindex="-2"
 				>
 					<img
-						src={viewingFile.links.self}
-						alt="File {viewingFile.links.self}"
+						src={viewingFile.links.self.resolved!}
+						alt="File {viewingFile.links.self.resolved!}"
 						class="max-w-full max-h-full object-contain rounded-lg shadow-lg"
 					/>
 				</div>
@@ -426,7 +426,7 @@
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<!-- svelte-ignore element_invalid_self_closing_tag -->
 				<iframe
-					src={viewingFile.links.self}
+					src={viewingFile.links.self.resolved!}
 					title="PDF Viewer"
 					class="w-full h-full rounded-lg shadow-lg"
 					onclick={(e) => e.stopPropagation()}
@@ -460,7 +460,7 @@
 					<Button
 						variant="primary"
 						onclick={() => {
-							deleteStudy(study.links.self, fetch)
+							deleteStudy(study.links.self.resolved!, fetch)
 								.then(() => {
 									goto(`${base}/studies`);
 								})

@@ -42,13 +42,13 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
 
     try {
         if (currentUser.role === 'DOCTOR' && (currentUserData as Doctor).links.freeAppointments) {
-            freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments;
+            freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments.resolved!;
             freeAppointments = await fetchFreeAppointments(freeAppointmentsLink, formatDateLocal(selectedDate), fetch);
         } else if (currentUser.role === 'PATIENT' && (currentUserData as Patient).links.pastAppointments) {
-            pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, false, fetch);
+            pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments.resolved!, false, fetch);
         }
 
-        futureAppointmentsLink = currentUserData.links.futureAppointments;
+        futureAppointmentsLink = currentUserData.links.futureAppointments.resolved!;
         futureAppointments = await fetchNonFreeAppointments(futureAppointmentsLink, currentUser.role === 'DOCTOR', fetch);
 
         return {

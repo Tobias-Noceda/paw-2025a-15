@@ -2,17 +2,17 @@ package ar.edu.itba.paw.webapp.dto.input;
 
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.URL;
 
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
+
+@NonEmptyBody
 public class StudyAuthPatchDTO {
-    // TODO: Validate that these are valid doctor URNs
     private List<@URL(protocol = "http") String> doctors;
     
     @NotNull
-    @NotBlank
     private Boolean authorize;
 
     public List<String> getDoctors() {

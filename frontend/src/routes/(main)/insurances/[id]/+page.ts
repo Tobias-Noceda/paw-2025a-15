@@ -2,8 +2,6 @@ import { user, userData } from '$lib/stores/user';
 import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
-import type { Appointment, Doctor, Paginated, Patient } from '$types/api';
-import { fetchFreeAppointments, fetchNonFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
 import { setUserFromSession } from '$lib/stores/user';
 import { fetchInsuranceById } from '$lib/services/insurances';
 

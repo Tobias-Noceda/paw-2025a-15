@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -53,22 +56,19 @@ public class AppointmentController {
     @GET
     @Produces(value = VndType.APPLICATION_APPOINTMENT)
     public Response listAppointments(
-        @QueryParam("userId") Long userId,
+        @QueryParam("userId") @NotNull @Min(1) Long userId,
         @QueryParam("status") @NotBlank String status,
         @QueryParam("date") String date,
-        @QueryParam("page") @DefaultValue("1") int page,
-        @QueryParam("pageSize") @DefaultValue("10") int pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
-        AppointmentStatusEnum appointmentStatus = AppointmentStatusEnum.fromString(status.toLowerCase());//TODO catch illegalArgument with bad request?
+        AppointmentStatusEnum appointmentStatus = AppointmentStatusEnum.fromString(status);
         List<AppointmentDTO> appointmentDTOs;
         Integer totalItems;
         LocalDate today = LocalDate.now(ARGENTINA_ZONE);
         
         switch (appointmentStatus) {
             case FREE -> {
-                if (userId == null) {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for FREE status").build();
-                }
                 LocalDate selectedDate = date != null ? LocalDate.parse(date) : today;
                 appointmentDTOs = as.getAvailableTurnsByDoctorIdByDate(userId, selectedDate)
                     .stream()
@@ -90,33 +90,23 @@ public class AppointmentController {
             }
             case TAKEN -> {
                 try {
-                    if (userId != null) {   
-                        appointmentDTOs = as.getFutureAppointmentDataPageByUserId(userId, page, pageSize)
-                            .stream()
-                            .map(AppointmentDTO.mapper(appointmentStatus, uriInfo))
-                            .collect(Collectors.toList());
-                        totalItems = as.getFutureAppointmentTotalByUserId(userId);
-                    } else {
-                        return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for TAKEN status").build();
-                    }
-                } catch (Exception e) {
-                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error fetching TAKEN appointments").build();
-                }
-            }
-            case COMPLETED -> {
-                if (userId != null) {
-                    appointmentDTOs = as.getOldAppointmentDataPageByPatientId(userId, page, pageSize)
+                    appointmentDTOs = as.getFutureAppointmentDataPageByUserId(userId, page, pageSize)
                         .stream()
                         .map(AppointmentDTO.mapper(appointmentStatus, uriInfo))
                         .collect(Collectors.toList());
-                    totalItems = as.getOldAppointmentTotalByPatientId(userId);
-                } else {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("userId parameter is required for COMPLETED status").build();
+                    totalItems = as.getFutureAppointmentTotalByUserId(userId);
+                } catch (Exception e) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
                 }
             }
-            default -> {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported status").build();
+            case COMPLETED -> {
+                appointmentDTOs = as.getOldAppointmentDataPageByPatientId(userId, page, pageSize)
+                    .stream()
+                    .map(AppointmentDTO.mapper(appointmentStatus, uriInfo))
+                    .collect(Collectors.toList());
+                totalItems = as.getOldAppointmentTotalByPatientId(userId);
             }
+            default -> throw new IllegalArgumentException();
         }
         
         return PaginationBuilder.buildResponse(
@@ -145,7 +135,7 @@ public class AppointmentController {
         ) {}).build();
     }
 
-    @PATCH//TODO capaz faltaria un post?
+    @PATCH
     @Path("/{appointmentId}")
     @Consumes(value = VndType.APPLICATION_APPOINTMENT)
     @Produces(value = VndType.APPLICATION_APPOINTMENT)
@@ -156,29 +146,25 @@ public class AppointmentController {
         AppointmentNewId id = AppointmentNewId.fromId(appointmentId);
 
         User user = AuthenticatedUser.get();
-        
-        if (user == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("User not authenticated").build();
-        }
 
         AppointmentNew newAppointment;
 
         switch (appointmentEditDTO.getStatus()) {
             case TAKEN -> {
                 if (appointmentEditDTO.getDescription() == null || appointmentEditDTO.getDescription().isBlank()) {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("Description is required when taking an appointment").build();
+                    return Response.status(Response.Status.BAD_REQUEST).build();
                 }
                 try {
                     newAppointment = as.addAppointment(id.getShiftId(), user.getId(), id.getDate(), id.getStartTime(), id.getEndTime(), appointmentEditDTO.getDescription());
                 } catch (AppointmentAlreadyTakenException e) {
-                    return Response.status(Response.Status.CONFLICT).entity("Appointment slot already taken").build();
+                    return Response.status(Response.Status.CONFLICT).build();
                 }
             }
             case FREE -> {
                 newAppointment = as.cancelAppointment(id.getShiftId(), id.getDate(), id.getStartTime(), id.getEndTime(), user.getId());
             }
             default -> {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported status for modification").build();
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
         }
 

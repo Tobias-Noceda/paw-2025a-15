@@ -60,13 +60,13 @@
 				return {
 					component: ToggleCell,
 					props: {
-						selected: selectedDoctorsSelfs.includes(doctor.links.self),
+						selected: selectedDoctorsSelfs.includes(doctor.links.self.resolved!),
 						onclick: (selected: boolean) => {
 							if (selected) {
-								selectedDoctorsSelfs = [...selectedDoctorsSelfs, doctor.links.self];
+								selectedDoctorsSelfs = [...selectedDoctorsSelfs, doctor.links.self.resolved!];
 							} else {
 								selectedDoctorsSelfs = selectedDoctorsSelfs.filter(
-									(self) => self !== doctor.links.self
+									(self) => self !== doctor.links.self.resolved!
 								);
 							}
 						},
@@ -81,7 +81,7 @@
 
 	const handleSelectAll = () => {
 		if (data.doctors) {
-			selectedDoctorsSelfs = data.doctors.map((doctor: Doctor) => doctor.links.self);
+			selectedDoctorsSelfs = data.doctors.map((doctor: Doctor) => doctor.links.self.resolved!);
 		}
 	};
 

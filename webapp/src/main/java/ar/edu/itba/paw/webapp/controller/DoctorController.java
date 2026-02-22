@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -49,6 +51,7 @@ import ar.edu.itba.paw.models.enums.WeekdayEnum;
 import ar.edu.itba.paw.webapp.auth.JwtTokenUtil;
 import ar.edu.itba.paw.webapp.controller.util.AuthenticatedUser;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
+import ar.edu.itba.paw.webapp.controller.util.URIHelper;
 import ar.edu.itba.paw.webapp.dto.input.VacationCreateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorAuthorizationUpdateDTO;
 import ar.edu.itba.paw.webapp.dto.input.DoctorCreateDTO;
@@ -104,8 +107,8 @@ public class DoctorController {
         @QueryParam("insurance") String insuranceName,
         @QueryParam("weekday") String weekday,
         @QueryParam("orderBy") String orderBy,
-        @QueryParam("page") @DefaultValue("1") Integer page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
@@ -173,10 +176,21 @@ public class DoctorController {
         if (shiftsModificationDTO != null && shiftsModificationDTO.getEndTime().isBefore(shiftsModificationDTO.getStartTime())) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Shift end time cannot be before start time").build();
         }
-        List<Insurance> insurances = doctorCreateDTO.getInsurances().stream()
-            .map(name -> {//TODO pasar logica al service
-                return is.getInsuranceByName(name).orElseThrow(() -> new NotFoundException("Insurance with name: " + name + " does not exist!"));
+        List<Long> insuranceIds = null;
+        if (doctorCreateDTO.getInsurances()!=null){
+            insuranceIds = URIHelper.getIds(
+                doctorCreateDTO.getInsurances(), 
+                uriInfo.getBaseUriBuilder()
+                    .path(InsuranceController.class)
+                    .build()
+            );
+        }
+        if (insuranceIds!=null){
+            insuranceIds.stream()
+            .map(id -> {
+                return is.getInsuranceById(id).orElseThrow(() -> new NotFoundException("Insurance with id: " + id + " does not exist!"));
             }).collect(Collectors.toList());
+        }
 
         String verifyToken = jtu.createVerifyToken(doctorCreateDTO.getEmail(), MAIL_TOKEN_EXPIRY_TIME);
         Doctor doctor = ds.createDoctor(
@@ -186,7 +200,7 @@ public class DoctorController {
             doctorCreateDTO.getTelephone(),
             doctorCreateDTO.getLicense(),
             doctorCreateDTO.getSpecialty(),
-            insurances.stream().map((insurance) -> insurance.getId()).collect(Collectors.toList()),
+            insuranceIds,
             LocaleEnum.fromLocale(LocaleContextHolder.getLocale()),
             verifyToken
         );
@@ -235,7 +249,15 @@ public class DoctorController {
     ) {
         Doctor doctor = ds.getDoctorById(doctorId).orElseThrow(NotFoundException::new);
 
-        List<Long> insuranceIds = doctorEditDTO.getInsuranceIds();
+        List<Long> insuranceIds = null;
+        if (doctorEditDTO.getInsurances()!=null){
+            insuranceIds = URIHelper.getIds(
+                doctorEditDTO.getInsurances(), 
+                uriInfo.getBaseUriBuilder()
+                    .path(InsuranceController.class)
+                    .build()
+            );
+        }
         if (insuranceIds == null) {
             insuranceIds = doctor.getInsurances().stream()
                 .map(Insurance::getId)
@@ -324,11 +346,11 @@ public class DoctorController {
         try {
             User user = AuthenticatedUser.get();
             
-            if (!user.getId().equals(patientId)) {//TODO etsa logica no deberia estar en auth?
+            if (!user.getId().equals(patientId)) {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
             
-            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {//TODO mismo en auth?
+            if (!ads.hasAuthDoctor(user.getId(), doctorId)) {
                 return Response.ok(new GenericEntity<DoctorAuthorizationDTO>(new DoctorAuthorizationDTO(false, List.of())) {}).build();
             }
             
@@ -351,7 +373,7 @@ public class DoctorController {
     ) {
         User loggedUser = AuthenticatedUser.get();
 
-        if (loggedUser == null) {//TODO logica en auth??
+        if (loggedUser == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -375,19 +397,14 @@ public class DoctorController {
     public Response listVacations(
         @PathParam("id") Long doctorId,
         @QueryParam("status") final String status,
-        @QueryParam("page") @DefaultValue("1") final int page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
-        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){ //TODO capaz en service ekl check?
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty() || status == null){
             throw new NotFoundException();
         }
         VacationsStatusEnum statusEnum;
-        try {
-            statusEnum = VacationsStatusEnum.fromValue(status.toLowerCase());
-        }
-        catch(IllegalArgumentException e){
-            return Response.status(Status.BAD_REQUEST).entity("Invalid Status value").build();
-        }
+        statusEnum = VacationsStatusEnum.fromValue(status);
 
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("status", status);
@@ -441,7 +458,6 @@ public class DoctorController {
         LocalDate startDate = vacationDTO.getStartDate();
         LocalDate endDate = vacationDTO.getEndDate();
 
-        //TODO toda esta logica en el service o en otra forma
         if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
             return Response.status(Response.Status.BAD_REQUEST)
                 .entity("{\"error\": \"End date must be after start date\"}")
@@ -485,12 +501,12 @@ public class DoctorController {
         @PathParam("startDate") String startDateStr,
         @PathParam("endDate") String endDateStr
     ) {
-        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {//TODO en auth?
+        if (doctorId == null || ds.getDoctorById(doctorId).isEmpty()) {
             throw new NotFoundException();
         }
 
         if (startDateStr == null || endDateStr == null) {
-            return Response.status(Response.Status.BAD_REQUEST)//TODO aca??????
+            return Response.status(Response.Status.BAD_REQUEST)
                 .entity("{\"error\": \"startDate and endDate query parameters are required\"}")
                 .build();
         }

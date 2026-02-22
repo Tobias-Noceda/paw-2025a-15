@@ -8,6 +8,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.URL;
 
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.webapp.form.constraints.ValidArgPhone;
@@ -41,7 +44,8 @@ public class DoctorCreateDTO {
     private SpecialtyEnum specialty;
 
     @NotNull
-    private List<String> insurances;
+    @Size(min = 1)
+    private List<@URL(protocol = "http")String>insurances;
 
     @Valid
     private ShiftsModificationDTO shifts;

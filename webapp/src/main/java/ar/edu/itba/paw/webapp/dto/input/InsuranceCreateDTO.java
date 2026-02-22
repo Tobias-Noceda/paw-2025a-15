@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.URL;
 
+import ar.edu.itba.paw.webapp.dto.validation.NonEmptyBody;
+@NonEmptyBody
 public class InsuranceCreateDTO {
     
     @NotNull
@@ -13,7 +15,7 @@ public class InsuranceCreateDTO {
 
     @NotNull
     @URL(protocol = "http")
-    private String pictureId;
+    private String picture;
 
     public String getName(){
         return name;
@@ -23,11 +25,11 @@ public class InsuranceCreateDTO {
         this.name = name;
     }
 
-    public String getPictureId(){
-        return pictureId;
+    public String getPicture(){
+        return picture;
     }
 
-    public void setPictureId(String pictureId){
-        this.pictureId = pictureId;
+    public void setPicture(String pictureId){
+        this.picture = pictureId;
     }
 }

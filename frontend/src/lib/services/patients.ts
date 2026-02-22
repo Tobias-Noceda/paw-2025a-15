@@ -1,4 +1,4 @@
-import { get, getAuth, patchAuth, post } from "$modules/api.svelte";
+import { get, getAuth, patchAuth, post, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import { baseApiUrl, type Insurance, type Paginated, type Patient } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
@@ -158,7 +158,7 @@ export const updatePatientProfile = async (user: User, payload: PatientProfileUp
         allergies: payload.allergies !== patient.allergies ? payload.allergies : undefined,
         hobbies: payload.hobbies !== patient.hobbies ? payload.hobbies : undefined,
         job: payload.job !== patient.job ? payload.job : undefined,
-        insuranceId: payload.insuranceSelf && payload.insuranceSelf !== patient.links.insurance ? parseInsuranceId(payload.insuranceSelf) : undefined,
+        insuranceId: payload.insuranceSelf && payload.insuranceSelf !== patient.links.insurance?.resolved! ? parseInsuranceId(payload.insuranceSelf) : undefined,
         insuranceNumber: payload.insuranceNumber && payload.insuranceNumber.trim() !== '' && payload.insuranceNumber !== patient.insuranceNumber ? payload.insuranceNumber : undefined
     };
 
@@ -184,8 +184,10 @@ export const updatePatientProfile = async (user: User, payload: PatientProfileUp
 };
 
 const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fetch): Promise<Patient> => {
+    resolveNonTemplatedLinks(patient);
+
     if (patient.links.insurance) {
-        const insuranceResponse = await get(patient.links.insurance, undefined, fetchFn);
+        const insuranceResponse = await get(patient.links.insurance.resolved!, undefined, fetchFn);
 
         if (insuranceResponse.ok) {
             const insurancesData: Insurance = await insuranceResponse.json();
@@ -195,7 +197,7 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
 
     console.log('Patient data after fetching insurance:', patient);
     // Fetch habits info
-    const habitsResponse = await getAuth(patient.links.habitsInfo, undefined, fetchFn)
+    const habitsResponse = await getAuth(patient.links.habitsInfo.resolved!, undefined, fetchFn)
         .catch(() => null);
     if (habitsResponse && habitsResponse.ok) {
         patient.gaveHabits = true;
@@ -206,7 +208,7 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
     }
 
     // Fetch medical info
-    const medicalResponse = await getAuth(patient.links.medicalInfo, undefined, fetchFn)
+    const medicalResponse = await getAuth(patient.links.medicalInfo.resolved!, undefined, fetchFn)
         .catch(() => null);
 
     if (medicalResponse && medicalResponse.ok) {
@@ -218,7 +220,7 @@ const populatePatientData = async (patient: Patient, fetchFn: typeof fetch = fet
     }
 
     // Fetch social info
-    const socialResponse = await getAuth(patient.links.socialInfo, undefined, fetchFn)
+    const socialResponse = await getAuth(patient.links.socialInfo.resolved!, undefined, fetchFn)
         .catch(() => null);
 
     if (socialResponse && socialResponse.ok) {

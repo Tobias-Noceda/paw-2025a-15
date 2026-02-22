@@ -20,7 +20,8 @@ public class PatientSocialInfoDTO {
         dto.setHobbies(patient.getHobbies());
         dto.setJob(patient.getJob());
 
-        URI self = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("socialInfo").build();
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(PatientController.class).path(String.valueOf(patient.getId())).path("socialInfo").build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)

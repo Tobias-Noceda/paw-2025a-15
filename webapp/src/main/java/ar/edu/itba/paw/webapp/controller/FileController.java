@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -57,13 +60,13 @@ public class FileController {
     @GET
     @Produces(VndType.APPLICATION_FILE)
     public Response listFiles(
-        @QueryParam("studyId") final Long studyId,
-        @QueryParam("page") @DefaultValue("1") final int page,
-        @QueryParam("pageSize") @DefaultValue("10") Integer pageSize
+        @QueryParam("studyId") @NotNull @Min(1) final Long studyId,
+        @QueryParam("page") @DefaultValue("1") @Min(1) final int page,
+        @QueryParam("pageSize") @DefaultValue("10") @Min(1) @Max(100) Integer pageSize
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if(studyId!=null) queryParams.put("studyId", studyId.toString());
+        queryParams.put("studyId", studyId.toString());
             
         final List<FileDTO> files = ss.getStudyFilesPage(studyId, page, pageSize)
             .stream().map(FileDTO.mapper(uriInfo)).collect(Collectors.toList());
@@ -96,7 +99,7 @@ public class FileController {
     @Path("/{id:\\d+}")
     @Produces({"image/png", "image/jpeg", "application/pdf"})
     public Response getFileById(
-        @PathParam("id") final long id,
+        @PathParam("id") @Min(1) final long id,
         @Context Request request
     ) {
         File file = fs.findById(id).orElseThrow(NotFoundException::new);

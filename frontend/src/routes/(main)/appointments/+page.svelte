@@ -26,6 +26,7 @@
     let showErrorToast = $state(false);
 
     let canceledAppointment: Appointment | null = $state(null);
+    let canceledAppointmentToast: Appointment | null = $state(null);
     let canceledAppointmentId: number | null = $state(null);
     let cancelReason: string | null = $state(null);
 
@@ -188,8 +189,9 @@
         if (!appointment) return;
 
         if (reason) {
-            takeAppointment(appointment.links.self, reason)
+            takeAppointment(appointment.links.self.resolved!, reason)
                 .then(() => {
+                    canceledAppointmentToast = appointment;
                     showSuccessToast = true;
 
                     // Remove the appointment from futureAppointments
@@ -200,8 +202,9 @@
                     console.error('Failed to take appointment:', error);
                 });
         } else {
-            cancelAppointment(appointment.links.self)
+            cancelAppointment(appointment.links.self.resolved!)
                 .then(() => {
+                    canceledAppointmentToast = appointment;
                     showSuccessToast = true;
 
                     futureAppointments.results.splice(index, 1)
@@ -240,7 +243,7 @@
                     selectedAppointment = appointment;
                     return;
                 }
-                goto(`${base}/${parseSelf((appointment as Appointment).doctor!.links.self)}`);
+                goto(`${base}/${parseSelf((appointment as Appointment).doctor!.links.self.resolved!)}`);
             }}
             emptyMessage={m['appointments.empty.future']()}
             class="shadow-sm rounded-lg"
@@ -256,7 +259,7 @@
                 columns={tableColumns}
                 striped
                 hover
-                onRowClick={(row) => goto(`${base}/${parseSelf((row as Appointment).doctor!.links.self)}`)}
+                onRowClick={(row) => goto(`${base}/${parseSelf((row as Appointment).doctor!.links.self.resolved!)}`)}
                 emptyMessage={m['appointments.empty.past']()}
                 class="shadow-sm rounded-lg"
             />
@@ -307,9 +310,9 @@
         variant="success"
         title={m['appointments.canceled.success_title']()}
         description={m['appointments.canceled.success_message']({
-            day: canceledAppointment?.date ? new Date(canceledAppointment.date).getDate() : '',
-            month: canceledAppointment?.date ? new Date(canceledAppointment.date).toLocaleString(getLocale(), { month: 'long' }) : '',
-            startTime: canceledAppointment?.startTime ?? ''}
+            day: canceledAppointmentToast?.date ? new Date(canceledAppointmentToast.date).getDate() : '',
+            month: canceledAppointmentToast?.date ? new Date(canceledAppointmentToast.date).toLocaleString(getLocale(), { month: 'long' }) : '',
+            startTime: canceledAppointmentToast?.startTime ?? ''}
         )}
     />
     <Toast
@@ -372,7 +375,7 @@
                             variant="primary"
                             onclick={() => {
                                 if (selectedAppointment?.patient) {
-                                    goto(`${base}/${parseSelf(selectedAppointment.patient.links.self)}`);
+                                    goto(`${base}/${parseSelf(selectedAppointment.patient.links.self.resolved!)}`);
                                 }
                             }}
                         >

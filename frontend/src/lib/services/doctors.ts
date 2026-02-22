@@ -2,7 +2,7 @@ import type { Doctor, DoctorAuthorizations, Insurance, Paginated, Shift } from "
 import type { Weekdays } from "$types/enums/weekdays";
 import { baseApiUrl } from "$types/api";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
-import { get, post, getAuth, postAuth, putAuth, patchAuth, deleteAuth } from "$modules/api.svelte";
+import { get, post, getAuth, postAuth, putAuth, patchAuth, deleteAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import UriTemplate from "uri-templates";
 import type { User } from "$stores/user";
 import type { AccessLevels } from "$types/enums/accessLevels";
@@ -229,7 +229,7 @@ export const updateDoctorProfile = async (
         pictureId: imageLocation,
         telephone: payload.telephone.trim() !== '' && payload.telephone !== doctor.telephone ? payload.telephone : undefined,
         mailLanguage: payload.mailLanguage !== user.language ? payload.mailLanguage : undefined,
-        insuranceIds: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs.map(parseInsuranceId) : undefined,
+        insurances: payload.insuranceSelfs.length > 0 ? payload.insuranceSelfs : undefined,
         updateSchedule: payload.updateSchedule,
         shifts: payload.shifts && payload.updateSchedule ? payload.shifts : undefined,
         keepTurns: payload.keepTurns !== undefined ? payload.keepTurns : undefined
@@ -256,7 +256,9 @@ export const updateDoctorProfile = async (
 };
 
 const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch): Promise<Doctor> => {
-    const response = await get(doctor.links.schedule, undefined, fetchFn);
+    resolveNonTemplatedLinks(doctor);
+    
+    const response = await get(doctor.links.schedule.resolved!, undefined, fetchFn);
 
     if (response && response.ok) {
         const schedule: Shift[] = await response.json();
@@ -286,12 +288,12 @@ const populateDoctorData = async (doctor: Doctor, fetchFn: typeof fetch = fetch)
 
     }
 
-    let insurancesPage = await fetchInsurancesPage(doctor.links.insurances, fetchFn);
-    let insurances: string[] = [...insurancesPage.results.map(i => i.name)];
+    let insurancesPage = await fetchInsurancesPage(doctor.links.insurances.resolved!, fetchFn);
+    let insurances: string[] = [...insurancesPage.results.map(i => i.links.self.href)];
 
     while (insurancesPage._links.next) {
         insurancesPage = await fetchInsurancesPage(insurancesPage._links.next, fetchFn);
-        insurances = [...insurances, ...insurancesPage.results.map(i => i.name)];
+        insurances = [...insurances, ...insurancesPage.results.map(i => i.links.self.href)];
     }
 
     doctor.insurances = insurances;
