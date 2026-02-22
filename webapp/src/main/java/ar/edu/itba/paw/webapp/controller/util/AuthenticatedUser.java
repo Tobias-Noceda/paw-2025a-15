@@ -1,16 +1,17 @@
 package ar.edu.itba.paw.webapp.controller.util;
 
-import java.security.Principal;
-import java.util.function.Function;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import ar.edu.itba.paw.models.entities.User;
 
 public class AuthenticatedUser {
-    public static User get(Principal principal, Function<String, User> userFetcher) {
-        if (principal == null || principal.getName() == null) {
-            return null;
+    public static User get() {
+        Authentication session = SecurityContextHolder.getContext().getAuthentication();
+        if (session != null && session.getPrincipal() instanceof User user) {
+            return user;
         }
-
-        return userFetcher.apply(principal.getName());
+        
+        return null;
     }
 }

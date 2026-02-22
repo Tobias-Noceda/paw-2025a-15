@@ -14,8 +14,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -141,15 +141,6 @@ public class AuthDoctorServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ads.getAuthAccessLevelEnums(PATIENT_ID, DOC_ID)
-        );
-    }
-
-    @Test
-    public void testDeauthorizeAllDoctorsNonexistent(){
-        Mockito.when(ps.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
-
-        Assert.assertThrows(NotFoundException.class, () -> 
-            ads.deauthorizeAllDoctors(PATIENT_ID)
         );
     }
 

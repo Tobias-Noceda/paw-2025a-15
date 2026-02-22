@@ -11,6 +11,9 @@ public class LinkDTO {
     private URI doctor;
     private URI doctors;
     private URI patient;
+    private URI medicalInfo;
+    private URI socialInfo;
+    private URI habitsInfo;
     private URI uploader;
     private URI authDoctors;
     private URI schedule;
@@ -18,6 +21,12 @@ public class LinkDTO {
     private URI pastAppointments;
     private URI futureAppointments;
     private URI files;
+    private URI patients;
+    private URI pastVacations;
+    private URI futureVacations;
+
+    private TemplatedLinkDTO authorization;
+    private TemplatedLinkDTO studies;
 
     public URI getSelf() {
         return self;
@@ -142,6 +151,78 @@ public class LinkDTO {
 
     public LinkDTO setFutureAppointments(URI futureAppointments) {
         this.futureAppointments = futureAppointments;
+        return this;
+    }
+
+    public URI getMedicalInfo() {
+        return medicalInfo;
+    }
+
+    public LinkDTO setMedicalInfo(URI medicalInfo) {
+        this.medicalInfo = medicalInfo;
+        return this;
+    }
+
+    public URI getSocialInfo() {
+        return socialInfo;
+    }
+
+    public LinkDTO setSocialInfo(URI socialInfo) {
+        this.socialInfo = socialInfo;
+        return this;
+    }
+
+    public URI getHabitsInfo() {
+        return habitsInfo;
+    }
+
+    public LinkDTO setHabitsInfo(URI habitsInfo) {
+        this.habitsInfo = habitsInfo;
+        return this;
+    }
+
+    public URI getPatients() {
+        return patients;
+    }
+
+    public LinkDTO setPatients(URI patients) {
+        this.patients = patients;
+        return this;
+    }
+
+    public TemplatedLinkDTO getAuthorization() {
+        return authorization;
+    }
+
+    public LinkDTO setAuthorization(TemplatedLinkDTO authorization) {
+        this.authorization = authorization;
+        return this;
+    }
+
+    public TemplatedLinkDTO getStudies() {
+        return studies;
+    }
+
+    public LinkDTO setStudies(TemplatedLinkDTO studies) {
+        this.studies = studies;
+        return this;
+    }
+
+    public URI getPastVacations() {
+        return pastVacations;
+    }
+
+    public LinkDTO setPastVacations(URI pastVacations) {
+        this.pastVacations = pastVacations;
+        return this;
+    }
+
+    public URI getFutureVacations() {
+        return futureVacations;
+    }
+
+    public LinkDTO setFutureVacations(URI futureVacations) {
+        this.futureVacations = futureVacations;
         return this;
     }
 }

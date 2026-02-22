@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 
 public interface InsuranceService {
+    
     public Insurance create(String name, File picture);
 
     public void edit(long id, String name, Long pictureId);
@@ -15,15 +16,13 @@ public interface InsuranceService {
 
     public Optional<Insurance> getInsuranceByName(String name);
 
-    public List<Insurance> getAllInsurances();
-
     public int getInsurancesByDoctorIdCount(long doctorId);
     
     public List<Insurance> getInsurancesByDoctorIdPage(long doctorId, int page, int pageSize);
 
-    public int getInsurancesCount();
+    public List<Insurance> searchInsurancesByNamePage(String name, int page, int pageSize);
 
-    public List<Insurance> getInsurancesPage(int page, int pageSize);
+    public int searchInsurancesByNameCount(String name);
 
     public void delete(long id);
 }

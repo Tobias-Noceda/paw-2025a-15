@@ -17,6 +17,7 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
@@ -54,6 +55,10 @@ public class PatientServiceImplTest {
     private static final String JOB = "carpenter";
     private static final Patient PATIENT = new Patient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, FILE, PAT_CREATE_DATE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT);
 
+    private static final long INSURANCE_ID = 1L;
+    private static final String INS_NAME = "nonsense";
+    private static final Insurance INSURANCE = new Insurance(INS_NAME, FILE);
+
     @InjectMocks
     private PatientServiceImpl ps;
 
@@ -74,7 +79,7 @@ public class PatientServiceImplTest {
         Mockito.when(us.getUserByEmail(Mockito.eq(PAT_EMAIL))).thenReturn(Optional.of(PATIENT));
 
         Assert.assertThrows(AlreadyExistsException.class, () -> 
-            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT)
+            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT, "token")
         );
     }
 
@@ -84,7 +89,7 @@ public class PatientServiceImplTest {
         Mockito.when(fs.findById(1)).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
-            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT)
+            ps.createPatient(PAT_EMAIL, PAT_PASSWORD, PAT_NAME, PAT_TELEPHONE, PAT_LOCALE, BIRTHDATE, HEIGHT, WEIGHT, "token")
         );
     }
 
@@ -107,13 +112,45 @@ public class PatientServiceImplTest {
 
     @Test
     public void testUpdatePatientDetailsNonexistentInsurance(){
-        final Long INSURANCE_ID = 0L;
         PATIENT.setId(PATIENT_ID);
         Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
         Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.empty());
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE_ID, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, INSURANCE_ID, null)
+        );
+    }
+
+    @Test
+    public void testUpdatePatientDetailsNonexistentPicture(){
+        PATIENT.setId(PATIENT_ID);
+        INSURANCE.setId(INSURANCE_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.of(PATIENT));
+        Mockito.when(is.getInsuranceById(Mockito.eq(INSURANCE_ID))).thenReturn(Optional.of(INSURANCE));
+        Mockito.when(fs.findById(Mockito.eq(FILE_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ps.updatePatient(PATIENT, PAT_TELEPHONE, FILE_ID, PAT_LOCALE, BIRTHDATE, BLOODTYPE, HEIGHT, WEIGHT, SMOKES, DRINKS, MEDS, CONDITIONS, ALLERGIES, DIET, HOBBIES, JOB, INSURANCE_ID, null)
+        );
+    }
+
+    @Test
+    public void testGetAuthDoctorsByPatientIdAndNameCountNonexistentPatient(){
+        PATIENT.setId(PATIENT_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ps.getAuthDoctorsByPatientIdAndNameCount(PATIENT_ID, null)
+        );
+    }
+
+    @Test
+    public void testGetAuthDoctorsByPatientIdAndNamePageNonexistentPatient(){
+        PATIENT.setId(PATIENT_ID);
+        Mockito.when(patientDaoMock.getPatientById(Mockito.eq(PATIENT_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ps.getAuthDoctorsByPatientIdAndNamePage(PATIENT_ID, null, 1, 1)
         );
     }
 

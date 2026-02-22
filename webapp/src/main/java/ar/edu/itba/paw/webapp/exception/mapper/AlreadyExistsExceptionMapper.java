@@ -12,7 +12,7 @@ public class AlreadyExistsExceptionMapper implements ExceptionMapper<AlreadyExis
 
     @Override
     public Response toResponse(AlreadyExistsException exception) {
-        return Response.status(Status.CONFLICT).build();
+        return Response.status(Status.CONFLICT).entity(exception.getMessage()).build();
     }
     
 }

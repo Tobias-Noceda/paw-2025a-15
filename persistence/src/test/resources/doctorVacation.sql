@@ -1,1 +1,1 @@
-INSERT INTO doctor_vacations(doctor_id, vacation_start_date, vacation_end_date) VALUES(2, DATE_ADD(CURRENT_DATE, INTERVAL 2 DAY), DATE_ADD(CURRENT_DATE, INTERVAL 5 DAY));
+INSERT INTO doctor_vacations(doctor_id, vacation_start_date, vacation_end_date) VALUES(2, '2125-04-10', '2125-04-19');

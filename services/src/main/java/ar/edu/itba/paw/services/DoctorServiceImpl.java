@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.itba.paw.interfaces.persistence.DoctorDao;
 import ar.edu.itba.paw.interfaces.services.DoctorService;
+import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.InsuranceService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -49,12 +50,24 @@ public class DoctorServiceImpl implements DoctorService {
     private InsuranceService is;
 
     @Autowired
+    private EmailService es;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
+    public void deleteDoctor(long doctorId) {
+        doctorDao.deleteDoctor(doctorId);
+        LOGGER.info("Deleted doctor with id: {}", doctorId);
+    }
+
+    @Transactional
+    @Override
     public Optional<Doctor> getDoctorById(long id) {
-        return doctorDao.getDoctorById(id);
+        Optional<Doctor> doctor = doctorDao.getDoctorById(id);
+        doctor.ifPresent(this::initializeDoctorRelations);
+        return doctor;
     }
 
     @Override
@@ -64,7 +77,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale) {
+    public Doctor createDoctor(String email, String password, String name, String telephone, String doctorLicense, SpecialtyEnum specialty, List<Long> insurances, LocaleEnum locale, String token) {
         if(us.getUserByEmail(email).isPresent()) throw new AlreadyExistsException("User with email: " + email + " already exists!");
         File picture = fs.findById(1).orElseThrow(() -> new NotFoundException("Default picture not found!"));
         List<Insurance> insuranceEntities;
@@ -78,7 +91,12 @@ public class DoctorServiceImpl implements DoctorService {
                 insuranceEntities.add(insurance);
             }
         }
-        return doctorDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
+        
+        Doctor newDoctor = doctorDao.createDoctor(email, passwordEncoder.encode(password), name, telephone, picture.getId(), locale, doctorLicense, specialty, insuranceEntities);
+        
+        es.sendWelcomeAndVerifyEmail(newDoctor, token);
+        
+        return newDoctor;
     }
 
     @Transactional
@@ -112,7 +130,9 @@ public class DoctorServiceImpl implements DoctorService {
         }
 
         LOGGER.info("Fetching doctors page: {} with page size: {}", page, pageSize);
-        return doctorDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
+        List<Doctor> doctors = doctorDao.getDoctorsPageByParams(name, specialty, insuranceId, weekday, orderBy, page, pageSize);
+        doctors.forEach(this::initializeDoctorRelations);
+        return doctors;
     }
 
     @Transactional(readOnly = true)
@@ -170,22 +190,51 @@ public class DoctorServiceImpl implements DoctorService {
         LOGGER.info("Deleted vacation for doctor with id: {}", doctorId);
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
-        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDao.getDoctorVacationsPast(doctorId);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
-        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
-        return doctorDao.getDoctorVacationsFuture(doctorId);
-    }
-
     @Override
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
         return doctorDao.vacationExists(doctorId, startDate, endDate);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorVacation> getDoctorVacationsPastPage(long doctorId, int page, int pageSize) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsPastPage(doctorId, page, pageSize);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getDoctorVacationsPastCount(long doctorId) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsPastCount(doctorId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<DoctorVacation> getDoctorVacationsFuturePage(long doctorId, int page, int pageSize) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsFuturePage(doctorId, page, pageSize);
+    }
+
+    private void initializeDoctorRelations(Doctor doctor) {
+        if (doctor == null) {
+            return;
+        }
+        if (doctor.getPicture() != null) {
+            doctor.getPicture().getId();
+        }
+        if (doctor.getInsurances() != null) {
+            doctor.getInsurances().size();
+        }
+        if (doctor.getSingleShifts() != null) {
+            doctor.getSingleShifts().size();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int getDoctorVacationsFutureCount(long doctorId) {
+        doctorDao.getDoctorById(doctorId).orElseThrow(() -> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
+        return doctorDao.getDoctorVacationsFutureCount(doctorId);
     }
 }

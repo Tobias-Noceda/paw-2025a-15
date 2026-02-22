@@ -16,9 +16,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import ar.edu.itba.paw.interfaces.persistence.AuthStudiesDao;
+import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
-import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.models.entities.Doctor;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
@@ -143,6 +143,15 @@ public class AuthStudiesServiceImplTest {
 
         Assert.assertThrows(NotFoundException.class, () -> 
             ass.authStudyForDoctorIdList(List.of(DOC_ID), STUDY_ID)
+        );
+    }
+
+    @Test
+    public void testUnauthStudyForDoctorIdListNonexistentStudy() {
+        Mockito.when(ss.getStudyById(Mockito.eq(STUDY_ID))).thenReturn(Optional.empty());
+
+        Assert.assertThrows(NotFoundException.class, () -> 
+            ass.unauthStudyForDoctorIdList(List.of(DOC_ID), STUDY_ID)
         );
     }
 

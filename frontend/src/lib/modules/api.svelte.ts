@@ -1,12 +1,12 @@
 import { browser } from '$app/environment';
-import { goto } from '$app/navigation';
+import { goto, invalidateAll } from '$app/navigation';
 import { base } from '$app/paths';
 import { PUBLIC_API_ORIGIN } from '$env/static/public';
-import { user } from '$stores/user';
-import type { Session } from '$types/api';
+import { loggedOut, user, userData } from '$stores/user';
+import type { Session, UriTemplate } from '$types/api';
 import { error } from '@sveltejs/kit';
 
-export const apiOrigin = PUBLIC_API_ORIGIN; 
+export const apiOrigin = PUBLIC_API_ORIGIN;
 
 let tokens = $state({
 	access: browser ? (localStorage.access as string) : null,
@@ -34,6 +34,12 @@ export function parseJWT(token: string) {
 		console.error('Failed to parse JWT:', error);
 		return null;
 	}
+}
+
+export function getJWTEmail(token: string): string | null {
+	const payload = parseJWT(token);
+	console.log('Parsed JWT payload:', payload);
+	return payload ? payload.sub : null;
 }
 
 export function setSession(data: Session) {
@@ -80,6 +86,39 @@ export async function login(e?: string, pass?: string): Promise<void> {
 		setSession(sessionData);
 	} catch (error) {
 		throw error;
+	}
+}
+
+export async function refreshToken(): Promise<void> {
+	if (!tokens.refresh) {
+		logout();
+		return;
+	}
+
+	try {
+		const res = await get(
+			'/api/doctors',
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${tokens.refresh}`,
+				}
+			}
+		);
+
+		if (!res.ok) {
+			throw new Error(`Refresh failed: ${res.status} ${res.statusText}`);
+		}
+
+		let sessionData: Session = {
+			access: res.headers.get('X-Access-Token') as string,
+			refresh: tokens.refresh
+		}
+
+		setSession(sessionData);
+	} catch (error) {
+		console.error('Token refresh failed:', error);
+		logout();
 	}
 }
 
@@ -145,14 +184,16 @@ export async function getAuth(path: string, options?: RequestInit, fetchFn: type
 };
 
 export async function post(path: string, body: any, options?: RequestInit, fetchFn: typeof fetch = fetch): Promise<Response> {
+	const isFormData = body instanceof FormData;
+	
 	return await fetchFn(new URL(path, PUBLIC_API_ORIGIN), {
 		...options,
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json',
 			...options?.headers,
 		},
-		body: JSON.stringify(body)
+		// Don't stringify FormData
+		body: isFormData ? body : JSON.stringify(body)
 	});
 };
 
@@ -178,7 +219,6 @@ export async function put(path: string, body: any, options?: RequestInit, fetchF
 		...options,
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json',
 			...options?.headers,
 		},
 		body: JSON.stringify(body)
@@ -257,12 +297,30 @@ export async function deleteAuth(path: string, options?: RequestInit, fetchFn: t
 	);
 };
 
-export function logout(redirectTo: string = '/login'): void {
+export function resolveNonTemplatedLinks<T extends { links: Record<string, UriTemplate> }>(data: T): T {
+	for (const key in data.links) {
+		const link = data.links[key];
+		if (!link.templated) {
+			data.links[key].resolved = link.href;
+		}
+	}
+
+	return data;
+};
+
+export function logout(redirectTo: string = '/home'): void {
+	if (!browser) {
+		return;
+	}
+	loggedOut.set(true);
+	invalidateAll();
+	window.location.href = `${base}${redirectTo}`;
+	
 	tokens = { access: null, refresh: null };
 	user.set(null);
+	userData.set(null);
 	if (browser) {
 		localStorage.removeItem('access');
 		localStorage.removeItem('refresh');
 	}
-	goto(`${base}${redirectTo}`);
 };

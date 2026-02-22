@@ -13,10 +13,13 @@ import ar.edu.itba.paw.models.enums.BloodTypeEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 
 public interface PatientDao {
+    
+    public void deletePatientById(long patientId);
+
     public Patient createPatient(String email, String password, String name, String telephone, File picture, LocaleEnum locale, LocalDate birthDate, BigDecimal height, BigDecimal weight);
 
     public void updatePatient(
-        Patient patient,
+        Long patientId,
         String phoneNumber,
         File picture,
         LocaleEnum mailLanguage,

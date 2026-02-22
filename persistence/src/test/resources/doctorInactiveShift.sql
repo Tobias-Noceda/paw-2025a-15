@@ -1,0 +1,1 @@
+INSERT INTO doctor_single_shifts(shift_id, doctor_id, shift_weekday, shift_address, shift_start_time, shift_end_time, shift_duration, shift_is_active) VALUES(2, 2, 3, 'Lavarden', '13:00:00', '13:30:00', 15, false);

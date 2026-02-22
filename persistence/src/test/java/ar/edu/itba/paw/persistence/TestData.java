@@ -7,12 +7,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import ar.edu.itba.paw.models.enums.StudyTypeEnum;
-import ar.edu.itba.paw.models.enums.AccessLevelEnum;
-import ar.edu.itba.paw.models.enums.BloodTypeEnum;
-import ar.edu.itba.paw.models.enums.FileTypeEnum;
-import ar.edu.itba.paw.models.enums.LocaleEnum;
-import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.entities.AppointmentNew;
 import ar.edu.itba.paw.models.entities.AuthDoctor;
 import ar.edu.itba.paw.models.entities.Doctor;
@@ -22,6 +16,12 @@ import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.entities.Insurance;
 import ar.edu.itba.paw.models.entities.Patient;
 import ar.edu.itba.paw.models.entities.Study;
+import ar.edu.itba.paw.models.enums.AccessLevelEnum;
+import ar.edu.itba.paw.models.enums.BloodTypeEnum;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.enums.LocaleEnum;
+import ar.edu.itba.paw.models.enums.SpecialtyEnum;
+import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
 
 //Readable output of all the data inputed in test/resources
@@ -61,7 +61,7 @@ public class TestData {
     public class Users{
         public static final Patient patient = new Patient("donna@example.com", "supersecret123", "donna", "1144445555", Images.validImage, LocalDate.parse("2025-04-09") , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
         public static final Long patientId = 1L;
-        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret123", "sophie", "1144445555", Images.validImage, LocalDate.now() , LocaleEnum.EN_US, LocalDate.parse("2000-01-01"), BigDecimal.valueOf(1.75), BigDecimal.valueOf(89.00));
+        public static final Patient newPatient = new Patient("sophie@example.com", "supersecret456", "sophie", "1187654321", Images.validImage2, LocalDate.now() , LocaleEnum.EN_AR, LocalDate.parse("1999-01-01"), BigDecimal.valueOf(1.55), BigDecimal.valueOf(79.00));
         public static final Long newPatientId = 3L;
         
 
@@ -73,33 +73,43 @@ public class TestData {
 
     public class PatientDetails{
         public static final LocalDate BIRTHDATE = LocalDate.parse("2000-01-01");
-        public static final BloodTypeEnum BLOOD_TYPE_1 = null;
-        public static final BloodTypeEnum BLOOD_TYPE_2 = BloodTypeEnum.AB_POSITIVE;
+        public static final LocalDate BIRTHDATE_2 = LocalDate.parse("1999-01-01");
+        public static final BloodTypeEnum BLOOD_TYPE_1 = BloodTypeEnum.AB_POSITIVE;
+        public static final BloodTypeEnum BLOOD_TYPE_2 = BloodTypeEnum.O_NEGATIVE;
         public static final BigDecimal HEIGHT = BigDecimal.valueOf(1.75);
+        public static final BigDecimal HEIGHT_2 = BigDecimal.valueOf(1.55);
         public static final BigDecimal WEIGHT = BigDecimal.valueOf(89.00);
-        public static final Boolean SMOKES_1 = null;
+        public static final BigDecimal WEIGHT_2 = BigDecimal.valueOf(79.00);
+        public static final Boolean SMOKES_1 = true;
         public static final Boolean SMOKES_2 = false;
-        public static final Boolean DRINKS_1 = null;
+        public static final Boolean DRINKS_1 = false;
         public static final Boolean DRINKS_2 = true;
-        public static final String MEDS = null;
-        public static final String CONDITIONS = null;
-        public static final String ALLERGIES = null;
-        public static final String DIET = null;
-        public static final String HOBBIES = null;
+        public static final String MEDS = "nope";
+        public static final String MEDS_2 = "lemon pie";
+        public static final String CONDITIONS = "nope";
+        public static final String CONDITIONS_2 = "short and sweet";
+        public static final String ALLERGIES = "nope";
+        public static final String ALLERGIES_2 = "fruitcake";
+        public static final String DIET = "nope";
+        public static final String DIET_2 = "espresso";
+        public static final String HOBBIES = "nope";
+        public static final String HOBBIES_2 = "touring";
         public static final String JOB_1 = "carpenter";
-        public static final String JOB_2 = null;
+        public static final String JOB_2 = "singer";
     }
 
     public class DoctorSingleShifts{
         public static final DoctorSingleShift doctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("10:00:00"), LocalTime.parse("10:30:00"), 15);
         public static final Long doctorSingleShiftId = 1L;
+        public static DoctorSingleShift doctorInactiveSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.THURSDAY, "Lavarden", LocalTime.parse("13:00:00"), LocalTime.parse("13:30:00"), 15);
+        public static final Long doctorInactiveSingleShiftId = 2L;
         public static final DoctorSingleShift newDoctorSingleShift = new DoctorSingleShift(Users.doctor, WeekdayEnum.MONDAY, "Los Patos", LocalTime.parse("15:00:00"), LocalTime.parse("17:00:00"), 30);
-        public static final Long newDoctorSingleShiftId = 2L;
+        public static final Long newDoctorSingleShiftId = 3L;
     }
 
     public class NewAppointments{
-        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 1");
-        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-10-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 2");
+        public static final AppointmentNew appointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2125-10-11"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 1");
+        public static final AppointmentNew appointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2125-10-11"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 2");
         public static final AppointmentNew oldAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 3");
         public static final AppointmentNew oldAppointment2 = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-09"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 4");
         public static final AppointmentNew removedAppointment = new AppointmentNew(DoctorSingleShifts.doctorSingleShift, Users.patient, LocalDate.parse("2025-04-19"), LocalTime.parse("10:00:00"), LocalTime.parse("10:15:00"), "Appointment detail 5");
@@ -112,7 +122,7 @@ public class TestData {
     }
 
     public class DocVacations{
-        public static final DoctorVacation docVacation = new DoctorVacation(Users.doctor, LocalDate.now().plusDays(2), LocalDate.now().plusDays(5));
-        public static final DoctorVacation docVacationPast = new DoctorVacation(Users.doctor, LocalDate.now().minusDays(2), LocalDate.now());
+        public static final DoctorVacation docVacation = new DoctorVacation(Users.doctor, LocalDate.parse("2125-04-10"), LocalDate.parse("2125-04-19"));
+        public static final DoctorVacation docVacationPast = new DoctorVacation(Users.doctor, LocalDate.parse("2025-04-10"), LocalDate.parse("2025-04-19"));
     }
 }

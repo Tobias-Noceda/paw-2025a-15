@@ -81,24 +81,8 @@ public class AppointmentJpaDao implements AppointmentDao {
     }
 
     @Override
-    public List<AppointmentNew> getFutureAppointmentDataByPatient(Patient patient) {
-        String query = "FROM AppointmentNew a " +
-                    "WHERE a.patient = :patient " +
-                    "AND (a.id.date > :today " +
-                    "OR (a.id.date = :today AND a.id.startTime > :todaysTime)) " +
-                    "ORDER BY a.id.date ASC, a.id.startTime ASC";
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("patient", patient)
-                        .setParameter("today", now.toLocalDate())
-                        .setParameter("todaysTime", now.toLocalTime())
-                        .getResultList();
-    }
-
-    @Override
     public List<AppointmentNew> getFutureAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
+        if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         String query = PATIENTS_FUTURE_APPOINTMENTS_QUERY;
 
         LocalDateTime now = LocalDateTime.now();
@@ -131,20 +115,8 @@ public class AppointmentJpaDao implements AppointmentDao {
     }
 
     @Override
-    public List<AppointmentNew> getOldAppointmentDataByPatient(Patient patient) {
-        String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return em.createQuery(query, AppointmentNew.class)
-                        .setParameter("patient", patient)
-                        .setParameter("today", now.toLocalDate())
-                        .setParameter("todaysTime", now.toLocalTime())
-                        .getResultList();
-    }
-
-    @Override
     public List<AppointmentNew> getOldAppointmentDataPageByPatient(Patient patient, int page, int pageSize) {
+        if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         String query = PATIENTS_OLD_APPOINTMENTS_QUERY;
 
         return em.createQuery(query, AppointmentNew.class)
@@ -158,6 +130,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public Integer getOldAppointmentTotalByPatient(Patient patient) {
+        if(patient==null) return 0;
         String query = "SELECT COUNT(a) FROM AppointmentNew a " +
                     "JOIN a.shift s " +
                     "JOIN a.patient p " +
@@ -196,6 +169,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public List<AppointmentNew> getFutureAppointmentDataPageByDoctor(Doctor doctor, int page, int pageSize) {
+        if(doctor==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         String query = DOCTORS_FUTURE_APPOINTMENTS_QUERY;
 
         LocalDateTime now = LocalDateTime.now();
@@ -212,6 +186,7 @@ public class AppointmentJpaDao implements AppointmentDao {
 
     @Override
     public Integer getFutureAppointmentTotalByDoctor(Doctor doctor) {
+        if(doctor==null) return 0;
         String query = "SELECT COUNT(a) FROM AppointmentNew a " +
                     "JOIN a.shift s " +
                     "JOIN a.patient p " +
@@ -255,8 +230,16 @@ public class AppointmentJpaDao implements AppointmentDao {
     }
 
     @Override
-    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
-        List<AppointmentNew> toRemove =  em.createQuery("from AppointmentNew a where a.id.date >= :startDate and a.id.date <= :endDate and a.shift.doctor.id = :doctorId", AppointmentNew.class)
+    public List<AppointmentNew> cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AppointmentNew> toRemove =  em.createQuery("""
+            FROM AppointmentNew a 
+            JOIN FETCH a.shift s 
+            JOIN FETCH a.patient p 
+            JOIN FETCH s.doctor d
+            WHERE a.id.date >= :startDate 
+                AND a.id.date <= :endDate 
+                AND a.shift.doctor.id = :doctorId
+        """, AppointmentNew.class)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .setParameter("doctorId", doctorId)
@@ -266,6 +249,8 @@ public class AppointmentJpaDao implements AppointmentDao {
         }
         em.flush();
         em.clear();
+
+        return toRemove;
     }
 
     private List<AppointmentNew> getAvailableTurnsByShift(DoctorSingleShift dss, List<AppointmentNew> takenAppointments, LocalDate date) {
