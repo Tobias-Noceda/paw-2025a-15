@@ -12,6 +12,20 @@ public class NonEmptyBodyConstraint implements ConstraintValidator<NonEmptyBody,
 
     @Override
     public boolean isValid(Object object, ConstraintValidatorContext ctx) {
-        return object != null;
+        
+        if (object == null) return false;
+
+        for (var field : object.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true);
+                if (field.get(object) != null) {
+                    return true; // at least one not null
+                }
+            } catch (IllegalAccessException e) {
+                // ignore
+            }
+        }
+
+        return false;
     }
 }

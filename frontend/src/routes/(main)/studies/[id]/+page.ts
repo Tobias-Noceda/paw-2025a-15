@@ -38,7 +38,7 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         let doctors: Doctor[] | null = null;
 
         if (currentUser.role === 'PATIENT') {
-            let doctorsPage = await fetchDoctorsPage(patient.links.doctors, undefined, fetch);
+            let doctorsPage = await fetchDoctorsPage(patient.links.doctors.resolved!, undefined, fetch);
             if (doctorsPage && doctorsPage.results) {
                 doctors = [...doctorsPage.results];
             }

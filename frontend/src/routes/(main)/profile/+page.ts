@@ -2,10 +2,8 @@ import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import { setUserFromSession, user, userData } from '$stores/user';
 import { get } from 'svelte/store';
-import type { Doctor, Insurance, Paginated, Patient, Study } from '$types/api';
-import { fetchStudies } from '$lib/services/studies';
-import type { StudyType } from '$types/enums/studyTypes';
-import { fetchDoctorBySelf, fetchDoctorsPage } from '$lib/services/doctors';
+import type { Doctor, Insurance, Patient } from '$types/api';
+import { fetchDoctorBySelf } from '$lib/services/doctors';
 import { fetchPatientBySelf } from '$lib/services/patients';
 import { fetchInsurances, fetchInsurancesPage } from '$lib/services/insurances';
 

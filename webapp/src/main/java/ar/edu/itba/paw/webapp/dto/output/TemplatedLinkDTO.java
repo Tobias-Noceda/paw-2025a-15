@@ -33,13 +33,18 @@ public class TemplatedLinkDTO {
         for (String param : queryParams) {
             if (!first) {
                 href.append(",");
-                first = false;
             }
+            first = false;
             href.append(param);
         }
         href.append("}");
         
         return new TemplatedLinkDTO(href.toString(), true);
+    }
+
+    public static TemplatedLinkDTO of(URI uri) {
+        if(uri == null) return null;
+        return new TemplatedLinkDTO(uri.toString(), false);
     }
 
     public String getHref() {

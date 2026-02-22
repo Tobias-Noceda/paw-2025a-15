@@ -41,16 +41,24 @@ public class DoctorDTO {
         dto.license = doctor.getLicence();
         dto.specialty = doctor.getSpecialty().toString();
 
-        URI self = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).build();
-        URI image = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
-        URI schedule = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("shifts").build();
-        URI insurances = uriInfo.getBaseUriBuilder().path(InsuranceController.class).queryParam("supportedBy", String.valueOf(doctor.getId())).build();
-        URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
-        URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
-        URI patients = uriInfo.getBaseUriBuilder().path(PatientController.class).queryParam("doctorId", String.valueOf(doctor.getId())).build();
-        URI pastVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.COMPLETED.getValue()).build();
-        URI futureVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.PROGRAMMED.getValue()).build();
-
+        URI baseSelf = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).build();
+        TemplatedLinkDTO self = TemplatedLinkDTO.of(baseSelf);
+        URI baseImage = uriInfo.getBaseUriBuilder().path(FileController.class).path(String.valueOf(doctor.getPicture().getId())).build();
+        TemplatedLinkDTO image = TemplatedLinkDTO.of(baseImage);
+        URI baseSchedule = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("shifts").build();
+        TemplatedLinkDTO schedule = TemplatedLinkDTO.of(baseSchedule);
+        URI baseInsurances = uriInfo.getBaseUriBuilder().path(InsuranceController.class).queryParam("supportedBy", String.valueOf(doctor.getId())).build();
+        TemplatedLinkDTO insurances = TemplatedLinkDTO.of(baseInsurances);
+        URI baseFreeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
+        TemplatedLinkDTO freeAppointments = TemplatedLinkDTO.of(baseFreeAppointments);
+        URI baseFutureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
+        TemplatedLinkDTO futureAppointments = TemplatedLinkDTO.of(baseFutureAppointments);
+        URI basePatients = uriInfo.getBaseUriBuilder().path(PatientController.class).queryParam("doctorId", String.valueOf(doctor.getId())).build();
+        TemplatedLinkDTO patients = TemplatedLinkDTO.of(basePatients);
+        URI basePastVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.COMPLETED.getValue()).build();
+        TemplatedLinkDTO pastVacations = TemplatedLinkDTO.of(basePastVacations);
+        URI baseFutureVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.PROGRAMMED.getValue()).build();
+        TemplatedLinkDTO futureVacations = TemplatedLinkDTO.of(baseFutureVacations);
         URI baseAuthorization = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("authorizations").build();
         TemplatedLinkDTO authorization = TemplatedLinkDTO.withQueryParams(baseAuthorization, List.of("patientId"));
 

@@ -3,9 +3,9 @@ package ar.edu.itba.paw.webapp.dto.input;
 import java.time.LocalDate;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +26,7 @@ public class PatientCreateDTO {
 
     @NotNull
     @NotBlank
-    @Min(8)
+    @Size(min = 8)
     private String password;
 
     @ValidArgPhone

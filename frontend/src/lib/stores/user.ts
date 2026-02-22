@@ -1,5 +1,5 @@
 import { setPatientsStudyLink } from "$lib/services/patients";
-import { get, getAuth, parseJWT } from "$modules/api.svelte";
+import { get, getAuth, parseJWT, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import type { Doctor, Patient } from "$types/api";
 import { writable } from "svelte/store";
 
@@ -36,10 +36,13 @@ export async function setUserFromSession(sessionToken: string, fetchFn: typeof f
 
 			if (response && response.ok) {
 				const data = await response.json();
+				
 				if (payload.role === 'PATIENT') {
 					const patient = setPatientsStudyLink(data as Patient);
+					resolveNonTemplatedLinks(patient);
 					userData.set(patient);
 				} else {
+					resolveNonTemplatedLinks(data as Doctor);
 					userData.set(data as Doctor);
 				}
 			}

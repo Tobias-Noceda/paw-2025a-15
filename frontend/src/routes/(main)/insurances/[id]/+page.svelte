@@ -26,7 +26,7 @@
 
 		isSubmitting = true;
 
-		editInsurance(insurance.links.self, insuranceName, newImage, fetch)
+		editInsurance(insurance.links.self.resolved!, insuranceName, newImage, fetch)
 			.then(() => {
 				showSuccessToast = true;
 				setTimeout(() => {
@@ -105,7 +105,7 @@
 						</p>
 					</div>
 					<div class="flex w-full h-fit items-center justify-center">
-						<img src={insurance.links.image || ''} alt="Logo" class="h-70 object-contain rounded-lg" />
+						<img src={insurance.links.image.resolved! || ''} alt="Logo" class="h-70 object-contain rounded-lg" />
 					</div>
 				</div>
 				
