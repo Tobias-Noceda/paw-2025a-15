@@ -23,7 +23,6 @@ public class DoctorEditDTO {
     @Pattern(regexp = "ES_AR|ES_US|EN_AR|EN_US")
     private String mailLanguage;
 
-    @Size(min = 1)
     private List<@URL(protocol = "http")String> insurances;
 
     private Boolean updateSchedule;
