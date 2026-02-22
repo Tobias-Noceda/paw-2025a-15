@@ -1,4 +1,4 @@
-import { deleteAuth, getAuth, postAuth } from "$modules/api.svelte";
+import { deleteAuth, getAuth, postAuth, resolveNonTemplatedLinks } from "$modules/api.svelte";
 import { type Paginated, type Vacations } from "$types/api";
 import { error } from "@sveltejs/kit";
 import { getPageInfoFromHeaders, getPaginationLinks } from "./pagination";
@@ -16,6 +16,10 @@ export const fetchVacations = async (url: string, fetchFn: typeof fetch = window
         _links: getPaginationLinks(response),
         _pageInfo: getPageInfoFromHeaders(response)
     };
+
+    for (const vacation of vacations.results) {
+        resolveNonTemplatedLinks(vacation);
+    }
 
     return vacations;
 };
