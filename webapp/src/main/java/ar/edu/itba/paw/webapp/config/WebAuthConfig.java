@@ -80,7 +80,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtTokenUtil jwtTokenUtil() throws IOException {
         final String token = env.getProperty("security.key");
-        String baseUrl = env.getProperty("api.base.url", "http://localhost:8080/paw-2025a-15/api");
+        String baseUrl = env.getProperty("api.base.url", "http://pawserver.it.itba.edu.ar/paw-2025a-15/api");
 
         if (token == null) {
             throw new IOException("Missing JWT secret key in configuration. Please set 'security.key' property.");

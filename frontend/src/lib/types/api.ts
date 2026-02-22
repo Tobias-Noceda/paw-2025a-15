@@ -5,7 +5,7 @@ import type { Specialty } from "./enums/specialties";
 import type { StudyType } from "./enums/studyTypes";
 import type { Weekdays } from "./enums/weekdays";
 
-export const baseApiUrl = 'http://localhost:8080/paw-2025a-15/api'
+export const baseApiUrl = 'http://pawserver.it.itba.edu.ar/paw-2025a-15/api'
 
 export type Languages = 'es' | 'en';
 
