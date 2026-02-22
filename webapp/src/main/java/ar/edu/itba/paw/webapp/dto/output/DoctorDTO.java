@@ -2,16 +2,19 @@ package ar.edu.itba.paw.webapp.dto.output;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.ws.rs.core.UriInfo;
 
 import ar.edu.itba.paw.models.entities.Doctor;
+import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
+import ar.edu.itba.paw.models.enums.VacationsStatusEnum;
+import ar.edu.itba.paw.webapp.controller.AppointmentController;
 import ar.edu.itba.paw.webapp.controller.DoctorController;
 import ar.edu.itba.paw.webapp.controller.FileController;
 import ar.edu.itba.paw.webapp.controller.InsuranceController;
-import ar.edu.itba.paw.models.enums.AppointmentStatusEnum;
-import ar.edu.itba.paw.webapp.controller.AppointmentController;
+import ar.edu.itba.paw.webapp.controller.PatientController;
 
 public class DoctorDTO {
     private String email;
@@ -19,6 +22,9 @@ public class DoctorDTO {
     private String telephone;
     private String license;
     private String specialty;
+    private String address;
+    private String startTime;
+    private String endTime;
 
     private LinkDTO links;
 
@@ -41,6 +47,12 @@ public class DoctorDTO {
         URI insurances = uriInfo.getBaseUriBuilder().path(InsuranceController.class).queryParam("supportedBy", String.valueOf(doctor.getId())).build();
         URI freeAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.FREE).queryParam("date", LocalDate.now()).build();
         URI futureAppointments = uriInfo.getBaseUriBuilder().path(AppointmentController.class).queryParam("userId", String.valueOf(doctor.getId())).queryParam("status", AppointmentStatusEnum.TAKEN).build();
+        URI patients = uriInfo.getBaseUriBuilder().path(PatientController.class).queryParam("doctorId", String.valueOf(doctor.getId())).build();
+        URI pastVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.COMPLETED.getValue()).build();
+        URI futureVacations = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("vacations").queryParam("status", VacationsStatusEnum.PROGRAMMED.getValue()).build();
+
+        URI baseAuthorization = uriInfo.getBaseUriBuilder().path(DoctorController.class).path(String.valueOf(doctor.getId())).path("authorizations").build();
+        TemplatedLinkDTO authorization = TemplatedLinkDTO.withQueryParams(baseAuthorization, List.of("patientId"));
 
         dto.setLinks(new LinkDTO()
             .setSelf(self)
@@ -49,6 +61,10 @@ public class DoctorDTO {
             .setInsurances(insurances)
             .setFreeAppointments(freeAppointments)
             .setFutureAppointments(futureAppointments)
+            .setPatients(patients)
+            .setAuthorization(authorization)
+            .setPastVacations(pastVacations)
+            .setFutureVacations(futureVacations)
         );
 
         return dto;
@@ -73,6 +89,18 @@ public class DoctorDTO {
 
     public String getSpecialty() {
         return specialty;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
     }
 
     public LinkDTO getLinks() {
@@ -100,14 +128,19 @@ public class DoctorDTO {
         this.specialty = specialty;
     }
 
-    public void setLinks(LinkDTO links){
-        this.links = links;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    @Override
-    public String toString() {
-        return "DoctorDTO [email=" + email + ", name=" + name + ", telephone=" + telephone + ", licence=" + license
-                + ", specialty="
-                + specialty + ", links=" + links + "]";
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setLinks(LinkDTO links){
+        this.links = links;
     }
 }

@@ -36,8 +36,7 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
         }
     }
 
-    @Override
-    public boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
+    private boolean hasAuthDoctorWithAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
         return em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel)) != null;
     }
 
@@ -67,7 +66,6 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                 patient = em.find(Patient.class, patientId);
             }
         }
-        return;
     }
 
     @Override
@@ -76,16 +74,6 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
             .setParameter("patientId", patientId)
             .setParameter("doctorId", doctorId)
             .executeUpdate();
-    }
-
-    @Override
-    public void unauthDoctorByAccessLevel(long patientId, long doctorId, AccessLevelEnum accessLevel) {
-        if(accessLevel.equals(AccessLevelEnum.VIEW_BASIC)) {
-            unauthDoctorAllAccessLevels(patientId, doctorId);
-            return;
-        }
-        AuthDoctor ad = em.find(AuthDoctor.class, new AuthDoctorId(doctorId, patientId, accessLevel));
-        if(ad != null) em.remove(ad);
     }
 
     @Override
@@ -103,7 +91,6 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                 }
             }
         }
-        return;
     }
 
     @Override
@@ -115,12 +102,5 @@ public class AuthDoctorJpaDao implements AuthDoctorDao{
                             .setParameter("doctorId", doctorId)
                             .setParameter("patientId", patientId)
                             .getResultList();
-    }
-
-    @Override
-    public void deauthorizeAllDoctors(long patientId) {
-        em.createQuery("DELETE FROM AuthDoctor ad WHERE ad.patient.id = :patientId")
-            .setParameter("patientId", patientId)
-            .executeUpdate();
     }
 }

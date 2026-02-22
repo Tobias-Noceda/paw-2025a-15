@@ -17,9 +17,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
@@ -32,9 +35,11 @@ import ar.edu.itba.paw.interfaces.services.FileService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.entities.File;
 import ar.edu.itba.paw.models.enums.FileTypeEnum;
+import ar.edu.itba.paw.models.exceptions.NotFoundException;
+import ar.edu.itba.paw.webapp.controller.util.CacheHelper;
 import ar.edu.itba.paw.webapp.controller.util.PaginationBuilder;
 import ar.edu.itba.paw.webapp.dto.output.FileDTO;
-import ar.edu.itba.paw.webapp.exception.NotFoundException;
+import ar.edu.itba.paw.webapp.mediaType.VndType;
 
 @Path("/files")
 @Component
@@ -50,7 +55,7 @@ public class FileController {
     private UriInfo uriInfo;
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(VndType.APPLICATION_FILE)
     public Response listFiles(
         @QueryParam("studyId") final Long studyId,
         @QueryParam("page") @DefaultValue("1") final int page,
@@ -58,23 +63,19 @@ public class FileController {
     ) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if(studyId!=null){
-            queryParams.put("studyId", studyId.toString());
+        if(studyId!=null) queryParams.put("studyId", studyId.toString());
             
-            final List<FileDTO> files = ss.getStudyFilesPage(studyId, page, pageSize)
-                .stream().map(FileDTO.mapper(uriInfo)).collect(Collectors.toList());
+        final List<FileDTO> files = ss.getStudyFilesPage(studyId, page, pageSize)
+            .stream().map(FileDTO.mapper(uriInfo)).collect(Collectors.toList());
             
-
-            return PaginationBuilder.buildResponse(
-                Response.ok(new GenericEntity<List<FileDTO>>(files) {}),
-                page, 
-                pageSize, 
-                ss.getStudyFilesCount(studyId), 
-                queryParams, 
-                uriInfo
-            );
-        }
-       return Response.noContent().build(); //TODO que lo maneje el service para devovler [] en todo caso
+        return PaginationBuilder.buildResponse(
+            Response.ok(new GenericEntity<List<FileDTO>>(files) {}),
+            page, 
+            pageSize, 
+            ss.getStudyFilesCount(studyId), 
+            queryParams, 
+            uriInfo.getBaseUriBuilder().path(FileController.class)
+        );
     }
 
     @POST
@@ -94,13 +95,27 @@ public class FileController {
     @GET
     @Path("/{id:\\d+}")
     @Produces({"image/png", "image/jpeg", "application/pdf"})
-    public Response getFileById(@PathParam("id") final long id) {
+    public Response getFileById(
+        @PathParam("id") final long id,
+        @Context Request request
+    ) {
         File file = fs.findById(id).orElseThrow(NotFoundException::new);
 
-        return Response.ok(file.getContent())
+        EntityTag eTag = new EntityTag(file.getId().toString());
+        ResponseBuilder builder = CacheHelper.evaluate(request, eTag);//check client
+        if (builder != null) {
+            CacheHelper.addCacheHeaders(builder, eTag);
+            return builder.build();//304
+        }
+        //first time flow
+        builder = Response.ok(file.getContent())
             .type(file.getType().getName())
             .header("Content-Disposition",
                     "inline; filename=\"file_" + file.getId() + file.getType().getExtension() + "\"")
-            .build();
+            .header("Content-Security-Policy", "frame-ancestors 'self' http://localhost:5173");
+
+        CacheHelper.addCacheHeaders(builder, eTag);
+        
+        return builder.build();
     }
 }

@@ -156,7 +156,7 @@ public class EmailServiceImpl implements EmailService{
         templateModel.put("patientName", patient.getName());
         templateModel.put("doctorName", doctor.getName());
         templateModel.put("description", description);
-        templateModel.put("studyLink", baseURL + "view-study/" + study.getId());
+        templateModel.put("studyLink", baseURL + "study-info/" + study.getId() + "-" + patient.getId());
         
         List<String> studyNames = new ArrayList<>();
         for (int i = 0; i < files.size(); i++) {
@@ -315,6 +315,27 @@ public class EmailServiceImpl implements EmailService{
             sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "passwordRecoveryTemplate", locale);
         } catch (MessagingException e) {
             LOGGER.error("Error sending user reset password email to {}: {}", user.getEmail(), e.getMessage(), e);
+        }
+    }
+
+    @Override
+    @Async
+    public void sendWelcomeAndVerifyEmail(User user, String token) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("homeLink", baseURL);
+        templateModel.put("imageSource", baseURL + "resources/icono.jpg");
+        templateModel.put("userName", user.getName());
+
+        String verifyLink = baseURL + "verify/" + token;
+        templateModel.put("verifyLink", verifyLink);
+
+        Locale locale = user.getLocale().toLocale();
+        String subject = messageSource.getMessage("welcomeVerify.subject", null, locale);
+
+        try {
+            sendSimpleMessageTemplate(user.getEmail(), subject, templateModel, "welcomeAndVerifyTemplate", locale);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending user welcome and verify email to {}: {}", user.getEmail(), e.getMessage(), e);
         }
     }
 

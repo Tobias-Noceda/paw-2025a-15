@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,6 @@ import ar.edu.itba.paw.interfaces.services.DoctorService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.StudyService;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
-
-import java.util.List;
 
 @Service
 public class AuthStudiesServiceImpl implements AuthStudiesService{
@@ -52,6 +52,13 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         authStudiesDao.authStudyForDoctorIdList(doctorsId, studyId);
     }
 
+    @Transactional
+    @Override
+    public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId) {
+        ss.getStudyById(studyId).orElseThrow(()-> new NotFoundException("Study with id: " + studyId + " does not exist!"));
+        authStudiesDao.unauthStudyForDoctorIdList(doctorsId, studyId);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public boolean hasAuthStudy(long studyId, long doctorId) {
@@ -59,24 +66,6 @@ public class AuthStudiesServiceImpl implements AuthStudiesService{
         ds.getDoctorById(doctorId).orElseThrow(()-> new NotFoundException("Doctor with id: " + doctorId + " does not exist!"));
 
         return authStudiesDao.hasAuthStudy(studyId, doctorId);
-    }
-
-    @Transactional
-    @Override
-    public void unauthStudyForDoctorId(long studyId, long doctorId) {
-        if(!hasAuthStudy(studyId, doctorId)) return;
-        authStudiesDao.unauthStudyForDoctor(studyId, doctorId);
-        LOGGER.info("Removed authorization of study with id:{} for doctor: {}", studyId, doctorId);
-    }
-
-    @Transactional
-    @Override
-    public void toggleStudyForDoctorId(long studyId, long doctorId) {
-        if(hasAuthStudy(studyId, doctorId)) {
-            unauthStudyForDoctorId(studyId, doctorId);
-        }else{
-            authStudyForDoctorId(studyId, doctorId);
-        }
     }
 
     @Transactional

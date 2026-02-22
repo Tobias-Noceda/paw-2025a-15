@@ -18,13 +18,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import lombok.extern.slf4j.Slf4j;
+import ar.edu.itba.paw.interfaces.services.UserService;
 
-@Slf4j
 @Component
 public class BearerAuthorizationFilter extends OncePerRequestFilter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(BearerAuthorizationFilter.class);
+
+    @Autowired
+    private UserService us;
 
     @Autowired
     private JwtTokenUtil jwt;
@@ -48,18 +50,31 @@ public class BearerAuthorizationFilter extends OncePerRequestFilter {
 
         if (token.isEmpty()) {
             LOGGER.debug("Empty token");
-            chain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         final JwtTokenUtil.SessionInfo info = jwt.parse(token);
         LOGGER.debug("Got user details: {}", info);
 
-        if (info == null || !info.user().isAccountNonLocked()
-                || SecurityContextHolder.getContext().getAuthentication() != null) {
+        if (info == null || SecurityContextHolder.getContext().getAuthentication() != null) {
             LOGGER.debug("Invalid user details");
-            chain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
+        }
+
+        if (!info.user().isEnabled()) {
+            if (info.isVerify() && !info.expired()) {
+                LOGGER.info("Verifying user with token: {}", token);
+                System.out.println("Verifying user with mail: " + info.user().getUser().getEmail());
+                us.verifyUser(info.user().getUser().getEmail());
+                chain.doFilter(request, response);
+                return;
+            } else {
+                LOGGER.info("User not active and token is not valid for verification: {}", token);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
 
         if (info.expired()) {
@@ -77,9 +92,10 @@ public class BearerAuthorizationFilter extends OncePerRequestFilter {
 
         LOGGER.debug("Setting authentication");
         final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                info.user().getUsername(),
-                info.user().getPassword(),
-                info.user().getAuthorities());
+            info.user().getUser(),
+            info.user().getPassword(),
+            info.user().getAuthorities()
+        );
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 public class PaginationBuilder<T> {
     public static Response buildResponse(
@@ -14,11 +13,9 @@ public class PaginationBuilder<T> {
         int pageSize,
         int totalItems,
         Map<String, String> queryParams,
-        UriInfo uriInfo
+        UriBuilder baseUri
     ) {
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
-
-        UriBuilder baseUri = uriInfo.getRequestUriBuilder();
 
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
             baseUri.queryParam(entry.getKey(), entry.getValue());

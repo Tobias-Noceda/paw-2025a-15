@@ -9,8 +9,8 @@ public interface AuthStudiesDao {
     public boolean hasAuthStudy(long studyId, long doctorId);
 
     public void authStudyForDoctorIdList(List<Long> doctorsId, long studyId);
-
-    public void unauthStudyForDoctor(long studyId, long doctorId);
+    
+    public void unauthStudyForDoctorIdList(List<Long> doctorsId, long studyId);
 
     public void unauthAllStudiesForDoctorAndPatient(long patientId, long doctorId);
 

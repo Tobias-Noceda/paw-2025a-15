@@ -115,13 +115,6 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional(readOnly = true)
     @Override
-    public List<AppointmentNew> getOldAppointmentDataByPatientId(long patientId) {
-        Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
-        return appointmentDao.getOldAppointmentDataByPatient(patient);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<AppointmentNew> getOldAppointmentDataPageByPatientId(long patientId, int page, int pageSize) {
         Patient patient = ps.getPatientById(patientId).orElseThrow(() -> new NotFoundException("Patient with id: " + patientId + " does not exist!"));
         return appointmentDao.getOldAppointmentDataPageByPatient(patient, page, pageSize);
@@ -211,8 +204,13 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Transactional
     @Override
-    public void cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
-        appointmentDao.cancelAppointmentRange(doctorId,startDate, endDate);
+    public void  cancelAppointmentRange(long doctorId, LocalDate startDate, LocalDate endDate) {
+        List<AppointmentNew> cancelled = appointmentDao.cancelAppointmentRange(doctorId,startDate, endDate);
+        LOGGER.info("Cancelled {} appointments for doctor with id: {}", cancelled.size(), doctorId);
+
+        for (AppointmentNew appointment : cancelled) {
+            es.sendPatientCancelledAppointmentEmail((Patient) appointment.getPatient(), appointment.getShift().getDoctor(), appointment, appointment.getShift());
+        }
     }
 
     @Transactional
@@ -235,7 +233,6 @@ public class AppointmentServiceImpl implements AppointmentService{
         }
         LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
     }
-          
     
     @Transactional(readOnly = true)
     @Override

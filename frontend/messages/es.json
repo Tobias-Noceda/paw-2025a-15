@@ -54,6 +54,7 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"insurances": "Obras sociales",
+			"add_schedule": "¿Desea agregar horario de atención?",
 			"work_days": "Días laborales",
 			"start_time": "Horario de inicio",
 			"end_time": "Horario de fin",
@@ -64,7 +65,21 @@
 			"password": "Contraseña",
 			"confirm_password": "Confirmar contraseña",
 			"submit_button": "Registrarse",
-			"back_to_login": "Volver a iniciar sesión"
+			"back_to_login": "Volver a iniciar sesión",
+			"success": {
+				"title": "¡Éxito!",
+				"message": "Tu cuenta ha sido creada exitosamente. Ahora puedes iniciar sesión."
+			},
+			"error": {
+				"title": "Error",
+				"message": "Ocurrió un error al intentar crear tu cuenta. Por favor, inténtelo de nuevo más tarde."
+			},
+			"form": {
+				"error": {
+					"email": "El mail ya está tomado",
+					"med_license": "La matrícula ya fue usada"
+				}
+			}
 		},
 		"change": {
 			"title": "Cambiar contraseña",
@@ -77,6 +92,17 @@
 			"success_message": "Tu contraseña ha sido cambiada exitosamente.",
 			"error_title": "Error",
 			"error_message": "Ocurrió un error al intentar cambiar su contraseña. Por favor, inténtelo de nuevo más tarde."
+		},
+		"verify": {
+			"success": {
+				"title": "¡Cuenta verificada exitosamente!",
+				"message": "Tu cuenta con correo {email} ha sido verificada exitosamente. Ahora puedes iniciar sesión."
+			},
+			"error": {
+				"title": "Error verificando cuenta",
+				"message": "Ocurrió un error al intentar verificar la cuenta. El enlace de verificación puede haber expirado. Por favor, inténtelo de nuevo o contacte al soporte para obtener ayuda."
+			},
+			"back_to_login": "Volver a iniciar sesión"
 		}
 	},
 	"months": {
@@ -164,12 +190,13 @@
 	},
 	"all": "Todos",
 	"doctors_list": "Cartilla médica",
+	"patients_list": "Lista de pacientes",
 	"clear": "Borrar",
 	"today": "Hoy",
 	"topbar": {
 		"logo_alt_text": "Logo de CareTrace",
 		"appointments": "Turnos",
-		"studies": "Estudios",
+		"studies": "Mis estudios y médicos",
 		"vacations": "Vacaciones",
 		"login": "Iniciar sesión",
 		"logout": "Cerrar sesión",
@@ -182,7 +209,19 @@
 			"specialty": "Especialidad",
 			"address": "Dirección",
 			"license": "Matrícula",
-			"schedule": "Atiende"
+			"schedule": "Atiende",
+			"accesses": "Accesos actuales"
+		},
+		"details": {
+			"specialty": {
+				"label": "Especialidad:"
+			}
+		},
+		"profile": {
+			"insurance": {
+				"label": "Obras Sociales:"
+			},
+			"updateSchedule": "¿Desea actualizar sus horarios?"
 		},
 		"table": {
 			"day": "Día",
@@ -190,7 +229,16 @@
 		},
 		"actions": {
 			"authorize": "Autorizar",
-			"de_authorize": "Desautorizar"
+			"de_authorize": "Desautorizar",
+			"update": "Actualizar"
+		},
+		"authorizations": {
+			"title": "Accesos actuales",
+			"options": {
+				"view_medical": "Médico",
+				"view_social": "Social",
+				"view_habits": "A hábitos"
+			}
 		},
 		"text": {
 			"no_schedule": "No hay horario disponible.",
@@ -198,12 +246,109 @@
 			"empty_schedule": "No hay turnos disponibles para la fecha seleccionada"
 		},
 		"pop_up": {
-			"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
-			"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
-			"reason": "Motivo de la cita:",
-			"reason_placeholder": "Ingrese el motivo de la cita",
-			"confirm": "Tomar turno",
+			"appointment": {
+				"title": "¿Está seguro de que desea tomar un turno el {day} de {month} a las {startTime} con {doctorName}?",
+				"subtitle": "Al hacerlo, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+				"reason": "Motivo de la cita:",
+				"reason_placeholder": "Ingrese el motivo de la cita",
+				"confirm": "Tomar turno"
+			},
+			"authorize": {
+				"title": "Al realizar esta acción, estarás autorizando al doctor a ver tu perfil y tus estudios médicos. Podrás revocar este permiso en cualquier momento.",
+				"confirm": "Autorizar"
+			},
+			"update": {
+				"title": "Los accesos actuales serán actualizados.",
+				"view_habits": "Con el acceso a hábitos brindas acceso a tus hábitos de bebida/fumar, en adicion a tu dieta.",
+				"view_medical": "Con el acceso médico brindas acceso a tus medicaciones, condiciones y alergias.",
+				"view_social": "Con el acceso social brindas acceso a tus hobbies y trabajo.",
+				"updateable": "Puedes actualizar estos permisos en cualquier momento.",
+				"confirm": "Actualizar accesos"
+			},
+			"de_authorize": {
+				"title": "Al realizar esta acción, estarás desautorizando al doctor de ver tu perfil y tus estudios médicos. Podrás autorizarlos nuevamente en cualquier momento.",
+				"confirm": "Desautorizar"
+			},
 			"cancel": "Cancelar"
+		}
+	},
+	"profile": {
+		"title": "Mi Perfil",
+		"role": {
+			"label": "Rol"
+		},
+		"save": {
+			"button": "Guardar cambios",
+			"success_title": "¡Cambios guardados!",
+			"success_message": "Tu perfil se actualizó correctamente."
+		},
+		"phone": {
+			"label": "Teléfono:"
+		},
+		"email": {
+			"lang": {
+				"label": "Idioma de los mails"
+			}
+		},
+		"insurance": {
+			"label": "Obra Social:",
+			"placeholder": "Seleccione su Obra Social"
+		},
+		"insuranceNumber": {
+			"label": "Número de afiliado:",
+			"placeholder": "Ingrese su número de afiliado"
+		},
+		"keep": "Deseo conservar mis turnos tomados con anterioridad",
+		"pop_up": {
+			"keep": {
+				"title": "¿Desea conservar sus turnos tomados con anterioridad?",
+				"confirm": "Sí, conservar turnos",
+				"cancel": "No, cancelar turnos"
+			}
+		}
+	},
+	"profileInfo": {
+		"age": "Edad",
+		"bloodType": "Tipo de sangre",
+		"height": "Altura (m):",
+		"weight": "Peso (kg):",
+		"smokes": "Fuma habitualmente:",
+		"drinks": "Bebe habitualmente:",
+		"meds": "Medicaciones:",
+		"conditions": "Condiciones:",
+		"allergies": "Alergias:",
+		"diet": "Dieta:",
+		"hobbies": "Hobbies:",
+		"job": "Trabajo:",
+		"basic": "Detalles Básicos",
+		"habits": "Detalles de Habitos",
+		"social": "Detalles Sociales",
+		"medical": "Detalles Médicos",
+		"select": "Seleccionar",
+		"yes": "Si",
+		"no": "No",
+		"notProvided": "No Provisto"
+	},
+	"form": {
+		"birthDate": "Fecha de nacimiento:"
+	},
+	"role": {
+		"PATIENT": "Paciente",
+		"DOCTOR": "Médico",
+		"LABORATORY": "Laboratorio",
+		"ADMIN": "Admin"
+	},
+	"locale": {
+		"ES_AR": "Español-(AR)",
+		"ES_US": "Español-(US)",
+		"EN_AR": "English",
+		"EN_US": "English-(US)"
+	},
+	"admin": {
+		"insurances": {
+			"button": {
+				"edit": "Editar"
+			}
 		}
 	},
 	"appointments": {
@@ -250,9 +395,342 @@
 			"see_patient": "Ver paciente"
 		}
 	},
+	"insurances": {
+		"title": "Gestión de obras sociales:",
+		"new": "Nueva obra social",
+		"buttons": {
+			"edit": "Editar",
+			"delete": "Eliminar"
+		}
+	},
+	"patient": {
+		"titles": {
+			"basic": "Detalles básicos",
+			"habits": "Detalles de hábitos",
+			"medical": "Detalles médicos",
+			"social": "Detalles sociales"
+		},
+		"labels": {
+			"email": "Mail",
+			"telephone": "Teléfono",
+			"age": "Edad",
+			"blood_type": "Tipo de sangre",
+			"height": "Altura (m)",
+			"weight": "Peso (kg)",
+			"insurance": "Obra social",
+			"insurance_number": "Número de afiliado",
+			"smokes": "Fuma habitualmente",
+			"drinks": "Bebe habitualmente",
+			"diet": "Dieta",
+			"medications": "Medicaciones",
+			"conditions": "Condiciones",
+			"allergies": "Alergias",
+			"hobbies": "Hobbies",
+			"job": "Trabajo"
+		},
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
+		},
+		"values": {
+			"true": "Sí",
+			"false": "No",
+			"unknown": "No provisto"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error al obtener los estudios",
+				"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+			}
+		}
+	},
+	"studies": {
+		"title": "Estudios",
+		"description": "Cliqueá en un estudio para administrar quién puede verlo",
+		"types": {
+			"title": "Tipo de estudio",
+			"options": {
+				"other": "Otro",
+				"prescription": "Receta médica",
+				"radiography": "Radiografía",
+				"laboratory_result": "Resultados de laboratorio",
+				"ultrasound": "Ecografía",
+				"mri": "Resonancia magnética",
+				"electrocardiogram": "Electrocardiograma",
+				"vaccination_record": "Registro de vacunación"
+			}
+		},
+		"orders": {
+			"title": "Fecha del estudio",
+			"options": {
+				"m_recent": "Más reciente",
+				"l_recent": "Más antiguo"
+			}
+		},
+		"table": {
+			"type": "Tipo de estudio",
+			"details": "Detalles",
+			"date": "Día",
+			"upload_date": "Fecha de subida",
+			"empty": "No hay estudios disponibles."
+		},
+		"actions": {
+			"upload": "Subir estudio",
+			"apply": "Aplicar"
+		},
+		"doctors": {
+			"title": "Mis médicos",
+			"description": "Cliquea en un doctor o ve a su perfil para administrar el acceso a tu información personal",
+			"actions": {
+				"revoke": "Desautorizar",
+				"grant": "Autorizar",
+				"revoke_all": "Desautorizar a todos"
+			},
+			"table": {
+				"name": "Doctor",
+				"specialty": "Especialidad",
+				"empty": "No tienes médicos autorizados para ver tu perfil."
+			}
+		},
+		"pop_up": {
+			"delete": {
+				"title": "¿Está seguro de que desea eliminar este estudio?",
+				"date_info": "El estudio fue subido el {uploadDate}",
+				"comment_label": "Con el comentario:",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar estudio",
+				"cancel": "Volver"
+			}
+		},
+		"messages": {
+			"error": {
+				"fething": {
+					"title": "Error al obtener los estudios",
+					"message": "Ocurrió un error al intentar obtener los estudios del paciente. Por favor, inténtelo de nuevo más tarde."
+				},
+				"deleting": {
+					"title": "Error al eliminar estudio",
+					"message": "Ocurrió un error al intentar eliminar el estudio. Por favor, inténtelo de nuevo más tarde."
+				}
+			},
+			"success": {
+				"deleting": {
+					"title": "¡Estudio eliminado con éxito!",
+					"message": "Has eliminado un estudio de tu perfil."
+				}
+			}
+		}
+	},
+	"study_info": {
+		"titles": {
+			"files": "Archivos",
+			"doctors": "Médicos autorizados"
+		},
+		"labels": {
+			"type": "Tipo de estudio",
+			"date": "Fecha del estudio",
+			"upload_date": "Fecha de subida",
+			"uploader": "Subido por"
+		},
+		"doctors": {
+			"actions": {
+				"revoke": "Desautorizar",
+				"grant": "Autorizar",
+				"revoke_all": "Desautorizar a todos",
+				"grant_all": "Autorizar a todos"
+			}
+		},
+		"table": {
+			"file_type": "Tipo de archivo"
+		},
+		"file_types": {
+			"application_pdf": "PDF (.pdf)",
+			"image_jpeg": "Imagen (.jpeg)",
+			"image_png": "Imagen (.png)"
+		},
+		"actions": {
+			"delete": "Eliminar estudio",
+			"download_all": "Descargar todos"
+		},
+		"error": {
+			"authorizing": {
+				"title": "Error al actualizar autorizaciones",
+				"message": "No se pudo actualizar la autorización para el doctor {doctorName}. Por favor, inténtelo de nuevo más tarde."
+			},
+			"deleting": {
+				"title": "Error al eliminar estudio",
+				"message": "Ocurrió un error al intentar eliminar el estudio. Por favor, inténtelo de nuevo más tarde."
+			},
+			"downloading": {
+				"title": "Error al descargar archivos",
+				"message": "Ocurrió un error al intentar descargar los archivos del estudio. Por favor, inténtelo de nuevo más tarde."
+			}
+		}
+	},
+	"new_file": {
+		"title": "Subir nuevo estudio para {patientName}",
+		"labels": {
+			"files": "Archivos",
+			"type": "Tipo de estudio",
+			"date": "Fecha del estudio",
+			"data": "Datos adicionales",
+			"auth_doctors": "Seleccione que médicos podrán ver este estudio"
+		},
+		"table": {
+			"auth_doctors": "Médicos autorizados"
+		},
+		"buttons": {
+			"files": "Elegir archivos",
+			"select_all": "Seleccionar todos",
+			"deselect_all": "Deseleccionar todos",
+			"submit": "Subir estudio"
+		},
+		"messages": {
+			"no_files": "Por favor, seleccione al menos un archivo para subir el estudio.",
+			"upload_success_title": "¡Estudio subido con éxito!",
+			"upload_success_message": "Has subido un nuevo estudio para {patientName}.",
+			"upload_error_title": "Error al subir el estudio",
+			"upload_error_message": "Ocurrió un error al intentar subir el estudio. Por favor, inténtelo de nuevo más tarde."
+		},
+		"data_placeholder": "Ingrese una descripción con datos sobre el estudio",
+		"no_files": "Ningún archivo seleccionado",
+		"more_files": "+ {count} archivos más"
+	},
+	"vacations": {
+		"title": "Gestión de Vacaciones",
+		"create": {
+			"title": "Registrar nuevas vacaciones",
+			"submit": "Registrar vacaciones"
+		},
+		"table": {
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de fin"
+		},
+		"past": {
+			"title": "Vacaciones pasadas",
+			"empty": "No hay vacaciones pasadas registradas"
+		},
+		"future": {
+			"title": "Vacaciones futuras",
+			"empty": "No hay vacaciones programadas"
+		},
+		"created": {
+			"title": "¡Vacaciones registradas!",
+			"message": "Las vacaciones han sido registradas exitosamente."
+		},
+		"deleted": {
+			"title": "¡Vacaciones canceladas!",
+			"message": "Las vacaciones han sido canceladas exitosamente."
+		},
+		"delete": {
+			"confirm": {
+				"title": "Cancelar vacaciones",
+				"message": "¿Está seguro que desea cancelar las vacaciones desde {startDate} hasta {endDate}?",
+				"button": "Cancelar vacaciones",
+				"back": "Volver"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Registrar vacaciones",
+				"message": "Estás por registrar vacaciones desde {startDate} hasta {endDate}, ¿deseas cancelar los turnos que tengas programados durante ese período?",
+				"yes": "Cancelar turnos",
+				"no": "Continuar sin cancelar turnos"
+			}
+		},
+		"error": {
+			"startRequired": "La fecha de inicio es requerida",
+			"endRequired": "La fecha de fin es requerida",
+			"endBeforeStart": "La fecha de fin debe ser posterior a la fecha de inicio",
+			"pastDate": "La fecha de inicio no puede ser anterior a la fecha actual",
+			"load": {
+				"title": "Error al cargar vacaciones",
+				"message": "No se pudieron cargar las vacaciones. Por favor, inténtelo de nuevo."
+			},
+			"create": {
+				"title": "Error al registrar vacaciones",
+				"message": "No se pudieron registrar las vacaciones. Por favor, inténtelo de nuevo."
+			},
+			"delete": {
+				"title": "Error al cancelar vacaciones",
+				"message": "No se pudieron cancelar las vacaciones. Por favor, inténtelo de nuevo."
+			}
+		}
+	},
+	"insurance": {
+		"title": "Editar obra social",
+		"labels": {
+			"name": "Nombre de la obra social",
+			"logo": "Nuevo logo de la obra social",
+			"current_logo": "Logo actual"
+		},
+		"placeholder": {
+			"name": "Ingrese el nombre de la obra social"
+		},
+		"no_logo": "Ningún archivo seleccionado",
+		"accepted_files": "Los tipos de archivo permitidos son: JPEG, PNG. El tamaño máximo del archivo es de 5 MB.",
+		"can_update": "Puede actualizar el logo de la obra social si lo desea.",
+		"buttons": {
+			"choose_file": "Elegir nuevo logo",
+			"submit": "Guardar cambios",
+			"delete": "Eliminar obra social",
+			"cancel": "Cancelar"
+		},
+		"toast": {
+			"success": {
+				"title": "¡Obra social actualizada con éxito!",
+				"message": "La obra social ha sido actualizada exitosamente."
+			},
+			"error": {
+				"title": "Error al actualizar la obra social",
+				"message": "Ocurrió un error al intentar actualizar la obra social. Por favor, inténtelo de nuevo más tarde."
+			}
+		},
+		"create": {
+			"title": "Crear nueva obra social",
+			"buttons": {
+				"file": "Elegir logo de la obra social",
+				"submit": "Crear obra social"
+			},
+			"labels": {
+				"logo": "Logo de la obra social"
+			},
+			"toast": {
+				"success": {
+					"title": "¡Obra social creada con éxito!",
+					"message": "La obra social ha sido creada exitosamente."
+				},
+				"error": {
+					"title": "Error al crear la obra social",
+					"message": "Ocurrió un error al intentar crear la obra social. Por favor, inténtelo de nuevo más tarde."
+				}
+			}
+		},
+		"delete": {
+			"toast": {
+				"success": {
+					"title": "¡Obra social eliminada con éxito!",
+					"message": "La obra social ha sido eliminada exitosamente."
+				},
+				"error": {
+					"title": "Error al eliminar la obra social",
+					"message": "Ocurrió un error al intentar eliminar la obra social. Por favor, inténtelo de nuevo más tarde."
+				}
+			},
+			"pop_up": {
+				"title": "¿Estás seguro de que quieres eliminar esta obra social?",
+				"subtitle": "Esta acción no se puede deshacer.",
+				"confirm": "Eliminar obra social",
+				"cancel": "Cancelar"
+			}
+		}
+	},
+	"unknown": "Desconocido",
 	"date_format": "dd/MM/yyyy",
-	"next": "Siguiente",
 	"previous": "Anterior",
+	"next": "Siguiente",
+	"action": "Acción",
+	"actions": "Acciones",
 	"vacations": {
 		"title": "Gestión de Vacaciones",
 		"create": {

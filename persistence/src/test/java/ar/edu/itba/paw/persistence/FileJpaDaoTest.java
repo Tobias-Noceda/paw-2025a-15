@@ -15,8 +15,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.models.entities.File;
+import ar.edu.itba.paw.models.enums.FileTypeEnum;
 import ar.edu.itba.paw.persistence.config.TestConfig;
 
 @Sql("classpath:images.sql")

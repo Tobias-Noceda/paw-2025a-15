@@ -164,21 +164,6 @@ public class InsuranceJpaDaoTest {
     }
 
     @Test
-    public void testGetAllInsurances(){
-        final Insurance INSURANCE1 = TestData.Insurances.validInsurance;
-        INSURANCE1.setId(TestData.Insurances.validInsuranceId);
-        final Insurance INSURANCE2 = TestData.Insurances.validInsurance2;
-        INSURANCE2.setId(TestData.Insurances.validInsurance2Id);
-
-        List<Insurance> foundInsurances = insuranceDao.getAllInsurances();
-
-        Assert.assertFalse(foundInsurances.isEmpty());
-        Assert.assertEquals(2, foundInsurances.size());
-        Assert.assertTrue(foundInsurances.contains(INSURANCE1));
-        Assert.assertTrue(foundInsurances.contains(INSURANCE2));
-    }
-
-    @Test
     public void testGetInsuranceByName(){
         final Insurance INSURANCE = TestData.Insurances.validInsurance;
         final Long INSURANCE_ID = TestData.Insurances.validInsuranceId;
@@ -215,12 +200,14 @@ public class InsuranceJpaDaoTest {
     }   
 
     @Test
-    public void testGetInsurancesCount(){
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql"})
+    public void testGetInsurancesByDoctorIdCount(){
         final Long INS1_ID = TestData.Insurances.validInsuranceId;
         final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final Long DOC_ID = TestData.Users.doctorId;
         final int INS_AMOUNT = 2;//in insurances.sql
 
-        int result = insuranceDao.getInsurancesCount();
+        int result = insuranceDao.getInsurancesByDoctorIdCount(DOC_ID);
         Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
         Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
 
@@ -230,48 +217,87 @@ public class InsuranceJpaDaoTest {
     }
 
     @Test
-    public void testGetInsurancesPage(){
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql"})
+    public void testGetInsurancesByDoctorIdCountNonexistentDoc(){
         final Long INS1_ID = TestData.Insurances.validInsuranceId;
         final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final Long DOC_ID = 0L;
 
-        List<Insurance> insurances = insuranceDao.getInsurancesPage(1, 2);
+        int result = insuranceDao.getInsurancesByDoctorIdCount(DOC_ID);
         Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
         Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
 
-        Assert.assertNotNull(insurances);
-        Assert.assertEquals(2, insurances.size());
-        Assert.assertTrue(insurances.contains(insurance2Persisted));
-        Assert.assertTrue(insurances.contains(insurance1Persisted));
+        Assert.assertEquals(0, result);
         Assert.assertNotNull(insurance1Persisted);
         Assert.assertNotNull(insurance2Persisted);
     }
 
     @Test
-    public void testGetInsurancesPageWrongPage(){
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql"})
+    public void testGetInsurancesByDoctorIdPage(){
         final Long INS1_ID = TestData.Insurances.validInsuranceId;
         final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final Long DOC_ID = TestData.Users.doctorId;
+        final int INS_AMOUNT = 2;//in insurances.sql
 
-        List<Insurance> insurances = insuranceDao.getInsurancesPage(0, 2);
+        List<Insurance> insurances = insuranceDao.getInsurancesByDoctorIdPage(DOC_ID, 1, 2);
         Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
         Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
 
         Assert.assertNotNull(insurances);
-        Assert.assertEquals(0, insurances.size());
+        Assert.assertFalse(insurances.isEmpty());
+        Assert.assertEquals(INS_AMOUNT, insurances.size());
         Assert.assertNotNull(insurance1Persisted);
         Assert.assertNotNull(insurance2Persisted);
     }
 
     @Test
-    public void testGetInsurancesPageWrongPageSize(){
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql"})
+    public void testGetInsurancesByDoctorIdPageNonexistentDoc(){
         final Long INS1_ID = TestData.Insurances.validInsuranceId;
         final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final Long DOC_ID = 0L;
 
-        List<Insurance> insurances = insuranceDao.getInsurancesPage(1, 0);
+        List<Insurance> insurances = insuranceDao.getInsurancesByDoctorIdPage(DOC_ID, 1, 2);
         Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
         Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
 
         Assert.assertNotNull(insurances);
-        Assert.assertEquals(0, insurances.size());
+        Assert.assertTrue(insurances.isEmpty());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql"})
+    public void testGetInsurancesByDoctorIdPageInvalidPage(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        List<Insurance> insurances = insuranceDao.getInsurancesByDoctorIdPage(DOC_ID, 0, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertTrue(insurances.isEmpty());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    @Sql({"classpath:images.sql", "classpath:insurances.sql", "classpath:users.sql", "classpath:doctorCoverages.sql"})
+    public void testGetInsurancesByDoctorIdPageInvalidPageSize(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final Long DOC_ID = TestData.Users.doctorId;
+
+        List<Insurance> insurances = insuranceDao.getInsurancesByDoctorIdPage(DOC_ID, 1, 0);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertTrue(insurances.isEmpty());
         Assert.assertNotNull(insurance1Persisted);
         Assert.assertNotNull(insurance2Persisted);
     }
@@ -290,4 +316,145 @@ public class InsuranceJpaDaoTest {
         Assert.assertNotNull(insurance2Persisted);
     }
 
+    @Test
+    public void testDeleteNonexistentInsurance(){
+        final Long INS1_ID = 0L;
+        Insurance insurance1 = em.find(Insurance.class, INS1_ID);
+
+        insuranceDao.delete(insurance1);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+
+        Assert.assertNull(insurance1Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNameCount(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final String INS_NAME = TestData.Insurances.validInsurance.getName();
+        final int INS_AMOUNT = 1;
+
+        int result = insuranceDao.searchInsurancesByNameCount(INS_NAME);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertEquals(INS_AMOUNT, result);
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNameCountNullName(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final int INS_AMOUNT = 2;
+
+        int result = insuranceDao.searchInsurancesByNameCount(null);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertEquals(INS_AMOUNT, result);
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNameCountEmptyName(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final int INS_AMOUNT = 2;
+
+        int result = insuranceDao.searchInsurancesByNameCount("");
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertEquals(INS_AMOUNT, result);
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNamePage(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final String INS_NAME = TestData.Insurances.validInsurance.getName();
+        final int INS_AMOUNT = 1;
+
+        List<Insurance> insurances = insuranceDao.searchInsurancesByNamePage(INS_NAME, 1, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertFalse(insurances.isEmpty());
+        Assert.assertEquals(INS_AMOUNT, insurances.size());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNamePageNullName(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final int INS_AMOUNT = 2;
+
+        List<Insurance> insurances = insuranceDao.searchInsurancesByNamePage(null, 1, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertFalse(insurances.isEmpty());
+        Assert.assertEquals(INS_AMOUNT, insurances.size());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNamePageEmptyName(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final int INS_AMOUNT = 2;
+
+        List<Insurance> insurances = insuranceDao.searchInsurancesByNamePage("", 1, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertFalse(insurances.isEmpty());
+        Assert.assertEquals(INS_AMOUNT, insurances.size());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    
+    @Test
+    public void testSearchInsurancesByNamePageInvalidPage(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final String INS_NAME = TestData.Insurances.validInsurance.getName();
+
+        List<Insurance> insurances = insuranceDao.searchInsurancesByNamePage(INS_NAME, 0, 2);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertTrue(insurances.isEmpty());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
+
+    @Test
+    public void testSearchInsurancesByNamePageInvalidPageSize(){
+        final Long INS1_ID = TestData.Insurances.validInsuranceId;
+        final Long INS2_ID = TestData.Insurances.validInsurance2Id;
+        final String INS_NAME = TestData.Insurances.validInsurance.getName();
+
+        List<Insurance> insurances = insuranceDao.searchInsurancesByNamePage(INS_NAME, 1, 0);
+        Insurance insurance1Persisted = em.find(Insurance.class, INS1_ID);
+        Insurance insurance2Persisted = em.find(Insurance.class, INS2_ID);
+
+        Assert.assertNotNull(insurances);
+        Assert.assertTrue(insurances.isEmpty());
+        Assert.assertNotNull(insurance1Persisted);
+        Assert.assertNotNull(insurance2Persisted);
+    }
 }

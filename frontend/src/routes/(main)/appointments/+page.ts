@@ -4,17 +4,19 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 import type { Appointment, Doctor, Paginated, Patient } from '$types/api';
 import { fetchFreeAppointments, fetchNonFreeAppointments, formatDateLocal, parseDateInLocalTimezone } from '$lib/services/appointments';
-import { setUserFromSession } from '../../../lib/stores/user';
+import { setUserFromSession } from '$lib/stores/user';
 
 // Disable SSR since we need localStorage for authentication tokens
 export const ssr = false;
 
 export const load: PageLoad = async ({ params, url, fetch }) => {
-    if (localStorage.getItem('access')) {
+    let currentUser = get(user);
+
+    if (!currentUser && localStorage.getItem('access')) {
         await setUserFromSession(localStorage.getItem('access')!, fetch);
     }
 
-    const currentUser = get(user);
+    currentUser = get(user);
     const currentUserData = get(userData);
 
     let pastAppointments: Paginated<Appointment> | null = null;
@@ -31,7 +33,11 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
         : new Date();
 
     if (!currentUser || !currentUserData) {
-        throw error(401, 'User data not available');
+        throw error(404, 'Not found');
+    }
+
+    if (currentUser.role !== 'DOCTOR' && currentUser.role !== 'PATIENT') {
+        throw error(404, 'Not found');
     }
 
     try {
@@ -39,12 +45,11 @@ export const load: PageLoad = async ({ params, url, fetch }) => {
             freeAppointmentsLink = (currentUserData as Doctor).links.freeAppointments;
             freeAppointments = await fetchFreeAppointments(freeAppointmentsLink, formatDateLocal(selectedDate), fetch);
         } else if (currentUser.role === 'PATIENT' && (currentUserData as Patient).links.pastAppointments) {
-            console.log('Fetching past appointments for patient: ', currentUserData);
-            pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, fetch);
+            pastAppointments = await fetchNonFreeAppointments((currentUserData as Patient).links.pastAppointments, false, fetch);
         }
 
         futureAppointmentsLink = currentUserData.links.futureAppointments;
-        futureAppointments = await fetchNonFreeAppointments(futureAppointmentsLink, fetch);
+        futureAppointments = await fetchNonFreeAppointments(futureAppointmentsLink, currentUser.role === 'DOCTOR', fetch);
 
         return {
             pastAppointments,

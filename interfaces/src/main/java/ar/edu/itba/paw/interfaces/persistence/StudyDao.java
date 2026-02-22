@@ -12,6 +12,7 @@ import ar.edu.itba.paw.models.entities.User;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 public interface StudyDao {
+    
     public Study create(StudyTypeEnum type, String comment, List<File> file, Patient patient, User uploader, LocalDate studyDate);
 
     public Study create(StudyTypeEnum type, String comment, List<File> file, Patient patient, User uploader);
@@ -19,8 +20,6 @@ public interface StudyDao {
     public Optional<Study> findStudyById(long id);
 
     public boolean deleteStudy(long id);
-
-    public boolean isFileInStudy(long studyId, long fileId);
 
     public int getStudyFilesCount(long studyId);
 

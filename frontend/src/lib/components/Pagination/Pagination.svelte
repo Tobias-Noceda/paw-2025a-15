@@ -93,8 +93,8 @@
 	}
 
 	onMount(() => {
-		const doctorsPage = initialFetchFunction();
-		doctorsPage.then((data) => {
+		const page = initialFetchFunction();
+		page.then((data) => {
 			entries = data.results;
 
             first = data._links?.first;

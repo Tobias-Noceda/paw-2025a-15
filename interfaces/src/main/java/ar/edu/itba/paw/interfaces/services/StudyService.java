@@ -10,17 +10,16 @@ import ar.edu.itba.paw.models.entities.Study;
 import ar.edu.itba.paw.models.enums.StudyTypeEnum;
 
 public interface StudyService {
+
     public Study create(StudyTypeEnum type, String comment, List<Long> fileIds, long userId, long uploaderId, LocalDate studyDate);
 
     public Optional<Study> getStudyById(long id);
 
     public boolean deleteStudy(long id);
 
-    public boolean isFileInStudy(long studyId, long fileId);
+    public int getStudyFilesCount(Long studyId);
 
-    public int getStudyFilesCount(long studyId);
-
-    public List<File> getStudyFilesPage(long studyId, int page, int pageSize);
+    public List<File> getStudyFilesPage(Long studyId, int page, int pageSize);
 
     public int getFilteredStudiesCount(long patientId, Long doctorId, StudyTypeEnum type);
 

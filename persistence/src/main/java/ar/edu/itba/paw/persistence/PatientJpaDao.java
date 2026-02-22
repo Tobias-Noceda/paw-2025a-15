@@ -27,6 +27,14 @@ public class PatientJpaDao implements PatientDao {
     private EntityManager em;
 
     @Override
+    public void deletePatientById(long patientId) {
+        Patient patient = em.find(Patient.class, patientId);
+        if (patient != null) {
+            em.remove(patient);
+        }
+    }
+
+    @Override
     public Patient createPatient(
         String email,
         String password,
@@ -45,7 +53,7 @@ public class PatientJpaDao implements PatientDao {
 
     @Override
     public void updatePatient(
-        Patient patient,
+        Long patientId,
         String phoneNumber,
         File picture,
         LocaleEnum mailLanguage,
@@ -64,6 +72,8 @@ public class PatientJpaDao implements PatientDao {
         Insurance insurance,
         String insuranceNumber
     ) {
+        Patient patient = getPatientById(patientId).orElse(null);
+        if(patient==null) return;
         if (phoneNumber != null) patient.setTelephone(phoneNumber);
         if (picture != null) patient.setPicture(picture);
         if (mailLanguage != null) patient.setLocale(mailLanguage);
@@ -109,7 +119,7 @@ public class PatientJpaDao implements PatientDao {
     @Override
     public List<Doctor> getAuthDoctorsByPatientIdAndNamePage(long patientId, String name, int page, int pageSize) {
         Patient patient = em.find(Patient.class, patientId);
-        if(patient==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        if(patient==null || page <= 0 || pageSize <= 0) return Collections.emptyList();
         int offset = (page - 1) * pageSize;
         TypedQuery<Doctor> query = em.createQuery(
                 "select distinct ad.doctor from AuthDoctor as ad where ad.patient = :patient ", Doctor.class);

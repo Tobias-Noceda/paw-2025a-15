@@ -8,7 +8,7 @@
     label?: string;
     placeholder?: string;
     type?: 'text' | 'password' | 'number';
-    value?: string;
+    value?: string | number;
     min?: number;
     errorMessage?: string;
     disabled?: boolean;
@@ -44,7 +44,7 @@
     inputClass,
     'px-3 py-2.5 rounded-md border bg-bgColor text-primaryText',
     'disabled:opacity-50 disabled:cursor-not-allowed',
-    errorMessage ? 'border-red-500' : 'border-gray-300',
+    errorMessage ? 'border-red-500' : 'border-primaryBorder',
     'focus:border-primary',
     skeleton ? 'bg-skeleton animate-pulse text-transparent cursor-default' : '',
     multiline ? 'resize-none overflow-hidden' : '',

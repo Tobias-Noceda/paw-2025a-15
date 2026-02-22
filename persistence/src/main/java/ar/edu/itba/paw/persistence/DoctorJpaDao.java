@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -23,6 +25,7 @@ import ar.edu.itba.paw.models.enums.DoctorOrderEnum;
 import ar.edu.itba.paw.models.enums.LocaleEnum;
 import ar.edu.itba.paw.models.enums.SpecialtyEnum;
 import ar.edu.itba.paw.models.enums.WeekdayEnum;
+import ar.edu.itba.paw.models.exceptions.AlreadyExistsException;
 
 @Repository
 public class DoctorJpaDao implements DoctorDao{
@@ -31,11 +34,26 @@ public class DoctorJpaDao implements DoctorDao{
     private EntityManager em;
 
     @Override
+    public void deleteDoctor(long doctorId) {
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if (doctor != null) {
+            em.remove(doctor);
+        }
+    }
+
+    @Override
     public Doctor createDoctor(String email, String password, String name, String telephone, long pictureId, LocaleEnum locale, String licence, SpecialtyEnum specialty, List<Insurance> insurances) {
         File picture = em.find(File.class, pictureId);
         if(picture == null) return null;
-        Doctor doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
-        em.persist(doctor);
+        Doctor doctor;
+
+        try {
+            doctor = new Doctor(email, password, name, telephone, picture, LocalDate.now(), locale, licence, specialty, insurances);
+            em.persist(doctor);
+            em.flush();
+        } catch (PersistenceException e) {
+            throw new AlreadyExistsException("Medical license already taken!");
+        }
         return doctor;
     }
 
@@ -81,20 +99,37 @@ public class DoctorJpaDao implements DoctorDao{
             insurance = null;
         }
         if (name == null && specialty == null && insurance == null && weekday == null) {
-            return em.createQuery("SELECT d FROM Doctor d", Doctor.class)
-                    .setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
+            Query nativeQuery = em.createNativeQuery("SELECT doctor_id FROM doctor_details ");
+            nativeQuery.setFirstResult((page - 1) * pageSize);
+            nativeQuery.setMaxResults(pageSize);
+            List<Long> filteredIds = (List<Long>) nativeQuery.getResultList()
+                                    .stream()
+                                    .map(id -> ((Number) id).longValue())
+                                    .toList();
+
+            if (filteredIds.isEmpty()) return Collections.emptyList();
+
+            return em.createQuery("SELECT d FROM Doctor d WHERE d.id IN :filteredIds", Doctor.class)
+                    .setParameter("filteredIds", filteredIds)
                     .getResultList();
         }
         
-        StringBuilder queryBuilder = new StringBuilder("SELECT d FROM Doctor d WHERE 1=1");
+        StringBuilder queryBuilder = new StringBuilder("SELECT dd.doctor_id FROM doctor_details as dd JOIN users as u ON dd.doctor_id = u.user_id WHERE 1=1 ");
         buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, orderBy);
+        Query nativeQuery = em.createNativeQuery(queryBuilder.toString());
+        if (name != null && !name.isEmpty()) {
+            nativeQuery.setParameter("name", "%" + sanitize(name) + "%");
+        }
+        nativeQuery.setFirstResult((page - 1) * pageSize);
+        nativeQuery.setMaxResults(pageSize);
+        List<Long> filteredIds = (List<Long>) nativeQuery.getResultList()
+                                    .stream()
+                                    .map(id -> ((Number) id).longValue())
+                                    .toList();
+        if (filteredIds.isEmpty()) return Collections.emptyList();
 
-        TypedQuery<Doctor> query = em.createQuery(queryBuilder.toString(), Doctor.class);
-        setQueryParameters(query, name, specialty, insurance, weekday);
-
-        List<Doctor> doctors = query.setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
+        List<Doctor> doctors = em.createQuery("SELECT d FROM Doctor d WHERE d.id IN :filteredIds", Doctor.class)
+                    .setParameter("filteredIds", filteredIds)
                     .getResultList();
 
         if(orderBy != null && (orderBy.equals(DoctorOrderEnum.M_POPULAR) || orderBy.equals(DoctorOrderEnum.L_POPULAR))) {
@@ -116,13 +151,15 @@ public class DoctorJpaDao implements DoctorDao{
             return em.createQuery("SELECT COUNT(d) FROM Doctor d", Long.class).getSingleResult().intValue();
         }
         
-        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(d) FROM Doctor d WHERE 1=1");
+        StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(dd.doctor_id) FROM doctor_details as dd JOIN users as u ON dd.doctor_id = u.user_id WHERE 1=1");
         buildQueryByParams(queryBuilder, name, specialty, insurance, weekday, null);
 
-        TypedQuery<Long> query = em.createQuery(queryBuilder.toString(), Long.class);
-        setQueryParameters(query, name, specialty, insurance, weekday);
-
-        return query.getSingleResult().intValue();
+        Query query = em.createNativeQuery(queryBuilder.toString());
+        if (name != null && !name.isEmpty()) {
+            query.setParameter("name", "%" + sanitize(name) + "%");
+        }
+        Number result = (Number) query.getSingleResult();
+        return result.intValue();
     }
 
     @Override
@@ -182,42 +219,26 @@ public class DoctorJpaDao implements DoctorDao{
             WeekdayEnum weekday, DoctorOrderEnum orderBy) {
         // Build the query based on the parameters provided
         if (name != null && !name.isEmpty()) {
-            queryBuilder.append(" AND LOWER(d.name) LIKE :name");
+            queryBuilder.append(" AND LOWER(u.user_name) LIKE :name");
         }
         if (specialty != null) {
-            queryBuilder.append(" AND d.specialty = :specialty");
+            queryBuilder.append(" AND doctor_specialty = " + specialty.ordinal());
         }
         if (insurance != null) {
-            queryBuilder.append(" AND :insurance MEMBER OF d.insurances");
+            queryBuilder.append(" AND").append(insurance.getId()).append("IN (SELECT dc.insurance_id FROM doctor_coverages as dc WHERE dc.doctor_id = dd.doctor_id)");
         }
         if (weekday != null) {
-            queryBuilder.append(" AND EXISTS (SELECT 1 FROM DoctorSingleShift dss WHERE dss.doctor = d AND dss.weekday = :weekday)");
+            queryBuilder.append(" AND EXISTS (SELECT 1 FROM doctor_single_shifts as dss WHERE dss.doctor_id = dd.doctor_id AND dss.shift_weekday =").append(weekday.ordinal()).append(")");
         }
         if (orderBy != null) {
             switch (orderBy) {
-                case M_RECENT -> queryBuilder.append(" ORDER BY d.createDate ASC");
-                case L_RECENT -> queryBuilder.append(" ORDER BY d.createDate DESC");
+                case M_RECENT -> queryBuilder.append(" ORDER BY u.createDate ASC");
+                case L_RECENT -> queryBuilder.append(" ORDER BY u.createDate DESC");
                 default -> {
                     // Imposible to filter by popularity in a query.
                     // If this is the case, the order will be done in Java
                 }
             }
-        }
-    }
-
-    private void setQueryParameters(TypedQuery<?> query, String name, SpecialtyEnum specialty, Insurance insurance,
-            WeekdayEnum weekday) {
-        if (name != null && !name.isEmpty()) {
-            query.setParameter("name", "%" + sanitize(name) + "%");
-        }
-        if (specialty != null) {
-            query.setParameter("specialty", specialty);
-        }
-        if (insurance != null) {
-            query.setParameter("insurance", insurance);
-        }
-        if (weekday != null) {
-            query.setParameter("weekday", weekday);
         }
     }
 
@@ -271,26 +292,62 @@ public class DoctorJpaDao implements DoctorDao{
     }
 
     @Override
-    public List<DoctorVacation> getDoctorVacationsPast(long doctorId) {
-    LocalDate today = LocalDate.now();
-        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today", DoctorVacation.class)
-             .setParameter("doctorId", doctorId)
-             .setParameter("today", today)
-             .getResultList();
-    }
-
-    @Override
-    public List<DoctorVacation> getDoctorVacationsFuture(long doctorId) {
-    LocalDate today = LocalDate.now();
-        return em.createQuery("SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today", DoctorVacation.class)
-             .setParameter("doctorId", doctorId)
-             .setParameter("today", today)
-             .getResultList();
-    }
-
-    @Override
     public boolean vacationExists(long doctorId, LocalDate startDate, LocalDate endDate) {
         return em.find(DoctorVacation.class, new DoctorVacationId(doctorId, startDate, endDate)) != null;
+    }
+
+    @Override
+    public List<DoctorVacation> getDoctorVacationsPastPage(long doctorId, int page, int pageSize) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        TypedQuery<DoctorVacation> query = em.createQuery(
+                "SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today ", DoctorVacation.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public int getDoctorVacationsPastCount(long doctorId) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
+        String baseQuery = " SELECT count(dv) FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate <= :today ";
+        TypedQuery<Long> query = em.createQuery(baseQuery, Long.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public List<DoctorVacation> getDoctorVacationsFuturePage(long doctorId, int page, int pageSize) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null ||page <= 0 || pageSize <= 0) return Collections.emptyList();
+        int offset = (page - 1) * pageSize;
+        TypedQuery<DoctorVacation> query = em.createQuery(
+                "SELECT dv FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today ", DoctorVacation.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
+    public int getDoctorVacationsFutureCount(long doctorId) {
+        LocalDate today = LocalDate.now();
+        Doctor doctor = em.find(Doctor.class, doctorId);
+        if(doctor==null) return 0;
+        String baseQuery = " SELECT count(dv) FROM DoctorVacation dv WHERE dv.id.doctorId = :doctorId AND dv.id.startDate > :today ";
+        TypedQuery<Long> query = em.createQuery(baseQuery, Long.class);
+        query.setParameter("doctorId", doctorId);
+        query.setParameter("today", today);
+        return query.getSingleResult().intValue();
     }
 
 }

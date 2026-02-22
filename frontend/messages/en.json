@@ -54,6 +54,7 @@
 			"specialty": "Specialty",
 			"address": "Address",
 			"insurances": "Health insurances",
+			"add_schedule": "Do you want to add a schedule of availability?",
 			"work_days": "Work days",
 			"start_time": "Start time",
 			"end_time": "End time",
@@ -64,7 +65,21 @@
 			"password": "Password",
 			"confirm_password": "Confirm password",
 			"submit_button": "Register",
-			"back_to_login": "Back to login"
+			"back_to_login": "Back to login",
+			"success": {
+				"title": "Success!",
+				"message": "Your account has been created successfully. You can now log in."
+			},
+			"error": {
+				"title": "Error",
+				"message": "An error occurred while trying to create your account. Please try again later."
+			},
+			"form": {
+				"error": {
+					"email": "Email already taken",
+					"med_license": "License already taken"
+				}
+			}
 		},
 		"change": {
 			"title": "Change Password",
@@ -77,6 +92,17 @@
 			"success_message": "Your password has been changed successfully.",
 			"error_title": "Error",
 			"error_message": "An error occurred while trying to change your password. Please try again later."
+		},
+		"verify": {
+			"success": {
+				"title": "Account verified successfully!",
+				"message": "Your account with email {email} has been verified successfully. You can now log in."
+			},
+			"error": {
+				"title": "Error verifying account",
+				"message": "An error occurred while trying to verify the account. The verification link may have expired. Please try again or contact support for help."
+			},
+			"back_to_login": "Back to login"
 		}
 	},
 	"months": {
@@ -164,12 +190,13 @@
 	},
 	"all": "All",
 	"doctors_list": "Doctors",
+	"patients_list": "Patients",
 	"clear": "Clear",
 	"today": "Today",
 	"topbar": {
 		"logo_alt_text": "CareTrace Logo",
 		"appointments": "Appointments",
-		"studies": "Studies",
+		"studies": "My Studies and Doctors",
 		"vacations": "Vacations",
 		"login": "Login",
 		"logout": "Logout",
@@ -182,7 +209,19 @@
 			"specialty": "Specialty",
 			"address": "Address",
 			"license": "License",
-			"schedule": "Availability"
+			"schedule": "Availability",
+			"accesses": "Current Accesses"
+		},
+		"details": {
+			"specialty": {
+				"label": "Specialty:"
+			}
+		},
+		"profile": {
+			"insurance": {
+				"label": "Insurances:"
+			},
+			"updateSchedule": "Do you want to update your schedule?"
 		},
 		"table": {
 			"day": "Weekday",
@@ -190,19 +229,125 @@
 		},
 		"actions": {
 			"authorize": "Authorize",
-			"de_authorize": "De-authorize"
+			"de_authorize": "De-authorize",
+			"update": "Update"
+		},
+		"authorizations": {
+			"title": "Current Accesses",
+			"options": {
+				"view_medical": "Medical",
+				"view_social": "Social",
+				"view_habits": "Habits"
+			}
 		},
 		"text": {
 			"no_schedule": "No available schedule.",
 			"schedule": "{day}s from {startTime} to {endTime}",
-			"empty_schedule": "No available appointments on this date",
-			"pop_up": {
+			"empty_schedule": "No available appointments on this date"
+		},
+		"pop_up": {
+			"appointment": {
 				"title": "Are you sure you want to take an appointment on {month} {day} at {startTime} with {doctorName}?",
 				"subtitle": "By doing this you will also be authorizing them to see your medical profile and studies. You can revoke this permission at any time.",
 				"reason": "Appointment reason:",
 				"reason_placeholder": "Enter a brief reason for the appointment",
-				"confirm": "Take appointment",
-				"cancel": "Cancel"
+				"confirm": "Take appointment"
+			},
+			"authorize": {
+				"title": "By doing this, you are authorizing the doctor to view your profile and medical studies. You can revoke this permission at any time.",
+				"confirm": "Authorize"
+			},
+			"update": {
+				"title": "Current accesses will be updated.",
+				"view_habits": "With access to habits you grant access to your drinking/smoking habits and diet.",
+				"view_medical": "With medical access you grant access to your medications, conditions and allergies.",
+				"view_social": "With social access you grant access to your hobbies and job.",
+				"updateable": "You can update these permissions at any time.",
+				"confirm": "Update accesses"
+			},
+			"de_authorize": {
+				"title": "By doing this, you are unauthorizing the doctor from viewing your profile and medical studies. You can authorize them again at any time.",
+				"confirm": "Unauthorize"
+			},
+			"cancel": "Cancel"
+		}
+	},
+	"profile": {
+		"title": "My Profile",
+		"role": {
+			"label": "Role"
+		},
+		"save": {
+			"button": "Save changes",
+			"success_title": "Changes saved!",
+			"success_message": "Your profile was updated successfully."
+		},
+		"phone": {
+			"label": "Phone number"
+		},
+		"email": {
+			"lang": {
+				"label": "Email language"
+			}
+		},
+		"insurance": {
+			"label": "Insurance:",
+			"placeholder": "Select your insurance"
+		},
+		"insuranceNumber": {
+			"label": "Insurance number:",
+			"placeholder": "Enter your insurance number"
+		},
+		"keep": "I wish to keep my taken turns",
+		"pop_up": {
+			"keep": {
+				"title": "Do you wish to keep your taken turns?",
+				"confirm": "Yes, keep turns",
+				"cancel": "No, cancel turns"
+			}
+		}
+	},
+	"profileInfo": {
+		"age": "Age:",
+		"bloodType": "Blood Type:",
+		"height": "Height (m):",
+		"weight": "Weight (kg):",
+		"smokes": "Smoking habit:",
+		"drinks": "Drinking habit:",
+		"meds": "Medications:",
+		"conditions": "Conditions:",
+		"allergies": "Allergies:",
+		"diet": "Diet:",
+		"hobbies": "Hobbies:",
+		"job": "Job:",
+		"basic": "Basic Details",
+		"habits": "Habits Details",
+		"social": "Social Details",
+		"medical": "Medical Details",
+		"select": "Select",
+		"yes": "Yes",
+		"no": "No",
+		"notProvided": "Not Provided"
+	},
+	"form": {
+		"birthDate": "Birth date:"
+	},
+	"role": {
+		"PATIENT": "Patient",
+		"DOCTOR": "Doctor",
+		"LABORATORY": "Laboratory",
+		"ADMIN": "Admin"
+	},
+	"locale": {
+		"ES_AR": "Español-(AR)",
+		"ES_US": "Español-(US)",
+		"EN_AR": "English",
+		"EN_US": "English-(US)"
+	},
+	"admin": {
+		"insurances": {
+			"button": {
+				"edit": "Edit"
 			}
 		}
 	},
@@ -250,9 +395,322 @@
 			"see_patient": "See patient"
 		}
 	},
+	"insurances": {
+		"title": "Health Insurances Management:",
+		"new": "Add New Insurance",
+		"buttons": {
+			"edit": "Edit",
+			"delete": "Delete"
+		}
+	},
+	"patient": {
+		"titles": {
+			"basic": "Basic Details",
+			"habits": "Habits Details",
+			"medical": "Medical Details",
+			"social": "Social Details"
+		},
+		"labels": {
+			"email": "Email",
+			"telephone": "Phone",
+			"age": "Age",
+			"blood_type": "Blood Type",
+			"height": "Height (m)",
+			"weight": "Weight (kg)",
+			"insurance": "Insurance",
+			"insurance_number": "Insurance Number",
+			"smokes": "Smoking habit",
+			"drinks": "Drinking habit",
+			"diet": "Diet",
+			"medications": "Medications",
+			"conditions": "Conditions",
+			"allergies": "Allergies",
+			"hobbies": "Hobbies",
+			"job": "Job"
+		},
+		"actions": {
+			"upload": "Upload Study",
+			"apply": "Apply"
+		},
+		"values": {
+			"true": "Yes",
+			"false": "No",
+			"unknown": "Not provided"
+		},
+		"error": {
+			"fetching": {
+				"title": "Error fetching studies",
+				"message": "An error occurred while trying to fetch the patient's studies. Please try again later."
+			}
+		}
+	},
+	"studies": {
+		"title": "Studies",
+		"description": "Click on a study to manage who can see it",
+		"types": {
+			"title": "Study Type",
+			"options": {
+				"other": "Other",
+				"prescription": "Prescription",
+				"radiography": "Radiography",
+				"laboratory_result": "Laboratory Result",
+				"ultrasound": "Ultrasound",
+				"mri": "MRI",
+				"electrocardiogram": "Electrocardiogram",
+				"vaccination_record": "Vaccination Record"
+			}
+		},
+		"orders": {
+			"title": "Study Date",
+			"m_recent": "Most Recent",
+			"l_recent": "Oldest"
+		},
+		"table": {
+			"type": "Study Type",
+			"details": "Details",
+			"date": "Date",
+			"upload_date": "Upload Date",
+			"empty": "No studies available."
+		},
+		"actions": {
+			"upload": "Upload Study",
+			"apply": "Apply"
+		},
+		"doctors": {
+			"title": "My Doctors",
+			"description": "Click on a doctor or go to their profile to manage access to your personal information",
+			"actions": {
+				"revoke": "Deauthorize",
+				"grant": "Authorize",
+				"revoke_all": "Deauthorize all"
+			},
+			"table": {
+				"name": "Name",
+				"specialty": "Specialty",
+				"empty": "You have no doctors authorized to view your profile."
+			}
+		},
+		"pop_up": {
+			"delete": {
+				"title": "Are you sure you want to delete this study?",
+				"date_info": "The study was uploaded on {uploadDate}",
+				"comment_label": "With the comment:",
+				"subtitle": "This action cannot be undone.",
+				"confirm": "Delete study",
+				"cancel": "Go back"
+			}
+		}
+	},
+	"study_info": {
+		"titles": {
+			"files": "Files",
+			"doctors": "Authorized Doctors"
+		},
+		"labels": {
+			"type": "Study Type",
+			"date": "Study Date",
+			"upload_date": "Upload Date",
+			"uploader": "Uploaded by"
+		},
+		"doctors": {
+			"actions": {
+				"revoke": "Deauthorize",
+				"grant": "Authorize",
+				"revoke_all": "Deauthorize all",
+				"grant_all": "Authorize all"
+			}
+		},
+		"table": {
+			"file_type": "File Type"
+		},
+		"file_types": {
+			"application_pdf": "PDF (.pdf)",
+			"image_jpeg": "Image (.jpeg)",
+			"image_png": "Image (.png)"
+		},
+		"actions": {
+			"delete": "Delete study",
+			"download_all": "Download all"
+		},
+		"error": {
+			"authorizing": {
+				"title": "Error updating authorizations",
+				"message": "Failed to update the authorization for doctor {doctorName}. Please try again later."
+			},
+			"deleting": {
+				"title": "Error deleting study",
+				"message": "An error occurred while trying to delete the study. Please try again later."
+			},
+			"downloading": {
+				"title": "Error downloading files",
+				"message": "An error occurred while trying to download the study files. Please try again later."
+			}
+		}
+	},
+	"new_file": {
+		"title": "Upload new study for {patientName}",
+		"labels": {
+			"files": "Files",
+			"type": "Study Type",
+			"date": "Study Date",
+			"data": "Additional Data",
+			"auth_doctors": "Select which doctors will be able to see this study"
+		},
+		"table": {
+			"auth_doctors": "Authorized Doctors"
+		},
+		"buttons": {
+			"files": "Choose files",
+			"select_all": "Select all",
+			"deselect_all": "Deselect all",
+			"submit": "Upload study"
+		},
+		"messages": {
+			"no_files": "Please select at least one file to upload the study.",
+			"upload_success_title": "Study uploaded successfully!",
+			"upload_success_message": "You have uploaded a new study for {patientName}.",
+			"upload_error_title": "Error uploading study",
+			"upload_error_message": "An error occurred while trying to upload the study. Please try again later."
+		},
+		"data_placeholder": "Enter a description with data about the study",
+		"no_files": "No files selected",
+		"more_files": "+ {count} more files"
+	},
+	"vacations": {
+		"title": "Vacations Management",
+		"create": {
+			"title": "Register New Vacations",
+			"submit": "Register Vacations"
+		},
+		"table": {
+			"startDate": "Start Date",
+			"endDate": "End Date"
+		},
+		"past": {
+			"title": "Past Vacations",
+			"empty": "No past vacations on record"
+		},
+		"future": {
+			"title": "Future Vacations",
+			"empty": "No future vacations scheduled"
+		},
+		"created": {
+			"title": "Vacations registered!",
+			"message": "The vacations have been successfully registered."
+		},
+		"deleted": {
+			"title": "Vacations canceled!",
+			"message": "The vacations have been successfully canceled."
+		},
+		"delete": {
+			"confirm": {
+				"title": "Cancel vacations",
+				"message": "Are you sure you want to cancel the vacations from {startDate} to {endDate}?",
+				"button": "Cancel vacations",
+				"back": "Go back"
+			}
+		},
+		"creating": {
+			"confirm": {
+				"title": "Register Vacations",
+				"message": "You are about to register vacations from {startDate} to {endDate}, do you want to cancel the appointments you have scheduled during that period?",
+				"yes": "Cancel appointments",
+				"no": "Continue without canceling appointments"
+			}
+		},
+		"error": {
+			"startRequired": "Start date is required",
+			"endRequired": "End date is required",
+			"endBeforeStart": "End date must be after start date",
+			"pastDate": "Start date cannot be in the past",
+			"load": {
+				"title": "Loading error",
+				"message": "Could not load vacations. Please try again."
+			},
+			"create": {
+				"title": "Registration error",
+				"message": "Could not register the vacations. Please try again."
+			},
+			"delete": {
+				"title": "Cancellation error",
+				"message": "Could not cancel the vacations. Please try again."
+			}
+		}
+	},
+	"insurance": {
+		"title": "Edit Insurance",
+		"labels": {
+			"name": "Insurance Name",
+			"logo": "New Insurance Logo",
+			"current_logo": "Current Logo"
+		},
+		"placeholder": {
+			"name": "Enter the insurance name"
+		},
+		"no_logo": "No logo selected",
+		"accepted_files": "The accepted file types are: JPEG, PNG. The maximum file size is 5 MB.",
+		"can_update": "You can update the logo if you want.",
+		"buttons": {
+			"choose_file": "Choose new logo",
+			"submit": "Save changes",
+			"delete": "Delete insurance",
+			"cancel": "Cancel"
+		},
+		"toast": {
+			"success": {
+				"title": "Insurance updated successfully!",
+				"message": "The insurance has been updated successfully."
+			},
+			"error": {
+				"title": "Error updating insurance",
+				"message": "An error occurred while trying to update the insurance. Please try again later."
+			}
+		},
+		"create": {
+			"title": "Create new insurance",
+			"buttons": {
+				"file": "Choose insurance logo",
+				"submit": "Create insurance"
+			},
+			"labels": {
+				"logo": "Insurance Logo"
+			},
+			"toast": {
+				"success": {
+					"title": "Insurance created successfully!",
+					"message": "The insurance has been created successfully."
+				},
+				"error": {
+					"title": "Error creating insurance",
+					"message": "An error occurred while trying to create the insurance. Please try again later."
+				}
+			}
+		},
+		"delete": {
+			"toast": {
+				"success": {
+					"title": "Insurance deleted successfully!",
+					"message": "The insurance has been deleted successfully."
+				},
+				"error": {
+					"title": "Error deleting insurance",
+					"message": "An error occurred while trying to delete the insurance. Please try again later."
+				}
+			},
+			"pop_up": {
+				"title": "Are you sure you want to delete this insurance?",
+				"subtitle": "This action cannot be undone.",
+				"confirm": "Delete insurance",
+				"cancel": "Cancel"
+			}
+		}
+	},
+	"unknown": "Unknown",
 	"date_format": "MM/dd/yyyy",
-	"next": "Next",
 	"previous": "Previous",
+	"next": "Next",
+	"action": "Action",
+	"actions": "Actions",
 	"vacations": {
 		"title": "Vacation Management",
 		"create": {
