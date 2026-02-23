@@ -104,7 +104,7 @@
 			insuranceSearch = $searchQuery;
 		} else {
 			// Fetch doctors with current URL params
-			fetchDoctors($searchQuery, selectedInsurance, selectedDay, selectedSpecialty, selectedOrder)
+			fetchDoctors($searchQuery, $insurance, $day, $specialty, $order)
 				.then(result => {
 					doctors = result;
 					filterKey++;

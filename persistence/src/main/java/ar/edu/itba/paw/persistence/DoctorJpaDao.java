@@ -225,15 +225,15 @@ public class DoctorJpaDao implements DoctorDao{
             queryBuilder.append(" AND doctor_specialty = " + specialty.ordinal());
         }
         if (insurance != null) {
-            queryBuilder.append(" AND").append(insurance.getId()).append("IN (SELECT dc.insurance_id FROM doctor_coverages as dc WHERE dc.doctor_id = dd.doctor_id)");
+            queryBuilder.append(" AND ").append(insurance.getId()).append(" IN (SELECT dc.insurance_id FROM doctor_coverages as dc WHERE dc.doctor_id = dd.doctor_id)");
         }
         if (weekday != null) {
             queryBuilder.append(" AND EXISTS (SELECT 1 FROM doctor_single_shifts as dss WHERE dss.doctor_id = dd.doctor_id AND dss.shift_weekday =").append(weekday.ordinal()).append(")");
         }
         if (orderBy != null) {
             switch (orderBy) {
-                case M_RECENT -> queryBuilder.append(" ORDER BY u.createDate ASC");
-                case L_RECENT -> queryBuilder.append(" ORDER BY u.createDate DESC");
+                case M_RECENT -> queryBuilder.append(" ORDER BY u.create_date DESC");
+                case L_RECENT -> queryBuilder.append(" ORDER BY u.create_date ASC");
                 default -> {
                     // Imposible to filter by popularity in a query.
                     // If this is the case, the order will be done in Java
