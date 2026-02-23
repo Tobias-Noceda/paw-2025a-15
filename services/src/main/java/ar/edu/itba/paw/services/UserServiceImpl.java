@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.services;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -18,7 +17,6 @@ import ar.edu.itba.paw.interfaces.services.EmailService;
 import ar.edu.itba.paw.interfaces.services.PatientService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.entities.User;
-import ar.edu.itba.paw.models.enums.UserRoleEnum;
 import ar.edu.itba.paw.models.exceptions.NotFoundException;
 
 @Service
@@ -81,16 +79,16 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Scheduled(cron = "0 0 0 * * ?", zone = "America/Argentina/Buenos_Aires")
     public void deleteUnverifiedUsers() {
-        List<User> unverifiedUsers = userDao.getUnverifiedUsersOlderThanDays(2);
+        //List<User> unverifiedUsers = userDao.getUnverifiedUsersOlderThanDays(2);
         
-        for (User user : unverifiedUsers) {
-            if (user.getRole().equals(UserRoleEnum.PATIENT)) {
-                ps.deletePatientById(user.getId());
-            } else if (user.getRole().equals(UserRoleEnum.DOCTOR)) {
-                ds.deleteDoctor(user.getId());
-            }
-            LOGGER.info("Deleted unverified user with email: {}", user.getEmail());
-        }
+        // for (User user : unverifiedUsers) {
+        //     if (user.getRole().equals(UserRoleEnum.PATIENT)) {
+        //         ps.deletePatientById(user.getId());
+        //     } else if (user.getRole().equals(UserRoleEnum.DOCTOR)) {
+        //         ds.deleteDoctor(user.getId());
+        //     }
+        //     LOGGER.info("Deleted unverified user with email: {}", user.getEmail());
+        // }
         LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
     }
 }
