@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.services;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,10 +74,10 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Verified user with email: {}", email);
     }
 
-    @Transactional(readOnly = true)
-    @Scheduled(cron = "0 0 0 * * ?", zone = "America/Argentina/Buenos_Aires")
-    public void deleteUnverifiedUsers() {
-        //List<User> unverifiedUsers = userDao.getUnverifiedUsersOlderThanDays(2);
+    // @Transactional(readOnly = true)
+    // @Scheduled(cron = "0 0 0 * * ?", zone = "America/Argentina/Buenos_Aires")
+    // public void deleteUnverifiedUsers() {
+        // List<User> unverifiedUsers = userDao.getUnverifiedUsersOlderThanDays(2);
         
         // for (User user : unverifiedUsers) {
         //     if (user.getRole().equals(UserRoleEnum.PATIENT)) {
@@ -89,6 +87,6 @@ public class UserServiceImpl implements UserService {
         //     }
         //     LOGGER.info("Deleted unverified user with email: {}", user.getEmail());
         // }
-        LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
-    }
+        // LOGGER.info("Tomorrow appointments reminder sent. At " + LocalDateTime.now().toLocalTime());
+    // }
 }
