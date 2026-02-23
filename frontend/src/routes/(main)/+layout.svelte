@@ -143,12 +143,14 @@
 					</p>
 				</div>
 			</button>
-			{#if userDropdownOpen}
-				<div class="user-dropdown-menu w-50">
-					<a href="{base}/profile">{m['topbar.profile']()}</a>
-					<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
-				</div>
-			{/if}
+				{#if userDropdownOpen}
+					<div class="user-dropdown-menu w-50">
+						{#if $user.role !== 'ADMIN'}
+							<a href="{base}/profile">{m['topbar.profile']()}</a>
+						{/if}
+						<button onclick={() => logout('/home')}>{m['topbar.logout']()}</button>
+					</div>
+				{/if}
 		{/if}
 	</div>
 	<div class="page-container flex-1 w-full!">
